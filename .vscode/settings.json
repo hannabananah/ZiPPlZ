@@ -1,0 +1,5 @@
+{
+    "editor.fontFamily": "'Play', Ebrima, '비트로 프라이드', 나눔스퀘어, Berlin Sans",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.formatOnSave": true
+}
