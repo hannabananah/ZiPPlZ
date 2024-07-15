@@ -1,9 +1,3 @@
-function App() {
-  return (
-    <>
-      <h1>Hello Zip-Plz</h1>
-    </>
-  );
+export default function App() {
+  return <div>App</div>;
 }
-
-export default App;
