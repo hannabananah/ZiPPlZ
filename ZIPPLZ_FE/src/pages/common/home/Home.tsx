@@ -1,10 +1,15 @@
+<<<<<<< HEAD
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+=======
+import Calendar from '@components/schedule/Calendar';
+>>>>>>> b72d5f6 (FEAT: test Calendar Library)
 
 export default function Home() {
   return (
     <div>
       Home
+<<<<<<< HEAD
       <p>hello</p>
       <Button
         children="primary"
@@ -27,6 +32,9 @@ export default function Home() {
           if (e.key === 'Enter') alert('keydown');
         }}
       />
+=======
+      <Calendar />
+>>>>>>> b72d5f6 (FEAT: test Calendar Library)
     </div>
   );
 }
