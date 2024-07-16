@@ -16,9 +16,10 @@ export default {
       colors: {
         'main-color': '#73744A',
         'sub-color': '#E9E8D5',
-        'black-color': '#111111',
+        'black-color': '#111',
         'light-beige': '#f2efef',
         gray: '#626262',
+        'light-gray': '#ccc',
       },
       fontFamily: {
         nanum: [
