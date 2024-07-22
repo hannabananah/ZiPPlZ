@@ -13,7 +13,7 @@ html {
   .profile-card {
     @apply w-[170px] h-[134px] rounded-zp-radius-big bg-zp-transparent py-3.5 items-center flex flex-col bg-zp-light-gray drop-shadow-zp-normal;
   }
-  .btn {
+  /* .btn {
     @apply;
-  }
+  } */
 }

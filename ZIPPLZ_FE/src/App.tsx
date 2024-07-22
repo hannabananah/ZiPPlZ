@@ -1,4 +1,6 @@
-import { Link, Outlet, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
+
+import Button from '@components/common/Button';
 
 import Layout from './components/layout/Layout';
 import CalendarTest from './components/schedule/CalendarTest';
@@ -9,6 +11,16 @@ import MyPage from './pages/common/mypage/MyPage';
 export default function App() {
   return (
     <>
+      <p>hello</p>
+      <Button
+        children="primary"
+        buttonType="primary"
+        width={6}
+        height={3}
+        fontSize="lg"
+        radius="btn"
+        onClick={() => alert('clicked')}
+      />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
