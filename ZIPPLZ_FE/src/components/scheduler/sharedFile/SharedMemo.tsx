@@ -1,4 +1,4 @@
-import { React, useState } from 'react';
+import { useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
 import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 import { MdOutlineCancel } from 'react-icons/md';

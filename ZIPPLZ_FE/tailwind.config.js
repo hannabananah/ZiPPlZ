@@ -31,6 +31,7 @@ export default {
     },
     borderRadius: {
       'zp-radius-big': '1rem',
+      'zp-radius-bubble': '0.844rem',
       'zp-radius-btn': '0.375rem',
       'zp-radius-full': '9999px',
     },
