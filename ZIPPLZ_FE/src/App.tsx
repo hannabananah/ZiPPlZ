@@ -1,11 +1,14 @@
 import { Route, Routes } from 'react-router-dom';
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import VideoRoom from '@pages/common/chat/VideoRoom';
 =======
 import Button from '@components/common/Button';
 >>>>>>> c770e44 (FEAT: create Button Component)
 
+=======
+>>>>>>> 7e3dddf (FEAT: create Input Component)
 import Layout from './components/layout/Layout';
 import NotFound from './pages/common/NotFound';
 import ChatRoom from './pages/common/chat/ChatRoom';
@@ -29,16 +32,6 @@ export default function App() {
     </Routes>
 =======
     <>
-      <p>hello</p>
-      <Button
-        children="primary"
-        buttonType="primary"
-        width={6}
-        height={3}
-        fontSize="lg"
-        radius="btn"
-        onClick={() => alert('clicked')}
-      />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
