@@ -3,5 +3,17 @@
 @tailwind utilities;
 
 html {
-  @apply text-black-color font-nanum text-balance break-all;
+  @apply text-zp-black font-nanum text-balance break-all;
+}
+
+@layer components {
+  .image-card {
+    @apply w-[170px] h-[220px] rounded-zp-radius-big bg-zp-slight-white pb-2.5 justify-between flex flex-col drop-shadow-zp-normal overflow-hidden;
+  }
+  .profile-card {
+    @apply w-[170px] h-[134px] rounded-zp-radius-big bg-zp-transparent py-3.5 items-center flex flex-col bg-zp-light-gray drop-shadow-zp-normal;
+  }
+  .btn {
+    @apply;
+  }
 }
