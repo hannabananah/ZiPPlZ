@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from 'react';
 
 interface Props {
@@ -94,4 +95,17 @@ export default function Input({
       onKeyDown={onKeydown}
     />
   );
+=======
+interface Props {
+  children: string;
+  buttonType: 'normal' | 'light' | 'second' | 'primary';
+  width: number;
+  height: number;
+  fontSize: string;
+  radius: string;
+  onClick?: () => void;
+}
+export default function Input() {
+  return <div>Input</div>;
+>>>>>>> c770e44 (FEAT: create Button Component)
 }

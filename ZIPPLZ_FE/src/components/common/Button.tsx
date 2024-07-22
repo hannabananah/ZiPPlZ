@@ -1,8 +1,13 @@
 interface Props {
   children: string;
   buttonType: 'normal' | 'light' | 'second' | 'primary';
+<<<<<<< HEAD
   width?: number | string;
   height: number | string;
+=======
+  width: number;
+  height: number;
+>>>>>>> c770e44 (FEAT: create Button Component)
   fontSize: string;
   radius: string;
   onClick?: () => void;
@@ -22,7 +27,10 @@ const radiusClasses: Record<Props['radius'], string> = {
   big: 'rounded-zp-radius-big',
   btn: 'rounded-zp-radius-btn',
   full: 'rounded-zp-radius-full',
+<<<<<<< HEAD
   none: 'rounded-none',
+=======
+>>>>>>> c770e44 (FEAT: create Button Component)
 };
 export default function Button({
   children,
@@ -50,6 +58,7 @@ export default function Button({
       typeStyles = 'bg-zp-white text-zp-black border border-zp-main-color';
       break;
   }
+<<<<<<< HEAD
   const widthClass = width === 'full' ? 'w-full' : '';
   const heightClass = height === 'full' ? 'h-full' : '';
   const widthStyle = typeof width === 'number' ? `${width}rem` : width;
@@ -61,6 +70,12 @@ export default function Button({
         width: width === 'full' ? '100%' : widthStyle,
         height: height === 'full' ? '100%' : heightStyle,
       }}
+=======
+  return (
+    <button
+      className={`${baseStyles} ${typeStyles}`}
+      style={{ width: `${width}rem`, height: `${height}rem` }}
+>>>>>>> c770e44 (FEAT: create Button Component)
       onClick={onClick}
     >
       {children}

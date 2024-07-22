@@ -17,6 +17,7 @@ html {
   .profile-img {
     @apply rounded-zp-radius-full max-w-16 max-h-16 w-full aspect-square drop-shadow-zp-deep;
   .btn {
+  /* .btn {
     @apply;
-  }
+  } */
 }
