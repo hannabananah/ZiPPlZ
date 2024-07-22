@@ -10,3 +10,6 @@ export { default as InvisibleIcon } from './InvisibleIcon';
 export { default as TrashCanIcon } from './TrashCanIcon';
 export { default as VisibleIcon } from './VisibleIcon';
 export { default as MeetballIcon } from './MeetballIcon';
+export { default as ScheduleCheckerIcon } from './ScheduleCheckerIcon';
+export { default as PlusCircleIcon } from './PlusCircleIcon';
+export { default as ImageDragIcon } from './ImageDragIcon';
