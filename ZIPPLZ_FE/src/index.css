@@ -4,6 +4,7 @@
 
 html {
   @apply text-zp-black font-nanum text-balance break-all min-h-full max-w-[600px] m-auto;
+  @apply text-zp-black font-nanum text-balance break-all;
 }
 
 @layer components {
@@ -15,5 +16,7 @@ html {
   }
   .profile-img {
     @apply rounded-zp-radius-full max-w-16 max-h-16 w-full aspect-square drop-shadow-zp-deep;
+  .btn {
+    @apply;
   }
 }
