@@ -14,6 +14,8 @@ import FullCalendar from '@fullcalendar/react';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import { INITIAL_EVENTS, createEventId } from '@utils/CalendarEvent';
 
+import './Calendar.css';
+
 export default function Calendar() {
   const [weekendsVisible, setWeekendsVisible] = useState<boolean>(true);
   const [currentEvents, setCurrentEvents] = useState<EventApi[]>([]);
@@ -75,7 +77,7 @@ export default function Calendar() {
 
   return (
     <div className="flex min-h-screen font-sans">
-      <div className="p-8 bg-blue-100 border-r border-blue-200 w-80">
+      {/* <div className="p-8 bg-blue-100 border-r border-blue-200 w-80">
         <div className="mb-8">
           <h2 className="mb-4 text-lg font-bold">Instructions</h2>
           <ul className="pl-4 list-disc">
@@ -101,14 +103,14 @@ export default function Calendar() {
           </h2>
           <ul>{currentEvents.map(renderSidebarEvent)}</ul>
         </div>
-      </div>
+      </div> */}
       <div className="flex-1 p-12">
         <FullCalendar
-          plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
+          plugins={[dayGridPlugin]}
           headerToolbar={{
-            left: 'prev,next today',
+            left: 'prev',
             center: 'title',
-            right: 'dayGridMonth,timeGridWeek,timeGridDay',
+            right: 'next',
           }}
           initialView="dayGridMonth"
           editable={true}
