@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { useState } from 'react';
 =======
 import { React, useState } from 'react';
 >>>>>>> 00b2ca2 (FEAT: scheduler카드 & scheduler공유문서 디자인)
+=======
+import { useState } from 'react';
+>>>>>>> 8515700 (ADD: 중간 커밋)
 import { FiPlusCircle } from 'react-icons/fi';
 import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 import { MdOutlineCancel } from 'react-icons/md';

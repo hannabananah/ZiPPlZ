@@ -26,11 +26,16 @@
     "react-icons": "^5.2.1",
     "react-modal": "^3.16.1",
 <<<<<<< HEAD
+<<<<<<< HEAD
     "react-router-dom": "^6.24.1",
     "zustand": "^4.5.4"
 =======
     "react-router-dom": "^6.24.1"
 >>>>>>> 00b2ca2 (FEAT: scheduler카드 & scheduler공유문서 디자인)
+=======
+    "react-router-dom": "^6.24.1",
+    "zustand": "^4.5.4"
+>>>>>>> 8515700 (ADD: 중간 커밋)
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.3.0",
