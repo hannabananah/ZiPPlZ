@@ -1,6 +1,13 @@
 import { create } from 'zustand';
 
-export const useCounterStore = create((set) => ({
-  count: 1,
-  increse: () => set((state) => ({ count: state.count + 1 })),
+interface UserStoreState {
+  userType: 'user' | 'worker';
+  setUserType: (type: 'user' | 'worker') => void;
+}
+
+const useUserStore = create<UserStoreState>((set) => ({
+  userType: 'user',
+  setUserType: (type) => set({ userType: type }),
 }));
+
+export default useUserStore;
