@@ -7,10 +7,14 @@ import Input from '@components/common/Input';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
 interface TextInputBoxProps {
+  isMenuVisible: boolean;
   onMenuToggle: () => void;
 }
 
-export default function TextInputBox({ onMenuToggle }: TextInputBoxProps) {
+export default function TextInputBox({
+  isMenuVisible,
+  onMenuToggle,
+}: TextInputBoxProps) {
   const [message, setMessage] = useState('');
   const ws = useContext(WebSocketContext);
 
@@ -29,11 +33,17 @@ export default function TextInputBox({ onMenuToggle }: TextInputBoxProps) {
   };
 
   return (
-    <div className="sticky bottom-0 w-full px-[25px] flex justify-between gap-3 items-center bg-zp-transparent h-12">
+    <div className="sticky bottom-0 flex items-center justify-between w-full h-12 gap-3 px-4 bg-zp-transparent">
       <button className="relative" onClick={onMenuToggle}>
         <Circle width={28} height={28} />
         <div className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-          <FaPlus size={14} />
+          <FaPlus
+            size={14}
+            style={{
+              transform: isMenuVisible ? 'rotate(45deg)' : 'rotate(0deg)',
+              transition: 'transform 0.3s',
+            }}
+          />
         </div>
       </button>
 
@@ -48,8 +58,8 @@ export default function TextInputBox({ onMenuToggle }: TextInputBoxProps) {
         width="full"
         value={message}
         onChange={handleChangeText}
-        onKeydown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-          if (e.key === 'Enter') alert('keydown');
+        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === 'Enter') handleClickSubmit();
         }}
       />
 

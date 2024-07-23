@@ -18,7 +18,7 @@ interface Props {
   radius: string;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onKeydown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
 
 const fontSizeClasses: Record<Props['fontSize'], string> = {
@@ -49,7 +49,7 @@ export default function Input({
   radius,
   value,
   onChange,
-  onKeydown,
+  onKeyDown,
 }: Props) {
   const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} `;
 
@@ -91,7 +91,7 @@ export default function Input({
       }}
       value={value}
       onChange={onChange}
-      onKeyDown={onKeydown}
+      onKeyDown={onKeyDown}
     />
   );
 }
