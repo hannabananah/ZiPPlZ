@@ -25,7 +25,7 @@ export default {
       'zp-yellow': '#ECE21B',
       'zp-light-gray': '#CCC',
       'zp-slight-white': '#FAFAFA',
-      'zp-light-beige': '#F2EFEF',
+      'zp-light-beige': '#f6f6f6',
       'zp-light-yellow': '#F6F7E2',
       'zp-light-orange': '#FFFDF7',
       'zp-transparent': 'transparent',
