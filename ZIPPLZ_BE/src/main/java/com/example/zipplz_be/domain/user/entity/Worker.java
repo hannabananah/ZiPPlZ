@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.user.domain;
+package com.example.zipplz_be.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,5 +18,6 @@ public class Worker {
     private int location;
     private String company;
     private String certificate;
+    @Column(name = "has_as_badge")
     private int hasAsBadge;
 }

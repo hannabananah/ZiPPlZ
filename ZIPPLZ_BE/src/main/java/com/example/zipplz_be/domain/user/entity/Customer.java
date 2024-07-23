@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.user.domain;
+package com.example.zipplz_be.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -15,5 +15,6 @@ public class Customer {
     @JoinColumn(name = "customer_serial")
     private User customerSerial;
     private String nickname;
+    @Column(name = "current_address")
     private String currentAddress;
 }
