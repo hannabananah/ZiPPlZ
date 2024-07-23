@@ -18,5 +18,6 @@ public class Worker {
     private int location;
     private String company;
     private String certificate;
+    @Column(name = "has_as_badge")
     private int hasAsBadge;
 }

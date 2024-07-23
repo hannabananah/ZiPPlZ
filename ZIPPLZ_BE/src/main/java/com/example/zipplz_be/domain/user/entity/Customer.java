@@ -15,5 +15,6 @@ public class Customer {
     @JoinColumn(name = "customer_serial")
     private User customerSerial;
     private String nickname;
+    @Column(name = "current_address")
     private String currentAddress;
 }
