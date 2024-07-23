@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.user.domain;
+package com.example.zipplz_be.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

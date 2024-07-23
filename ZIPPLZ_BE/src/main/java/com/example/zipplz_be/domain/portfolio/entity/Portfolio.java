@@ -1,6 +1,6 @@
-package com.example.zipplz_be.domain.portfolio.domain;
+package com.example.zipplz_be.domain.portfolio.entity;
 
-import com.example.zipplz_be.domain.user.domain.Worker;
+import com.example.zipplz_be.domain.user.entity.Worker;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
