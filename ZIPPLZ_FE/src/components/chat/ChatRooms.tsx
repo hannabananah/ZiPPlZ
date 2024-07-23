@@ -89,8 +89,8 @@ export default function ChatRooms() {
   };
 
   return (
-    <div className="relative w-full flex flex-col pb-8 overflow-y-auto">
-      <div className="pt-6 w-full sticky top-0 z-30 bg-zp-white px-8">
+    <div className="relative flex flex-col w-full pb-8 overflow-y-auto">
+      <div className="sticky top-0 z-30 w-full px-8 pt-6 bg-zp-white">
         <div className="relative w-full mb-4">
           <span className="absolute transform -translate-y-1/2 left-4 top-1/2">
             <IoIosSearch />
@@ -120,7 +120,7 @@ export default function ChatRooms() {
           </button>
         </div>
       </div>
-      <ul className="grid w-full grid-cols-2 gap-x-5 gap-y-4 px-8">
+      <ul className="grid w-full px-8 gap-x-5 gap-y-4 md:grid-cols-2 sm:grid-cols-1">
         {chatRooms.map((room) => (
           <li
             key={room.id}
