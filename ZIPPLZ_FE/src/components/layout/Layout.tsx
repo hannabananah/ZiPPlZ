@@ -14,10 +14,10 @@ export default function Layout() {
 
   return (
     <Suspense>
-      <div className="flex flex-col items-center justify-center">
-        <div className="relative flex flex-col min-h-screen">
+      <div className="flex flex-col items-center justify-center w-full max-w-[600px] mx-auto">
+        <div className="relative flex flex-col w-full min-h-screen">
           {!notShowHeader && <Header />}
-          <div className="flex-1 h-full justify-self-center bg-zp-light-yellow">
+          <div className="flex-1 w-full h-full justify-self-center bg-zp-light-yellow">
             <Outlet />
           </div>
           {!notShowHeader && <FloatingChatButton />}
