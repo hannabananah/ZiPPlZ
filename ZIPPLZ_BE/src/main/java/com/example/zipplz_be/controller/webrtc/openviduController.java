@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.webrtc.domain.controller;
+package com.example.zipplz_be.controller.webrtc;
 
 import java.util.*;
 
@@ -57,10 +57,5 @@ public class openviduController {
         Connection connection = session.createConnection(properties);
         return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
     }
-
-
-
-
-
 
 }
