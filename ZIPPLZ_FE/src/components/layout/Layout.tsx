@@ -21,7 +21,7 @@ export default function Layout() {
             <Outlet />
           </div>
           {!notShowHeader && <FloatingChatButton />}
-          <BottomTab />
+          {!notShowHeader && <BottomTab />}
           {(path === '/' || path === '/mypage') && <Footer />}
         </div>
       </div>
