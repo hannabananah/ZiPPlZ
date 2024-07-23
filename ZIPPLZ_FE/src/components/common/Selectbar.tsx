@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa6';
 
 interface Props {
+  backgroundColor: string;
+  fontColor: string;
   options: string[];
   selectedValue: string;
   setSelectedValue: (option: string) => void;
-  width?: number;
-  height?: number;
+  width?: string | number;
+  height?: string | number;
   fontSize: string;
   radius: string;
   border: string;
@@ -14,36 +16,68 @@ interface Props {
 
   onClick?: () => void;
 }
+const bgClasses: Record<Props['backgroundColor'], string> = {
+  main: 'bg-zp-main-color',
+  sub: 'bg-zp-sub-color',
+  black: 'bg-zp-black',
+  white: 'bg-zp-white',
+  gray: 'bg-zp-gray',
+  red: 'bg-zp-red',
+  yellow: 'bg-zp-yellow',
+  'light-gray': 'bg-zp-light-gray',
+  'slight-white': 'bg-zp-slight-white',
+  'light-beige': 'bg-zp-light-beige',
+  'light-yellow': 'bg-zp-light-yellow',
+  'light-orange': 'bg-zp-light-orange',
+  transparent: 'bg-zp-transparent',
+  none: 'bg-none',
+};
+const fontClasses: Record<Props['fontColor'], string> = {
+  main: 'text-zp-main-color',
+  sub: 'text-zp-sub-color',
+  black: 'text-zp-black',
+  white: 'text-zp-white',
+  gray: 'text-zp-gray',
+  red: 'text-zp-red',
+  yellow: 'text-zp-yellow',
+  'light-gray': 'text-zp-light-gray',
+  'slight-white': 'text-zp-slight-white',
+  'light-beige': 'text-zp-light-beige',
+  'light-yellow': 'text-zp-light-yellow',
+  'light-orange': 'text-zp-light-orange',
+  transparent: 'text-zp-transparent',
+  none: 'text-none',
+};
 const borderClasses: Record<Props['border'], string> = {
-  main: 'border border-zp-main-color',
-  sub: 'border border-zp-sub-color',
-  black: 'border border-zp-black',
-  white: 'border border-zp-white',
-  gray: 'border border-zp-gray',
-  red: 'border border-zp-red',
-  yellow: 'border border-zp-yellow',
-  'light-gray': 'border border-zp-light-gray',
-  'slight-white': 'border border-zp-slight-white',
-  'light-beige': 'border border-zp-light-beige',
-  'light-yellow': 'border border-zp-light-yellow',
-  'light-orange': 'border border-zp-light-orange',
-  transparent: 'border border-zp-transparent',
+  main: 'border-zp-main-color',
+  sub: 'border-zp-sub-color',
+  black: 'border-zp-black',
+  white: 'border-zp-white',
+  gray: 'border-zp-gray',
+  red: 'border-zp-red',
+  yellow: 'border-zp-yellow',
+  'light-gray': 'border-zp-light-gray',
+  'slight-white': 'border-zp-slight-white',
+  'light-beige': 'border-zp-light-beige',
+  'light-yellow': 'border-zp-light-yellow',
+  'light-orange': 'border-zp-light-orange',
+  transparent: 'border-zp-transparent',
   none: 'border-none',
 };
 const hoverClasses: Record<Props['hover'], string> = {
-  main: 'zp-main-color',
-  sub: 'zp-sub-color',
-  black: 'zp-black',
-  white: 'zp-white',
-  gray: 'zp-gray',
-  red: 'zp-red',
-  yellow: 'zp-yellow',
-  'light-gray': 'zp-light-gray',
-  'slight-white': 'zp-slight-white',
-  'light-beige': 'zp-light-beige',
-  'light-yellow': 'zp-light-yellow',
-  'light-orange': 'zp-light-orange',
-  transparent: 'zp-transparent',
+  main: 'hover:bg-zp-main-color',
+  sub: 'hover:bg-zp-sub-color',
+  black: 'hover:bg-zp-black',
+  white: 'hover:bg-zp-white',
+  gray: 'hover:bg-zp-gray',
+  red: 'hover:bg-zp-red',
+  yellow: 'hover:bg-zp-yellow',
+  'light-gray': 'hover:bg-zp-light-gray',
+  'slight-white': 'hover:bg-zp-slight-white',
+  'light-beige': 'hover:bg-zp-light-beige',
+  'light-yellow': 'hover:bg-zp-light-yellow',
+  'light-orange': 'hover:bg-zp-light-orange',
+  transparent: 'hover:bg-zp-transparent',
 };
 const fontSizeClasses: Record<Props['fontSize'], string> = {
   '3xl': 'text-zp-3xl',
@@ -62,6 +96,8 @@ const radiusClasses: Record<Props['radius'], string> = {
   full: 'rounded-zp-radius-full',
 };
 export default function Selectbar({
+  backgroundColor,
+  fontColor,
   options,
   selectedValue,
   setSelectedValue,
@@ -80,28 +116,52 @@ export default function Selectbar({
   const handleOptionClick = function (option: string) {
     setSelectedValue(option);
     setIsShowOptions(false);
+    onClick;
   };
-  const Select: string = `${borderClasses[border]} outline-none ${radiusClasses[radius]}`;
-  const Selected: string = `flex justify-between items-center py-[0.5rem] px-[1rem] cursor-pointer`;
-  const SelectedValue:string = ``${fontSizeClasses[fontSize]}``
-  const Options:string = 
+  const Select: string = `relative border ${borderClasses[border]} outline-none ${radiusClasses[radius]} px-1 ${bgClasses[backgroundColor]} ${fontClasses[fontColor]}`;
+  const Selected: string = `flex justify-between items-center px-[1rem] cursor-pointer font-bold `;
+  const SelectedValue: string = `${fontSizeClasses[fontSize]} bg-white`;
+  const Options: string = `border ${borderClasses[border]} list-none  outline-none ${radiusClasses[radius]} absolute mt-2 left-0  z-[10]  ${bgClasses[backgroundColor]}`;
+  const Option: string = `flex items-center w-full px-[1rem] py-[0.5rem] w-full ${radiusClasses[radius]} cursor-pointer ${hoverClasses[hover]} font-bold z-[100] ${fontClasses[fontColor]}`;
+
+  const widthClass = width === 'full' ? 'w-full' : '';
+  const heightClass = height === 'full' ? 'h-full' : '';
+  const widthStyle = typeof width === 'number' ? `${width}rem` : width;
+  const heightStyle = typeof height === 'number' ? `${height}rem` : height;
   return (
-    <div className={Select}>
-      <div className={Selected}>
-        <div className={SelectedValue}>{selectedValue}</div>
+    <div
+      className={`${Select} ${widthClass} ${heightClass}`}
+      style={{
+        width: width === 'full' ? '100%' : widthStyle,
+        height: height === 'full' ? '100%' : heightStyle,
+      }}
+    >
+      <div className={`${Selected}`} onClick={handleClickOptions}>
+        <div className={`${SelectedValue}`}>{selectedValue}</div>
         {isShowOptions ? (
-          <FaChevronUp size={16} />
+          <FaChevronUp size={16} className="absolute right-[1rem]" />
         ) : (
-          <FaChevronDown size={16} />
+          <FaChevronDown size={16} className="absolute right-[1rem]" />
         )}
       </div>
-      <ul>
-        {options.map((option, index) => (
-          <li key={index} onClick={() => handleOptionClick(option)}>
-            {option}
-          </li>
-        ))}
-      </ul>
+      {isShowOptions && (
+        <ul
+          className={`${Options} ${widthClass}`}
+          style={{
+            width: width === 'full' ? '100%' : widthStyle,
+          }}
+        >
+          {options.map((option, index) => (
+            <li
+              className={`${Option}  ${widthClass} ${heightClass}`}
+              key={index}
+              onClick={() => handleOptionClick(option)}
+            >
+              {option}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }
