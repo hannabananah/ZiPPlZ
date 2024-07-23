@@ -1,6 +1,6 @@
-package com.example.zipplz_be.domain.board.domain;
+package com.example.zipplz_be.domain.board.entity;
 
-import com.example.zipplz_be.domain.user.domain.User;
+import com.example.zipplz_be.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.file.domain;
+package com.example.zipplz_be.domain.file.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

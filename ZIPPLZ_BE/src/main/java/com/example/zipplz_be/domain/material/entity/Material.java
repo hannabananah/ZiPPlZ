@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.material.domain;
+package com.example.zipplz_be.domain.material.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
