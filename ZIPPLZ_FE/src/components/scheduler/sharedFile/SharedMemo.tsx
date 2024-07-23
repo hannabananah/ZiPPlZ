@@ -9,13 +9,17 @@ import Button from '@/components/common/Button';
 
 const customModalStyles: ReactModal.Styles = {
   overlay: {
-    backgroundColor: 'rgba(0,0,0,0.5)',
-    zIndex: '10',
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   content: {
-    width: '29.25rem',
-    height: '22.5rem',
-    zIndex: '150',
+    maxWidth: '468px',
+    minWidth: '80%',
+    maxHeight: '468px',
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -24,6 +28,7 @@ const customModalStyles: ReactModal.Styles = {
     backgroundColor: 'white',
     display: 'flex',
     justifyContent: 'center',
+    padding: '24px',
   },
 };
 Modal.setAppElement('#root');
@@ -36,6 +41,7 @@ export default function SharedMemo() {
     '뒷정리 깔끔하게 부탁드립니다!',
     '세면대가 깨져있어요...',
     '할게 너무 많아요...',
+    '동해물과 백두산이 마르고 닳도록 하느님이 보우하사 우리나라 만세',
   ];
   const openWriteModal = function () {
     setIsWriteModalOpen(true);
@@ -50,26 +56,23 @@ export default function SharedMemo() {
     setIsListModalOpen(false);
   };
   return (
-    <div
-      className="relative flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big"
-      style={{ width: '12.5rem', height: '7rem' }}
-    >
+    <div className="relative min-w-[100px] max-w-[198px] min-h-[5rem] max-h-[7rem] flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-4">
       {isNull ? (
         <p className="text-zp-xs text-zp-light-gray">공유할 메모 가져오기</p>
       ) : (
         <>
           <LuMaximize2
-            className="absolute top-4 right-4 cursor-pointer"
+            className="absolute top-[10%] right-[5%] cursor-pointer"
             size={16}
             onClick={openListModal}
           />
-          <div className="flex flex-col items-center gap-1">
-            <div
-              className="bg-zp-yellow bg-opacity-40 text-center text-zp-2xs flex justify-center items-center"
-              style={{ width: '10rem', height: '1.5rem' }}
+          <div className="flex flex-col items-center gap-1 p-2">
+            <p
+              className="max-w-[80%] bg-zp-yellow bg-opacity-40 text-center text-zp-2xs flex-grow overflow-hidden text-ellipsis whitespace-nowrap justify-center items-center p-0.5 truncate"
+              onClick={openListModal}
             >
-              메모메모메모메모
-            </div>
+              {items[0]}
+            </p>
             <FiPlusCircle
               className="cursor-pointer"
               size={16}
@@ -92,18 +95,18 @@ export default function SharedMemo() {
         <div className="flex flex-col gap-[1rem] w-full mt-[4rem] overflow-auto">
           {items.map((item, idx) => (
             <div
-              className="relative flex flex-col p-[1rem] w-[24rem] h-[7rem] bg-zp-yellow bg-opacity-40 gap-[0.5rem]"
+              className="relative flex flex-col p-[1rem] max-w-[24rem] h-[7rem] bg-zp-yellow bg-opacity-40 gap-[0.5rem]"
               key={idx}
             >
               <div className="flex justify-between items-start ">
                 <div className="flex flex-col  ">
                   <p className="text-zp-sm  font-bold">작성자</p>
-                  <p className="text-zp-2xs  ">작성일자</p>
+                  <p className="text-zp-2xs">작성일자</p>
                 </div>
                 <VscKebabVertical size={16} className="cursor-pointer" />
               </div>
 
-              <p className="text-zp-2xs">{item}</p>
+              <p className="text-zp-2xs text-wrap">{item}</p>
             </div>
           ))}
         </div>
@@ -118,15 +121,15 @@ export default function SharedMemo() {
           size={16}
           onClick={closeWriteModal}
         />
-        <div className="flex flex-col items-center w-full mt-[1rem] px-[1rem] overflow-auto gap-[1rem]">
+        <div className="flex flex-col items-center w-full mt-[1rem] overflow-auto gap-[1rem]">
           <p className="text-zp-2xl font-bold">메모를 남겨주세요.</p>
-          <div className="border border-zp-sub-color w-[22.5rem] h-[12rem] rounded-zp-radius-btn">
+          <div className="border border-zp-sub-color w-[100%] h-[12rem] rounded-zp-radius-btn">
             인풋넣어야 함
           </div>
           <Button
             buttonType="second"
             children="메모 남기기"
-            width={22.5}
+            width="full"
             height={3}
             fontSize="xl"
             radius="btn"
