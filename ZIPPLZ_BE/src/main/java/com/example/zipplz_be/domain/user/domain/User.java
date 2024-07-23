@@ -1,25 +1,23 @@
 package com.example.zipplz_be.domain.user.domain;
 
-import com.example.zipplz_be.domain.file.domain.File;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.sql.Date;
 
 @Entity
 @Getter
 @AllArgsConstructor
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int userSerial;
-    @OneToOne
-    @JoinColumn(name = "file_serial")
-    private File fileSerial;
-    private String email;
-    private String password;
-    private String userName;
-    private int gender;
-    private String tel;
-    private int age;
+    @Column(name="user_serial")
+    private int userSerial;     // 유저 연번
+    private String email;       // 이메일
+    private String password;    // 비밀번호
+    private String userName;    // 이름
+    private Date birthDate;     // 나이
+    private String tel;         // 전화번호
+    @Column(name = "del_yn")
+    private int delYN;          // 삭제된 유저인지 여부: 0이면 사용 중인 User, 1이면 삭제된 User
 }
