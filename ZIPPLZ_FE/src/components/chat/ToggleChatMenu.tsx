@@ -1,20 +1,49 @@
+import { useRef } from 'react';
 import { CiImageOn } from 'react-icons/ci';
 import { FaRegCalendarCheck, FaRegFileAlt } from 'react-icons/fa';
-import 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
 import { TbWood } from 'react-icons/tb';
 
-import useUserStore from '@store/userStore';
+import { useUserStore } from '@store/userStore';
+
+interface MenuItem {
+  id: number;
+  icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
+  label: string;
+  bgColor: string;
+  type: string | string[];
+  onClick?: () => void;
+}
 
 export default function ToggleChatMenu() {
   const { userType } = useUserStore();
-  const menus = [
+
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleImageUpload = () => {
+    imageInputRef.current?.click();
+  };
+
+  const handleFileUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      console.log('Files selected:', files);
+    }
+  };
+
+  const menus: MenuItem[] = [
     {
       id: 1,
       icon: CiImageOn,
       label: '이미지',
       bgColor: '#75C734',
       type: ['user', 'worker'],
+      onClick: handleImageUpload,
     },
     {
       id: 2,
@@ -22,6 +51,7 @@ export default function ToggleChatMenu() {
       label: '파일',
       bgColor: '#0697FF',
       type: ['user', 'worker'],
+      onClick: handleFileUpload,
     },
     {
       id: 3,
@@ -46,12 +76,8 @@ export default function ToggleChatMenu() {
     },
   ];
 
-  const handleChatMenuClick = (menuId: number) => {
-    console.log(`${menuId}번을 클릭`);
-  };
-
   return (
-    <div className="sticky bottom-0 content-center w-full h-20 border bg-zp-white border-zp-sub-color rounded-t-zp-radius-big">
+    <div className="sticky bottom-0 content-center w-full h-24 border bg-zp-white border-zp-sub-color rounded-t-zp-radius-big">
       <ul className="flex items-center w-11/12 h-full m-auto bg-zp-white justify-evenly">
         {menus
           .filter(
@@ -64,8 +90,8 @@ export default function ToggleChatMenu() {
           .map((menu) => (
             <li
               key={menu.id}
-              className="flex flex-col items-center gap-1"
-              onClick={() => handleChatMenuClick(menu.id)}
+              className="flex flex-col items-center gap-1 cursor-pointer"
+              onClick={() => menu.onClick && menu.onClick()}
             >
               <div
                 style={{ backgroundColor: menu.bgColor }}
@@ -83,6 +109,20 @@ export default function ToggleChatMenu() {
             </li>
           ))}
       </ul>
+
+      <input
+        ref={imageInputRef}
+        type="file"
+        accept="image/*"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
+      <input
+        ref={fileInputRef}
+        type="file"
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+      />
     </div>
   );
 }
