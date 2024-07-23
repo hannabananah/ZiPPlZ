@@ -1,7 +1,8 @@
-import Calendar from '@/components/scheduler/Calendar';
+import Calendar from '@/components/common/Calendar';
+import SchedulerCardExist from '@/components/scheduler/card/SchedulerCardExist';
 import SharedImg from '@/components/scheduler/sharedFile/SharedImg';
 import SharedMemo from '@/components/scheduler/sharedFile/SharedMemo';
-import SchedulerCard from '@components/scheduler/SchedulerCard';
+import SchedulerCard from '@components/scheduler/card/SchedulerCard';
 
 export default function Schedule() {
   return (
@@ -11,7 +12,7 @@ export default function Schedule() {
         style={{ width: '37.5rem' }}
       >
         <Calendar />
-        <p className="w-full text-ㅣㄷㄹㅅ text-zp-xl font-bold ">공유 문서</p>
+        <p className="w-full  text-zp-xl font-bold ">공유 문서</p>
         <div className="w-full flex justify-between items-center">
           <SharedImg />
           <SharedMemo />
@@ -20,6 +21,7 @@ export default function Schedule() {
           총 시공 가격 : 1000000원
         </p>
         <SchedulerCard />
+        <SchedulerCardExist />
       </div>
     </div>
   );
