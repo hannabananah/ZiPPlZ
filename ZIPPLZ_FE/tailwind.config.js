@@ -13,6 +13,7 @@ export default {
       'zp-sm': ['0.875rem', '1.25rem'],
       'zp-xs': ['0.813rem', '1.125rem'],
       'zp-2xs': ['0.688rem', '0.875rem'],
+      'zp-3xs': ['0.563rem', '0.875rem'],
     },
     colors: {
       'zp-main-color': '#73744A',
