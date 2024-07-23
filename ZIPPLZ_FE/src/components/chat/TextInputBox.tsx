@@ -1,15 +1,16 @@
-import { useContext, useState } from 'react';
+import { ChangeEvent, useContext, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { FiSend } from 'react-icons/fi';
 
 import Circle from '@assets/gradient-circle.svg?react';
+import Input from '@components/common/Input';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
 export default function TextInputBox() {
   const [message, setMessage] = useState('');
   const ws = useContext(WebSocketContext);
 
-  const handleChangeText = (e: any) => {
+  const handleChangeText = (e: ChangeEvent<HTMLInputElement>) => {
     setMessage(e.target.value);
   };
 
@@ -32,13 +33,20 @@ export default function TextInputBox() {
         </div>
       </button>
 
-      <input
-        className="flex-1 px-2 caret-zp-main-color placeholder-zp-main-color focus:outline-none"
+      <Input
         type="text"
+        placeholder="메시지를 입력해주세요."
+        inputType="normal"
+        height={2.5}
+        className="flex-1"
+        fontSize="sm"
+        radius="btn"
         value={message}
         onChange={handleChangeText}
-        placeholder="메시지를 입력해주세요."
-      ></input>
+        onKeydown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          if (e.key === 'Enter') alert('keydown');
+        }}
+      />
 
       <button type="button" onClick={handleClickSubmit}>
         <FiSend size={32} stroke="#73744A" />
