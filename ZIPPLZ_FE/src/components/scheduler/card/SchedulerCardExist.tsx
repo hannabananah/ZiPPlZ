@@ -15,8 +15,13 @@ export default function SchedulerCardExist() {
   return (
     <>
       <div
+<<<<<<< HEAD
         className="w-full relative flex flex-col justify-center items-center rounded-zp-radius-big bg-zp-white gap-4"
         style={{ height: cardHeight }}
+=======
+        className="relative flex flex-col justify-center items-center rounded-zp-radius-big bg-zp-white gap-4"
+        style={{ width: '34.375rem', height: cardHeight }}
+>>>>>>> 00b2ca2 (FEAT: scheduler카드 & scheduler공유문서 디자인)
       >
         <div className="absolute top-5 flex justify-between items-center w-full px-6 ">
           <div className="flex items-center gap-1.5 text-zp-xl font-bold">
@@ -62,7 +67,11 @@ export default function SchedulerCardExist() {
             <hr className="w-full border-zp-light-gray" />
             <div className="flex items-start gap-6">
               <div className="flex flex-col items-center gap-2">
+<<<<<<< HEAD
                 <div className="w-[3rem] h-[3rem] text-center border rounded-zp-radius-full">
+=======
+                <div className="w-[4rem] h-[4rem] text-center border rounded-zp-radius-full">
+>>>>>>> 00b2ca2 (FEAT: scheduler카드 & scheduler공유문서 디자인)
                   이미지
                 </div>
                 <p className="text-zp-xs font-bold">시공자 이름</p>
@@ -74,11 +83,19 @@ export default function SchedulerCardExist() {
                 <p className="text-zp-xs font-bold">시공 비용</p>
                 <p className="text-zp-xs font-bold">메모</p>
                 {isUpdate ? (
+<<<<<<< HEAD
                   <div className=" min-w-[168px] max-w-[19rem] h-[3.5rem] border border-zp-light-gray rounded-zp-radius-big text-zp-2xs">
                     인풋 너어야 함
                   </div>
                 ) : (
                   <div className="max-w-[19rem] h-[3.5rem] border border-zp-light-gray rounded-zp-radius-big text-zp-2xs">
+=======
+                  <div className="w-[19rem] h-[3.5rem] border border-zp-light-gray rounded-zp-radius-big text-zp-2xs">
+                    인풋 너어야 함
+                  </div>
+                ) : (
+                  <div className="w-[19rem] h-[3.5rem] border border-zp-light-gray rounded-zp-radius-big text-zp-2xs">
+>>>>>>> 00b2ca2 (FEAT: scheduler카드 & scheduler공유문서 디자인)
                     메모 내용
                   </div>
                 )}
