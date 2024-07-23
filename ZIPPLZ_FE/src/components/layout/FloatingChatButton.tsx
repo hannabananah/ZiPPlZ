@@ -2,15 +2,18 @@ import { IoIosClose } from 'react-icons/io';
 import { PiChatsCircleFill } from 'react-icons/pi';
 
 import Circle from '@assets/gradient-circle.svg?react';
-import FullModal from '@components/common/FullModal';
-import { useChatRoomsModalState, useModalActions } from '@store/modalStore';
+import { useCurrentModals, useModalActions } from '@store/modalStore';
 
 export default function FloatingChatButton() {
-  const { changeModalState } = useModalActions();
-  const chatRoomsModal = useChatRoomsModalState();
+  const { openModal, closeModal } = useModalActions();
+  const currentModals = useCurrentModals();
 
   const handleToggleModal = () => {
-    changeModalState('chatRooms');
+    if (currentModals.includes('chatRooms')) {
+      closeModal('chatRooms');
+    } else {
+      openModal('chatRooms');
+    }
   };
 
   return (
@@ -21,14 +24,13 @@ export default function FloatingChatButton() {
       >
         <Circle />
         <div className="absolute transform -translate-x-1/2 -translate-y-[14px] top-1/2 left-1/2">
-          {chatRoomsModal ? (
+          {currentModals.includes('chatRooms') ? (
             <IoIosClose size={24} />
           ) : (
             <PiChatsCircleFill size={24} />
           )}
         </div>
       </button>
-      <FullModal isOpen={chatRoomsModal} onRequestClose={handleToggleModal} />
     </>
   );
 }
