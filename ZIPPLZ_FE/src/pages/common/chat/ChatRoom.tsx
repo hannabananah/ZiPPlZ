@@ -9,17 +9,26 @@ export default function ChatRoom() {
   const { roomId } = useParams<{ roomId?: string }>();
 
   const roomIdNumber = roomId ? parseInt(roomId, 10) : NaN;
+  const isValidRoomId = !isNaN(roomIdNumber);
 
   return (
-    <div className="h-full">
-      <ChatRoomHeader />
-      <h2>ChatRoom{roomId}</h2>
-      <WebSocketProvider>
-        <div className="flex-grow overflow-y-auto">
-          {!isNaN(roomIdNumber) && <Message roomId={roomIdNumber} />}
-        </div>
-        <TextInputBox />
-      </WebSocketProvider>
+    <div className="flex flex-col h-full">
+      {isValidRoomId && <ChatRoomHeader />}
+      <div className="flex flex-col flex-grow overflow-y-auto">
+        {isValidRoomId ? (
+          <>
+            <h2 className="mb-4 text-xl font-bold">ChatRoom {roomId}</h2>
+            <WebSocketProvider>
+              <div className="flex-grow overflow-y-auto">
+                <Message roomId={roomIdNumber} />
+              </div>
+              <TextInputBox />
+            </WebSocketProvider>
+          </>
+        ) : (
+          <p className="text-red-500">Invalid room ID</p>
+        )}
+      </div>
     </div>
   );
 }
