@@ -12,8 +12,8 @@ export default function SchedulerCard() {
   return (
     <>
       <div
-        className="relative flex flex-col justify-center items-center rounded-zp-radius-big bg-zp-white"
-        style={{ width: '34.375rem', height: cardHeight }}
+        className="relative flex flex-col w-full justify-center items-center rounded-zp-radius-big bg-zp-white"
+        style={{ height: cardHeight }}
       >
         <div className="absolute top-5 flex justify-between items-center w-full px-6 ">
           <div className="flex items-center gap-1 text-zp-xl font-bold">
@@ -38,7 +38,7 @@ export default function SchedulerCard() {
         </div>
         {isOpen && (
           <div className="flex flex-col items-center w-full mt-[2.5rem] gap-[0.75rem]">
-            <hr className="w-[34.375rem] border-zp-light-gray" />
+            <hr className="w-full border-zp-light-gray" />
             <FiPlusCircle
               className="cursor-pointer"
               size={32}
