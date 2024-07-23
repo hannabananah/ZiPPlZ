@@ -8,7 +8,7 @@ public class NetworkUtil {
 
     public static boolean isNetworkConnected() {
         try {
-            URL url = new URL("http://www.google.com"); //연결될 url 넣어야 함.
+            URL url = new URL("http://www.google.com"); // 나중에 서버 판 후, url 넣어야 함.
             HttpURLConnection urlConnect = (HttpURLConnection) url.openConnection();
             urlConnect.setConnectTimeout(3000);
             urlConnect.connect();

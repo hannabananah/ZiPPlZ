@@ -15,8 +15,12 @@ import lombok.NoArgsConstructor;
 public class File {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "file_serial")
     private int fileSerial;
+    @Column(name = "save_folder")
     private String saveFolder;
+    @Column(name = "original_file")
     private String originalFile;
+    @Column(name = "save_file")
     private String saveFile;
 }

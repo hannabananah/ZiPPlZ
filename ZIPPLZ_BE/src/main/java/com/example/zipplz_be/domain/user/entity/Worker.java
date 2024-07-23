@@ -9,12 +9,15 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class Customer {
+public class Worker {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @OneToOne
-    @JoinColumn(name = "customer_serial")
-    private User customerSerial;
-    private String nickname;
-    @Column(name = "current_address")
-    private String currentAddress;
+    @JoinColumn(name = "worker_serial")
+    private User workerSerial;
+    private int specialty;
+    private int location;
+    private String company;
+    private String certificate;
+    @Column(name = "has_as_badge")
+    private int hasAsBadge;
 }
