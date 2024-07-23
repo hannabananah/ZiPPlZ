@@ -6,7 +6,11 @@ import Circle from '@assets/gradient-circle.svg?react';
 import Input from '@components/common/Input';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
-export default function TextInputBox() {
+interface TextInputBoxProps {
+  onMenuToggle: () => void;
+}
+
+export default function TextInputBox({ onMenuToggle }: TextInputBoxProps) {
   const [message, setMessage] = useState('');
   const ws = useContext(WebSocketContext);
 
@@ -25,11 +29,11 @@ export default function TextInputBox() {
   };
 
   return (
-    <div className="absolute bottom-20 w-full px-[25px] flex justify-between gap-4">
-      <button className="relative">
-        <Circle />
+    <div className="sticky bottom-0 w-full px-[25px] flex justify-between gap-3 items-center bg-zp-transparent h-12">
+      <button className="relative" onClick={onMenuToggle}>
+        <Circle width={28} height={28} />
         <div className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-          <FaPlus size={18} />
+          <FaPlus size={14} />
         </div>
       </button>
 
@@ -37,10 +41,11 @@ export default function TextInputBox() {
         type="text"
         placeholder="메시지를 입력해주세요."
         inputType="normal"
-        height={2.5}
+        height={2}
         className="flex-1"
         fontSize="sm"
         radius="btn"
+        width="full"
         value={message}
         onChange={handleChangeText}
         onKeydown={(e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -49,7 +54,7 @@ export default function TextInputBox() {
       />
 
       <button type="button" onClick={handleClickSubmit}>
-        <FiSend size={32} stroke="#73744A" />
+        <FiSend size={20} stroke="#73744A" />
       </button>
     </div>
   );
