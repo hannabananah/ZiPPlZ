@@ -52,6 +52,28 @@ const chatRooms = [
     temp: '36.5℃',
     unread: 5,
   },
+  {
+    id: 4,
+    name: '강신구',
+    message:
+      '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 으갸갸갸으갸갸으악',
+    temp: '36.5℃',
+    unread: 5,
+  },
+  {
+    id: 5,
+    name: '강신구',
+    message: '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 ...',
+    temp: '36.5℃',
+    unread: 5,
+  },
+  {
+    id: 6,
+    name: '강신구',
+    message: '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 ...',
+    temp: '36.5℃',
+    unread: 5,
+  },
 ];
 
 export default function ChatRooms() {
@@ -67,37 +89,38 @@ export default function ChatRooms() {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-screen px-8 py-12 bg-zp-white ">
-      <div className="relative w-full mb-4">
-        <span className="absolute transform -translate-y-1/2 left-4 top-1/2">
-          <IoIosSearch />
-        </span>
-        <Input
-          type="text"
-          placeholder="이름을 입력해주세요."
-          inputType="search"
-          width="full"
-          height={2}
-          className="pl-8"
-          fontSize="sm"
-          radius="big"
-          value={searchText}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSearchText(e.target.value)
-          }
-          onKeydown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if (e.key === 'Enter') alert('keydown');
-          }}
-        />
-        <button
-          className="absolute transform -translate-y-1/2 right-4 top-1/2"
-          onClick={handleClearInput}
-        >
-          <IoIosClose size={24} />
-        </button>
+    <div className="relative w-full flex flex-col pb-8 overflow-y-auto">
+      <div className="pt-6 w-full sticky top-0 z-30 bg-zp-white px-8">
+        <div className="relative w-full mb-4">
+          <span className="absolute transform -translate-y-1/2 left-4 top-1/2">
+            <IoIosSearch />
+          </span>
+          <Input
+            type="text"
+            placeholder="이름을 입력해주세요."
+            inputType="search"
+            width="full"
+            height={2}
+            className="pl-8"
+            fontSize="sm"
+            radius="big"
+            value={searchText}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setSearchText(e.target.value)
+            }
+            onKeydown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === 'Enter') alert('keydown');
+            }}
+          />
+          <button
+            className="absolute transform -translate-y-1/2 right-4 top-1/2"
+            onClick={handleClearInput}
+          >
+            <IoIosClose size={24} />
+          </button>
+        </div>
       </div>
-
-      <ul className="grid w-full grid-cols-2 gap-x-5 gap-y-4">
+      <ul className="grid w-full grid-cols-2 gap-x-5 gap-y-4 px-8">
         {chatRooms.map((room) => (
           <li
             key={room.id}
