@@ -21,7 +21,9 @@ public class User {
     private File fileSerial;
     private String email;       // 이메일
     private String password;    // 비밀번호
+    @Column(name = "user_name")
     private String userName;    // 이름
+    @Column(name = "birth_date")
     private Date birthDate;     // 나이
     private String tel;         // 전화번호
     @Column(name = "del_yn")

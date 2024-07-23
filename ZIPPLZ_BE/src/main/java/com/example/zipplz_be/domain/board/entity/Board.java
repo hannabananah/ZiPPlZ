@@ -15,13 +15,17 @@ import java.sql.Date;
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="board_serial")
     private int boardSerial;
     @ManyToOne
     @JoinColumn(name="customer_serial")
     private Customer customerSerial;
+    @Column(name="board_type")
     private String boardType;
     private String title;
+    @Column(name="board_content")
     private String boardContent;
+    @Column(name="board_date")
     private Date boardDate;
     private int hit;
 }
