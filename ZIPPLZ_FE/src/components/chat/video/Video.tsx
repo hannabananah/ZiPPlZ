@@ -17,8 +17,14 @@ export default function Video({ streamManager }: Props) {
   }, [streamManager]);
 
   return (
-    <video autoPlay={autoplay} ref={videoRef} style={{ width: '100%' }}>
-      <track kind="captions" />
-    </video>
+    <div className="relative w-full h-full overflow-hidden rounded-lg shadow-lg">
+      <video
+        autoPlay={autoplay}
+        ref={videoRef}
+        className="object-cover w-full h-full"
+      >
+        <track kind="captions" />
+      </video>
+    </div>
   );
 }

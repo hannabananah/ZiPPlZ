@@ -37,7 +37,7 @@ export default function ChatRoomHeader() {
   return (
     <>
       <div className="sticky top-0 flex items-center justify-between h-20 px-4 align-middle bg-zp-transparent gap-x-6">
-        <button onClick={() => navigate(-1)}>
+        <button onClick={() => navigate('/')}>
           <IoIosArrowBack size={16} fill="#111" />
         </button>
         <img
