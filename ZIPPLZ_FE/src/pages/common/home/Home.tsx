@@ -1,10 +1,10 @@
-import Calendar from '@components/schedule/Calendar';
+import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 
 export default function Home() {
   return (
     <div>
       Home
-      <Calendar />
+      <ScheduleCalendar />
     </div>
   );
 }
