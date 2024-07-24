@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
+import { LuMinimize2 } from 'react-icons/lu';
 import ReactModal from 'react-modal';
+import Modal from 'react-modal';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import Selectbar from '@/components/common/Selectbar';
 import { ConstructionData } from '@/pages/user/Schedule';
+
+import PrivateScheduleModal from './PrivateScheduleModal';
 
 const options: string[] = [
   '철거',
@@ -21,8 +25,36 @@ const options: string[] = [
 ];
 interface Props {
   scheduleList: ConstructionData[];
-  setScheduleList: (value: ConstructionData[]) => void;
+  setScheduleList: (
+    updateFn: (prev: ConstructionData[]) => ConstructionData[]
+  ) => void;
 }
+const customModalStyles: ReactModal.Styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1000,
+  },
+  content: {
+    maxWidth: '468px',
+    minWidth: '350px',
+    maxHeight: '468px',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '1rem',
+    backgroundColor: 'white',
+    display: 'flex',
+    justifyContent: 'center',
+    padding: '24px',
+    zIndex: 1500,
+  },
+};
 export default function ScheduleRegist({
   scheduleList,
   setScheduleList,
@@ -50,6 +82,12 @@ export default function ScheduleRegist({
       setNewPrivateSchedule((e.target as HTMLInputElement).value);
     }
   };
+  const closeModal = function () {
+    setShowRegistPrivateModal(false);
+    setNewPrivateSchedule('');
+    setIsPrivateSchedule(false);
+    setIsRegist(false);
+  };
   useEffect(() => {
     if (selectedValue !== '시공을 선택해주세요.') {
       setScheduleList((prev: ConstructionData[]) => [
@@ -57,7 +95,9 @@ export default function ScheduleRegist({
         { id: prev.length + 1, 시공분야: selectedValue, 스케줄: null },
       ]);
     }
-  });
+    setIsRegist(false);
+    setIsNormalSchedule(false);
+  }, [selectedValue]);
   useEffect(() => {
     console.log(newPrivateSchedule);
   }, [newPrivateSchedule]);
@@ -112,6 +152,23 @@ export default function ScheduleRegist({
           onKeydown={handleKeyDown}
         />
       )}
+      <Modal
+        isOpen={showRegistPrivateModal}
+        onRequestClose={closeModal}
+        style={customModalStyles}
+      >
+        <LuMinimize2
+          className="absolute top-[1rem] right-[1rem] cursor-pointer"
+          size={16}
+          onClick={closeModal}
+        />
+        <PrivateScheduleModal
+          scheduleList={scheduleList}
+          setScheduleList={setScheduleList}
+          newPrivateSchedule={newPrivateSchedule}
+          closeModal={closeModal}
+        />
+      </Modal>
     </>
   );
 }

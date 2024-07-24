@@ -2,8 +2,8 @@ import { useState } from 'react';
 
 import Calendar from '@/components/common/Calendar';
 import Selectbar from '@/components/common/Selectbar';
-import ScheduleRegist from '@/components/scheduler/ScheduleRegist';
 import SchedulerCardExist from '@/components/scheduler/card/SchedulerCardExist';
+import ScheduleRegist from '@/components/scheduler/regist/ScheduleRegist';
 import SharedImg from '@/components/scheduler/sharedFile/SharedImg';
 import SharedMemo from '@/components/scheduler/sharedFile/SharedMemo';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
@@ -50,7 +50,7 @@ const dummyData: ConstructionData[] = [
     },
   },
   {
-    id: 1,
+    id: 2,
     시공분야: '설비',
     스케줄: {
       시공자이름: '김설비',
@@ -62,7 +62,7 @@ const dummyData: ConstructionData[] = [
     },
   },
   {
-    id: 1,
+    id: 3,
     시공분야: '샷시',
     스케줄: {
       시공자이름: '이샷시',
@@ -74,7 +74,7 @@ const dummyData: ConstructionData[] = [
     },
   },
   {
-    id: 1,
+    id: 4,
     시공분야: '목공',
     스케줄: {
       시공자이름: '박목수',
@@ -86,7 +86,7 @@ const dummyData: ConstructionData[] = [
     },
   },
   {
-    id: 1,
+    id: 5,
     시공분야: '전기',
     스케줄: {
       시공자이름: '최전기',
@@ -98,7 +98,7 @@ const dummyData: ConstructionData[] = [
     },
   },
   {
-    id: 1,
+    id: 6,
     시공분야: '욕실',
     스케줄: {
       시공자이름: '김욕실',
@@ -109,9 +109,9 @@ const dummyData: ConstructionData[] = [
       가격: 10000,
     },
   },
-  { id: 1, 시공분야: '타일', 스케줄: null },
+  { id: 7, 시공분야: '타일', 스케줄: null },
   {
-    id: 1,
+    id: 8,
     시공분야: '마루',
     스케줄: {
       시공자이름: '박마루',
@@ -122,9 +122,9 @@ const dummyData: ConstructionData[] = [
       가격: 10000,
     },
   },
-  { id: 1, 시공분야: '도배', 스케줄: null },
+  { id: 9, 시공분야: '도배', 스케줄: null },
   {
-    id: 1,
+    id: 10,
     시공분야: '가구',
     스케줄: {
       시공자이름: '홍가구',
@@ -136,6 +136,9 @@ const dummyData: ConstructionData[] = [
     },
   },
 ];
+function numberWithCommas(x: number) {
+  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
 
 export default function Schedule() {
   const options: string[] = ['집1', '집2', '집3'];
@@ -143,7 +146,7 @@ export default function Schedule() {
   const [scheduleList, setScheduleList] =
     useState<ConstructionData[]>(dummyData);
   return (
-    <div className="flex flex-col items-center bg-zp-light-beige gap-4 sm px-2 lg px-4">
+    <div className="flex flex-col w-full max-w-screen-md items-center bg-zp-light-beige gap-4 sm px-2 lg px-4">
       <Selectbar
         fontColor="main"
         options={options}
@@ -164,9 +167,9 @@ export default function Schedule() {
         <SharedMemo />
       </div>
       <p className="w-full text-right text-zp-xl font-bold ">
-        총 시공 가격 : 1000000원
+        총 시공 가격 : {numberWithCommas(1000000)}원
       </p>
-      {dummyData.map((item, idx) =>
+      {scheduleList.map((item, idx) =>
         item.스케줄 ? (
           <SchedulerCardExist key={idx} schedule={item} />
         ) : (
