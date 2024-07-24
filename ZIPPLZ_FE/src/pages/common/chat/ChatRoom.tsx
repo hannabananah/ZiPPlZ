@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import Message from '@/components/chat/Message';
 import ChatRoomHeader from '@components/chat/ChatRoomHeader';
+import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
 import ToggleChatMenu from '@components/chat/ToggleChatMenu';
 import WebSocketProvider from '@utils/socket/WebSocketProvider';
