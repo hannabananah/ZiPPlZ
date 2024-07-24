@@ -11,7 +11,7 @@ interface MenuItem {
   icon: React.ComponentType<{ size?: number; style?: React.CSSProperties }>;
   label: string;
   bgColor: string;
-  type: string | string[];
+  role: string | string[];
   onClick?: () => void;
 }
 
@@ -42,7 +42,7 @@ export default function ToggleChatMenu() {
       icon: CiImageOn,
       label: '이미지',
       bgColor: '#75C734',
-      type: ['user', 'worker'],
+      role: ['user', 'worker'],
       onClick: handleImageUpload,
     },
     {
@@ -50,7 +50,7 @@ export default function ToggleChatMenu() {
       icon: FaRegFileAlt,
       label: '파일',
       bgColor: '#0697FF',
-      type: ['user', 'worker'],
+      role: ['user', 'worker'],
       onClick: handleFileUpload,
     },
     {
@@ -58,21 +58,21 @@ export default function ToggleChatMenu() {
       icon: FaRegCalendarCheck,
       label: '일정 잡기',
       bgColor: '#FF9500',
-      type: 'user',
+      role: 'user',
     },
     {
       id: 4,
       icon: FiTool,
       label: 'A/S 신청',
       bgColor: '#FC7FF0',
-      type: 'worker',
+      role: 'worker',
     },
     {
       id: 5,
       icon: TbWood,
       label: '자재 관리',
       bgColor: '#A2845E',
-      type: ['user', 'worker'],
+      role: ['user', 'worker'],
     },
   ];
 
@@ -82,10 +82,10 @@ export default function ToggleChatMenu() {
         {menus
           .filter(
             (menu) =>
-              menu.type === 'both' ||
-              (Array.isArray(menu.type)
-                ? menu.type.includes(userType)
-                : menu.type === userType)
+              menu.role === 'both' ||
+              (Array.isArray(menu.role)
+                ? menu.role.includes(userType)
+                : menu.role === userType)
           )
           .map((menu) => (
             <li

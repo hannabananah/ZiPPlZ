@@ -9,38 +9,43 @@ import InactiveWorker from '@assets/inactive-worker-icon.svg?react';
 import { useUserStore } from '@store/userStore';
 
 const tabItems = [
-  { path: '/', icon: <FaHome size={30} />, label: '홈', type: 'both' },
+  {
+    path: '/',
+    icon: <FaHome size={30} />,
+    label: '홈',
+    role: ['user', 'worker'],
+  },
   {
     path: '/workers',
     activeIcon: <ActiveWorker />,
     inactiveIcon: <InactiveWorker />,
     label: '시공자 정보',
-    type: ['user', 'worker'],
+    role: ['user', 'worker'],
   },
   {
     path: '/schedule',
     icon: <FaRegCalendarCheck size={30} />,
     label: '시공일정',
-    type: 'user',
+    role: 'user',
   },
   {
     path: '/portfolio',
     icon: <TiBusinessCard size={30} />,
     label: '포트폴리오',
-    type: 'worker',
+    role: 'worker',
   },
   {
     path: '/community',
     activeIcon: <ActiveCommunity />,
     inactiveIcon: <InactiveCommunity />,
     label: '커뮤니티',
-    type: ['user', 'worker'],
+    role: ['user', 'worker'],
   },
   {
     path: '/mypage',
     icon: <FaUser size={30} />,
     label: '마이페이지',
-    type: ['user', 'worker'],
+    role: ['user', 'worker'],
   },
 ];
 
@@ -54,10 +59,10 @@ export default function BottomTab() {
         {tabItems
           .filter(
             (item) =>
-              item.type === 'both' ||
-              (Array.isArray(item.type)
-                ? item.type.includes(userType)
-                : item.type === userType)
+              item.role === 'both' ||
+              (Array.isArray(item.role)
+                ? item.role.includes(userType)
+                : item.role === userType)
           )
           .map((item, index) => (
             <NavLink
