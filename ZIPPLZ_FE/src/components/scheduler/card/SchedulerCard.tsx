@@ -4,7 +4,12 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FiPlusCircle } from 'react-icons/fi';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 
-export default function SchedulerCard() {
+import { ConstructionData } from '@/pages/user/Schedule';
+
+interface Props {
+  schedule: ConstructionData;
+}
+export default function SchedulerCard({ schedule }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const cardHeight: string = isOpen ? '7rem' : '4rem';
   const handleClickChevron = function () {
@@ -44,7 +49,8 @@ export default function SchedulerCard() {
       >
         <div className="absolute top-5 flex justify-between items-center w-full px-6 ">
           <div className="flex items-center gap-1 text-zp-xl font-bold">
-            1.철거 <IoMdCheckmarkCircleOutline size={16} color="#34C759" />
+            {schedule.id} {schedule.시공분야}
+            <IoMdCheckmarkCircleOutline size={16} color="#34C759" />
           </div>
           <div>
             {isOpen ? (
