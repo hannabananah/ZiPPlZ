@@ -36,7 +36,6 @@ export default function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="mypage" element={<MyPage />} />
-          <Route path="calendar" element={<CalendarTest />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
