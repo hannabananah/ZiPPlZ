@@ -15,8 +15,6 @@ export default {
       'zp-2xs': ['0.688rem', '0.875rem'],
       'zp-3xs': ['0.563rem', '0.875rem'],
     },
-  },
-  extend: {
     colors: {
       'zp-main-color': '#73744A',
       'zp-sub-color': '#E9E8D5',
@@ -27,7 +25,7 @@ export default {
       'zp-yellow': '#ECE21B',
       'zp-light-gray': '#CCC',
       'zp-slight-white': '#FAFAFA',
-      'zp-light-beige': '#F2EFEF',
+      'zp-light-beige': '#f6f6f6',
       'zp-light-yellow': '#F6F7E2',
       'zp-light-orange': '#FFFDF7',
       'zp-transparent': 'transparent',
