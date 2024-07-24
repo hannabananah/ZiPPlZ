@@ -5,9 +5,7 @@ interface UserStoreState {
   setUserType: (type: 'user' | 'worker') => void;
 }
 
-const useUserStore = create<UserStoreState>((set) => ({
+export const useUserStore = create<UserStoreState>((set) => ({
   userType: 'user',
   setUserType: (type) => set({ userType: type }),
 }));
-
-export default useUserStore;
