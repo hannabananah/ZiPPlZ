@@ -1,8 +1,7 @@
-import React from 'react';
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
-import JoinVideoForm from '@components/chat/JoinVideoForm';
-import Session from '@components/chat/Session';
+import JoinVideoForm from '@components/chat/video/JoinVideoForm';
+import Session from '@components/chat/video/Session';
 import axios, { AxiosError } from 'axios';
 import {
   Session as OVSession,
@@ -18,12 +17,11 @@ export default function VideoRoom() {
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
 
-  const OPENVIDU_SERVER_URL = `https://${window.location.hostname}:4443`;
+  const OPENVIDU_SERVER_URL = `http://${window.location.hostname}:4443`;
   const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
   const leaveSession = useCallback(() => {
     if (session) session.disconnect();
-
     setOV(null);
     setSession('');
     setSessionId('');
@@ -39,7 +37,6 @@ export default function VideoRoom() {
 
   useEffect(() => {
     window.addEventListener('beforeunload', leaveSession);
-
     return () => {
       window.removeEventListener('beforeunload', leaveSession);
     };
@@ -77,22 +74,17 @@ export default function VideoRoom() {
           data,
           {
             headers: {
-              Authorization: `Basic ${btoa(
-                `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-              )}`,
+              Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
               'Content-Type': 'application/json',
             },
           }
         );
-
         return (response.data as { id: string }).id;
       } catch (err) {
         const errResponse = (err as AxiosError)?.response;
-
         if (errResponse?.status === 409) {
           return sessionIds;
         }
-
         return '';
       }
     };
@@ -106,10 +98,7 @@ export default function VideoRoom() {
             data,
             {
               headers: {
-                Authorization: `Basic ${btoa(
-                  `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-                )}`,
-
+                Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
                 'Content-Type': 'application/json',
               },
             }
@@ -120,6 +109,7 @@ export default function VideoRoom() {
           .catch((err) => reject(err));
       });
     };
+
     const getToken = async (): Promise<string> => {
       try {
         const sessionIds = await createSession(sessionId);
@@ -168,10 +158,13 @@ export default function VideoRoom() {
           />
         )}
         {session && (
-          <Session
-            publisher={publisher as Publisher}
-            subscriber={subscriber as Subscriber}
-          />
+          <div>
+            <Session
+              publisher={publisher as Publisher}
+              subscriber={subscriber as Subscriber}
+            />
+            <button onClick={leaveSession}>나가기</button>
+          </div>
         )}
       </>
     </div>

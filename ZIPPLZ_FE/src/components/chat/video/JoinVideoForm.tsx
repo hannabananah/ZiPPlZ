@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { useVideoStore } from '@store/videoStore';
 
 interface FormProps {

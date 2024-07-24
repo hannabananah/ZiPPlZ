@@ -21,7 +21,7 @@ export default function App() {
         <Route path="workers" element={<Workers />} />
         <Route path="portfolio" element={<Portfolio />} />
         <Route path="mypage" element={<MyPage />} />
-        <Route path="videoroom" element={<VideoRoom />} />
+        <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
         <Route path="*" element={<NotFound />} />
       </Route>

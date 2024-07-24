@@ -17,7 +17,9 @@ export default function ChatRoomHeader() {
   const { closeModal, openModal } = useModalActions();
 
   const handleClickVideo = () => {
-    navigate('/videoroom');
+    if (selectedChatRoom) {
+      navigate(`/chatrooms/${selectedChatRoom.id}/videoroom`);
+    }
   };
 
   const handleClickOpenMenu = () => {
