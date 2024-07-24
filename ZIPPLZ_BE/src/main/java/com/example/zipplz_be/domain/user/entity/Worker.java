@@ -10,10 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Worker {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "worker_serial")
+    private int workerSerial;
     @OneToOne
-    @JoinColumn(name = "worker_serial")
-    private User workerSerial;
+    @JoinColumn(name = "user_serial")
+    private User userSerial;
     private int specialty;
     private int location;
     private String company;
