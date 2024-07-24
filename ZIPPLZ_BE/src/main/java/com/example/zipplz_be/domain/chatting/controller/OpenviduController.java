@@ -1,10 +1,11 @@
-package com.example.zipplz_be.domain.webrtc.controller;
-
+package com.example.zipplz_be.domain.chatting.controller;
 
 import java.util.*;
 
+import com.example.zipplz_be.domain.chatting.service.OpenviduService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,7 +24,14 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/openvidu")
-public class openviduController {
+public class OpenviduController {
+    private final OpenviduService openviduService;
+
+    public OpenviduController(OpenviduService openviduService) {
+        this.openviduService = openviduService;
+    }
+
+
     @Value("${OPENVIDU_URL}")
     private String OPENVIDU_URL;
 
@@ -45,16 +53,25 @@ public class openviduController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            if(params.get("customSessionId") == null || params.get("customSessionId") == "") {
+            if(params.get("chatroomSerial") == null || params.get("customSessionId") == null || params.get("customSessionId") == "") {
                 status = HttpStatus.BAD_REQUEST;
-                responseDTO = new ResponseDTO<>(status.value(), "세션 아이디를 입력해주세요.");
+                responseDTO = new ResponseDTO<>(status.value(), "필수 항목을 입력해주세요.");
             }
             else {
                 SessionProperties properties = SessionProperties.fromJson(params).build();
                 Session session = openvidu.createSession(properties);
 
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "응답 성공", session.getSessionId());
+                boolean flag = openviduService.initializeSession((Integer)params.get("chatroomSerial"), session.getSessionId());
+
+                if(!flag) {
+                    status = HttpStatus.NOT_FOUND;
+                    responseDTO = new ResponseDTO<>(status.value(), "유효하지 않은 채팅방 번호");
+                }
+                else {
+                    status = HttpStatus.OK;
+                    responseDTO = new ResponseDTO<>(status.value(), "응답 성공", session.getSessionId());
+
+                }
             }
 
         } catch(Exception e) {
@@ -77,7 +94,7 @@ public class openviduController {
 
             if (session == null) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "세션이 비활성화되었습니다! 갱신하세요.");
             } else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "조회 성공", session);
@@ -93,10 +110,15 @@ public class openviduController {
 
     //해당 클라이언트를 세션에서 연결 삭제
     @DeleteMapping("/api/sessions")
-    public ResponseEntity<ResponseDTO<?>> deleteSession(@RequestBody(required = false) Map<String, Object> params)
+    public ResponseEntity<ResponseDTO<?>> deleteSession(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
             throws OpenViduJavaClientException, OpenViduHttpException {
         ResponseDTO<String> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
+
+        //1. 해당 세션 id에 해당하는 채팅방 번호를 가져온다.
+        //2. 해당 채팅방 번호와 현재 로그인된 유저를 묶어 토큰을 찾는다.
+        //3. 해당 레코드를 delete한다.
+        //4. 해당 세션에서 해당 커넥션을 삭제한다.
 
         try {
             //토큰을 받고, 해당 토큰을 가진 connection 객체를 가져와서 그 연결을 session에서 해제한다.
@@ -109,11 +131,15 @@ public class openviduController {
                 responseDTO = new ResponseDTO<>(status.value(), "세션이 존재하지 않음");
             }
             else {
+                //임시 설정
+                int userSerial = 1;
+                String token = openviduService.deleteConnection((String) params.get("sessionId"), userSerial);
+
                 //세션의 연결된 유저 리스트 중 해당 토큰과 똑같은 값을 가진 커넥션 아이디를 뽑아와야 한다!!
                 List<Connection> connectionList = session.getConnections();
 
                 for(Connection c : connectionList) {
-                    if(c.getToken().equals(params.get("token"))) {
+                    if(c.getToken().equals(token)) {
                         connectionId = c.getConnectionId();
                         break;
                     }
@@ -140,7 +166,7 @@ public class openviduController {
 
     //connection 생성, 토큰 발급
     @PostMapping("/api/sessions/connections")
-    public ResponseEntity<ResponseDTO<String>> createConnection(@RequestBody(required = false) Map<String, Object> params)
+    public ResponseEntity<ResponseDTO<String>> createConnection(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
             throws OpenViduJavaClientException, OpenViduHttpException {
         ResponseDTO<String> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -156,6 +182,12 @@ public class openviduController {
                 ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
                 Connection connection = session.createConnection(properties);
 
+                //임시
+                int userSerial = 1;
+
+                //토큰 암호화 필요?
+                openviduService.createConnection(connection.getToken(),userSerial, (Integer)params.get("chatroomSerial"));
+
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "응답 성공" ,connection.getToken());
             }
@@ -167,9 +199,8 @@ public class openviduController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-
     //녹화 시작
-    @PostMapping("/api/sessions/connections")
+    //@PostMapping("/api/sessions/connections")
 
 
     //녹화 종료
@@ -179,3 +210,4 @@ public class openviduController {
     //녹화된 파일 조회
 
 }
+
