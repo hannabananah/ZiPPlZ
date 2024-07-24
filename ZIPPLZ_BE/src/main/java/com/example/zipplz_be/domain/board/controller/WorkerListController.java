@@ -1,7 +1,7 @@
 package com.example.zipplz_be.domain.board.controller;
 
 import com.example.zipplz_be.domain.board.dto.ResponseDTO;
-import com.example.zipplz_be.domain.board.dto.WorkerInfos;
+import com.example.zipplz_be.domain.board.dto.WorkerInfosDTO;
 import com.example.zipplz_be.domain.board.service.WorkerListService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +25,7 @@ public class WorkerListController {
         ResponseDTO<String> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
-        List<WorkerInfos> workers = workerListService.getWorkList();
+        List<WorkerInfosDTO> workers = workerListService.getWorkList();
 
         try {
             responseDTO = new ResponseDTO<>();

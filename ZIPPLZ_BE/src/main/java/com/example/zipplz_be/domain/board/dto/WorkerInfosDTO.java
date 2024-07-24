@@ -2,14 +2,14 @@ package com.example.zipplz_be.domain.board.dto;
 
 import java.util.*;
 
-public class WorkerInfos {
+public class WorkerInfosDTO {
     String name;
     String birth_date;
     float temp;
     List<String> location;
     HashMap<String, Integer> field_career;
 
-    public WorkerInfos(String birth_date, float temp, String name, List<String> location, HashMap<String, Integer> field_career) {
+    public WorkerInfosDTO(String birth_date, float temp, String name, List<String> location, HashMap<String, Integer> field_career) {
         this.birth_date = birth_date;
         this.temp = temp;
         this.name = name;
