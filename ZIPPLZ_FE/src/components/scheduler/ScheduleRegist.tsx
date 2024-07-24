@@ -1,9 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
+import ReactModal from 'react-modal';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import Selectbar from '@/components/common/Selectbar';
+import { ConstructionData } from '@/pages/user/Schedule';
 
 const options: string[] = [
   '철거',
@@ -17,28 +19,54 @@ const options: string[] = [
   '도배',
   '가구',
 ];
-export default function ScheduleRegist() {
+interface Props {
+  scheduleList: ConstructionData[];
+  setScheduleList: (value: ConstructionData[]) => void;
+}
+export default function ScheduleRegist({
+  scheduleList,
+  setScheduleList,
+}: Props) {
   const [isRegist, setIsRegist] = useState<boolean>(false);
   const [isNormalScehdule, setIsNormalSchedule] = useState<boolean>(false);
   const [isPrivateSchedule, setIsPrivateSchedule] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<string>('');
+  const [selectedValue, setSelectedValue] =
+    useState<string>('시공을 선택해주세요.');
+  const [showRegistPrivateModal, setShowRegistPrivateModal] =
+    useState<boolean>(false);
+  const [newPrivateSchedule, setNewPrivateSchedule] = useState<string>('');
   const handleClickPlus = function () {
     setIsRegist(true);
   };
   const handleClickNormal = function () {
-    setIsRegist(false);
     setIsNormalSchedule(true);
   };
   const handleClickPrivate = function () {
-    setIsRegist(false);
     setIsPrivateSchedule(true);
   };
+  const handleKeyDown = function (e: React.KeyboardEvent) {
+    if (e.key === 'Enter') {
+      setShowRegistPrivateModal(true);
+      setNewPrivateSchedule((e.target as HTMLInputElement).value);
+    }
+  };
+  useEffect(() => {
+    if (selectedValue !== '시공을 선택해주세요.') {
+      setScheduleList((prev: ConstructionData[]) => [
+        ...prev,
+        { id: prev.length + 1, 시공분야: selectedValue, 스케줄: null },
+      ]);
+    }
+  });
+  useEffect(() => {
+    console.log(newPrivateSchedule);
+  }, [newPrivateSchedule]);
   return (
-    <div>
+    <>
       {!isRegist ? (
         <FiPlusCircle size={32} onClick={handleClickPlus} />
       ) : !isNormalScehdule && !isPrivateSchedule ? (
-        <div className="flex justify-center w-full items-center gap-4">
+        <div className="w-full flex justify-center w-full items-center gap-4">
           <Button
             buttonType="primary"
             children="메인 시공"
@@ -61,7 +89,7 @@ export default function ScheduleRegist() {
       ) : isNormalScehdule ? (
         <Selectbar
           backgroundColor="white"
-          selectedValue="시공을 선택해주세요."
+          selectedValue={selectedValue}
           setSelectedValue={setSelectedValue}
           fontColor="black"
           fontSize="xl"
@@ -81,8 +109,9 @@ export default function ScheduleRegist() {
           radius="btn"
           width="full"
           fontSize="xl"
+          onKeydown={handleKeyDown}
         />
       )}
-    </div>
+    </>
   );
 }

@@ -32,7 +32,7 @@ interface ConstructionSchedule {
 
 export interface ConstructionData {
   id: number;
-  시공분야: ConstructionField;
+  시공분야: string;
   스케줄: ConstructionSchedule | null;
 }
 
@@ -140,6 +140,8 @@ const dummyData: ConstructionData[] = [
 export default function Schedule() {
   const options: string[] = ['집1', '집2', '집3'];
   const [selectedValue, setSelectedValue] = useState<string>(options[0]);
+  const [scheduleList, setScheduleList] =
+    useState<ConstructionData[]>(dummyData);
   return (
     <div className="flex flex-col items-center bg-zp-light-beige gap-4 sm px-2 lg px-4">
       <Selectbar
@@ -171,7 +173,10 @@ export default function Schedule() {
           <SchedulerCard key={idx} schedule={item} />
         )
       )}
-      <ScheduleRegist />
+      <ScheduleRegist
+        scheduleList={scheduleList}
+        setScheduleList={setScheduleList}
+      />
     </div>
   );
 }
