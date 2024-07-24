@@ -4,7 +4,7 @@ import { FaRegCalendarCheck, FaRegFileAlt } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
 import { TbWood } from 'react-icons/tb';
 
-import { useUserStore } from '@store/userStore';
+import { useUserStore } from '@stores/userStore';
 
 interface MenuItem {
   id: number;

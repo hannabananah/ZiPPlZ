@@ -1,6 +1,6 @@
 import Modal from 'react-modal';
 
-import { useCurrentModals, useModalActions } from '@store/modalStore';
+import { useCurrentModals, useModalActions } from '@stores/modalStore';
 
 type ModalType = 'survey' | 'chatRooms' | 'select' | 'mini' | null;
 

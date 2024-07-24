@@ -5,8 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import Badge from '@assets/certified-icon.svg?react';
 import Input from '@components/common/Input';
 import ModalComponent from '@components/common/Modal';
-import { useChatStore } from '@store/chatStore';
-import { useModalActions } from '@store/modalStore';
+import { useChatStore } from '@stores/chatStore';
+import { useModalActions } from '@stores/modalStore';
 
 const chatRooms = [
   {

@@ -5,8 +5,8 @@ import { TiBusinessCard } from 'react-icons/ti';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-import { useChatStore } from '@store/chatStore';
-import { useCurrentModals, useModalActions } from '@store/modalStore';
+import { useChatStore } from '@stores/chatStore';
+import { useCurrentModals, useModalActions } from '@stores/modalStore';
 
 Modal.setAppElement('#root');
 

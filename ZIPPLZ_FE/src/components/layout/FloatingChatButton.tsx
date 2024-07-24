@@ -2,7 +2,7 @@ import { IoIosClose } from 'react-icons/io';
 import { PiChatsCircleFill } from 'react-icons/pi';
 
 import Circle from '@assets/gradient-circle.svg?react';
-import { useCurrentModals, useModalActions } from '@store/modalStore';
+import { useCurrentModals, useModalActions } from '@stores/modalStore';
 
 export default function FloatingChatButton() {
   const { openModal, closeModal } = useModalActions();

@@ -6,7 +6,7 @@ import ActiveCommunity from '@assets/active-community-icon.svg?react';
 import ActiveWorker from '@assets/active-worker-icon.svg?react';
 import InactiveCommunity from '@assets/inactive-community-icon.svg?react';
 import InactiveWorker from '@assets/inactive-worker-icon.svg?react';
-import { useUserStore } from '@store/userStore';
+import { useUserStore } from '@stores/userStore';
 
 const tabItems = [
   {

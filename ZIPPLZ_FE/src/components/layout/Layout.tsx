@@ -7,7 +7,7 @@ import BottomTab from '@components/layout/BottomTab';
 import FloatingChatButton from '@components/layout/FloatingChatButton';
 import Footer from '@components/layout/Footer';
 import Header from '@components/layout/Header';
-import { useCurrentModals, useModalActions } from '@store/modalStore';
+import { useCurrentModals, useModalActions } from '@stores/modalStore';
 
 export default function Layout() {
   const location = useLocation();
