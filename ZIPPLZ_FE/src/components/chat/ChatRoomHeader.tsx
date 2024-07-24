@@ -1,6 +1,7 @@
 import { CiMenuKebab } from 'react-icons/ci';
 import { IoIosArrowBack } from 'react-icons/io';
 import { IoExitOutline, IoVideocamOutline } from 'react-icons/io5';
+import { TiBusinessCard } from 'react-icons/ti';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
@@ -70,7 +71,7 @@ export default function ChatRoomHeader() {
               <button
                 onClick={() => {
                   handleCloseModal();
-                  navigate('/chatrooms');
+                  navigate('/');
                 }}
                 className="flex items-center w-full p-2 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-gray bg-zp-white border-zp-sub-color"
               >
@@ -84,7 +85,7 @@ export default function ChatRoomHeader() {
                 }}
                 className="flex items-center w-full p-2 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-gray bg-zp-white border-zp-sub-color"
               >
-                <IoVideocamOutline size={20} className="mr-2" />
+                <TiBusinessCard size={20} className="mr-2" />
                 <span>포트폴리오 보기</span>
               </button>
             </div>
