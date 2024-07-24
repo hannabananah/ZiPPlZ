@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.model;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,3 +30,4 @@ public class BoardToWorkerId implements Serializable {
         return Objects.hash(boardSerial, workerSerial);
     }
 }
+
