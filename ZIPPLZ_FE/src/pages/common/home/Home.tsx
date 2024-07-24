@@ -29,6 +29,7 @@ export default function Home() {
           if (e.key === 'Enter') alert('keydown');
         }}
       />
+      <ScheduleCalendar />
     </div>
   );
 }

@@ -47,27 +47,21 @@ const getRandomColor = (): string => {
 const CalendarTest: React.FC = function () {
   const navigate = useNavigate();
   return (
-    <div className="p-4">
+    <div className="w-full relative">
       <div
-        className="absolute top-8 left-1/2 transform -translate-x-1/2 bg-zp-yellow bg-opacity-0 z-1000 cursor-pointer w-[7rem] h-[2rem]"
+        className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-zp-yellow bg-opacity-0 z-1000 cursor-pointer w-[7rem] h-[2rem]"
         onClick={() => navigate('/schedule')}
       ></div>
 
       <FullCalendar
         plugins={[dayGridPlugin]}
         timeZone="UTC"
-        customButtons={{
-          customTitle: {
-            text: 'titl',
-            click: () => navigate('/schedule'),
-          },
-        }}
         headerToolbar={{
           left: 'prev',
           center: 'title',
           right: 'next',
         }}
-        aspectRatio={1.7}
+        aspectRatio={1.5}
         eventBorderColor="none"
         initialView="dayGridMonth"
         dayMaxEvents={true}

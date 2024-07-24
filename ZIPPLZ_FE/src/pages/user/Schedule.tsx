@@ -6,6 +6,7 @@ import ScheduleRegist from '@/components/scheduler/ScheduleRegist';
 import SchedulerCardExist from '@/components/scheduler/card/SchedulerCardExist';
 import SharedImg from '@/components/scheduler/sharedFile/SharedImg';
 import SharedMemo from '@/components/scheduler/sharedFile/SharedMemo';
+import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import SchedulerCard from '@components/scheduler/card/SchedulerCard';
 
 type ConstructionField =
@@ -154,7 +155,7 @@ export default function Schedule() {
         hover="sub"
         backgroundColor="white"
       />
-      <Calendar />
+      <ScheduleCalendar />
       <p className="w-full text-zp-xl font-bold ">공유 문서</p>
       <div className="flex justify-between items-center gap-4">
         <SharedImg />
