@@ -1,0 +1,44 @@
+.fc-day-sun a {
+  color: red;
+}
+
+.fc-day-sat a {
+  color: blue;
+}
+.fc-toolbar-title {
+  margin: 0;
+  color: #73744a;
+}
+
+.fc-toolbar .fc-button {
+  font-size: 0.5rem;
+  padding: 0;
+  border: 0;
+  color: #73744a;
+  background-color: white;
+}
+.fc-toolbar {
+  height: 1rem;
+}
+.fc-daygrid-day-number {
+  font-size: 0.5rem;
+}
+.fc-daygrid-day-frame fc-scrollgrid-sync-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.fc-daygrid-more-link {
+  font-size: 0.5rem;
+}
+.fc-event-main {
+  background-color: white;
+  border: none;
+}
+.fc-popover-body {
+  border: none;
+}
+.fc-h-event {
+  border: none;
+  background-color: white;
+}
