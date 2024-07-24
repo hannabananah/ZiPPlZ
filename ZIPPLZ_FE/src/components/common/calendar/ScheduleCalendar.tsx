@@ -61,7 +61,7 @@ const CalendarTest: React.FC = function () {
           center: 'title',
           right: 'next',
         }}
-        aspectRatio={1.5}
+        aspectRatio={1.3}
         eventBorderColor="none"
         initialView="dayGridMonth"
         dayMaxEvents={true}
