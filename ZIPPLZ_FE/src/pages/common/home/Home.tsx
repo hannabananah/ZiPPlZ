@@ -1,5 +1,6 @@
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 
 export default function Home() {
   return (
@@ -27,6 +28,7 @@ export default function Home() {
           if (e.key === 'Enter') alert('keydown');
         }}
       />
+      <ScheduleCalendar />
     </div>
   );
 }
