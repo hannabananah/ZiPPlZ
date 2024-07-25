@@ -20,7 +20,7 @@ export default function SignUp() {
   const [active, setActive] = useState<boolean>(false);
   const [link, setLink] = useState<string>('');
   return (
-    <div className="w-[600px] relative flex flex-col bg-zp-white  min-h-screen max-h-screen p-4 gap-4">
+    <div className="w-full relative flex flex-col bg-zp-white  min-h-screen max-h-screen p-4 gap-4">
       <SignUpHead type={type} />
       {orderNumber === 1 && type === 'common' && phrase === 'info' && (
         <SignUpInfo setActive={setActive} setLink={setLink} />

@@ -68,7 +68,7 @@ export default function SharedImg() {
             size={16}
             onClick={openModal}
           />
-          <div className="flex items-center gap-4 justify-center">
+          <div className="flex items-center justify-center gap-4">
             <img className="border min-w-[24px] max-w-[48px] aspect-square" />
             <img className="border min-w-[24px] max-w-[48px] aspect-square" />
             <img className="border min-w-[24px] max-w-[48px] aspect-square" />
@@ -94,7 +94,7 @@ export default function SharedImg() {
         <div className="w-full mt-[4rem] px-[1rem] overflow-auto">
           <div className="grid grid-cols-3 gap-4">
             {items.map((item) => (
-              <div className="aspect-square border" key={item}>
+              <div className="border aspect-square" key={item}>
                 이미지
               </div>
             ))}

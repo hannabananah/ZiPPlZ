@@ -1,13 +1,16 @@
 import Modal from 'react-modal';
 
-import ChatRooms from '@components/chat/ChatRooms';
-
-interface modalProps {
+interface ModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
+  children: React.ReactNode;
 }
 
-const FullModal = ({ isOpen, onRequestClose }: modalProps) => {
+export default function FullModal({
+  isOpen,
+  onRequestClose,
+  children,
+}: ModalProps) {
   return (
     <Modal
       style={{
@@ -18,6 +21,7 @@ const FullModal = ({ isOpen, onRequestClose }: modalProps) => {
           right: 0,
           bottom: 0,
           backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          zIndex: 50,
         },
         content: {
           maxWidth: '580px',
@@ -32,12 +36,11 @@ const FullModal = ({ isOpen, onRequestClose }: modalProps) => {
       }}
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      className=" flex   rounded-zp-radius-big bg-zp-white h-[94%] overflow-hidden m-auto"
+      className="flex rounded-zp-radius-big bg-zp-white h-[94%] overflow-hidden m-auto drop-shadow-zp-normal"
+      appElement={document.getElementById('root') || undefined}
       shouldCloseOnOverlayClick={true}
     >
-      <ChatRooms />
+      {children}
     </Modal>
   );
-};
-
-export default FullModal;
+}
