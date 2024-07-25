@@ -35,6 +35,15 @@ public class ResponseDTO<T> {
         public Conn() {
             this.networkConnected = NetworkUtil.isNetworkConnected();
         }
+
+        // Getter and Setter methods
+        public boolean isNetworkConnected() {
+            return networkConnected;
+        }
+
+        public void setNetworkConnected(boolean networkConnected) {
+            this.networkConnected = networkConnected;
+        }
     }
 
     @Getter
