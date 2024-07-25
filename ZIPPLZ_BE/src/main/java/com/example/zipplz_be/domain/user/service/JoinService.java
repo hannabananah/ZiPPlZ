@@ -36,6 +36,7 @@ public class JoinService {
         String password = joinDTO.getPassword();
         joinDTO.setPassword(bCryptPasswordEncoder.encode(password));
         User user = userRepository.save(joinDTO.toEntity());
+        System.out.println(user.getUserSerial());
 
         return user.getUserSerial();
     }
@@ -50,7 +51,7 @@ public class JoinService {
         String nickname = insertCustomerDTO.getNickname();
 
         Customer customer = Customer.builder()
-                .userSerial(user)
+                .customerSerial(user)
                 .nickname(nickname).build();
 
         customerRepository.save(customer);

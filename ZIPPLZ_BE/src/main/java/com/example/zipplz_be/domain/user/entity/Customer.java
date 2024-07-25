@@ -10,20 +10,17 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "customer_serial")
-    private int customerSerial;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @OneToOne
-    @JoinColumn(name = "user_serial")
-    private User userSerial;
+    @JoinColumn(name = "customer_serial")
+    private User customerSerial;
     private String nickname;
     @Column(name = "current_address")
     private String currentAddress;
 
     @Builder
-    public Customer(User userSerial, String nickname) {
-        this.userSerial = userSerial;
+    public Customer(User customerSerial, String nickname) {
+        this.customerSerial = customerSerial;
         this.nickname = nickname;
     }
 }
