@@ -29,9 +29,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-
-        String email = obtainUsername(request); // 우리는 username 대신 email로 검증
-        String password = obtainPassword(request);
+        String email = request.getHeader("email"); // 우리는 username 대신 email로 검증
+        String password = request.getHeader("password");
+        System.out.println(password);
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
