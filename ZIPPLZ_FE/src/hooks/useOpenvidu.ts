@@ -37,7 +37,7 @@ export function useOpenVidu() {
   const leaveSession = useCallback(() => {
     if (session) {
       session.disconnect();
-      navigate(`/chatrooms/${selectedChatRoom?.id}`);
+      navigate('/');
     }
 
     setOV(null);

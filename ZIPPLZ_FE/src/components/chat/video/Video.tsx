@@ -17,14 +17,14 @@ export default function Video({ streamManager }: Props) {
   }, [streamManager]);
 
   return (
-    <div className="relative w-full h-full overflow-hidden rounded-lg shadow-lg">
+    <>
       <video
         autoPlay={autoplay}
         ref={videoRef}
-        className="object-cover w-full h-full"
+        className="flex justify-center object-cover w-full h-full overflow-hidden basis-1/2 bg-zp-main-color rounded-zp-radius-big"
       >
         <track kind="captions" />
       </video>
-    </div>
+    </>
   );
 }

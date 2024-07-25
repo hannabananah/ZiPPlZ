@@ -13,19 +13,15 @@ export default function Session({ subscriber, publisher }: SessionProps) {
   useEffect(() => {}, [subscriber]);
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 w-full h-full space-y-4">
-      <div className="flex justify-center w-full basis-1/2 bg-zp-main-color">
-        <Video streamManager={publisher} />
-      </div>
-      <div className="flex justify-center w-full basis-1/2 bg-zp-sub-color">
-        {subscriber ? (
-          <Video streamManager={subscriber} />
-        ) : (
-          <div className="relative flex items-center justify-center w-full h-full overflow-hidden bg-gray-700 rounded-lg shadow-lg">
-            <p className="text-white">Waiting for subscriber...</p>
-          </div>
-        )}
-      </div>
+    <div className="flex flex-col items-center justify-center w-full h-full p-4 space-y-4">
+      <Video streamManager={publisher} />
+      {subscriber ? (
+        <Video streamManager={subscriber} />
+      ) : (
+        <div className="relative flex items-center justify-center w-full h-full overflow-hidden bg-gray-700 rounded-lg shadow-lg">
+          <p className="text-white">Waiting for subscriber...</p>
+        </div>
+      )}
     </div>
   );
 }
