@@ -1,6 +1,6 @@
 package com.example.zipplz_be.domain.board.controller;
 
-import com.example.zipplz_be.domain.board.dto.ResponseDTO;
+import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.board.service.WorkerListService;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import org.springframework.http.HttpStatus;
