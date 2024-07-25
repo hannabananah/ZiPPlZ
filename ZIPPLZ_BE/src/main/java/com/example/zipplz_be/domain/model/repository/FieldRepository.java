@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.*;
 
 public interface FieldRepository extends JpaRepository<Field, Integer> {
-    @Query(value="SELECT field_name " +
+    @Query(value="SELECT * " +
             "FROM Field" , nativeQuery = true)
-    List<String> getFields();
+    List<Field> getFields();
 }
