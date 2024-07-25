@@ -1,11 +1,15 @@
 package com.example.zipplz_be.global.config;
 
+import com.example.zipplz_be.domain.chatting.service.RedisSubscriber;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
+import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class RedisConfig {
@@ -33,5 +37,26 @@ public class RedisConfig {
             이는 실제 메시지 처리를 담당하는 비즈니스 로직을 분리하여 관리할 수 있게 해줍니다
      */
     @Bean
-    public MessageListenerAdapter listenerAdapter(RedisSubscriber )
+    public MessageListenerAdapter listenerAdapter(RedisSubscriber subscriber) {
+        return new MessageListenerAdapter(subscriber, "sendMessage");
+    }
+
+    /*
+    - 역할: Redis 서버와의 통신을 위한 템플릿을 제공합니다. 이 템플릿을 통해 Redis 서버에 데이터를 쓰거나 읽을 수 있습니다.
+    - 사용: 이 템플릿은 Redis에 데이터를 저장하거나 조회할 때 사용됩니다.
+            JSON 형식으로 데이터를 교환하기 위해 `Jackson2JsonRedisSerializer`를 사용하여 값의 직렬화 및 역직렬화를 관리합니다.
+     */
+    @Bean
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(connectionFactory);
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(String.class));
+        return redisTemplate;
+    }
+
+    @Bean
+    public ChannelTopic channelTopic() {
+        return new ChannelTopic("chatroom");
+    }
 }
