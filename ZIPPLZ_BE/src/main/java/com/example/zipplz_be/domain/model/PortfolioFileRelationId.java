@@ -1,6 +1,5 @@
 package com.example.zipplz_be.domain.model;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,21 +12,18 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardToWorkerId implements Serializable {
-    private int boardSerial;
-    private int workerSerial;
+public class PortfolioFileRelationId implements Serializable {
+    private int portfolioSerial;
+    private int fileSerial;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BoardToWorkerId that = (BoardToWorkerId) o;
-        return boardSerial == that.boardSerial && workerSerial == that.workerSerial;
+        PortfolioFileRelationId that = (PortfolioFileRelationId) o;
+        return portfolioSerial == that.portfolioSerial && fileSerial == that.fileSerial;
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(boardSerial, workerSerial);
-    }
+    public int hashCode() { return Objects.hash(portfolioSerial, fileSerial); }
 }
-
