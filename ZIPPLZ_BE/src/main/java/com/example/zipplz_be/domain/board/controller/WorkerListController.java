@@ -22,12 +22,12 @@ public class WorkerListController {
     }
 
     @GetMapping("/fields")
-    public ResponseEntity<ResponseDTO<List<String>>> getFields() {
-        ResponseDTO<List<String>> responseDTO;
+    public ResponseEntity<ResponseDTO<List<Field>>> getFields() {
+        ResponseDTO<List<Field>> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            List<String> fields = workerListService.getFields();
+            List<Field> fields = workerListService.getFields();
             System.out.println(fields);
             if (fields == null) {
                 status = HttpStatus.NOT_FOUND;
