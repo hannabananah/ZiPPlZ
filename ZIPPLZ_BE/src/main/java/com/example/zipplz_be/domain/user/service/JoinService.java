@@ -44,6 +44,7 @@ public class JoinService {
     public boolean insertCustomerInfo(InsertCustomerDTO insertCustomerDTO) {
 
         int userSerial = insertCustomerDTO.getUserSerial();
+
         User user = userRepository.findByUserSerial(userSerial);
         if (user == null) {
             return false; // 유저가 존재하지 않는 경우
@@ -51,10 +52,10 @@ public class JoinService {
         String nickname = insertCustomerDTO.getNickname();
 
         Customer customer = Customer.builder()
-                .customerSerial(user)
+                .userSerial(user)
                 .nickname(nickname).build();
-
         customerRepository.save(customer);
+
         return true;
     }
 }
