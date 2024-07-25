@@ -20,7 +20,7 @@ public interface LocalRepository extends JpaRepository<Local, Integer> {
     List<Gugun> getGugunList(@Param("sido_code") int sido_code);
 
     @Query(value="SELECT local_name " +
-            "FROM Local "git s +
+            "FROM Local " +
             "WHERE Local.user_serial = :user_serial", nativeQuery = true)
     List<String> getLocalNames(@Param("user_serial") int user_serial);
 }
