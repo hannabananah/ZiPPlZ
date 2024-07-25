@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useVideoStore } from '@store/videoStore';
+import { useVideoStore } from '@stores/videoStore';
 
 interface FormProps {
   joinSession: () => void;
