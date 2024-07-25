@@ -69,11 +69,11 @@ public class PortfolioJoinDTO {
         this.temp = temp;
     }
 
-    public String getField_id() {
+    public int getField_id() {
         return field_id;
     }
 
-    public void setField_id(String field_id) {
+    public void setField_id(int field_id) {
         this.field_id = field_id;
     }
 
