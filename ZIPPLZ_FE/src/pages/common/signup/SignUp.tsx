@@ -4,10 +4,11 @@ import { useParams } from 'react-router-dom';
 import SignBottom from '@/components/signup/SignBottom';
 import SignUpHead from '@/components/signup/SignUpHead';
 
-import SignUpAgree from './SignUpAgree';
-import SignUpInfo from './SignUpInfo';
-import SignUpNickName from './SignUpNickName';
-import SignUpSelectType from './SignUpSelectType';
+import SignUpAgree from './common/SignUpAgree';
+import SignUpInfo from './common/SignUpInfo';
+import SignUpSelectType from './common/SignUpSelectType';
+import SignUpNickName from './customer/SignUpNickName';
+import SignUpWorkerDetail from './worker/SignUpWorkerDetail';
 
 export default function SignUp() {
   const { order, type, phrase } = useParams<{
@@ -33,6 +34,9 @@ export default function SignUp() {
       )}
       {phrase === 'agree' && (
         <SignUpAgree setLink={setLink} setNext={setNext} />
+      )}
+      {phrase === 'detail' && type === 'worker' && (
+        <SignUpWorkerDetail setActive={setActive} setLink={setLink} />
       )}
       <SignBottom
         order={orderNumber}
