@@ -1,7 +1,7 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
+import Custom404 from '@/pages/common/404';
 import Layout from '@components/layout/Layout';
-import NotFound from '@pages/common/NotFound';
 import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
 import Community from '@pages/common/community/HousePostList';
@@ -23,7 +23,8 @@ export default function App() {
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
-        <Route path="*" element={<NotFound />} />
+        <Route path="404" element={<Custom404 />} />
+        <Route path="*" element={<Navigate to="/404" replace />} />
       </Route>
     </Routes>
   );
