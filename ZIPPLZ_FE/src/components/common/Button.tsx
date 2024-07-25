@@ -1,8 +1,8 @@
 interface Props {
   children: string;
   buttonType: 'normal' | 'light' | 'second' | 'primary';
-  width: number;
-  height: number;
+  width?: number | string;
+  height: number | string;
   fontSize: string;
   radius: string;
   onClick?: () => void;
@@ -22,6 +22,7 @@ const radiusClasses: Record<Props['radius'], string> = {
   big: 'rounded-zp-radius-big',
   btn: 'rounded-zp-radius-btn',
   full: 'rounded-zp-radius-full',
+  none: 'rounded-none',
 };
 export default function Button({
   children,
@@ -49,10 +50,17 @@ export default function Button({
       typeStyles = 'bg-zp-white text-zp-black border border-zp-main-color';
       break;
   }
+  const widthClass = width === 'full' ? 'w-full' : '';
+  const heightClass = height === 'full' ? 'h-full' : '';
+  const widthStyle = typeof width === 'number' ? `${width}rem` : width;
+  const heightStyle = typeof height === 'number' ? `${height}rem` : height;
   return (
     <button
-      className={`${baseStyles} ${typeStyles}`}
-      style={{ width: `${width}rem`, height: `${height}rem` }}
+      className={`${baseStyles} ${typeStyles} ${widthClass} ${heightClass}`}
+      style={{
+        width: width === 'full' ? '100%' : widthStyle,
+        height: height === 'full' ? '100%' : heightStyle,
+      }}
       onClick={onClick}
     >
       {children}

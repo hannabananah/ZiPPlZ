@@ -13,6 +13,7 @@ export default {
       'zp-sm': ['0.875rem', '1.25rem'],
       'zp-xs': ['0.813rem', '1.125rem'],
       'zp-2xs': ['0.688rem', '0.875rem'],
+      'zp-3xs': ['0.563rem', '0.875rem'],
     },
     colors: {
       'zp-main-color': '#73744A',
@@ -24,13 +25,14 @@ export default {
       'zp-yellow': '#ECE21B',
       'zp-light-gray': '#CCC',
       'zp-slight-white': '#FAFAFA',
-      'zp-light-beige': '#F2EFEF',
+      'zp-light-beige': '#f6f6f6',
       'zp-light-yellow': '#F6F7E2',
       'zp-light-orange': '#FFFDF7',
       'zp-transparent': 'transparent',
     },
     borderRadius: {
       'zp-radius-big': '1rem',
+      'zp-radius-bubble': '0.844rem',
       'zp-radius-btn': '0.375rem',
       'zp-radius-full': '9999px',
     },

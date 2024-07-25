@@ -1,7 +1,9 @@
 import React from 'react';
 
 interface Props {
+  className?: string;
   placeholder: string;
+  type: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel';
   inputType:
     | 'login'
     | 'signup'
@@ -10,13 +12,15 @@ interface Props {
     | 'textArea'
     | 'file'
     | 'error';
-  width: number;
-  height: number;
+  width?: number | string;
+  height: number | string;
   fontSize: string;
   radius: string;
-  onChange?: () => void;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeydown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
 }
+
 const fontSizeClasses: Record<Props['fontSize'], string> = {
   '3xl': 'text-zp-3xl',
   '2xl': 'text-zp-2xl',
@@ -34,27 +38,33 @@ const radiusClasses: Record<Props['radius'], string> = {
   full: 'rounded-zp-radius-full',
   none: 'rounded-none',
 };
+
 export default function Input({
   placeholder,
   inputType,
+  type,
   width,
   height,
   fontSize,
   radius,
+  value,
   onChange,
   onKeydown,
 }: Props) {
-  const baseStyle: string = `flex justify-cente items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} `;
+  const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} `;
+
   let typeStyle = '';
   switch (inputType) {
     case 'normal':
-      typeStyle = 'border border-zp-light-gray focus: outline-none';
+      typeStyle =
+        'border border-zp-light-gray focus:outline-none caret-zp-main-color placeholder-zp-main-color px-2';
       break;
     case 'search':
-      typeStyle = 'border border-zp-main-color focus: outline-none';
+      typeStyle =
+        'border border-zp-main-color focus:outline-none caret-zp-main-color placeholder-zp-main-color px-10';
       break;
     case 'login':
-      typeStyle = 'border-b border-zp-main-color focus: outline-none';
+      typeStyle = 'border-b border-zp-main-color focus:outline-none';
       break;
     case 'signup':
       typeStyle =
@@ -64,13 +74,24 @@ export default function Input({
       typeStyle = 'border-b border-zp-red focus:outline-none';
       break;
   }
+
+  const widthClass = width === 'full' ? 'w-full' : '';
+  const heightClass = height === 'full' ? 'h-full' : '';
+  const widthStyle = typeof width === 'number' ? `${width}rem` : width;
+  const heightStyle = typeof height === 'number' ? `${height}rem` : height;
+
   return (
     <input
+      type={type}
       placeholder={placeholder}
-      className={`${baseStyle} ${typeStyle}`}
-      style={{ width: `${width}rem`, height: `${height}rem` }}
+      className={`${baseStyle} ${typeStyle} ${widthClass} ${heightClass}`}
+      style={{
+        width: width === 'full' ? '100%' : widthStyle,
+        height: height === 'full' ? '100%' : heightStyle,
+      }}
+      value={value}
       onChange={onChange}
       onKeyDown={onKeydown}
-    ></input>
+    />
   );
 }
