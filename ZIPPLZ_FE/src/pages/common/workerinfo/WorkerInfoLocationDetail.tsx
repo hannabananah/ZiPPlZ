@@ -2,29 +2,36 @@ import React, { useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
-// 시공자 리스트로 돌아가기 위한 router
-
 export default function WorkerInfoLocationDetail() {
-  const [selectedCity, setSelectedCity] = useState(null);
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
 
-  const handleCityClick = (city) => {
+  const navigate = useNavigate();
+
+  const handleCityClick = (city: string) => {
     setSelectedCity(city);
     setSelectedDistrict(null); // 도시 클릭 시 구역 초기화
   };
 
-  const handleDistrictClick = (district) => {
+  const handleDistrictClick = (district: string) => {
     setSelectedDistrict(district);
   };
 
   const handleConfirmClick = () => {
     if (selectedCity && selectedDistrict) {
-      setSearchText(`${selectedCity} ${selectedDistrict}`);
+      // 확인 클릭 시의 로직
+      console.log(`Selected Location: ${selectedCity} ${selectedDistrict}`);
     }
   };
 
   const handleClose = () => {
     navigate('../WorkerInfoList'); // 우측 상단 x 클릭 시 이전 페이지로 돌아가기
+  };
+
+  const handleSelectionClick = () => {
+    // 선택된 도시와 구역을 초기화
+    setSelectedCity(null);
+    setSelectedDistrict(null);
   };
 
   const cityButtons = [
@@ -68,86 +75,98 @@ export default function WorkerInfoLocationDetail() {
   };
 
   return (
-    <>
-      <div className="flex justify-between items-center w-full">
-        <div className="flex-1 text-center">작업 지역 선택</div>
-        <IoIosClose size={40} />
-      </div>
-      <hr className="my-2" />
+    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+      <div className="w-full max-w-3xl">
+        <div className="flex justify-between items-center w-full mb-4">
+          <div className="flex-1 text-center font-bold">작업 지역 선택</div>
+          <IoIosClose
+            size={40}
+            onClick={handleClose}
+            className="cursor-pointer"
+          />
+        </div>
 
-      <div className="grid grid-cols-4 gap-4 mb-4">
-        {cityButtons.map((city, index) => (
-          <button
-            key={index}
-            className={`px-4 py-2 rounded ${
-              selectedCity === city
-                ? 'bg-blue-500 text-white'
-                : 'bg-gray-200 text-black'
-            }`}
-            onClick={() => handleCityClick(city)}
-          >
-            {city}
-          </button>
-        ))}
-      </div>
+        {/* 밑줄 */}
+        <hr className="p-2 my-2" />
 
-      <hr className="my-2" />
-
-      <div className="grid grid-cols-4 gap-4 mb-4">
-        {selectedCity &&
-          districtMap[selectedCity].map((district, index) => (
+        <div className="grid grid-cols-4 gap-4 mb-4">
+          {cityButtons.map((city, index) => (
             <button
               key={index}
-              className={`px-4 py-2 rounded ${
-                selectedDistrict === district
-                  ? 'bg-blue-500 text-white'
-                  : 'bg-gray-200 text-black'
-              }`}
-              onClick={() => handleDistrictClick(district)}
+              className={`px-4 py-2 rounded border ${
+                selectedCity === city
+                  ? 'rounded-zp-radius-btn bg-zp-sub-color border-zp-main-color'
+                  : 'rounded-zp-radius-btn border-zp-main-color'
+              } focus:outline-none focus:ring-2 `}
+              onClick={() => handleCityClick(city)}
             >
-              {district}
+              {city}
             </button>
           ))}
-      </div>
+        </div>
 
-      <hr className="my-2" />
+        {/* 밑줄 */}
+        <hr className="p-2 my-2" />
 
-      <div className="flex flex-wrap mb-4">
-        {selectedCity && selectedDistrict && (
-          <div className="flex items-center space-x-2 bg-gray-200 p-2 rounded">
-            <div>
-              {selectedCity} {selectedDistrict}
+        <div className="grid grid-cols-4 gap-4 mb-4">
+          {selectedCity &&
+            districtMap[selectedCity].map((district, index) => (
+              <button
+                key={index}
+                className={`px-4 py-2 rounded border ${
+                  selectedDistrict === district
+                    ? 'rounded-zp-radius-btn bg-zp-sub-color border-zp-main-color'
+                    : 'rounded-zp-radius-btn border-zp-main-color'
+                } focus:outline-none focus:ring-2 focus:ring-blue-500`}
+                onClick={() => handleDistrictClick(district)}
+              >
+                {district}
+              </button>
+            ))}
+        </div>
+
+        {/* 밑줄 */}
+        <hr className="p-2" />
+
+        <div className="flex flex-wrap mb-4">
+          {selectedCity && selectedDistrict && (
+            <div
+              className="flex items-center space-x-2 bg-gray-200 p-2 font-bold text-zp-white bg-zp-main-color rounded-zp-radius-big cursor-pointer"
+              onClick={handleSelectionClick}
+            >
+              <span>
+                {selectedCity} {selectedDistrict}
+              </span>
             </div>
+          )}
+        </div>
+
+        {/* 초기화 및 확인 버튼 묶는 div */}
+        <div className="flex justify-between mb-4">
+          {/* 초기화 버튼 */}
+          <div className="font-bold h-20 flex items-center justify-center">
             <button
-              className="text-red-500"
+              className="w-[130px] h-[60px] bg-zp-sub-color rounded-zp-radius-btn"
               onClick={() => {
                 setSelectedCity(null);
                 setSelectedDistrict(null);
               }}
             >
-              <IoIosClose size={30} />
+              초기화
             </button>
           </div>
-        )}
-      </div>
 
-      <div className="flex justify-between mb-4">
-        <button
-          className="px-4 py-2 bg-gray-200 text-black rounded"
-          onClick={() => {
-            setSelectedCity(null);
-            setSelectedDistrict(null);
-          }}
-        >
-          초기화
-        </button>
-        <button
-          className="px-4 py-2 bg-blue-500 text-white rounded"
-          onClick={handleConfirmClick}
-        >
-          확인
-        </button>
+          {/* 확인 버튼 */}
+          <div className="font-bold h-20 flex items-center justify-center">
+            <button
+              className="w-[410px] h-[60px] bg-zp-main-color rounded-zp-radius-btn text-white"
+              onClick={handleConfirmClick}
+            >
+              확인
+            </button>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }
