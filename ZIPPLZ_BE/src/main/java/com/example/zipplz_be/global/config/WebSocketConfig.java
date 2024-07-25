@@ -37,7 +37,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         setApplicationDestinationPrefixes에는 메시지 발행 요청의 prefix를 넣음
         즉, /pub로 시작하는 메시지만 해당 Broker에서 받아서 처리
          */
-        registry.setApplicationDestinationPrefixes("/app");
+        registry.setApplicationDestinationPrefixes("/pub");
     }
 
 //    @Override
