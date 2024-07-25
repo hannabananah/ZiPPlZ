@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 
 import Badge from '@assets/certified-icon.svg?react';
 import Input from '@components/common/Input';
+import ModalComponent from '@components/common/Modal';
+import { useChatStore } from '@stores/chatStore';
+import { useModalActions } from '@stores/modalStore';
 
 const chatRooms = [
   {
@@ -13,6 +16,7 @@ const chatRooms = [
       '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 으갸갸갸으갸갸으악',
     temp: '36.5℃',
     unread: 5,
+    imageUrl: 'https://i.pravatar.cc/50?img=1',
   },
   {
     id: 2,
@@ -21,6 +25,7 @@ const chatRooms = [
       '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 으갸갸갸으갸갸으악',
     temp: '36.5℃',
     unread: 5,
+    imageUrl: 'https://i.pravatar.cc/50?img=2',
   },
   {
     id: 3,
@@ -29,6 +34,7 @@ const chatRooms = [
       '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 으갸갸갸으갸갸으악',
     temp: '36.5℃',
     unread: 5,
+    imageUrl: 'https://i.pravatar.cc/50?img=3',
   },
   {
     id: 4,
@@ -37,6 +43,7 @@ const chatRooms = [
       '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 으갸갸갸으갸갸으악',
     temp: '36.5℃',
     unread: 5,
+    imageUrl: 'https://i.pravatar.cc/50?img=4',
   },
   {
     id: 5,
@@ -44,6 +51,7 @@ const chatRooms = [
     message: '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 ...',
     temp: '36.5℃',
     unread: 5,
+    imageUrl: 'https://i.pravatar.cc/50?img=5',
   },
   {
     id: 6,
@@ -51,47 +59,47 @@ const chatRooms = [
     message: '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 ...',
     temp: '36.5℃',
     unread: 5,
-  },
-  {
-    id: 4,
-    name: '강신구',
-    message:
-      '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 으갸갸갸으갸갸으악',
-    temp: '36.5℃',
-    unread: 5,
-  },
-  {
-    id: 5,
-    name: '강신구',
-    message: '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 ...',
-    temp: '36.5℃',
-    unread: 5,
-  },
-  {
-    id: 6,
-    name: '강신구',
-    message: '안녕하세요 새로 30평 아파트에 거주하고 있는데요. 총 챗젼이 ...',
-    temp: '36.5℃',
-    unread: 5,
+    imageUrl: 'https://i.pravatar.cc/50?img=6',
   },
 ];
 
 export default function ChatRooms() {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState<string>('');
+  const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
+  const { openModal, closeModal } = useModalActions();
+  const setSelectedChatRoom = useChatStore(
+    (state) => state.setSelectedChatRoom
+  );
 
-  const handleRoomClick = (roomId: number) => {
-    navigate(`/chatrooms/${roomId}`);
+  const handleRoomClick = (room: (typeof chatRooms)[number]) => {
+    setSelectedChatRoom(room);
+    closeModal('chatRooms');
+    navigate(`/chatrooms/${room.id}`);
   };
 
   const handleClearInput = () => {
     setSearchText('');
   };
 
+  const handleDeleteChatroom = (roomId: number) => {
+    setSelectedRoomId(roomId);
+    openModal('select');
+  };
+
+  const handleConfirmDelete = () => {
+    if (selectedRoomId !== null) {
+      console.log('selected');
+      setSelectedRoomId(null);
+      //
+    }
+    closeModal('select');
+  };
+
   return (
-    <div className="relative w-full flex flex-col pb-8 overflow-y-auto">
-      <div className="pt-6 w-full sticky top-0 z-30 bg-zp-white px-8">
-        <div className="relative w-full mb-4">
+    <div className="relative flex flex-col w-full pb-8 overflow-y-auto">
+      <div className="sticky top-0 z-30 w-full px-8 pt-6 bg-zp-white">
+        <div className="relative w-full mb-8">
           <span className="absolute transform -translate-y-1/2 left-4 top-1/2">
             <IoIosSearch />
           </span>
@@ -108,7 +116,7 @@ export default function ChatRooms() {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSearchText(e.target.value)
             }
-            onKeydown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
               if (e.key === 'Enter') alert('keydown');
             }}
           />
@@ -120,20 +128,26 @@ export default function ChatRooms() {
           </button>
         </div>
       </div>
-      <ul className="grid w-full grid-cols-2 gap-x-5 gap-y-4 px-8">
+      <ul className="grid w-full px-8 gap-x-5 gap-y-4 md:grid-cols-2 sm:grid-cols-1">
         {chatRooms.map((room) => (
           <li
             key={room.id}
             className="flex flex-col items-center p-2.5 bg-zp-light-orange rounded-zp-radius-big drop-shadow-zp-normal cursor-pointer"
-            onClick={() => handleRoomClick(room.id)}
+            onClick={() => handleRoomClick(room)}
           >
-            <button className="self-end rounded-zp-radius-full">
+            <button
+              className="self-end rounded-zp-radius-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteChatroom(room.id);
+              }}
+            >
               <IoIosClose size={20} />
             </button>
             <div className="flex items-center justify-center w-full">
               <div className="relative flex justify-center basis-2/5">
                 <img
-                  src={`https://i.pravatar.cc/50?img=${room.id}`}
+                  src={room.imageUrl}
                   alt={room.name}
                   className="profile-img"
                 />
@@ -165,6 +179,12 @@ export default function ChatRooms() {
           </li>
         ))}
       </ul>
+      <ModalComponent
+        type="select"
+        title="채팅방 삭제"
+        message="해당 채팅방을 정말 삭제하시겠습니까?"
+        onConfirm={handleConfirmDelete}
+      />
     </div>
   );
 }

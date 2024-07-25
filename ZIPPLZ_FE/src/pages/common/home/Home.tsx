@@ -24,7 +24,7 @@ export default function Home() {
         height={3}
         fontSize="xs"
         radius="none"
-        onKeydown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if (e.key === 'Enter') alert('keydown');
         }}
       />
