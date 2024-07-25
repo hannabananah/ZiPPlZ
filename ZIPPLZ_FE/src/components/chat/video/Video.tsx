@@ -8,7 +8,6 @@ interface Props {
 
 export default function Video({ streamManager }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
-  const autoplay = true;
 
   useEffect(() => {
     if (streamManager && videoRef.current) {
@@ -17,14 +16,12 @@ export default function Video({ streamManager }: Props) {
   }, [streamManager]);
 
   return (
-    <>
-      <video
-        autoPlay={autoplay}
-        ref={videoRef}
-        className="flex justify-center object-cover w-full h-full overflow-hidden basis-1/2 bg-zp-main-color rounded-zp-radius-big"
-      >
-        <track kind="captions" />
-      </video>
-    </>
+    <video
+      autoPlay
+      ref={videoRef}
+      className="flex justify-center object-cover w-full h-full overflow-hidden max-h-[380px] rounded-zp-radius-big"
+    >
+      <track kind="captions" />
+    </video>
   );
 }

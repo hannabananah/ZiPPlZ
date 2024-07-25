@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useChatStore } from '@stores/chatStore';
 import axios, { AxiosError } from 'axios';
 import {
   Session as OVSession,
@@ -13,18 +12,9 @@ import {
 const OPENVIDU_SERVER_URL = `http://${window.location.hostname}:4443`;
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
-const sampleUser = {
-  userSerial: 1,
-  fileSerial: 101,
-  email: 'user@example.com',
-  password: 'password123',
-  userName: 'John Doe',
-  tel: '123-456-7890',
-  birthDate: new Date('1990-01-01'),
-  delYn: 0,
-};
-
-const sessionId = sampleUser.userSerial.toString();
+// 예를 들어, sampleUser의 userSerial을 사용하여 sessionId를 생성합니다.
+const sampleUser = { userSerial: 1 };
+const sessionId = `chat_${sampleUser.userSerial}_${new Date().getTime()}`;
 
 export function useOpenVidu() {
   const [session, setSession] = useState<OVSession | null>(null);
@@ -32,169 +22,185 @@ export function useOpenVidu() {
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
   const navigate = useNavigate();
-  const selectedChatRoom = useChatStore((state) => state.selectedChatRoom);
 
   const leaveSession = useCallback(() => {
+    console.log('Leaving session');
     if (session) {
       session.disconnect();
-      navigate('/');
     }
-
     setOV(null);
     setSession(null);
     setSubscriber(null);
     setPublisher(null);
-  }, [session, navigate, selectedChatRoom]);
+    navigate('/');
+  }, [session, navigate]);
 
   useEffect(() => {
+    console.log('Adding beforeunload event listener');
     window.addEventListener('beforeunload', leaveSession);
-
     return () => {
+      console.log('Removing beforeunload event listener');
       window.removeEventListener('beforeunload', leaveSession);
     };
   }, [leaveSession]);
 
+  const createSession = async (): Promise<string> => {
+    console.log('Creating session');
+    try {
+      const data = JSON.stringify({ customSessionId: sessionId });
+      const response = await axios.post(
+        `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
+        data,
+        {
+          headers: {
+            Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Session created', response.data);
+      return response.data.id;
+    } catch (error) {
+      const errorResponse = (error as AxiosError)?.response;
+      console.error('Failed to create session:', errorResponse);
+      if (errorResponse?.status === 409) {
+        return sessionId;
+      }
+      throw new Error('Failed to create session.');
+    }
+  };
+
+  const createToken = async (sessionId: string): Promise<string> => {
+    console.log('Creating token for sessionId:', sessionId);
+    try {
+      const response = await axios.post(
+        `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
+        {},
+        {
+          headers: {
+            Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      console.log('Token created', response.data);
+      return response.data.token;
+    } catch (error) {
+      console.error('Failed to create token:', error);
+      throw new Error('Failed to create token.');
+    }
+  };
+
+  const getToken = async (): Promise<string> => {
+    console.log('Getting token');
+    try {
+      const sessionId = await createSession();
+      const token = await createToken(sessionId);
+      return token;
+    } catch (error) {
+      console.error('Failed to get token:', error);
+      throw new Error('Failed to get token.');
+    }
+  };
+
+  const joinSession = useCallback(async () => {
+    console.log('Joining session');
+    if (!session || !OV) {
+      console.warn('Session or OpenVidu instance is missing');
+      return;
+    }
+    try {
+      const token = await getToken();
+      await session.connect(token);
+      console.log('Session connected');
+
+      const publisherInstance = OV.initPublisher(undefined, {
+        audioSource: undefined,
+        videoSource: undefined,
+        publishAudio: true,
+        publishVideo: true,
+        mirror: true,
+      });
+
+      setPublisher(publisherInstance);
+      await session.publish(publisherInstance);
+      console.log('Publisher published');
+    } catch (error) {
+      console.error('Failed to join session:', error);
+    }
+  }, [session, OV]);
+
   useEffect(() => {
-    if (!session || !OV) return;
-
-    const initializeSession = async () => {
-      const checkSessionExists = async (
-        sessionId: string
-      ): Promise<boolean> => {
-        try {
-          await axios.get(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}`,
-            {
-              headers: {
-                Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
-              },
-            }
-          );
-          return true;
-        } catch (error) {
-          const errorResponse = (error as AxiosError)?.response;
-          if (errorResponse?.status === 404) {
-            return false;
-          }
-          console.error('Failed to check session existence:', errorResponse);
-          throw new Error('Failed to check session existence.');
-        }
-      };
-
-      const createSession = async (sessionId: string): Promise<string> => {
-        try {
-          const data = JSON.stringify({ customSessionId: sessionId });
-          const response = await axios.post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions`,
-            data,
-            {
-              headers: {
-                Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          return (response.data as { id: string }).id;
-        } catch (error) {
-          const errorResponse = (error as AxiosError)?.response;
-          if (errorResponse?.status === 409) {
-            return sessionId; // Return existing session ID if conflict occurs
-          }
-          console.error('Failed to create session:', errorResponse);
-          throw new Error('Failed to create session.');
-        }
-      };
-
-      const createToken = async (sessionId: string): Promise<string> => {
-        try {
-          const data = {};
-          const response = await axios.post(
-            `${OPENVIDU_SERVER_URL}/openvidu/api/sessions/${sessionId}/connection`,
-            data,
-            {
-              headers: {
-                Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          return (response.data as { token: string }).token;
-        } catch (error) {
-          console.error('Failed to create token:', error);
-          throw new Error('Failed to create token.');
-        }
-      };
-
-      const getToken = async (): Promise<string> => {
-        try {
-          const exists = await checkSessionExists(sessionId);
-          const sessionIds = exists
-            ? sessionId
-            : await createSession(sessionId);
-          const token = await createToken(sessionIds);
-          return token;
-        } catch (error) {
-          throw new Error('Failed to get token.');
-        }
-      };
-
-      const joinSession = async () => {
-        try {
-          const token = await getToken();
-          await session.connect(token);
-
-          const publisher = OV.initPublisher(undefined, {
-            audioSource: undefined,
-            videoSource: undefined,
-            publishAudio: true,
-            publishVideo: true,
-            mirror: true,
-          });
-
-          setPublisher(publisher);
-          await session.publish(publisher);
-        } catch (error) {
-          console.error('Failed to join session:', error);
-        }
-      };
-
+    if (session) {
       session.on('streamCreated', (event) => {
-        const subscriber = session.subscribe(event.stream, '');
-        setSubscriber(subscriber);
+        console.log('Stream created event:', event);
+
+        if (!subscriber) {
+          const newSubscriber = session.subscribe(event.stream, '');
+          console.log('Subscriber created:', newSubscriber);
+
+          // 비디오 요소 생성 및 추가
+          const videoElement = newSubscriber.createVideoElement();
+          if (videoElement) {
+            console.log(
+              'Video element created for new subscriber:',
+              videoElement
+            );
+            document.body.appendChild(videoElement); // 적절한 위치에 추가합니다.
+          } else {
+            console.error('Failed to create video element for new subscriber');
+          }
+
+          setSubscriber(newSubscriber);
+        } else {
+          console.log('Subscriber already exists');
+        }
       });
 
       session.on('streamDestroyed', (event) => {
+        console.log('Stream destroyed event:', event);
         if (
           subscriber &&
           event.stream.streamId === subscriber.stream.streamId
         ) {
           setSubscriber(null);
+          console.log('Subscriber removed');
         }
       });
-
-      await joinSession();
-    };
-
-    initializeSession();
-  }, [session, OV, sessionId]);
-
-  useEffect(() => {
-    const OV = new OpenVidu();
-    setOV(OV);
-    const session = OV.initSession();
-    setSession(session);
-
+    }
     return () => {
       if (session) {
+        console.log('Disconnecting session');
         session.disconnect();
+      }
+    };
+  }, [session, subscriber]);
+
+  useEffect(() => {
+    const OVs = new OpenVidu();
+    const sessionInstance = OVs.initSession();
+    setOV(OVs);
+    setSession(sessionInstance);
+
+    return () => {
+      if (sessionInstance) {
+        console.log('Disconnecting session');
+        sessionInstance.disconnect();
       }
     };
   }, []);
 
+  useEffect(() => {
+    if (session && OV) {
+      joinSession();
+    }
+  }, [session, OV, joinSession]);
+
   return {
-    session,
     publisher,
     subscriber,
     leaveSession,
   };
 }
+
+export default useOpenVidu;
