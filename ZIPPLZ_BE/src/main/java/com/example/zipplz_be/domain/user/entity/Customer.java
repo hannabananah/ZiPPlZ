@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.user.entity;
 
+
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

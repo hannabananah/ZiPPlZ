@@ -36,6 +36,7 @@ public class JoinService {
         String password = joinDTO.getPassword();
         joinDTO.setPassword(bCryptPasswordEncoder.encode(password));
         User user = userRepository.save(joinDTO.toEntity());
+        System.out.println(user.getUserSerial());
 
         return user.getUserSerial();
     }
