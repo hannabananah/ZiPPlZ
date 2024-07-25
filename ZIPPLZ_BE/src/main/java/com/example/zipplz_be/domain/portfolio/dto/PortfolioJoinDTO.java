@@ -6,10 +6,10 @@ public class PortfolioJoinDTO {
     String name;
     String birth_date;
     float temp;
-    String field_id;
+    int field_id;
     double career;
 
-    public PortfolioJoinDTO(int user_serial, int portfolio_serial, String birth_date, String name, float temp, String field_id, String location, double career, String img) {
+    public PortfolioJoinDTO(int user_serial, int portfolio_serial, String birth_date, String name, float temp, int field_id, String location, double career, String img) {
         this.user_serial = user_serial;
         this.portfolio_serial = portfolio_serial;
         this.birth_date = birth_date;
@@ -69,11 +69,11 @@ public class PortfolioJoinDTO {
         this.temp = temp;
     }
 
-    public String getField_id() {
+    public int getField_id() {
         return field_id;
     }
 
-    public void setField_id(String field_id) {
+    public void setField_id(int field_id) {
         this.field_id = field_id;
     }
 

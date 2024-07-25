@@ -1,7 +1,8 @@
 package com.example.zipplz_be.domain.board.controller;
 
-import com.example.zipplz_be.domain.board.dto.ResponseDTO;
 import com.example.zipplz_be.domain.board.service.WorkerListService;
+import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,12 +23,12 @@ public class WorkerListController {
     }
 
     @GetMapping("/fields")
-    public ResponseEntity<ResponseDTO<List<String>>> getFields() {
-        ResponseDTO<List<String>> responseDTO;
+    public ResponseEntity<ResponseDTO<List<Field>>> getFields() {
+        ResponseDTO<List<Field>> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            List<String> fields = workerListService.getFields();
+            List<Field> fields = workerListService.getFields();
             System.out.println(fields);
             if (fields == null) {
                 status = HttpStatus.NOT_FOUND;
