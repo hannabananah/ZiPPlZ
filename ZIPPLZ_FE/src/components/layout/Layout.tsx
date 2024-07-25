@@ -14,6 +14,7 @@ export default function Layout() {
   const path = location.pathname;
 
   const notShowHeader = path.startsWith('/chatrooms');
+  const is404Page = path === '/404';
   const currentModals = useCurrentModals();
   const { closeModal } = useModalActions();
 
@@ -21,12 +22,12 @@ export default function Layout() {
     <Suspense>
       <div className="flex flex-col items-center justify-center w-full max-w-[600px] mx-auto">
         <div className="relative flex flex-col w-full min-h-screen">
-          {!notShowHeader && <Header />}
+          {!notShowHeader && !is404Page && <Header />}
           <div className="flex-1 w-full h-full justify-self-center bg-zp-light-beige">
             <Outlet />
           </div>
-          {!notShowHeader && <FloatingChatButton />}
-          {!notShowHeader && <BottomTab />}
+          {!notShowHeader && !is404Page && <FloatingChatButton />}
+          {!notShowHeader && !is404Page && <BottomTab />}
           {(path === '/' || path === '/mypage') && <Footer />}
         </div>
       </div>
