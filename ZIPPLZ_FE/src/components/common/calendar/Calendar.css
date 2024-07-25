@@ -1,0 +1,63 @@
+.fc-day-sun a {
+  color: red;
+}
+
+.fc-day-sat a {
+  color: blue;
+}
+
+.fc .fc-button-primary {
+  background-color: transparent;
+  border: none;
+  padding: 0;
+}
+.fc-toolbar {
+  height: 1rem;
+}
+.fc-daygrid-day-number {
+  font-size: 0.5rem;
+}
+.fc-daygrid-day-frame fc-scrollgrid-sync-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.fc-daygrid-more-link {
+  font-size: 0.5rem;
+}
+.fc-event-main {
+  background-color: white;
+  border: none;
+}
+.fc-popover-body {
+  border: none;
+}
+.fc-h-event {
+  border: none;
+  background-color: white;
+}
+.fc-theme-standard th {
+  height: 32px;
+  padding-top: 3.5px;
+  background: #e5edff;
+  border: 1px solid #dddee0;
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 19px;
+  color: #7b7b7b;
+}
+.fc {
+  width: 100%;
+}
+
+.fc .fc-toolbar.fc-header-toolbar {
+  margin: 0;
+  padding: 0 40px;
+  background-color: #356eff;
+  height: 48px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 10px;
+  color: white;
+  border-radius: 16px 16px 0px 0px;
+}
