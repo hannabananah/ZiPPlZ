@@ -56,6 +56,12 @@ const CalendarTest: React.FC = function () {
       <FullCalendar
         plugins={[dayGridPlugin]}
         timeZone="UTC"
+        customButtons={{
+          customTitle: {
+            text: 'titl',
+            click: () => navigate('/schedule'),
+          },
+        }}
         headerToolbar={{
           left: 'prev',
           center: 'title',

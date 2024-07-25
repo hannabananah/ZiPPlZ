@@ -1,7 +1,6 @@
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
-import Calendar from '@components/schedule/Calendar';
 
 export default function Home() {
   return (
