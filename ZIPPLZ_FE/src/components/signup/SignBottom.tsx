@@ -81,7 +81,8 @@ export default function SignBottom({
             className={order > 2 ? 'bg-zp-sub-color' : 'bg-zp-light-beige'}
           />
         </div>
-        {order === 1 && phrase === 'info' && (
+        {((order === 1 && phrase === 'info') ||
+          (order === 2 && phrase === 'detail')) && (
           <Button
             buttonType={active ? 'second' : 'light'}
             radius="btn"
@@ -118,23 +119,22 @@ export default function SignBottom({
         <p className="absolute top-[1rem] left-0 text-zp-2xl font-bold w-full text-center">
           회원가입 완료
         </p>
-        <hr className="absolute top-[4rem] left-0 w-full border border-zp-sub-color" />
         <div className="w-full flex flex-col mt-[4rem] items-center gap-6">
           <div className="w-full flex flex-col items-center ">
             <p className="text-zp-xl font-bold text-center">
               회원가입이 완료되었습니다.
             </p>
             <p className="text-zp-xl font-bold text-center">
-              로그인 페이지로 이동해주세요.
+              로그인 페이지로 이동하시겠습니까?
             </p>
           </div>
           <Button
             buttonType="second"
-            children="로그인 하러가기"
+            children="확인"
             width={8}
             height={3}
             fontSize="xl"
-            radius="btn"
+            radius="big"
             onClick={() => {
               navigate(link);
             }}
