@@ -6,6 +6,7 @@ interface Props {
   fontSize: string;
   radius: string;
   onClick?: () => void;
+  disabled?: boolean;
 }
 const fontSizeClasses: Record<Props['fontSize'], string> = {
   '3xl': 'text-zp-3xl',
@@ -31,9 +32,12 @@ export default function Button({
   height,
   fontSize,
   radius,
+  disabled,
   onClick,
 }: Props) {
-  const baseStyles = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]}`;
+  const baseStyles = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} ${
+    disabled ? 'cursor-not-allowed' : ''
+  }`;
   let typeStyles = '';
 
   switch (buttonType) {
