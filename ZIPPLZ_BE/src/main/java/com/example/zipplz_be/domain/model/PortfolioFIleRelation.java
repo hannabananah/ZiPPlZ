@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PortfolioFIleRelation {
     @Id
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="portfolio_serial")
     private Portfolio portfolioSerial;
     @Id

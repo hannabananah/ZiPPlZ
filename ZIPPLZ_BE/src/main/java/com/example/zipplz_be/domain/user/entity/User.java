@@ -17,8 +17,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_serial")
     private int userSerial;     // 유저 연번
-    @OneToOne
-    @JoinColumn(name = "file_serial", nullable=true)
+    @Column(name = "file_serial", nullable=true)
     private File fileSerial;
     private String email;       // 이메일
     private String password;    // 비밀번호
