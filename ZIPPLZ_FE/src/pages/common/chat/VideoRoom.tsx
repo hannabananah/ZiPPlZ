@@ -27,8 +27,8 @@ export default function VideoRoom() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-between w-full min-h-screen text-white bg-zp-light-orange">
-      <div className="flex flex-col w-full">
+    <div className="flex flex-col items-center flex-1 w-full min-h-screen text-white bg-zp-light-orange">
+      <div className="flex flex-col w-full rounded-zp-radius-big">
         {session && (
           <Session
             publisher={publisher as Publisher}
