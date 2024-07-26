@@ -21,22 +21,19 @@ export default function Session({
   }, [subscriber]);
 
   return (
-    <div className="flex flex-col items-center justify-center flex-1 w-full h-full space-y-4">
-      <div className="flex justify-center w-full basis-1/2">
+    <div className="relative flex flex-col items-center justify-center w-full h-full p-4 space-y-4 overflow-hidden">
+      <div className={`relative flex-1 ${subscriber ? '' : 'blur'}`}>
         <Video streamManager={publisher} />
       </div>
-      <div
-        className="flex justify-center w-full basis-1/2"
-        key={subscriber?.id}
-      >
-        {subscriber ? (
+      {subscriber ? (
+        <div className="relative flex-1">
           <Video streamManager={subscriber} />
-        ) : (
-          <div className="relative flex items-center justify-center w-full h-full overflow-hidden bg-gray-700 rounded-lg shadow-lg">
-            <p className="text-white">Waiting for subscriber...</p>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        <div className="absolute top-0 left-0 flex items-center justify-center w-full h-full ">
+          <p className="text-zp-white">상대방이 없습니다.</p>
+        </div>
+      )}
     </div>
   );
 }

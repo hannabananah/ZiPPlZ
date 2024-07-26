@@ -1,24 +1,35 @@
+import { useState } from 'react';
 import { FaMicrophone, FaMicrophoneSlash } from 'react-icons/fa';
 import { ImPhoneHangUp } from 'react-icons/im';
-import { MdCameraswitch, MdChecklistRtl } from 'react-icons/md';
+import { MdChecklistRtl } from 'react-icons/md';
+
+import { Publisher, Subscriber } from 'openvidu-browser';
 
 interface OptionsProps {
   leaveSession: () => void;
+  subscriber: Subscriber | null;
+  publisher: Publisher;
+  publishAudio: (enabled: boolean) => void;
+  publishVideo: (enabled: boolean) => void;
 }
 
-export default function Options({ leaveSession }: OptionsProps) {
+export default function Options({ leaveSession, publisher }: OptionsProps) {
+  const [isMuted, setIsMuted] = useState(false);
+
+  const handleMute = () => {
+    const newMuteState = !isMuted;
+    setIsMuted(newMuteState);
+    publisher.publishAudio(!newMuteState);
+  };
+
   const handleExitLive = () => {
     leaveSession();
   };
 
   return (
     <div className="flex w-10/12 p-2 justify-evenly rounded-zp-radius-big bg-zp-light-yellow">
-      {/* 화면전환, 음소거, 계약서공유(시공업자 체크)->시공업자 화면공유 모달로 띄우기, 통화종료 */}
-      {/* <button className="btn">
-        <MdCameraswitch size={24} />
-      </button> */}
-      <button className="btn">
-        <FaMicrophone size={24} />
+      <button className="btn" onClick={handleMute}>
+        {isMuted ? <FaMicrophoneSlash size={24} /> : <FaMicrophone size={24} />}
       </button>
       <button className="btn">
         <MdChecklistRtl size={28} />

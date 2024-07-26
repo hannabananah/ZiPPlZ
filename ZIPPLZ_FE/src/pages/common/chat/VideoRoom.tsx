@@ -7,6 +7,18 @@ export default function VideoRoom() {
   const { session, publisher, subscriber, leaveSession, setSubscriber } =
     useOpenVidu();
 
+  const publishAudio = (enabled: boolean) => {
+    if (publisher) {
+      publisher.publishAudio(enabled);
+    }
+  };
+
+  const publishVideo = (enabled: boolean) => {
+    if (publisher) {
+      publisher.publishVideo(enabled);
+    }
+  };
+
   return (
     <div className="flex flex-col items-center justify-between w-full min-h-screen text-white bg-zp-light-orange">
       <div className="flex flex-col w-full">
@@ -18,7 +30,13 @@ export default function VideoRoom() {
           />
         )}
       </div>
-      <Options leaveSession={leaveSession} />
+      <Options
+        leaveSession={leaveSession}
+        publisher={publisher as Publisher}
+        subscriber={subscriber as Subscriber}
+        publishAudio={publishAudio}
+        publishVideo={publishVideo}
+      />
     </div>
   );
 }
