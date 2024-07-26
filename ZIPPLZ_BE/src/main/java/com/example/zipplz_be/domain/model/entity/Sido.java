@@ -12,6 +12,7 @@ import lombok.NoArgsConstructor;
 public class Sido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="sido_code")
     private int sidoCode;
     @Column(name="sido_name")
     private String sidoName;
