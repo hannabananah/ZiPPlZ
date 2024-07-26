@@ -1,30 +1,37 @@
 package com.example.zipplz_be.domain.chatting.service;
 
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
-import com.example.zipplz_be.domain.chatting.repository.ChattingRepository;
+import com.example.zipplz_be.domain.chatting.entity.RecordingFile;
+import com.example.zipplz_be.domain.chatting.repository.ChatroomRepository;
+import com.example.zipplz_be.domain.chatting.repository.RecordingFileRepository;
 import com.example.zipplz_be.domain.model.UserToChatroom;
 import com.example.zipplz_be.domain.model.repository.UserToChatroomRepository;
+import io.openvidu.java.client.Recording;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Service
 public class OpenviduService {
-    private final ChattingRepository chattingRepository;
+    private final ChatroomRepository chatroomRepository;
     private final UserToChatroomRepository userToChatroomRepository;
+    private final RecordingFileRepository recordingFileRepository;
 
-    OpenviduService(ChattingRepository chattingRepository, UserToChatroomRepository userToChatroomRepository) {
-        this.chattingRepository = chattingRepository;
+    OpenviduService(ChatroomRepository chatroomRepository, UserToChatroomRepository userToChatroomRepository, RecordingFileRepository recordingFileRepository) {
+        this.chatroomRepository = chatroomRepository;
         this.userToChatroomRepository = userToChatroomRepository;
-
+        this.recordingFileRepository = recordingFileRepository;
     }
 
     @Transactional
     public boolean initializeSession(int chatroomSerial, String newSessionId) {
-        Chatroom chatroom = chattingRepository.findBychatroomSerial(chatroomSerial);
+        Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatroomSerial);
 
         if(chatroom == null) return false;
         chatroom.setSessionId(newSessionId);
-        chattingRepository.save(chatroom);
+        chatroomRepository.save(chatroom);
         return true;
     }
 
@@ -50,7 +57,7 @@ public class OpenviduService {
 
     @Transactional
     public String deleteConnection(String sessionId, int userSerial) {
-        Chatroom chatroom = chattingRepository.findBysessionId(sessionId);
+        Chatroom chatroom = chatroomRepository.findBysessionId(sessionId);
 
         UserToChatroom userToChatroom = userToChatroomRepository.findToken(chatroom.getChatroomSerial(),userSerial);
 
@@ -58,5 +65,43 @@ public class OpenviduService {
 
         userToChatroomRepository.delete(userToChatroom);
         return token;
+    }
+
+    @Transactional
+    public void insertRecordingFile(Recording recording, String sessionId) {
+        //만약, recording_id로 검색해본 파일이 존재하면 업데이트.
+        //존재하지 않으면 새로 만들기
+        RecordingFile recordingFile = recordingFileRepository.findByRecordingId(recording.getId());
+
+        if(recordingFile == null) {
+            Chatroom chatroom = chatroomRepository.findBysessionId(sessionId);
+            recordingFile = new RecordingFile(chatroom, recording);
+        } else {
+            recordingFile.setUrl(recording.getUrl());
+        }
+
+        recordingFileRepository.save(recordingFile);
+    }
+
+    @Transactional
+    public List<RecordingFile> getRecordingFiles(int chatroomSerial) {
+        Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatroomSerial);
+
+        return recordingFileRepository.findByChatroomSerial(chatroom);
+    }
+
+    @Transactional
+    public List<RecordingFile> deleteRecordingFile(int chatroomSerial) {
+        Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatroomSerial);
+
+        List<RecordingFile> recordingFileList = recordingFileRepository.findByChatroomSerial(chatroom);
+
+        //db에서 삭제
+        for(RecordingFile recordingFile: recordingFileList) {
+            recordingFileRepository.deleteByRecordingId(recordingFile.getRecordingId());
+        }
+
+        return recordingFileList;
+
     }
 }

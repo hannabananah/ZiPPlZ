@@ -13,7 +13,8 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_serial")
     private int userSerial;     // 유저 연번
     @OneToOne
@@ -28,6 +29,8 @@ public class User {
     private String tel;         // 전화번호
     @Column(name = "del_yn")
     private int delYN;          // 삭제된 유저인지 여부: 0이면 사용 중인 User, 1이면 삭제된 User
+    @Column(name = "role")
+    private String role;
 
     @Builder
     public User(String email, String password, String userName, Date birthDate, String tel) {
@@ -38,5 +41,6 @@ public class User {
         this.tel = tel;
         this.fileSerial = null;
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
+        this.role = "";
     }
 }
