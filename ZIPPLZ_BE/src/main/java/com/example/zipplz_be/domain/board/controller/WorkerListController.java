@@ -1,8 +1,8 @@
 package com.example.zipplz_be.domain.board.controller;
 
 import com.example.zipplz_be.domain.board.service.WorkerListService;
+import com.example.zipplz_be.domain.model.dto.FieldDTO;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
-import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,28 +20,6 @@ public class WorkerListController {
 
     public WorkerListController(WorkerListService workerListService) {
         this.workerListService = workerListService;
-    }
-
-    @GetMapping("/fields")
-    public ResponseEntity<ResponseDTO<List<Field>>> getFields() {
-        ResponseDTO<List<Field>> responseDTO;
-        HttpStatus status = HttpStatus.ACCEPTED;
-
-        try {
-            List<Field> fields = workerListService.getFields();
-            System.out.println(fields);
-            if (fields == null) {
-                status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
-            } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", fields);
-            }
-        } catch (Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        return new ResponseEntity<>(responseDTO, status);
     }
 
     @GetMapping("/portfolios")
