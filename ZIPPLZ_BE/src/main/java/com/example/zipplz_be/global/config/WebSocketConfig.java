@@ -19,8 +19,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // 클라이언트에서 WebSocket에 접속할 수 있는 endpoint를 지정한다
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")     // ex. wss://localhost:8080/ws
-                .setAllowedOriginPatterns("*");
+        registry.addEndpoint("/ws")     // ex. wss://localhost:3000/ws
+                .setAllowedOrigins("*");
     }
 
     // 메세지를 중간에서 라우팅할 때 사용하는 메세지 브로커를 구성

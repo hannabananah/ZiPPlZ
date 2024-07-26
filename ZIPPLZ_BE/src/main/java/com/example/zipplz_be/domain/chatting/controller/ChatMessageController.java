@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
+import com.example.zipplz_be.domain.chatting.exception.InvalidTokenException;
 import com.example.zipplz_be.domain.chatting.service.ChatMessageService;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
@@ -23,7 +24,9 @@ public class ChatMessageController {
      */
     @MessageMapping("chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
-        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
+        System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!1");
+//        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
+        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
     }
 
     /*
@@ -31,11 +34,24 @@ public class ChatMessageController {
      */
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
-        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
+        System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
+//        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
+        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial());
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {
-        String token = headerAccessor.getFirstNativeHeader("X-AUTH-TOKEN");
+        String authorization = headerAccessor.getFirstNativeHeader("Authorization");
+
+        // Authorization 헤더 검증
+        if (authorization == null || !authorization.startsWith("Bearer ")) {
+
+            throw new InvalidTokenException("해당 토큰이 유효하지 않습니다.");
+        }
+
+        String token = authorization.split(" ")[1];
+
+        System.out.println("!!!!!!!!!!! token => " + token);
+
         return jwtUtil.getUserSerialFromJwt(token);
     }
 }

@@ -49,12 +49,6 @@ public class JWTUtil {
                 .compact();
     }
 
-    // JWT 토큰에서 인증 정보 조회
-    public Authentication getAuthentication(String token) {
-        UserDetails userDetails = customUserDetailsService.loadUserByUsername(this.extractEmailFromJwt(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
     // 토큰에서 email 정보 추출
     private String extractEmailFromJwt(String token) {
         Claims claims = Jwts.parser()
@@ -78,11 +72,6 @@ public class JWTUtil {
         return user.getUserSerial();
     }
 
-    // Request의 Header에서 토큰 값을 가져옴. "X-AUTH-TOKEN" : "TOKEN값"
-    public String resolveToken(HttpServletRequest request) {
-        return request.getHeader("X-AUTH-TOKEN");
-    }
-
     // 토큰 유효성 + 만료일자 확인 기능 추가 해야 함!
-    
+
 }
