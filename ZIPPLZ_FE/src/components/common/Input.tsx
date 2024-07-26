@@ -64,7 +64,8 @@ export default function Input({
         'border border-zp-main-color focus:outline-none caret-zp-main-color placeholder-zp-main-color px-10';
       break;
     case 'login':
-      typeStyle = 'border-b border-zp-main-color focus:outline-none';
+      typeStyle =
+        'bg-zp-transparent  border-b border-zp-main-color focus:outline-none';
       break;
     case 'signup':
       typeStyle =
