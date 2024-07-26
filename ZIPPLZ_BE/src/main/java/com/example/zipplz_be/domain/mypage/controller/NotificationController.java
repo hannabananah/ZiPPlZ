@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/notification")
@@ -20,7 +20,7 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    @PostMapping("add")
+    @PostMapping("/add")
     public ResponseEntity<ResponseDTO<Boolean>> addNotification(@RequestBody(required = false) Map<String, Object> params) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -47,5 +47,27 @@ public class NotificationController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    @PostMapping("/list")
+    public ResponseEntity<ResponseDTO<List<Notification>>> getNotificationList(@RequestBody(required = false) Map<String, Object> params) {
+        ResponseDTO<List<Notification>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
+        try {
+            // 해당 정보 가져오기
+            int user_serial = (int) params.get("user_serial");
+            List<Notification> list = notificationService.getNotificationList(user_serial);
+            System.out.println(list.size());
+            if (list == null) {
+                status = HttpStatus.BAD_REQUEST;
+                responseDTO = new ResponseDTO<>(status.value(), "알림 가져오기 실패");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "알림 가져오기 완료", list);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
 }
