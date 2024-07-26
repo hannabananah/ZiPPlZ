@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.board.service;
 
 import com.example.zipplz_be.domain.file.repository.FileRepository;
+import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
 import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
@@ -26,7 +27,7 @@ public class WorkerListServiceImpl implements WorkerListService {
     }
 
     @Override
-    public List<String> getFields() {
+    public List<Field> getFields() {
         return fieldRepository.getFields();
     }
 

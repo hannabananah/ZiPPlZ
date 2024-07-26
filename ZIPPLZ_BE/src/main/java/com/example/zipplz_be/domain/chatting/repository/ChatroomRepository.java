@@ -10,4 +10,5 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Integer> {
 
     Chatroom findBysessionId(String sessionId);
 
+    Boolean existsByChatroomSerial(int chatroomSerial);
 }

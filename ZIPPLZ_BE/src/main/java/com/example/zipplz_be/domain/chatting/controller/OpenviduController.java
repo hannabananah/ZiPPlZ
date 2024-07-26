@@ -7,6 +7,7 @@ import java.util.*;
 import com.example.zipplz_be.domain.chatting.entity.RecordingFile;
 import com.example.zipplz_be.domain.chatting.service.OpenviduService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import io.openvidu.java.client.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,9 +23,11 @@ import java.util.Map;
 @RequestMapping("/openvidu")
 public class OpenviduController {
     private final OpenviduService openviduService;
+    JWTUtil jwtUtil;
 
-    public OpenviduController(OpenviduService openviduService) {
+    public OpenviduController(OpenviduService openviduService, JWTUtil jwtUtil) {
         this.openviduService = openviduService;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -125,8 +128,7 @@ public class OpenviduController {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "세션이 존재하지 않음");
             } else {
-                //임시 설정
-                int userSerial = 1;
+                int userSerial = jwtUtil.getUserSerialFromJwt(request.getHeader("Authorization"));
                 String token = openviduService.deleteConnection((String) params.get("sessionId"), userSerial);
 
                 //세션의 연결된 유저 리스트 중 해당 토큰과 똑같은 값을 가진 커넥션 아이디를 뽑아와야 한다!!
@@ -174,8 +176,7 @@ public class OpenviduController {
                 ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
                 Connection connection = session.createConnection(properties);
 
-                //임시
-                int userSerial = 1;
+                int userSerial = jwtUtil.getUserSerialFromJwt(request.getHeader("Authorization"));
 
                 //토큰 암호화 필요?
                 openviduService.createConnection(connection.getToken(), userSerial, (Integer) params.get("chatroomSerial"));
@@ -272,6 +273,7 @@ public class OpenviduController {
             //채팅방 번호 전달하면 해당 번호에 맞는 recording 객체들 모두 가져옴!!
             List<RecordingFile> recordingFileList = openviduService.getRecordingFiles(chatroomSerial);
             List<Recording> recordingList = new ArrayList<Recording>();
+
 
             for(RecordingFile recordingFile : recordingFileList) {
                 recordingList.add(openvidu.getRecording(recordingFile.getRecordingId()));
