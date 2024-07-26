@@ -19,10 +19,10 @@ public class ChatMessageController {
     private final JWTUtil jwtUtil;
 
     /*
-     websocket "/app/chat/enter"로 들어오는 메시징을 처리한다.
+     websocket "/pub/chat/enter"로 들어오는 메시징을 처리한다.
      채팅방에 입장했을 경우
      */
-    @MessageMapping("chat/enter")
+    @MessageMapping("/chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!1");
 //        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
@@ -30,7 +30,7 @@ public class ChatMessageController {
     }
 
     /*
-     websocket "/app/chat/message"로 들어오는 메시징을 처리한다.
+     websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
