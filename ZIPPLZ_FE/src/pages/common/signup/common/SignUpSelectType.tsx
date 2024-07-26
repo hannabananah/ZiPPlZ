@@ -40,10 +40,11 @@ export default function SignUpSelectType({ setNext, setLink }: Props) {
         </div>
         <div
           className={`flex flex-col justify-center items-center border rounded-zp-radius-btn border-zp-main-color gap-4 p-10 cursor-pointer hover:bg-zp-sub-color ${userType === 'worker' ? 'bg-zp-sub-color' : ''}`}
+          onMouseEnter={() => setIsWorkerHovered(true)}
           onMouseLeave={() => setIsWorkerHovered(false)}
           onClick={() => {
             setNext(true);
-            setLink('/member/join/worker/2/region');
+            setLink('/member/join/worker/2/detail');
             setUserType('worker');
           }}
         >

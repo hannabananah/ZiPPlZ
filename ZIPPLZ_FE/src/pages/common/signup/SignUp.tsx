@@ -9,6 +9,7 @@ import SignUpInfo from './common/SignUpInfo';
 import SignUpSelectType from './common/SignUpSelectType';
 import SignUpNickName from './customer/SignUpNickName';
 import SignUpWorkerDetail from './worker/SignUpWorkerDetail';
+import SignUpWorkerRegion from './worker/SignUpWorkerRegion';
 
 export default function SignUp() {
   const { order, type, phrase } = useParams<{
@@ -37,6 +38,9 @@ export default function SignUp() {
       )}
       {phrase === 'detail' && type === 'worker' && (
         <SignUpWorkerDetail setActive={setActive} setLink={setLink} />
+      )}
+      {phrase === 'region' && type === 'worker' && (
+        <SignUpWorkerRegion setNext={setNext} setLink={setLink} />
       )}
       <SignBottom
         order={orderNumber}

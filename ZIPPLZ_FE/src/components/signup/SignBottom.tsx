@@ -64,9 +64,7 @@ export default function SignBottom({
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-      setActive(false);
-      alert('인증이 완료되었습니다.');
-      setNext(true);
+      setModalIsOpen(true);
     }, 3000);
   };
   return (
@@ -117,15 +115,17 @@ export default function SignBottom({
         style={customModalStyles}
       >
         <p className="absolute top-[1rem] left-0 text-zp-2xl font-bold w-full text-center">
-          회원가입 완료
+          {active ? '인증 완료' : '회원가입 완료'}
         </p>
         <div className="w-full flex flex-col mt-[4rem] items-center gap-6">
           <div className="w-full flex flex-col items-center ">
             <p className="text-zp-xl font-bold text-center">
-              회원가입이 완료되었습니다.
+              {!active && '회원가입이 완료되었습니다.'}
             </p>
             <p className="text-zp-xl font-bold text-center">
-              로그인 페이지로 이동하시겠습니까?
+              {active
+                ? '인증이 완료되었습니다.'
+                : '로그인 페이지로 이동하시겠습니까?'}
             </p>
           </div>
           <Button
@@ -136,7 +136,11 @@ export default function SignBottom({
             fontSize="xl"
             radius="big"
             onClick={() => {
-              navigate(link);
+              if (active) {
+                setActive(false);
+                setNext(true);
+                closeModal();
+              } else navigate(link);
             }}
           />
         </div>
