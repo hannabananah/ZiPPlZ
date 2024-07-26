@@ -66,6 +66,7 @@ export default function Button({
         height: height === 'full' ? '100%' : heightStyle,
       }}
       onClick={onClick}
+      disabled={disabled}
     >
       {children}
     </button>
