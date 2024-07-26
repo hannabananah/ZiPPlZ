@@ -22,6 +22,6 @@ public class File {
     @Column(name = "save_file")
     private String saveFile;
     @OneToOne
-    @JoinColumn(name = "user_serial")
+    @JoinColumn(name = "user_serial", referencedColumnName = "user_serial")
     private User userSerial;
 }

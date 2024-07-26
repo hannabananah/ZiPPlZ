@@ -18,7 +18,7 @@ public class User {
     @Column(name="user_serial")
     private int userSerial;     // 유저 연번
     @Column(name = "file_serial", nullable=true)
-    private File fileSerial;
+    private int fileSerial;
     private String email;       // 이메일
     private String password;    // 비밀번호
     @Column(name = "user_name")
@@ -38,7 +38,7 @@ public class User {
         this.userName = userName;
         this.birthDate = birthDate;
         this.tel = tel;
-        this.fileSerial = null;
+        this.fileSerial = 0;
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
         this.role = "";
     }
