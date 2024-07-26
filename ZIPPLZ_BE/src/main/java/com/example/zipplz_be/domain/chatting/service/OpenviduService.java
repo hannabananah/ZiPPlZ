@@ -1,7 +1,7 @@
 package com.example.zipplz_be.domain.chatting.service;
 
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
-import com.example.zipplz_be.domain.chatting.repository.ChattingRepository;
+import com.example.zipplz_be.domain.chatting.repository.ChatroomRepository;
 import com.example.zipplz_be.domain.model.UserToChatroom;
 import com.example.zipplz_be.domain.model.repository.UserToChatroomRepository;
 import jakarta.transaction.Transactional;
@@ -9,22 +9,22 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class OpenviduService {
-    private final ChattingRepository chattingRepository;
+    private final ChatroomRepository chatroomRepository;
     private final UserToChatroomRepository userToChatroomRepository;
 
-    OpenviduService(ChattingRepository chattingRepository, UserToChatroomRepository userToChatroomRepository) {
-        this.chattingRepository = chattingRepository;
+    OpenviduService(ChatroomRepository chatroomRepository, UserToChatroomRepository userToChatroomRepository) {
+        this.chatroomRepository = chatroomRepository;
         this.userToChatroomRepository = userToChatroomRepository;
 
     }
 
     @Transactional
     public boolean initializeSession(int chatroomSerial, String newSessionId) {
-        Chatroom chatroom = chattingRepository.findBychatroomSerial(chatroomSerial);
+        Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatroomSerial);
 
         if(chatroom == null) return false;
         chatroom.setSessionId(newSessionId);
-        chattingRepository.save(chatroom);
+        chatroomRepository.save(chatroom);
         return true;
     }
 
@@ -50,7 +50,7 @@ public class OpenviduService {
 
     @Transactional
     public String deleteConnection(String sessionId, int userSerial) {
-        Chatroom chatroom = chattingRepository.findBysessionId(sessionId);
+        Chatroom chatroom = chatroomRepository.findBysessionId(sessionId);
 
         UserToChatroom userToChatroom = userToChatroomRepository.findToken(chatroom.getChatroomSerial(),userSerial);
 

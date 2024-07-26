@@ -31,7 +31,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String email = request.getHeader("email"); // 우리는 username 대신 email로 검증
         String password = request.getHeader("password");
-        System.out.println(password);
+
+        System.out.println("password when attempting authentication :" + password);
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
 
@@ -46,13 +47,15 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = customUserDetails.getUsername();
         int userSerial = userRepository.findByEmail(email).getUserSerial();
 
+        System.out.println("email when success :" + email);
+
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
 
         String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(email, 60*60*10L);
+        String token = jwtUtil.createJwt(email, 600000000L);
 
         response.addHeader("Authorization", "Bearer " + token);
     }
