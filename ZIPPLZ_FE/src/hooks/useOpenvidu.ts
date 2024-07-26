@@ -19,6 +19,7 @@ export default function useOpenVidu() {
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
   const navigate = useNavigate();
+
   const leaveSession = useCallback(() => {
     if (session) session.disconnect();
 
@@ -78,9 +79,7 @@ export default function useOpenVidu() {
           data,
           {
             headers: {
-              Authorization: `Basic ${btoa(
-                `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-              )}`,
+              Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
               'Content-Type': 'application/json',
             },
           }
@@ -107,10 +106,7 @@ export default function useOpenVidu() {
             data,
             {
               headers: {
-                Authorization: `Basic ${btoa(
-                  `OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`
-                )}`,
-
+                Authorization: `Basic ${btoa(`OPENVIDUAPP:${OPENVIDU_SERVER_SECRET}`)}`,
                 'Content-Type': 'application/json',
               },
             }
@@ -156,7 +152,8 @@ export default function useOpenVidu() {
           .catch(() => {});
       })
       .catch(() => {});
-  }, [session, OV, sessionId, OPENVIDU_SERVER_URL]);
+  }, [session, OV, sessionId]);
+
   return {
     session,
     publisher,
@@ -164,5 +161,7 @@ export default function useOpenVidu() {
     leaveSession,
     joinSession,
     setSubscriber,
+    setPublisher,
+    OV,
   };
 }

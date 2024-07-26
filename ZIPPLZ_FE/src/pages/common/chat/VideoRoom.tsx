@@ -4,8 +4,15 @@ import useOpenVidu from '@hooks/useOpenvidu';
 import { Publisher, Subscriber } from 'openvidu-browser';
 
 export default function VideoRoom() {
-  const { session, publisher, subscriber, leaveSession, setSubscriber } =
-    useOpenVidu();
+  const {
+    session,
+    publisher,
+    subscriber,
+    leaveSession,
+    setSubscriber,
+    setPublisher,
+    OV,
+  } = useOpenVidu();
 
   const publishAudio = (enabled: boolean) => {
     if (publisher) {
@@ -34,6 +41,9 @@ export default function VideoRoom() {
         leaveSession={leaveSession}
         publisher={publisher as Publisher}
         subscriber={subscriber as Subscriber}
+        session={session}
+        OV={OV}
+        setPublisher={setPublisher}
         publishAudio={publishAudio}
         publishVideo={publishVideo}
       />
