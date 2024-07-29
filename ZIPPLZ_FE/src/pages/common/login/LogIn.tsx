@@ -120,7 +120,7 @@ export default function Login() {
           <p
             className="text-zp-md text-zp-gray  ml-[5%] cursor-pointer font-bold"
             onClick={() => {
-              navigate('/member/join/common/1/info');
+              navigate('/member/join/common/1/agree');
             }}
           >
             회원가입

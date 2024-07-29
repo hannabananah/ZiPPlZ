@@ -69,7 +69,7 @@ export default function SignBottom({
   };
   return (
     <>
-      <div className="w-full flex flex-col gap-2 absolute bottom-[1rem] left-0 p-4">
+      <div className="w-full flex flex-col gap-2 absolute bottom-0 left-0 p-4">
         <div className="grid grid-cols-3 gap-0 w-full h-[0.5rem] bg-zp-light-beige">
           <div className="bg-zp-sub-color" />
           <div
@@ -79,8 +79,8 @@ export default function SignBottom({
             className={order > 2 ? 'bg-zp-sub-color' : 'bg-zp-light-beige'}
           />
         </div>
-        {((order === 1 && phrase === 'info') ||
-          (order === 2 && phrase === 'detail')) && (
+        {((order === 2 && phrase === 'info') ||
+          (order === 3 && phrase === 'detail')) && (
           <Button
             buttonType={active ? 'second' : 'light'}
             radius="btn"
@@ -97,13 +97,18 @@ export default function SignBottom({
           radius="btn"
           width="full"
           height={3.75}
-          children={order < 3 ? '다음' : '회원가입 완료'}
+          children={
+            order < 3 || (phrase !== 'nickname' && phrase !== 'skills')
+              ? '다음'
+              : '회원가입 완료'
+          }
           fontSize="2xl"
           disabled={!next}
           onClick={() => {
             setNext(false);
             setActive(false);
-            if (order < 3) navigate(link);
+            if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
+              navigate(link);
             else openModal();
           }}
         />
