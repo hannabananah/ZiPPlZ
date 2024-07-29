@@ -23,6 +23,8 @@ public class PlanService {
         //customer serial을 customer 테이블에서 검색해보기!!
         Customer customer = customerRepository.findByCustomerSerial(customerSerial);
 
+
+
         return planRepository.findBycustomerSerial(customer);
     }
 }

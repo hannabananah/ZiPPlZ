@@ -39,9 +39,7 @@ public class PlanController {
 
         try {
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-
             int customerSerial = customUserDetails.getUserSerial();
-
             List<Plan> planList = planService.getPlanService(customerSerial);
 
             status= HttpStatus.OK;
