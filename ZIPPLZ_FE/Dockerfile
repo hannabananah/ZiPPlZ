@@ -12,7 +12,7 @@ RUN npm install
 COPY . .
 
 # 애플리케이션이 사용하는 포트 공개
-EXPOSE 4443
+EXPOSE 5173
 
 # 애플리케이션 시작 명령어
 CMD ["npm", "run", "start"]

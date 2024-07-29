@@ -25,7 +25,7 @@ export default function Session({
   }, [subscriber]);
 
   return (
-    <div className="relative flex flex-col items-center justify-center flex-1 w-full h-full p-4 space-y-4 overflow-hidden ">
+    <div className="relative flex flex-col items-center justify-center h-full p-4 space-y-4">
       <div className={`relative basis-1/2 ${subscriber ? '' : 'blur'}`}>
         <Video streamManager={publisher} ref={publisherRef} />
       </div>

@@ -97,7 +97,7 @@ export default function Options({
   };
 
   return (
-    <div className="absolute flex w-10/12 p-2 bottom-3 justify-evenly rounded-zp-radius-big bg-zp-light-yellow">
+    <div className="absolute flex w-10/12 p-2 bg-opacity-50 bottom-3 justify-evenly rounded-zp-radius-big bg-zp-light-yellow">
       <button className="btn" onClick={handleMute}>
         {isMuted ? <FaMicrophoneSlash size={24} /> : <FaMicrophone size={24} />}
       </button>
