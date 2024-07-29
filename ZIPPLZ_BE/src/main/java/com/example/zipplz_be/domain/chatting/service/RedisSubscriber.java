@@ -1,5 +1,7 @@
 package com.example.zipplz_be.domain.chatting.service;
 
+import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
+import com.example.zipplz_be.domain.chatting.dto.ChatMessageResponseDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,9 +30,10 @@ public class RedisSubscriber implements MessageListener {
            String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
 
            // ChatMessage 객체로 맵핑
+           ChatMessageRequestDTO roomMessage = objectMapper.readValue(publishMessage, ChatMessageRequestDTO.class);
 
-
-
+           ChatMessageResponseDTO chatMessageResponseDTO = new ChatMessageResponseDTO(roomMessage);
+           messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getChatroomSerial(), chatMessageResponseDTO);
        } catch (Exception e) {
 
         }

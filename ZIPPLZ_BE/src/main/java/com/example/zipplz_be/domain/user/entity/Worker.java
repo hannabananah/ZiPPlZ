@@ -2,6 +2,7 @@ package com.example.zipplz_be.domain.user.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -25,4 +26,12 @@ public class Worker {
     private String certificate;
     @Column(name = "has_as_badge")
     private int hasAsBadge;
+
+    @Builder
+    public Worker(User userSerial, String businessNumber, String company, String companyAddress) {
+        this.userSerial = userSerial;
+        this.businessNumber = businessNumber;
+        this.company = company;
+        this.companyAddress = companyAddress;
+    }
 }
