@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface CustomerRepository extends JpaRepository<Customer, Integer> {
     Boolean existsByUserSerial(User userSerial);
     Customer findByCustomerSerial(int customerSerial);
+    Customer findByUserSerial(User userSerial);
 }

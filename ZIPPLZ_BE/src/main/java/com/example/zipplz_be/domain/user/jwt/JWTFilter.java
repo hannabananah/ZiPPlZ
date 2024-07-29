@@ -26,12 +26,10 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // request에서 Authorization 헤더를 찾음
         String authorization = request.getHeader("Authorization");
-        System.out.println("!!!!!!!!!!!!!!"  + authorization);
 
         // Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
 
-            System.out.println("token null");
             filterChain.doFilter(request, response);
 
             return;
@@ -39,7 +37,6 @@ public class JWTFilter extends OncePerRequestFilter {
 
         System.out.println("Authorization now");
         String token = authorization.split(" ")[1];
-        System.out.println(token);
 
         // 토큰 소멸 시간 검증
         if (jwtUtil.isExpired(token)) {
@@ -52,10 +49,14 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // 토큰에서 email과 userSerial 획득
         String email = jwtUtil.getEmail(token);
+        int userSerial = jwtUtil.getUserSerial(token);
+        String role = jwtUtil.getRole(token);
 
         // User 생성해서 값 set
         User user = new User();
         user.setEmail(email);
+        user.setUserSerial(userSerial);
+        user.setRole(role);
 
         // UserDetails에 회원 정보 객체 담기
         CustomUserDetails customUserDetails = new CustomUserDetails(user);
