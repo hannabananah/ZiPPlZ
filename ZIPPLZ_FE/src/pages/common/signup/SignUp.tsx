@@ -12,12 +12,26 @@ import SignUpWorkerDetail from './worker/SignUpWorkerDetail';
 import SignUpWorkerRegion from './worker/SignUpWorkerRegion';
 import SignUpWorkerSkill from './worker/SignUpWorkerSkill';
 
+export interface User {
+  email: string;
+  password: string;
+  userName: string;
+  birthDate: string;
+  tel: string;
+}
 export default function SignUp() {
   const { order, type, phrase } = useParams<{
     order: string;
     type: string;
     phrase: string;
   }>();
+  const [user, setUser] = useState<User>({
+    email: '',
+    password: '',
+    userName: '',
+    birthDate: '',
+    tel: '',
+  });
   const orderNumber: number = order ? parseInt(order) : 0;
   const [next, setNext] = useState<boolean>(false);
   const [active, setActive] = useState<boolean>(false);
@@ -26,7 +40,7 @@ export default function SignUp() {
     <div className="w-full relative  bg-zp-white  min-h-screen p-4 gap-4 flex flex-col  max-w-[600px] ">
       <SignUpHead type={type} />
       {orderNumber === 2 && type === 'common' && phrase === 'info' && (
-        <SignUpInfo setActive={setActive} setLink={setLink} />
+        <SignUpInfo setActive={setActive} setLink={setLink} setUser={setUser} />
       )}
       {orderNumber === 2 && type === 'common' && phrase === 'type' && (
         <SignUpSelectType setNext={setNext} setLink={setLink} />
@@ -54,6 +68,7 @@ export default function SignUp() {
         link={link}
         setNext={setNext}
         setActive={setActive}
+        user={user}
       />
     </div>
   );

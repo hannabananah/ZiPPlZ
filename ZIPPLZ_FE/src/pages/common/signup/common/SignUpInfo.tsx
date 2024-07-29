@@ -4,12 +4,14 @@ import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import Input from '@/components/common/Input';
 import DateInput from '@/components/signup/DateInput';
 import PhoneInput from '@/components/signup/PhoneInput';
+import { User } from '@pages/common/signup/SignUp';
 
 interface Props {
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
+  setUser: React.Dispatch<React.SetStateAction<User>>;
 }
-export default function SignupInfo({ setActive, setLink }: Props) {
+export default function SignupInfo({ setActive, setLink, setUser }: Props) {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -67,7 +69,18 @@ export default function SignupInfo({ setActive, setLink }: Props) {
       setActive(false);
     }
   }, [name, email, password, checkPassword, birthDate, phone]);
-
+  useEffect(() => {
+    setUser((prev: User) => ({
+      ...prev,
+      birthDate: birthDate,
+    }));
+  }, [birthDate]);
+  useEffect(() => {
+    setUser((prev: User) => ({
+      ...prev,
+      tel: phone,
+    }));
+  }, [phone]);
   return (
     <div className="relative flex flex-col bg-zp-white w-full p-4 gap-4 overflow-auto mb-[9rem]">
       <p className="text-xl font-bold">이름</p>
@@ -79,6 +92,10 @@ export default function SignupInfo({ setActive, setLink }: Props) {
         width="full"
         height={2}
         onChange={(e: React.ChangeEvent) => {
+          setUser((prev: User) => ({
+            ...prev,
+            userName: (e.target as HTMLInputElement).value,
+          }));
           setName((e.target as HTMLInputElement).value);
         }}
         fontSize="xl"
@@ -94,6 +111,10 @@ export default function SignupInfo({ setActive, setLink }: Props) {
           width="full"
           height={2}
           onChange={(e: React.ChangeEvent) => {
+            setUser((prev: User) => ({
+              ...prev,
+              email: (e.target as HTMLInputElement).value,
+            }));
             setEmail((e.target as HTMLInputElement).value);
           }}
           fontSize="xl"
@@ -150,6 +171,10 @@ export default function SignupInfo({ setActive, setLink }: Props) {
           width="full"
           height={2}
           onChange={(e: React.ChangeEvent) => {
+            setUser((prev: User) => ({
+              ...prev,
+              password: (e.target as HTMLInputElement).value,
+            }));
             setCheckPassword((e.target as HTMLInputElement).value);
           }}
           fontSize="xl"

@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
+import { signUp } from '@/apis/member/MemberApi';
+import { User } from '@/pages/common/signup/SignUp';
 import Button from '@components/common/Button';
 import Loading from '@components/common/Loading';
 
@@ -11,6 +13,7 @@ interface Props {
   next: boolean;
   phrase?: string;
   link: string;
+  user: User;
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
 }
@@ -48,9 +51,11 @@ export default function SignBottom({
   next,
   phrase,
   link,
+  user,
   setNext,
   setActive,
 }: Props) {
+  const [userSerial, setUserSerial] = useState<number>(0);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -67,6 +72,14 @@ export default function SignBottom({
       setModalIsOpen(true);
     }, 3000);
   };
+  const registUser = async (user: User) => {
+    const response = await signUp(user);
+    setUserSerial(response.data.userSerial);
+  };
+  useEffect(() => {
+    console.log(user);
+    console.log(userSerial);
+  }, [userSerial]);
   return (
     <>
       <div className="w-full flex flex-col gap-2 absolute bottom-0 left-0 p-4">
@@ -109,7 +122,11 @@ export default function SignBottom({
             setActive(false);
             if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
               navigate(link);
-            else openModal();
+            else {
+              registUser(user);
+              console.log(user);
+              openModal();
+            }
           }}
         />
       </div>
