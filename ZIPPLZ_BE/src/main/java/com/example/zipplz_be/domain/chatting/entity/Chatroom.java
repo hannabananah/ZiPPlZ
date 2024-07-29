@@ -3,14 +3,14 @@ package com.example.zipplz_be.domain.chatting.entity;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.Worker;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Chatroom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,4 +29,10 @@ public class Chatroom {
     private Timestamp chatroomDate;
     @Column(name="session_id")
     private String sessionId;
+
+    @Builder
+    Chatroom(Customer customerSerial, Worker workerSerial) {
+        this.customerSerial = customerSerial;
+        this.workerSerial = workerSerial;
+    }
 }

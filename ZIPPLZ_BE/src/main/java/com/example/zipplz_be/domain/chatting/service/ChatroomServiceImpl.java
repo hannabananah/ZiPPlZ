@@ -4,7 +4,9 @@ import com.example.zipplz_be.domain.chatting.dto.CreateChatroomDTO;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
 import com.example.zipplz_be.domain.chatting.exception.CannotCreateChatroomAloneException;
 import com.example.zipplz_be.domain.chatting.repository.ChatroomRepository;
+import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
+import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
@@ -37,12 +39,21 @@ public class ChatroomServiceImpl implements ChatroomService {
         User user = userRepository.findByUserSerial(userSerial);
         User anotherUser = userRepository.findByUserSerial(createChatroomDTO.getAnotherUserSerial());
 
-        int customerSerial = customerRepository.existsByUserSerial(user) ?
-                customerRepository.findByUserSerial(user).getCustomerSerial() : customerRepository.findByUserSerial(anotherUser).getCustomerSerial();
-        int workerSerial = customerRepository.existsByUserSerial(user) ?
-                workerRepository.findByUserSerial(anotherUser).getWorkerSerial() : workerRepository.findByUserSerial(user).getWorkerSerial();
+        Customer customer = customerRepository.existsByUserSerial(user) ?
+                customerRepository.findByUserSerial(user) : customerRepository.findByUserSerial(anotherUser);
+        Worker worker = customerRepository.existsByUserSerial(user) ?
+                workerRepository.findByUserSerial(anotherUser) : workerRepository.findByUserSerial(user);
 
+        if (chatroomRepository.existsByCustomerSerialAndWorkerSerial(customer, worker)) {
+            Chatroom savedChatroom =chatroomRepository.findByCustomerSerialAndWorkerSerial(customer, worker);
+            return savedChatroom.getChatroomSerial();
+        }
 
-        return 0;
+        Chatroom newChatroom = Chatroom.builder()
+                .customerSerial(customer)
+                .workerSerial(worker).build();
+        chatroomRepository.save(newChatroom);
+
+        return newChatroom.getChatroomSerial();
     }
 }

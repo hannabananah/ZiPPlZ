@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.user.jwt;
 
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
+import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
@@ -45,17 +46,19 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         String email = customUserDetails.getUsername();
-        int userSerial = userRepository.findByEmail(email).getUserSerial();
+        User user = userRepository.findByEmail(email);
+        int userSerial = user.getUserSerial();
+        String role = user.getRole();
 
         System.out.println("email when success :" + email);
 
-        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-        GrantedAuthority auth = iterator.next();
+//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
+//        GrantedAuthority auth = iterator.next();
+//
+//        String role = auth.getAuthority();
 
-        String role = auth.getAuthority();
-
-        String token = jwtUtil.createJwt(email, 600000000L);
+        String token = jwtUtil.createJwt(email, userSerial, role, 600000000L);
 
         response.addHeader("Authorization", "Bearer " + token);
     }

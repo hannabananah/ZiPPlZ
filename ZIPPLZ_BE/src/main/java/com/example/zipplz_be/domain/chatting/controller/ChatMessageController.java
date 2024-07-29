@@ -25,8 +25,8 @@ public class ChatMessageController {
     @MessageMapping("/chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!1");
-//        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
-        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
+        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
+//        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
     }
 
     /*
@@ -35,8 +35,8 @@ public class ChatMessageController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
-//        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
-        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial());
+        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
+//        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial());
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {
@@ -44,14 +44,13 @@ public class ChatMessageController {
 
         // Authorization 헤더 검증
         if (authorization == null || !authorization.startsWith("Bearer ")) {
-
             throw new InvalidTokenException("해당 토큰이 유효하지 않습니다.");
         }
 
         String token = authorization.split(" ")[1];
+        Authentication authentication = jwtUtil.getAuthentication(token);
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        System.out.println("!!!!!!!!!!! token => " + token);
-
-        return jwtUtil.getUserSerialFromJwt(token);
+        return customUserDetails.getUserSerial();
     }
 }
