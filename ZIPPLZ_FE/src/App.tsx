@@ -36,6 +36,12 @@ import Workers from '@pages/common/workerinfo/WorkerInfoList';
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
 
+import Login from './pages/common/login/LogIn';
+import FindId from './pages/common/login/find/FindId';
+import FindIdPw from './pages/common/login/find/FindIdPw';
+import FindPw from './pages/common/login/find/FindPw';
+import SignUp from './pages/common/signup/SignUp';
+
 export default function App() {
   return (
     <Routes>
@@ -79,6 +85,9 @@ export default function App() {
         <Route path="beforeResign" element={<BeforeResign />} />
         <Route path="dontUseZIPPLZ" element={<DontUseZIPPLZ />} />
       </Route>
+      <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
+      <Route path="/member/login" element={<Login />} />
+      <Route path="/member/find" element={<FindIdPw />} />
     </Routes>
   );
 }
