@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
-import Custom404 from '@/pages/common/404';
 import Layout from '@components/layout/Layout';
+import Custom404 from '@pages/common/404';
 import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
 import Community from '@pages/common/community/HousePostList';

@@ -3,8 +3,8 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaPencilAlt, FaRegTrashAlt } from 'react-icons/fa';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 
-import Button from '@/components/common/Button';
-import { ConstructionData } from '@/pages/user/Schedule';
+import Button from '@components/common/Button';
+import { ConstructionData } from '@pages/user/Schedule';
 
 interface Props {
   schedule: ConstructionData;
