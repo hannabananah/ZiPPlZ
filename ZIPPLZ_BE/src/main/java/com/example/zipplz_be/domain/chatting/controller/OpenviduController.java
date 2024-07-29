@@ -7,6 +7,7 @@ import java.util.*;
 import com.example.zipplz_be.domain.chatting.entity.RecordingFile;
 import com.example.zipplz_be.domain.chatting.service.OpenviduService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import io.openvidu.java.client.*;
 import jakarta.annotation.PostConstruct;
@@ -14,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -108,7 +110,7 @@ public class OpenviduController {
 
     //해당 클라이언트를 세션에서 연결 삭제
     @DeleteMapping("/api/sessions")
-    public ResponseEntity<ResponseDTO<?>> deleteSession(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
+    public ResponseEntity<ResponseDTO<?>> deleteSession(Authentication authentication, @RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
             throws OpenViduJavaClientException, OpenViduHttpException {
         ResponseDTO<String> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -128,7 +130,9 @@ public class OpenviduController {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "세션이 존재하지 않음");
             } else {
-                int userSerial = jwtUtil.getUserSerialFromJwt(request.getHeader("Authorization"));
+                CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+                int userSerial = customUserDetails.getUserSerial();
+
                 String token = openviduService.deleteConnection((String) params.get("sessionId"), userSerial);
 
                 //세션의 연결된 유저 리스트 중 해당 토큰과 똑같은 값을 가진 커넥션 아이디를 뽑아와야 한다!!
@@ -161,7 +165,7 @@ public class OpenviduController {
 
     //connection 생성, 토큰 발급
     @PostMapping("/api/sessions/connections")
-    public ResponseEntity<ResponseDTO<String>> createConnection(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
+    public ResponseEntity<ResponseDTO<String>> createConnection(Authentication authentication, @RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
             throws OpenViduJavaClientException, OpenViduHttpException {
         ResponseDTO<String> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -176,7 +180,8 @@ public class OpenviduController {
                 ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
                 Connection connection = session.createConnection(properties);
 
-                int userSerial = jwtUtil.getUserSerialFromJwt(request.getHeader("Authorization"));
+                CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+                int userSerial = customUserDetails.getUserSerial();
 
                 //토큰 암호화 필요?
                 openviduService.createConnection(connection.getToken(), userSerial, (Integer) params.get("chatroomSerial"));
