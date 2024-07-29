@@ -1,30 +1,29 @@
-import { useEffect, useRef } from 'react';
+import { forwardRef, useEffect } from 'react';
 
 import { StreamManager } from 'openvidu-browser';
 
-interface Props {
+interface VideoProps {
   streamManager: StreamManager;
 }
 
-export default function Video({ streamManager }: Props) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const autoplay = true;
+const Video = forwardRef<HTMLVideoElement, VideoProps>(
+  ({ streamManager }, ref) => {
+    useEffect(() => {
+      if (streamManager && ref && 'current' in ref && ref.current) {
+        streamManager.addVideoElement(ref.current);
+      }
+    }, [streamManager, ref]);
 
-  useEffect(() => {
-    if (streamManager && videoRef.current) {
-      streamManager.addVideoElement(videoRef.current);
-    }
-  }, [streamManager]);
-
-  return (
-    <>
+    return (
       <video
-        autoPlay={autoplay}
-        ref={videoRef}
-        className="flex justify-center object-cover w-full h-full overflow-hidden basis-1/2 bg-zp-main-color rounded-zp-radius-big"
+        autoPlay
+        ref={ref}
+        className="flex justify-center object-cover w-full h-full rounded-zp-radius-big"
       >
         <track kind="captions" />
       </video>
-    </>
-  );
-}
+    );
+  }
+);
+
+export default Video;

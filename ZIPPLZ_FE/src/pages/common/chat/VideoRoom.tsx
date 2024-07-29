@@ -1,20 +1,52 @@
 import Options from '@components/chat/video/Options';
 import Session from '@components/chat/video/Session';
-import { useOpenVidu } from '@hooks/useOpenvidu';
+import useOpenVidu from '@hooks/useOpenvidu';
 import { Publisher, Subscriber } from 'openvidu-browser';
 
 export default function VideoRoom() {
-  const { publisher, subscriber, leaveSession } = useOpenVidu();
+  const {
+    session,
+    publisher,
+    subscriber,
+    leaveSession,
+    setSubscriber,
+    setPublisher,
+    OV,
+  } = useOpenVidu();
+
+  const publishAudio = (enabled: boolean) => {
+    if (publisher) {
+      publisher.publishAudio(enabled);
+    }
+  };
+
+  const publishVideo = (enabled: boolean) => {
+    if (publisher) {
+      publisher.publishVideo(enabled);
+    }
+  };
 
   return (
-    <div className="flex flex-col items-center justify-between w-full min-h-screen text-white bg-zp-light-orange">
-      <div className="flex flex-col w-full">
-        <Session
-          publisher={publisher as Publisher}
-          subscriber={subscriber as Subscriber}
-        />
+    <div className="flex flex-col items-center w-full h-screen text-white bg-zp-light-orange">
+      <div className="flex flex-col w-full h-full rounded-zp-radius-big">
+        {session && (
+          <Session
+            publisher={publisher as Publisher}
+            subscriber={subscriber as Subscriber}
+            setSubscriber={setSubscriber}
+          />
+        )}
       </div>
-      <Options leaveSession={leaveSession} />
+      <Options
+        leaveSession={leaveSession}
+        publisher={publisher as Publisher}
+        subscriber={subscriber as Subscriber}
+        session={session}
+        OV={OV}
+        setPublisher={setPublisher}
+        publishAudio={publishAudio}
+        publishVideo={publishVideo}
+      />
     </div>
   );
 }
