@@ -8,7 +8,7 @@ interface Props {
 }
 export default function SignUpNickName({ setNext, setLink }: Props) {
   const [nickName, setNickName] = useState<string>('');
-  setLink('/member/join/common/3/agree');
+  setLink('/member/login');
   useEffect(() => {
     if (nickName) setNext(true);
     else setNext(false);
