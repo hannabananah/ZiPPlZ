@@ -25,4 +25,6 @@ public class Portfolio {
     public int fieldId;
     @Column(name = "as_period")
     public int asPeriod;
+    @Column(name = "work_count")
+    public int workCount;
 }

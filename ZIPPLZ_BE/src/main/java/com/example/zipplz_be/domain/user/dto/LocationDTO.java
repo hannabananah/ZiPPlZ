@@ -5,7 +5,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class InsertCustomerDTO {
-    private int userSerial;
-    private String nickname;
+public class LocationDTO {
+    private int sidoCode;
+    private int gugunCode;
+    private String localName;
 }

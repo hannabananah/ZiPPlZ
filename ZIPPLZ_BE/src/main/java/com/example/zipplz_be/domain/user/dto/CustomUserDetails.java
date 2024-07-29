@@ -61,4 +61,9 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return user.getEmail();
     }
+
+    // 유저 userSerial
+    public int getUserSerial() {
+        return user.getUserSerial();
+    }
 }
