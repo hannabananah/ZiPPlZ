@@ -1,31 +1,30 @@
 import { create } from 'zustand';
 
 interface User {
-  userSerial: number;
-  fileSerial: number;
+  user_serial: number;
   email: string;
   password: string;
-  userName: string;
+  user_name: string;
   tel: string;
-  birthDate: Date;
-  delYn: number;
+  birth_date: Date;
+  del_yn: number;
 }
 
 interface Worker extends User {
-  workerSerial: number;
+  worker_serial: number;
   specialty: string;
   location: string;
   company: string;
-  companyAddress: string;
-  businessNumber: string;
+  company_address: string;
+  business_number: string;
   certificate: string;
-  hasAsBadge: number;
+  has_as_badge: number;
 }
 
 interface Customer extends User {
-  customerSerial: number;
+  customer_serial: number;
   nickname: string;
-  currentAddress: string;
+  current_address: string;
 }
 
 interface UserStoreState {
@@ -41,33 +40,32 @@ interface UserStoreState {
 
 // 목업 데이터 임시사용
 const defaultUser: User = {
-  userSerial: 1,
-  fileSerial: 101,
+  user_serial: 1,
   email: 'user@example.com',
   password: 'password123',
-  userName: '김철수',
+  user_name: '김철수',
   tel: '010-1234-5678',
-  birthDate: new Date('1990-01-01'),
-  delYn: 0,
+  birth_date: new Date('1990-01-01'),
+  del_yn: 0,
 };
 
 const defaultWorker: Worker = {
   ...defaultUser,
-  workerSerial: 201,
+  worker_serial: 201,
   specialty: '소프트웨어 엔지니어',
   location: '서울',
   company: '테크코리아',
-  companyAddress: '서울특별시 강남구 테헤란로 123',
-  businessNumber: '123-45-67890',
+  company_address: '서울특별시 강남구 테헤란로 123',
+  business_number: '123-45-67890',
   certificate: '전문가 인증서',
-  hasAsBadge: 1,
+  has_as_badge: 1,
 };
 
 const defaultCustomer: Customer = {
   ...defaultUser,
-  customerSerial: 301,
+  customer_serial: 301,
   nickname: '홍길동',
-  currentAddress: '부산광역시 해운대구 우동 456',
+  current_address: '부산광역시 해운대구 우동 456',
 };
 
 export const useUserStore = create<UserStoreState>((set) => ({

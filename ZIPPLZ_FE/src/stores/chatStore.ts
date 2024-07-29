@@ -1,12 +1,10 @@
 import { create } from 'zustand';
 
 interface ChatRoom {
-  id: number;
-  name: string;
-  message: string;
-  temp: string;
-  unread: number;
-  imageUrl: string;
+  chatroom_serial: number;
+  user_serial: number;
+  session_id: string;
+  chatroom_name: string;
 }
 
 interface ChatStore {
