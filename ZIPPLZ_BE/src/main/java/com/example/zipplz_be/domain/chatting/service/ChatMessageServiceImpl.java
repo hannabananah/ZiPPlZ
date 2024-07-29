@@ -3,7 +3,7 @@ package com.example.zipplz_be.domain.chatting.service;
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
-import com.example.zipplz_be.domain.chatting.exception.ChatRoomNotFoundException;
+import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException;
 import com.example.zipplz_be.domain.chatting.repository.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.ChatroomRepository;
 import com.example.zipplz_be.domain.user.entity.User;
@@ -35,7 +35,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         }
         Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatMessageRequestDTO.getChatroomSerial());
         if (chatroom == null) {
-            throw new ChatRoomNotFoundException("해당 채팅방이 존재하지 않습니다.");
+            throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
 
         ChatMessage chatMessage = ChatMessage.builder()
@@ -64,7 +64,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     @Override
     public void enter(int userSerial, int chatroomSerial) {
         if (!chatroomRepository.existsByChatroomSerial(chatroomSerial)) {
-            throw new ChatRoomNotFoundException("해당 채팅방이 존재하지 않습니다.");
+            throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
         Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatroomSerial);
 

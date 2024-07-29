@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WorkerRepository extends JpaRepository<Worker, Integer> {
     Boolean existsByUserSerial(User userSerial);
+    Worker findByUserSerial(User userSerial);
 }
