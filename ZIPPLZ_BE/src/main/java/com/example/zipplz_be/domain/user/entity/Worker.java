@@ -17,7 +17,6 @@ public class Worker {
     @OneToOne
     @JoinColumn(name = "user_serial")
     private User userSerial;
-    private int location;
     private String company;
     @Column(name = "company_address")
     private String companyAddress;
