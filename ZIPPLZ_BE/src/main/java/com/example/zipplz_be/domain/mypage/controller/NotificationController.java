@@ -56,7 +56,6 @@ public class NotificationController {
             // 해당 정보 가져오기
             int user_serial = (int) params.get("user_serial");
             List<Notification> list = notificationService.getNotificationList(user_serial);
-            System.out.println(list.size());
             if (list == null) {
                 status = HttpStatus.BAD_REQUEST;
                 responseDTO = new ResponseDTO<>(status.value(), "알림 가져오기 실패");

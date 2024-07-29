@@ -17,9 +17,11 @@ public class Worker {
     @OneToOne
     @JoinColumn(name = "user_serial")
     private User userSerial;
-    private int specialty;
-    private int location;
     private String company;
+    @Column(name = "company_address")
+    private String companyAddress;
+    @Column(name = "business_number")
+    private String businessNumber;
     private String certificate;
     @Column(name = "has_as_badge")
     private int hasAsBadge;
