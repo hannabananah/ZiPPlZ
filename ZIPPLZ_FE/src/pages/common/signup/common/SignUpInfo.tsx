@@ -186,6 +186,10 @@ export default function SignupInfo({ setActive, setLink }: Props) {
           value={phone}
           onChange={setPhone}
           placeholder="010-0000-0000"
+          inputType="signup"
+          fontSize="xl"
+          height={2}
+          radius="none"
         />
       </div>
     </>
