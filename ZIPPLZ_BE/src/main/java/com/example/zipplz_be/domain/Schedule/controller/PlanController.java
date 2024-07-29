@@ -38,12 +38,9 @@ public class PlanController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            String temp = request.getHeader("Authorization");
-            String token = temp.split(" ")[1];
-            //CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-            //int customerSerial = customUserDetails.getUserSerial();
-            int customerSerial = jwtUtil.getUserSerialFromJwt(token);
+            int customerSerial = customUserDetails.getUserSerial();
 
             List<Plan> planList = planService.getPlanService(customerSerial);
 
