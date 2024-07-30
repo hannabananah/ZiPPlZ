@@ -1,7 +1,6 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
-import com.example.zipplz_be.domain.chatting.exception.InvalidTokenException;
 import com.example.zipplz_be.domain.chatting.service.ChatMessageService;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
@@ -24,7 +23,7 @@ public class ChatMessageController {
      */
     @MessageMapping("/chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
-        System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!1");
+        System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!");
         chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
 //        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
     }
@@ -40,17 +39,11 @@ public class ChatMessageController {
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {
-        String authorization = headerAccessor.getFirstNativeHeader("Authorization");
+        String token = headerAccessor.getFirstNativeHeader("X-AUTH-TOKEN");
+        System.out.println("!!!!!!!!!X-AUTH-TOKEN!!!!!!!!!!" + token);
 
-        // Authorization 헤더 검증
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-            throw new InvalidTokenException("해당 토큰이 유효하지 않습니다.");
-        }
-
-        String token = authorization.split(" ")[1];
         Authentication authentication = jwtUtil.getAuthentication(token);
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-
         return customUserDetails.getUserSerial();
     }
 }
