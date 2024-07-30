@@ -10,6 +10,11 @@ import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
 import Community from '@pages/common/community/HousePostList';
 import Home from '@pages/common/home/Home';
+import Login from '@pages/common/login/LogIn';
+import FindIdPw from '@pages/common/login/find/FindIdPw';
+// import MyPage from '@pages/common/mypage/MyPage';
+import SignUp from '@pages/common/signup/SignUp';
+// import Workers from '@pages/common/workerinfo/WorkerInfoList';
 // import MyPage from '@pages/common/mypage/MyPage';
 // import Workers from '@pages/common/workerinfo/WorkerInfoList';
 import Schedule from '@pages/user/Schedule';
@@ -34,12 +39,6 @@ import Portfolio from '@pages/worker/Portfolio';
 import OverView from '@pages/worker/tabs/OverView';
 // import Review from '@pages/worker/tabs/Review';
 import WorkerSchedule from '@pages/worker/tabs/WorkerSchedule';
-
-import Login from './pages/common/login/LogIn';
-// import FindId from './pages/common/login/find/FindId';
-import FindIdPw from './pages/common/login/find/FindIdPw';
-// import FindPw from './pages/common/login/find/FindPw';
-import SignUp from './pages/common/signup/SignUp';
 
 export default function App() {
   return (

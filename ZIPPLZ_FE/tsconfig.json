@@ -13,7 +13,8 @@
       "@pages/*": ["pages/*"],
       "@utils/*": ["utils/*"],
       "@hooks/*": ["hooks/*"],
-      "@stores/*": ["stores/*"]
+      "@stores/*": ["stores/*"],
+      "@apis/*": ["apis/*"]
     },
 
     /* Bundler mode */

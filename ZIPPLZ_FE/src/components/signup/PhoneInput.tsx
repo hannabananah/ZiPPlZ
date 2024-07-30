@@ -4,7 +4,14 @@ interface PhoneInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
-  inputType: string;
+  inputType:
+    | 'search'
+    | 'login'
+    | 'signup'
+    | 'normal'
+    | 'textArea'
+    | 'file'
+    | 'error';
   height: number | string;
   fontSize: string;
   radius: string;

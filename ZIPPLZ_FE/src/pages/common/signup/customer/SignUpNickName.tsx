@@ -1,12 +1,18 @@
 import React, { useEffect, useState } from 'react';
 
+import { Customer } from '@apis/member/MemberApi';
 import Input from '@components/common/Input';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
+  setCustomer: React.Dispatch<React.SetStateAction<Customer>>;
 }
-export default function SignUpNickName({ setNext, setLink }: Props) {
+export default function SignUpNickName({
+  setNext,
+  setLink,
+  setCustomer,
+}: Props) {
   const [nickName, setNickName] = useState<string>('');
   setLink('/member/login');
   useEffect(() => {
@@ -25,6 +31,10 @@ export default function SignUpNickName({ setNext, setLink }: Props) {
         height={2}
         radius="none"
         onChange={(e: React.ChangeEvent) => {
+          setCustomer((prev: Customer) => ({
+            ...prev,
+            nickname: (e.target as HTMLInputElement).value,
+          }));
           setNickName((e.target as HTMLInputElement).value);
         }}
       />
