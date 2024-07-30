@@ -7,6 +7,7 @@ import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -33,6 +34,7 @@ public class ChatMessageController {
      websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/chat/message")
+//    @SendTo("sub/chatroom/1")
     public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
 //        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
