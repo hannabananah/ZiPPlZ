@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-import { Worker } from '@/apis/member/MemberApi';
-import { getFields } from '@/apis/member/MemberApi';
-import Button from '@/components/common/Button';
+import { Worker } from '@apis/member/MemberApi';
+import { getFields } from '@apis/member/MemberApi';
+import Button from '@components/common/Button';
 
 interface Field {
   fieldCode: number;

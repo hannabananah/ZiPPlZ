@@ -1,51 +1,52 @@
-import { useState } from 'react';
+// import { useState } from 'react';
 import { IoIosArrowRoundBack } from 'react-icons/io';
-import Modal from 'react-modal';
+// import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@components/common/Button';
+// import Button from '@components/common/Button';
 
-interface Props {
-  type: string;
-}
+// interface Props {
+//   type: string;
+// }
 
-const customModalStyles: ReactModal.Styles = {
-  overlay: {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    zIndex: 1000,
-  },
-  content: {
-    maxWidth: '468px',
-    minWidth: '350px',
-    maxHeight: '300px',
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    borderRadius: '1rem',
-    backgroundColor: 'white',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    padding: '16px',
-    zIndex: 1500,
-  },
-};
-Modal.setAppElement('#root');
-export default function SignUpHead({ type }: Props) {
+// const customModalStyles: ReactModal.Styles = {
+//   overlay: {
+//     position: 'fixed',
+//     top: 0,
+//     left: 0,
+//     right: 0,
+//     bottom: 0,
+//     backgroundColor: 'rgba(0, 0, 0, 0.5)',
+//     zIndex: 1000,
+//   },
+//   content: {
+//     maxWidth: '468px',
+//     minWidth: '350px',
+//     maxHeight: '300px',
+//     position: 'absolute',
+//     top: '50%',
+//     left: '50%',
+//     transform: 'translate(-50%, -50%)',
+//     borderRadius: '1rem',
+//     backgroundColor: 'white',
+//     display: 'flex',
+//     flexDirection: 'column',
+//     justifyContent: 'center',
+//     padding: '16px',
+//     zIndex: 1500,
+//   },
+// };
+// Modal.setAppElement('#root');
+export default function SignUpHead() {
+  //({ type }: Props) {
   const navigate = useNavigate();
-  const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
-  const openModal = function () {
-    setModalIsOpen(true);
-  };
-  const closeModal = function () {
-    setModalIsOpen(false);
-  };
+  // const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  // const openModal = function () {
+  //   setModalIsOpen(true);
+  // };
+  // const closeModal = function () {
+  //   setModalIsOpen(false);
+  // };
   return (
     <>
       <div className="w-full flex justify-between items-center">
@@ -63,7 +64,7 @@ export default function SignUpHead({ type }: Props) {
           </p>
         )} */}
       </div>
-      <Modal
+      {/* <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={customModalStyles}
@@ -93,7 +94,7 @@ export default function SignUpHead({ type }: Props) {
             }}
           />
         </div>
-      </Modal>
+      </Modal> */}
     </>
   );
 }

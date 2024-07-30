@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 
-import { Worker } from '@/apis/member/MemberApi';
-import { getGugun, getSido } from '@/apis/member/MemberApi';
-import Button from '@/components/common/Button';
+import { Worker } from '@apis/member/MemberApi';
+import { getGugun, getSido } from '@apis/member/MemberApi';
+import Button from '@components/common/Button';
 
 interface Sido {
   sidoCode: number;

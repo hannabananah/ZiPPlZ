@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { Customer } from '@/apis/member/MemberApi';
-import Input from '@/components/common/Input';
+import { Customer } from '@apis/member/MemberApi';
+import Input from '@components/common/Input';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;

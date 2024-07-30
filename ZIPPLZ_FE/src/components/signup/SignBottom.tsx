@@ -2,8 +2,14 @@ import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-import { signUp, signUpCustomer, signUpWorker } from '@/apis/member/MemberApi';
-import { Customer, User, Worker } from '@/apis/member/MemberApi';
+import {
+  Customer,
+  User,
+  Worker,
+  signUp,
+  signUpCustomer,
+  signUpWorker,
+} from '@apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Loading from '@components/common/Loading';
 
@@ -14,7 +20,7 @@ interface Props {
   phrase?: string;
   link: string;
   user: User;
-  type: string;
+  type?: string;
   customer: Customer;
   worker: Worker;
   setNext: React.Dispatch<React.SetStateAction<boolean>>;

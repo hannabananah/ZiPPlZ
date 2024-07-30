@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { Worker } from '@/apis/member/MemberApi';
-import Input from '@/components/common/Input';
-import RegistrationInput from '@/components/signup/RegistrationInput';
+import { Worker } from '@apis/member/MemberApi';
+import Input from '@components/common/Input';
+import RegistrationInput from '@components/signup/RegistrationInput';
 
 interface Props {
   setActive: React.Dispatch<React.SetStateAction<boolean>>;

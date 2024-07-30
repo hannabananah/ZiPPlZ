@@ -1,7 +1,5 @@
-import axios from 'axios';
-
-import { END_POINT } from '../apiConstants';
-import { axiosInstance } from './../axiosInstance';
+import { END_POINT } from '@apis/apiConstants';
+import { axiosInstance } from '@apis/axiosInstance';
 
 export interface User {
   email: string;

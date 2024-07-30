@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { Customer, User, Worker } from '@/apis/member/MemberApi';
@@ -44,7 +44,7 @@ export default function SignUp() {
   const [link, setLink] = useState<string>('');
   return (
     <div className="w-full relative  bg-zp-white  min-h-screen p-4 gap-4 flex flex-col  max-w-[600px] ">
-      <SignUpHead type={type} />
+      <SignUpHead />
       {orderNumber === 2 && type === 'common' && phrase === 'info' && (
         <SignUpInfo setActive={setActive} setLink={setLink} setUser={setUser} />
       )}

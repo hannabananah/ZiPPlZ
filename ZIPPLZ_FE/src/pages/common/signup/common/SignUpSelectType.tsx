@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import {
   HammerandWrench,
   HammerandWrenchFilled,
   Telescope,
   TelescopeFilled,
-} from '@/assets/svg/icons';
+} from '@assets/svg/icons';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
