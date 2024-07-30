@@ -11,4 +11,7 @@ public interface FieldRepository extends JpaRepository<Field, Integer> {
     @Query(value="SELECT * " +
             "FROM Field" , nativeQuery = true)
     List<FieldDTO> getFields();
+
+    Field findByFieldName(String fieldName);
+    Field findByFieldCode(int fieldCode);
 }

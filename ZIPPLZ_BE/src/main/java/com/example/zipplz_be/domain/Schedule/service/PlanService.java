@@ -1,15 +1,21 @@
 package com.example.zipplz_be.domain.Schedule.service;
 
 import com.example.zipplz_be.domain.Schedule.entity.Plan;
+import com.example.zipplz_be.domain.Schedule.entity.Work;
 import com.example.zipplz_be.domain.Schedule.exception.CustomerNotFoundException;
 import com.example.zipplz_be.domain.Schedule.repository.PlanRepository;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-
+import org.springframework.data.domain.Pageable;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class PlanService {
@@ -23,7 +29,7 @@ public class PlanService {
         this.customerRepository= customerRepository;
         this.userRepository = userRepository;
     }
-
+    @Transactional
     public List<Plan> getPlanService(int userSerial) {
         //주어진 userSerial로부터 User 객체를 찾고,
         User user = userRepository.findByUserSerial(userSerial);
@@ -38,4 +44,5 @@ public class PlanService {
 
         return planRepository.findBycustomerSerial(customer);
     }
+
 }
