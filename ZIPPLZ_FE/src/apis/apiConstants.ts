@@ -1,4 +1,4 @@
-export const BASE_URL: string = import.meta.env.VITE_BASE_URL;
+export const BASE_URL: string = import.meta.env.VITE_APP_BASE_URL;
 
 export const END_POINT = {
   //로그인 회원가입
