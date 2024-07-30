@@ -19,7 +19,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     // 클라이언트에서 WebSocket에 접속할 수 있는 endpoint를 지정한다
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/ws")     // ex. wss://localhost:3000/ws
+        registry.addEndpoint("/ws")     // ex. ws://localhost:5000/ws
                 .setAllowedOrigins("*");
     }
 
@@ -40,8 +40,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registry.setApplicationDestinationPrefixes("/pub");
     }
 
-//    @Override
-//    public void configureClientInboundChannel(ChannelRegistration registration) {
-//        WebSocketMessageBrokerConfigurer.super.configureClientInboundChannel(registration);
-//    }
+    @Override
+    public void configureClientInboundChannel(ChannelRegistration registration) {
+        WebSocketMessageBrokerConfigurer.super.configureClientInboundChannel(registration);
+    }
 }
