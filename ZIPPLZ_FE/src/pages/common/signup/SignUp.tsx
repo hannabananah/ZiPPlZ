@@ -6,6 +6,7 @@ import SignBottom from '@components/signup/SignBottom';
 import SignUpHead from '@components/signup/SignUpHead';
 
 import SignUpAgree from './common/SignUpAgree';
+import SignUpExtraInfo from './common/SignUpExtraInfo';
 import SignUpInfo from './common/SignUpInfo';
 import SignUpSelectType from './common/SignUpSelectType';
 import SignUpNickName from './customer/SignUpNickName';
@@ -81,6 +82,13 @@ export default function SignUp() {
           setNext={setNext}
           setLink={setLink}
           setWorker={setWorker}
+        />
+      )}
+      {phrase === 'extraInfo' && type === 'common' && orderNumber === 1 && (
+        <SignUpExtraInfo
+          setNext={setNext}
+          setLink={setLink}
+          setUser={setUser}
         />
       )}
       <SignBottom
