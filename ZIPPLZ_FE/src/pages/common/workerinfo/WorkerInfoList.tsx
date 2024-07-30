@@ -170,7 +170,7 @@ export default function WorkerInfoList() {
               options={options}
               selectedValue={selectedValue}
               setSelectedValue={handleSortSelect}
-              width={5}
+              width={6}
               height={2.5}
               fontSize="xs"
               radius="btn"

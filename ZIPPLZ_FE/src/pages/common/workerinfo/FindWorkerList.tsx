@@ -8,7 +8,9 @@ import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import Button from '@/components/common/Button';
 import Input from '@components/common/Input';
+import Selectbar from '@components/common/Selectbar';
 import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 
 // newPost의 타입을 정의합니다.
@@ -27,9 +29,11 @@ export default function FindWorkerList() {
   const navigate = useNavigate();
   const location = useLocation();
   const newPost = (location.state as LocationState)?.newPost;
+  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+  const [inputValue, setInputValue] = useState<string>('');
 
   const handleWritePost = () => {
-    navigate('/FindWorkerDetail'); // FindWorkerDetail 페이지로 이동
+    navigate('/FindWorkerDetailCreate'); // FindWorkerDetail 페이지로 이동
   };
 
   const handleInputClick = () => {
@@ -51,8 +55,10 @@ export default function FindWorkerList() {
   // 정렬 옵션의 타입을 정의합니다.
   type SortOption = '평점순' | '최신순' | '과거순';
 
-  const handleSortSelect = (sortOption: SortOption) => {
+  const handleSortSelect = (sortOption: string) => {
+    // 수정된 부분
     console.log(`Selected sort option: ${sortOption}`);
+    setSelectedValue(sortOption as SortOption); // 타입 강제 변환
     setIsSortDropdownOpen(false);
   };
 
@@ -60,6 +66,12 @@ export default function FindWorkerList() {
     navigate(path);
     setIsDropdownOpen(false); // 드롭다운을 닫습니다.
   };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setInputValue(e.target.value);
+  };
+
+  const options: SortOption[] = ['평점순', '최신순', '과거순'];
 
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
@@ -98,7 +110,7 @@ export default function FindWorkerList() {
           )}
         </div>
 
-        {/* 위치 및 날짜 입력 */}
+        {/* 이전에 만든 위치 및 날짜 입력
         <div className="flex justify-center space-x-4 my-6">
           <div className="relative flex items-center space-x-2">
             <FaMapMarkerAlt
@@ -127,9 +139,53 @@ export default function FindWorkerList() {
               onClick={handleInputClick2} // 클릭 시 handleInputClick2 함수 호출
             />
           </div>
+        </div> */}
+
+        {/* 위치 및 날짜 입력 */}
+        <div className="flex justify-center space-x-4 my-4">
+          <div className="relative flex items-center space-x-2">
+            <FaMapMarkerAlt
+              className="absolute left-4 text-zp-sub-color"
+              size={20}
+            />
+            <div>
+              <Input
+                placeholder="인천 계양구, 인천 부평구 외 2개"
+                inputType="search"
+                type="search"
+                width={16.875}
+                height={2.5}
+                fontSize="xs"
+                radius="btn"
+                value={inputValue}
+                onClick={handleInputClick}
+                additionalStyle="pl-8 bg-zp-light-beige border-b-2 font-bold border-zp-sub-color"
+              />
+            </div>
+          </div>
+          <div className="relative flex items-center space-x-2">
+            <FaRegCalendarAlt
+              className="absolute left-4 text-zp-sub-color"
+              size={20}
+            />
+            <div>
+              <Input
+                placeholder="시공 날짜 선택"
+                inputType="search"
+                type="search"
+                width={16.875}
+                height={2.5}
+                fontSize="xs"
+                radius="btn"
+                value={inputValue}
+                onClick={handleInputClick2}
+                additionalStyle="pl-8 bg-zp-light-beige border-b-2 font-bold border-zp-sub-color"
+              />
+            </div>
+          </div>
         </div>
 
-        {/* 정렬 버튼 */}
+        {/* 이전에 만든 정렬 버튼
         <div className="relative flex justify-end">
           <button
             className="w-18 h-12 text-zp-xs flex items-center space-x-2"
@@ -160,9 +216,29 @@ export default function FindWorkerList() {
               </button>
             </div>
           )}
+        </div> */}
+
+        {/* 정렬 버튼 */}
+        <div className="relative flex justify-end">
+          <FaSortAmountDown />
+          <div>
+            <Selectbar
+              backgroundColor="none"
+              fontColor="black"
+              options={options}
+              selectedValue={selectedValue}
+              setSelectedValue={handleSortSelect}
+              width={6}
+              height={2.5}
+              fontSize="xs"
+              radius="btn"
+              border="none"
+              hover="light-gray"
+            />
+          </div>
         </div>
 
-        {/* 검색 입력 필드 */}
+        {/* 이전에 작성한 검색 입력 필드
         <div className="flex justify-center items-center space-x-2 my-4">
           <HiMagnifyingGlass />
           <input
@@ -171,20 +247,43 @@ export default function FindWorkerList() {
             name="input"
             placeholder="글의 제목이나 작성자 이름을 입력하세요"
           />
+        </div> */}
+
+        {/* 검색 입력 필드 */}
+        <div className="flex justify-center items-center space-x-2 my-4">
+          <HiMagnifyingGlass />
+          <Input
+            placeholder="글의 제목이나 작성자 이름을 입력하세요"
+            inputType="normal"
+            type="text"
+            width={15}
+            height={2.5}
+            fontSize="xs"
+            radius="btn"
+            value={inputValue}
+            onChange={handleInputChange}
+            additionalStyle="bg-zp-light-beige font-bold border-zp-sub-color text-zp-gray"
+          />
         </div>
 
         {/* 글 작성하기 버튼 */}
         <div className="flex justify-end mb-4">
-          <button
-            onClick={handleWritePost}
-            className="w-18 px-4 text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center"
-          >
-            글 작성하기
-          </button>
+          <div className="w-18 px-4 text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
+            <Button
+              children="글 작성하기"
+              buttonType="light"
+              width={3.5}
+              height={1}
+              fontSize="2xs"
+              radius="btn"
+              onClick={handleWritePost}
+            />
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-3">
           {/* 임시로 하드 코딩 */}
+          {/* backend 유저 정보 데이터 받고나서 수정 예정 */}
           <WorkerInfoListItem />
           <WorkerInfoListItem />
           <WorkerInfoListItem />
@@ -202,10 +301,11 @@ export default function FindWorkerList() {
         )}
 
         {/* 나중에 추가할 요소들 */}
-        {/* 글 제목, 글 내용, 닉네임, 작업희망 날짜, 위치 표시 */}
-        {/* 해당되는 구인글 없으면 관련 이미지 표시 */}
+        {/* 글 제목, 글 내용, 닉네임, 작업희망 날짜, 위치 연동 */}
+        {/* 클릭 시 글 상세 페이지로 이동 */}
+        {/* 해당되는 구인글 없으면 "게시물이 없습니다" 이미지 표시 */}
+        {/* 게시물 개수를 확인하는 변수를 만들고, 개수가 0이면 "게시물이 없습니다" 이미지 띄우기 */}
         {/* 무한스크롤 */}
-        {/* Bottom-tab */}
       </div>
     </div>
   );

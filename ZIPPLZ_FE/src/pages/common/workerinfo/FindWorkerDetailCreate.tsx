@@ -1,4 +1,4 @@
-import { ChangeEvent, MouseEvent, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { CiCamera, CiSearch } from 'react-icons/ci';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
@@ -94,8 +94,8 @@ export default function FindWorkerDetailCreate() {
           </div>
 
           {/* 사진 첨부 버튼 */}
-          <div className="font-bold h-32 flex items-center">
-            <div className="text-left w-1/6">
+          <div className="flex items-start mt-6 space-x-4">
+            <div className="w-1/6">
               <div className="relative">
                 <label
                   htmlFor="file-upload"
@@ -117,9 +117,9 @@ export default function FindWorkerDetailCreate() {
               </div>
             </div>
             {/* 사진 미리보기 */}
-            <div className="w-full flex overflow-x-auto mt-4">
+            <div className="flex-1 flex overflow-x-auto space-x-2">
               {images.map((image, index) => (
-                <div key={index} className="relative w-20 h-20 mr-2">
+                <div key={index} className="relative w-20 h-20 flex-shrink-0">
                   <img
                     src={image}
                     alt={`Preview ${index}`}
@@ -245,6 +245,10 @@ export default function FindWorkerDetailCreate() {
           </div>
         </div>
       </div>
+
+      {/* 추가 해야 하는 기능 */}
+      {/* 같은 사진 파일 안올라가게 */}
+      {/* 사진 10장 넘게 올리려하면 메시지 뜨게 */}
     </>
   );
 }
