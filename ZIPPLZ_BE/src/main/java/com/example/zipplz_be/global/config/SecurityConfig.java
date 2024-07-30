@@ -47,9 +47,9 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
         http
                 .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/login", "/", "/users/join").permitAll()
+                        .requestMatchers("/users/login", "/", "/users/join").permitAll()
 //                        .anyRequest().authenticated());
-                        .anyRequest().permitAll());
+                        .anyRequest().authenticated());
         http
                 .addFilterAt(new JWTFilter(jwtUtil), LoginFilter.class);
         http
