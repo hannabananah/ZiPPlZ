@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 
 @RequiredArgsConstructor
 @Controller
@@ -26,34 +27,23 @@ public class ChatMessageController {
     @MessageMapping("/chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!");
-//        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
-        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
+        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
+//        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
     }
 
     /*
      websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/chat/message")
-//    @SendTo("sub/chatroom/1")
     public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
-//        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
-        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial());
+        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
+//        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial());
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {
         String token = headerAccessor.getFirstNativeHeader("X-AUTH-TOKEN");
         System.out.println("!!!!!!!!!X-AUTH-TOKEN!!!!!!!!!!" + token);
-
-        // Authorization 헤더 검증
-//        if (authorization == null || !authorization.startsWith("Bearer ")) {
-//            System.out.println("!!!!!!!!!!authorization!!!!!!!!!!!" + authorization);
-//            throw new InvalidTokenException("해당 토큰이 유효하지 않습니다.");
-//        }
-//
-//        String token = authorization.split(" ")[1];
-//        Authentication authentication = jwtUtil.getAuthentication(token);
-//        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         Authentication authentication = jwtUtil.getAuthentication(token);
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
