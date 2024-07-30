@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import { Customer, User, Worker } from '@/apis/member/MemberApi';
 import SignBottom from '@/components/signup/SignBottom';
 import SignUpHead from '@/components/signup/SignUpHead';
 
@@ -12,13 +13,6 @@ import SignUpWorkerDetail from './worker/SignUpWorkerDetail';
 import SignUpWorkerRegion from './worker/SignUpWorkerRegion';
 import SignUpWorkerSkill from './worker/SignUpWorkerSkill';
 
-export interface User {
-  email: string;
-  password: string;
-  userName: string;
-  birthDate: string;
-  tel: string;
-}
 export default function SignUp() {
   const { order, type, phrase } = useParams<{
     order: string;
@@ -31,6 +25,18 @@ export default function SignUp() {
     userName: '',
     birthDate: '',
     tel: '',
+  });
+  const [customer, setCustomer] = useState<Customer>({
+    userSerial: 0,
+    nickname: '',
+  });
+  const [worker, setWorker] = useState<Worker>({
+    userSerial: 0,
+    locationList: [],
+    fieldList: [],
+    businessNumber: '',
+    company: '',
+    companyAddress: '',
   });
   const orderNumber: number = order ? parseInt(order) : 0;
   const [next, setNext] = useState<boolean>(false);
@@ -46,19 +52,35 @@ export default function SignUp() {
         <SignUpSelectType setNext={setNext} setLink={setLink} />
       )}
       {orderNumber === 3 && phrase === 'nickname' && (
-        <SignUpNickName setLink={setLink} setNext={setNext} />
+        <SignUpNickName
+          setLink={setLink}
+          setNext={setNext}
+          setCustomer={setCustomer}
+        />
       )}
       {phrase === 'agree' && (
         <SignUpAgree setLink={setLink} setNext={setNext} />
       )}
       {phrase === 'detail' && type === 'worker' && (
-        <SignUpWorkerDetail setActive={setActive} setLink={setLink} />
+        <SignUpWorkerDetail
+          setActive={setActive}
+          setLink={setLink}
+          setWorker={setWorker}
+        />
       )}
       {phrase === 'skills' && type === 'worker' && (
-        <SignUpWorkerSkill setNext={setNext} setLink={setLink} />
+        <SignUpWorkerSkill
+          setNext={setNext}
+          setLink={setLink}
+          setWorker={setWorker}
+        />
       )}
       {phrase === 'region' && type === 'worker' && (
-        <SignUpWorkerRegion setNext={setNext} setLink={setLink} />
+        <SignUpWorkerRegion
+          setNext={setNext}
+          setLink={setLink}
+          setWorker={setWorker}
+        />
       )}
       <SignBottom
         order={orderNumber}
@@ -68,7 +90,12 @@ export default function SignUp() {
         link={link}
         setNext={setNext}
         setActive={setActive}
+        setCustomer={setCustomer}
+        setWorker={setWorker}
         user={user}
+        type={type}
+        customer={customer}
+        worker={worker}
       />
     </div>
   );

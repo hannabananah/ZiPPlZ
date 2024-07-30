@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 
+import { Worker } from '@/apis/member/MemberApi';
 import Input from '@/components/common/Input';
 import RegistrationInput from '@/components/signup/RegistrationInput';
 
 interface Props {
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
+  setWorker: React.Dispatch<React.SetStateAction<Worker>>;
 }
-export default function SignupInfo({ setActive, setLink }: Props) {
+export default function SignupWorkerDetail({
+  setActive,
+  setLink,
+  setWorker,
+}: Props) {
   const [registrationNumber, setRegistrationNumber] = useState<string>('');
 
   const [groupName, setGroupName] = useState<string>('');
@@ -26,7 +32,12 @@ export default function SignupInfo({ setActive, setLink }: Props) {
       setActive(false);
     }
   }, [registrationNumber, groupName, address]);
-
+  useEffect(() => {
+    setWorker((prev: Worker) => ({
+      ...prev,
+      businessNumber: registrationNumber,
+    }));
+  }, [registrationNumber]);
   return (
     <>
       <div className="relative flex flex-col bg-zp-white w-full p-4 gap-4">
@@ -47,6 +58,10 @@ export default function SignupInfo({ setActive, setLink }: Props) {
           height={2}
           onChange={(e: React.ChangeEvent) => {
             setGroupName((e.target as HTMLInputElement).value);
+            setWorker((prev: Worker) => ({
+              ...prev,
+              company: (e.target as HTMLInputElement).value,
+            }));
           }}
           fontSize="xl"
           className="p-1"
@@ -63,6 +78,10 @@ export default function SignupInfo({ setActive, setLink }: Props) {
           height={2}
           onChange={(e: React.ChangeEvent) => {
             setAddress((e.target as HTMLInputElement).value);
+            setWorker((prev: Worker) => ({
+              ...prev,
+              companyAddress: (e.target as HTMLInputElement).value,
+            }));
           }}
           fontSize="xl"
           className="p-1"
