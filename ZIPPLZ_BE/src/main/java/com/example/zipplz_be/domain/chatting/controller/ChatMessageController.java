@@ -1,17 +1,14 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
-import com.example.zipplz_be.domain.chatting.exception.InvalidTokenException;
 import com.example.zipplz_be.domain.chatting.service.ChatMessageService;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 
 @RequiredArgsConstructor
 @Controller
