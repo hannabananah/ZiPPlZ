@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   FaMapMarkerAlt,
   FaRegCalendarAlt,
@@ -8,6 +8,7 @@ import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import Input from '@/components/common/Input';
 import WorkerInfoListItem from '@/components/worker/WorkerInfoListItem';
 
 export default function FindWorkerList() {
@@ -55,7 +56,7 @@ export default function FindWorkerList() {
           <div className="relative flex justify-center items-center">
             <div
               onClick={toggleDropdown}
-              className="cursor-pointer flex items-center space-x-2 absolute left-1/2 transform -translate-x-1/2"
+              className="cursor-pointer flex items-center space-x-2"
             >
               <div className="w-44 h-6 font-bold text-zp-lg text-zp-black text-center">
                 전문 시공자 구하기
@@ -68,7 +69,7 @@ export default function FindWorkerList() {
 
             {/* 드롭다운 메뉴 */}
             {isDropdownOpen && (
-              <div className="absolute top-full mt-2 w-64 bg-white border border-gray-200 shadow-lg rounded-lg z-50">
+              <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
                 <button
                   onClick={() => handleNavigate('/WorkerInfoList')}
                   className="block w-full text-left px-4 py-2 hover:bg-gray-100"
@@ -170,13 +171,11 @@ export default function FindWorkerList() {
             </button>
           </div>
 
-          <div className="mt-3">
+          <div className="grid grid-cols-1 gap-3">
+            {/* 임시로 하드 코딩 */}
             <WorkerInfoListItem />
-          </div>
-          <div className="mt-3">
             <WorkerInfoListItem />
-          </div>
-          <div className="mt-3">
+            <WorkerInfoListItem />
             <WorkerInfoListItem />
           </div>
 
@@ -191,7 +190,6 @@ export default function FindWorkerList() {
           )}
 
           {/* 나중에 추가할 요소들 */}
-          {/* 1줄에 글 1개 */}
           {/* 글 제목, 글 내용, 닉네임, 작업희망 날짜, 위치 표시 */}
           {/* 해당되는 구인글 없으면 관련 이미지 표시 */}
           {/* 무한스크롤 */}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {
   FaMapMarkerAlt,
   FaRegCalendarAlt,
@@ -8,6 +8,8 @@ import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import Input from '@/components/common/Input';
+import Selectbar from '@/components/common/Selectbar';
 import FindWorkerListItem from '@/components/worker/FindWorkerListItem';
 
 export default function WorkerInfoList() {
@@ -45,6 +47,16 @@ export default function WorkerInfoList() {
   const handleNavigate = (path) => {
     navigate(path);
     setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+  };
+
+  const [selectedValue, setSelectedValue] = useState('정렬');
+  const options = ['평점순', '최신순', '과거순'];
+  const options2 = ['전문 시공자 둘러보기', '전문 시공자 구하기'];
+
+  const [inputValue, setInputValue] = useState('');
+
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
   };
 
   return (
@@ -85,6 +97,7 @@ export default function WorkerInfoList() {
             )}
           </div>
 
+          {/* 공종 선택 버튼 리스트 임시로 만듦 */}
           <div className="flex justify-center">
             <div>공종 선택 버튼 리스트</div>
           </div>
@@ -102,85 +115,93 @@ export default function WorkerInfoList() {
                 className="absolute left-4 text-zp-sub-color"
                 size={20}
               />
-              <input
-                className="w-[270px] pl-8 bg-zp-light-beige text-zp-xs border-b-2 font-bold border border-zp-sub-color rounded-zp-radius-btn p-2"
-                type="text"
-                name="location"
-                placeholder="인천 계양구, 인천 부평구 외 2개"
-                onClick={handleInputClick} // 클릭 시 handleInputClick 함수 호출
-              />
+              <div>
+                <Input
+                  placeholder="인천 계양구, 인천 부평구 외 2개"
+                  inputType="search"
+                  type="search"
+                  width={16.875}
+                  height={2.5}
+                  fontSize="xs"
+                  radius="btn"
+                  value={inputValue}
+                  onClick={handleInputClick}
+                  additionalStyle="pl-8 bg-zp-light-beige border-b-2 font-bold border-zp-sub-color"
+                />
+              </div>
             </div>
             <div className="relative flex items-center space-x-2">
               <FaRegCalendarAlt
                 className="absolute left-4 text-zp-sub-color"
                 size={20}
               />
-              <input
-                className="w-[270px] pl-8 bg-zp-light-beige text-zp-xs border-b-2 font-bold border border-zp-sub-color rounded-zp-radius-btn p-2"
-                type="text"
-                name="workDateSelect"
-                placeholder="시공 날짜 선택"
-                onClick={handleInputClick2} // 클릭 시 handleInputClick 함수 호출
-              />
+              <div>
+                <Input
+                  placeholder="시공 날짜 선택"
+                  inputType="search"
+                  type="search"
+                  width={16.875}
+                  height={2.5}
+                  fontSize="xs"
+                  radius="btn"
+                  value={inputValue}
+                  onClick={handleInputClick2}
+                  additionalStyle="pl-8 bg-zp-light-beige border-b-2 font-bold border-zp-sub-color"
+                />
+              </div>
             </div>
           </div>
 
           {/* 정렬 버튼 */}
+
           <div className="relative flex justify-end">
-            <button
-              className="w-18 h-12 text-zp-xs flex items-center space-x-2"
-              onClick={toggleSortDropdown}
-            >
-              <FaSortAmountDown />
-              <span>정렬</span>
-            </button>
-            {isSortDropdownOpen && (
-              <div className="rounded-zp-radius-big bg-zp-white absolute top-full mt-2 right-0 w-20 bg-white border border-gray-200 shadow-lg rounded-lg z-50">
-                <button
-                  onClick={() => handleSortSelect('평점순')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
-                  평점순
-                </button>
-                <button
-                  onClick={() => handleSortSelect('최신순')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
-                  최신순
-                </button>
-                <button
-                  onClick={() => handleSortSelect('과거순')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-                >
-                  과거순
-                </button>
-              </div>
-            )}
+            <FaSortAmountDown />
+            <div>
+              <Selectbar
+                backgroundColor="none"
+                fontColor="black"
+                options={options}
+                selectedValue="정렬"
+                setSelectedValue={setSelectedValue}
+                width={5}
+                height={2.5}
+                fontSize="xs"
+                radius="btn"
+                border="none"
+                hover="light-gray"
+              />
+            </div>
           </div>
 
           {/* 시공업자의 이름을 입력하세요. */}
           {/* 검색 입력 필드 */}
           <div className="flex justify-center items-center space-x-2 my-4">
             <HiMagnifyingGlass />
-            <input
-              className="w-48 bg-zp-light-beige text-zp-xs border-b-2 font-bold border-zp-sub-color outline-none p-2"
-              type="text"
-              name="input"
+            <Input
               placeholder="시공업자의 이름을 입력하세요"
+              inputType="normal"
+              type="text"
+              width={12}
+              height={2.5}
+              fontSize="xs"
+              radius="btn"
+              value={inputValue}
+              onChange={handleInputChange}
+              additionalStyle="bg-zp-light-beige font-bold border-zp-sub-color text-zp-gray"
             />
           </div>
 
           {/* 시공업자 정보 컴포넌트(줄당 3개) */}
-          <div className="mt-4 flex justify-center space-x-5">
+          {/* 컴포넌트 클릭 시 시공업자 상세 페이지로 이동되게 코드 수정 필요 */}
+
+          <div className="grid grid-cols-3 gap-3">
+            {/* 임시로 하드 코딩 */}
+            <FindWorkerListItem />
             <FindWorkerListItem />
             <FindWorkerListItem />
             <FindWorkerListItem />
           </div>
-          <div className="mt-4 flex justify-center space-x-5">
-            <FindWorkerListItem />
-            <FindWorkerListItem />
-            <FindWorkerListItem />
-          </div>
+
           {/* 해당되는 시공업자가 없으면 관련 이미지 표시 */}
           {/* 무한스크롤 */}
         </div>

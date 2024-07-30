@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { CiCamera, CiSearch } from 'react-icons/ci';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+
+import Button from '@/components/common/Button';
+import Input from '@components/common/Input';
 
 export default function FindWorkerDetailCreate() {
   const [images, setImages] = useState([]);
@@ -12,6 +15,7 @@ export default function FindWorkerDetailCreate() {
   const [workDetail, setWorkDetail] = useState('');
 
   const navigate = useNavigate();
+  const maxImages = 10;
 
   const handleImageUpload = (event) => {
     const files = Array.from(event.target.files);
@@ -24,7 +28,10 @@ export default function FindWorkerDetailCreate() {
     });
 
     Promise.all(readerPromises).then((results) => {
-      setImages((prevImages) => [...prevImages, ...results]);
+      setImages((prevImages) => [
+        ...prevImages,
+        ...results.slice(0, maxImages - prevImages.length),
+      ]);
     });
   };
 
@@ -80,15 +87,17 @@ export default function FindWorkerDetailCreate() {
           </div>
 
           {/* 사진 첨부 버튼 */}
-          {/* 사진 첨부 버튼 */}
-          <div className="font-bold h-20 flex items-center justify-start px-6">
-            <div className="text-left">
-              <div className="relative mt-2">
+          <div className="font-bold h-32 flex items-center">
+            <div className="text-left w-1/6">
+              <div className="relative">
                 <label
                   htmlFor="file-upload"
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
+                  className="flex items-center justify-center w-20 h-20 bg-zp-white border border-zp-main-color rounded-zp-radius-btn p-2 cursor-pointer"
                 >
-                  <CiCamera size={24} />
+                  <CiCamera size={24} className="text-zp-main-color" />
+                  <div className="absolute bottom-2 text-zp-xs text-zp-gray">
+                    {images.length}/{maxImages}
+                  </div>
                 </label>
                 <input
                   id="file-upload"
@@ -99,56 +108,65 @@ export default function FindWorkerDetailCreate() {
                   multiple
                 />
               </div>
-              {images.length > 0 && (
-                <div className="relative mt-4 flex flex-wrap gap-2">
-                  {images.map((image, index) => (
-                    <div key={index} className="relative">
-                      <img
-                        src={image}
-                        alt={`Preview ${index}`}
-                        className="w-[100px] h-[100px] object-cover"
-                      />
-                      <button
-                        onClick={() => handleImageRemove(index)}
-                        className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
-                      >
-                        <MdClose size={16} />
-                      </button>
-                    </div>
-                  ))}
+            </div>
+            {/* 사진 미리보기 */}
+            <div className="w-full flex overflow-x-auto mt-4">
+              {images.map((image, index) => (
+                <div key={index} className="relative w-20 h-20 mr-2">
+                  <img
+                    src={image}
+                    alt={`Preview ${index}`}
+                    className="w-full h-full object-cover rounded-md border border-gray-300"
+                    onClick={() => handleImageRemove(index)}
+                  />
+                  <button
+                    onClick={() => handleImageRemove(index)}
+                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                  >
+                    <MdClose size={16} />
+                  </button>
                 </div>
-              )}
+              ))}
             </div>
           </div>
 
           {/* 제목 input */}
-          <div className="font-bold h-20 flex items-center justify-center">
-            <div className="text-left">
-              <div>제목</div>
-              <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="border border-zp-sub-color rounded-zp-radius-btn w-[550px] h-[38px] mt-2 p-[10px]"
-                type="text"
-                name="title"
-                placeholder="제목 입력"
-              />
+          <div className="mt-6 font-bold flex flex-col items-center justify-center">
+            <div className="text-left w-full">
+              <div className="mb-2">제목</div>
+              <div className="bg-zp-white border rounded-zp-radius-btn">
+                <Input
+                  type="text"
+                  placeholder="제목 입력"
+                  inputType="textArea"
+                  width="100%"
+                  height={2.375}
+                  className=""
+                  fontSize="xs"
+                  radius="btn"
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
           {/* 현장 주소 input */}
-          {/* 추후 주소 api 적용해서 기능 구현 예정 */}
-          <div className="font-bold h-20 flex items-center justify-center">
-            <div className="text-left">
-              <div>현장 주소</div>
-              <div className="relative mt-2">
-                <input
+          <div className="mt-6 font-bold flex flex-col items-center justify-center">
+            <div className="text-left w-full">
+              <div className="mb-2">현장 주소</div>
+              <div className="relative mt-2 bg-zp-white border rounded-zp-radius-btn">
+                <Input
+                  type="text"
+                  placeholder="현장 주소"
+                  inputType="textArea"
+                  width="100%"
+                  height={2.375}
+                  className="border border-zp-sub-color rounded-zp-radius-btn p-[10px] pr-[40px]"
+                  fontSize="xs"
+                  radius="btn"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="border border-zp-sub-color rounded-zp-radius-btn w-[550px] h-[38px] p-[10px] pr-[40px]"
-                  type="text"
-                  name="address"
-                  placeholder="현장 주소"
                 />
                 <CiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2" />
               </div>
@@ -156,44 +174,59 @@ export default function FindWorkerDetailCreate() {
           </div>
 
           {/* 상세 주소 input */}
-          <div className="font-bold h-20 flex items-center justify-center">
-            <div className="text-left">
-              <div>상세 주소</div>
-              <input
-                value={addressDetail}
-                onChange={(e) => setAddressDetail(e.target.value)}
-                className="border border-zp-sub-color rounded-zp-radius-btn w-[550px] h-[38px] mt-2 p-[10px]"
-                type="text"
-                name="addressDetail"
-                placeholder="상세 주소"
-              />
+          <div className="mt-6 font-bold flex flex-col items-center justify-center">
+            <div className="text-left w-full">
+              <div className="mb-2">상세 주소</div>
+              <div className="bg-zp-white border rounded-zp-radius-btn">
+                <Input
+                  type="text"
+                  placeholder="상세 주소"
+                  inputType="textArea"
+                  width="100%"
+                  height={2.375}
+                  className=""
+                  fontSize="xs"
+                  radius="btn"
+                  value={addressDetail}
+                  onChange={(e) => setAddressDetail(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
           {/* 작업 내용 input */}
-          <div className="font-bold h-20 flex items-center justify-center">
-            <div className="text-left">
-              <div>작업내용</div>
-              <input
-                value={workDetail}
-                onChange={(e) => setWorkDetail(e.target.value)}
-                className="border border-zp-sub-color rounded-zp-radius-btn w-[550px] h-[38px] mt-2 p-[10px]"
-                type="text"
-                name="workDetail"
-                placeholder="시공을 요청하는 작업에 대해 작성해주세요."
-              />
+          <div className="mt-6 font-bold flex flex-col items-center justify-center">
+            <div className="text-left w-full">
+              <div className="mb-2">작업내용</div>
+              <div className="bg-zp-white border rounded-zp-radius-btn">
+                <Input
+                  type="text"
+                  placeholder="시공을 요청하는 작업에 대해 작성해주세요."
+                  inputType="textArea"
+                  width="100%"
+                  height={2.375}
+                  className=""
+                  fontSize="xs"
+                  radius="btn"
+                  value={workDetail}
+                  onChange={(e) => setWorkDetail(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
-          <div className="font-bold h-20 flex items-center justify-center">
-            <div className="text-left">
-              <button
-                onClick={handleConfirm}
-                className="w-[550px] h-[38px] bg-zp-sub-color rounded-zp-radius-btn text-white zp-radius-btn"
-              >
-                확인
-              </button>
-            </div>
+          <div className="mt-6 font-bold h-20 flex items-center justify-center">
+            <Button
+              buttonType="second"
+              width="full"
+              height={2.375}
+              fontSize="xl"
+              radius="btn"
+              onClick={handleConfirm}
+              className="flex items-center justify-center w-full"
+            >
+              <span className="ml-2">채팅하기</span>
+            </Button>
           </div>
         </div>
       </div>

@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
-import { CiBookmark, CiBookmarkCheck } from 'react-icons/ci';
-// CiBookmarkCheck 추가
+import { IoBookmark } from 'react-icons/io5';
+import { IoBookmarkOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
+
+import Button from '@components/common/Button';
 
 export default function Portfolio() {
   const [activeTab, setActiveTab] = useState('overview');
@@ -35,15 +37,15 @@ export default function Portfolio() {
   return (
     <>
       {/* 북마크 이미지 */}
-      <div className="w-[550px] flex justify-end">
+      <div className="w-full flex justify-end">
         {isBookmarked ? (
-          <CiBookmarkCheck
+          <IoBookmark
             size={32}
             className="cursor-pointer"
             onClick={toggleBookmark}
           />
         ) : (
-          <CiBookmark
+          <IoBookmarkOutline
             size={32}
             className="cursor-pointer"
             onClick={toggleBookmark}
@@ -63,10 +65,10 @@ export default function Portfolio() {
         </div>
 
         {/* 지역, 전화번호, 분야 */}
-        <div className="flex flex-col space-y-2 text-zp-xs text-zp-black">
-          <div className="w-64 h-8">Area : {area}</div>
-          <div className="w-64 h-8">Phone : {tel}</div>
-          <div className="w-64 h-8 flex space-x-2">
+        <div className="w-full flex flex-col space-y-2 text-zp-xs text-zp-black">
+          <div className="w-full h-8">Area : {area}</div>
+          <div className="w-full h-8">Phone : {tel}</div>
+          <div className="w-full h-8 flex space-x-2">
             {/* Skills as buttons */}
             {skills.map((skill, index) => (
               <button
@@ -80,25 +82,46 @@ export default function Portfolio() {
         </div>
       </div>
 
-      <div>
-        <button
-          className={`font-bold w-32 h-8 text-zp-xs ${activeTab === 'overview' ? 'rounded-zp-radius-btn border-x-2 border-t-2 border-zp-main-color' : 'rounded-zp-radius-btn border-b-2 border-zp-main-color'}`}
-          onClick={overviewClick}
+      <div className="font-bold w-1/4 flex justify-start">
+        <div
+          className={`${activeTab === 'overview' ? 'rounded-t-lg border-x-2 border-t-2 border-zp-main-color' : 'rounded-b-lg border-b-2 border-zp-main-color'}`}
         >
-          종합 정보
-        </button>
-        <button
-          className={`font-bold w-32 h-8 text-zp-xs ${activeTab === 'workerSchedule' ? 'rounded-zp-radius-btn border-x-2 border-t-2 border-zp-main-color' : 'rounded-zp-radius-btn border-b-2 border-zp-main-color'}`}
-          onClick={workerScheduleClick}
+          <Button
+            children="종합 정보"
+            buttonType="light"
+            width={8}
+            height={2}
+            fontSize="xs"
+            radius="btn"
+            onClick={overviewClick}
+          />
+        </div>
+        <div
+          className={`${activeTab === 'workerSchedule' ? 'rounded-t-lg border-x-2 border-t-2 border-zp-main-color' : 'rounded-b-lg border-b-2 border-zp-main-color'}`}
         >
-          시공자 일정
-        </button>
-        <button
-          className={`font-bold w-32 h-8 text-zp-xs ${activeTab === 'review' ? 'rounded-zp-radius-btn border-x-2 border-t-2 border-zp-main-color' : 'rounded-zp-radius-btn border-b-2 border-zp-main-color'}`}
-          onClick={reviewClick}
+          <Button
+            children="시공자 일정"
+            buttonType="light"
+            width={8}
+            height={2}
+            fontSize="xs"
+            radius="btn"
+            onClick={workerScheduleClick}
+          />
+        </div>
+        <div
+          className={`${activeTab === 'review' ? 'rounded-t-lg border-x-2 border-t-2 border-zp-main-color' : 'rounded-b-lg border-b-2 border-zp-main-color'}`}
         >
-          후기
-        </button>
+          <Button
+            children="후기"
+            buttonType="light"
+            width={8}
+            height={2}
+            fontSize="xs"
+            radius="full"
+            onClick={reviewClick}
+          />
+        </div>
       </div>
     </>
   );

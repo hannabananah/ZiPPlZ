@@ -1,6 +1,6 @@
-import React from 'react';
 import { MdOpenInFull } from 'react-icons/md';
 
+import Button from '@components/common/Button';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 
 import Portfolio from '../Portfolio';
@@ -36,7 +36,15 @@ export default function WorkerSchedule() {
               <div className="text-zp-lg">승범백</div>
               <div className="text-zp-2xs">시공기간: 07.09 ~ 07.11</div>
               <div className="text-zp-2xs">출장 장소: 전남 순천</div>
-              <button className="text-zp-2xs">채팅하기</button>
+              <Button
+                children="채팅하기"
+                buttonType="light"
+                width={8}
+                height={2}
+                fontSize="2xs"
+                radius="full"
+                // onClick=
+              />
             </div>
             {/* 우측 하단 컴포넌트는 현태가 만든 컴포넌트 적용할 예정  */}
             {/* 시공업자의 대표 사진 3개가 보이는 컴포넌트 */}

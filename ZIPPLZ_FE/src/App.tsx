@@ -59,31 +59,31 @@ export default function App() {
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
         <Route path="404" element={<Custom404 />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
-        <Route path="findWorkerDetail" element={<FindWorkerDetail />} />
+        <Route path="findworkerdetail" element={<FindWorkerDetail />} />
         <Route
-          path="FindWorkerDetailCreate"
+          path="Findworkerdetailcreate"
           element={<FindWorkerDetailCreate />}
         />
-        <Route path="findWorkerList" element={<FindWorkerList />} />
-        <Route path="workerInfoDateDetail" element={<WorkerInfoDateDetail />} />
+        <Route path="findworkerlist" element={<FindWorkerList />} />
+        <Route path="workerinfodatedetail" element={<WorkerInfoDateDetail />} />
         <Route
-          path="workerInfoLocationDetail"
+          path="workerinfolocationdetail"
           element={<WorkerInfoLocationDetail />}
         />
-        <Route path="workerInfoList" element={<WorkerInfoList />} />
-        <Route path="findWorkerListItem" element={<FindWorkerListItem />} />
-        <Route path="workerInfoListItem" element={<WorkerInfoListItem />} />
+        <Route path="workerinfolist" element={<WorkerInfoList />} />
+        <Route path="findworkerlistItem" element={<FindWorkerListItem />} />
+        <Route path="workerinfolistItem" element={<WorkerInfoListItem />} />
 
         {/* 마이페이지 */}
-        <Route path="myBoardAndScrapList" element={<MyBoardAndScrapList />} />
-        <Route path="myInformationModify" element={<MyInformationModify />} />
-        <Route path="myPasswordModify" element={<MyPasswordModify />} />
+        <Route path="myboardandscraplist" element={<MyBoardAndScrapList />} />
+        <Route path="myinformationmodify" element={<MyInformationModify />} />
+        <Route path="mypasswordModify" element={<MyPasswordModify />} />
         <Route path="policy" element={<Policy />} />
         <Route path="resign" element={<Resign />} />
         <Route path="version" element={<Version />} />
-        <Route path="resignComplete" element={<ResignComplete />} />
-        <Route path="beforeResign" element={<BeforeResign />} />
-        <Route path="dontUseZIPPLZ" element={<DontUseZIPPLZ />} />
+        <Route path="resigncomplete" element={<ResignComplete />} />
+        <Route path="beforeresign" element={<BeforeResign />} />
+        <Route path="dontusezipplz" element={<DontUseZIPPLZ />} />
       </Route>
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
       <Route path="/member/login" element={<Login />} />
