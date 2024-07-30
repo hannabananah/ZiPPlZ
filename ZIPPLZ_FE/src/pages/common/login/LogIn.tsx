@@ -9,18 +9,14 @@ export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showCheckPassword, setShowCheckPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   function validatePassword(password: string): boolean {
     if (!password) return true;
     var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$/;
     return passwordRegex.test(password);
   }
-  const handleCickEye = function () {
+  const handleClickEye = function () {
     setShowPassword(!showPassword);
-  };
-  const handleCickCheckEye = function () {
-    setShowCheckPassword(!showCheckPassword);
   };
   function validateEmail(email: string): boolean {
     let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
@@ -88,13 +84,13 @@ export default function Login() {
             <FaRegEyeSlash
               className="absolute top-[0.5rem] right-[1rem]"
               size={16}
-              onClick={handleCickEye}
+              onClick={handleClickEye}
             />
           ) : (
             <FaRegEye
               className="absolute top-[0.5rem] right-[1rem]"
               size={16}
-              onClick={handleCickEye}
+              onClick={handleClickEye}
             />
           )}
           {!validatePassword(password) && (

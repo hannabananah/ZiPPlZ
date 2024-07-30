@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Checkbox from '@/components/common/Checkbox';
+import Checkbox from '@components/common/Checkbox';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;

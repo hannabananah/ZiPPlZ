@@ -8,18 +8,6 @@ import ScheduleRegist from '@components/scheduler/regist/ScheduleRegist';
 import SharedImg from '@components/scheduler/sharedFile/SharedImg';
 import SharedMemo from '@components/scheduler/sharedFile/SharedMemo';
 
-// type ConstructionField =
-//   | '철거'
-//   | '설비'
-//   | '샷시'
-//   | '목공'
-//   | '전기'
-//   | '욕실'
-//   | '타일'
-//   | '마루'
-//   | '도배'
-//   | '가구';
-
 interface ConstructionSchedule {
   시공자이름: string;
   시공기간: string; // yyyy-mm-dd ~ yyyy-mm-dd
@@ -145,7 +133,7 @@ export default function Schedule() {
   const [scheduleList, setScheduleList] =
     useState<ConstructionData[]>(dummyData);
   return (
-    <div className="flex flex-col items-center w-full max-w-screen-md gap-4 px-2 px-4 bg-zp-light-beige sm lg">
+    <div className="flex flex-col w-full max-w-screen-md items-center bg-zp-light-beige gap-4 sm lg px-4">
       <Selectbar
         fontColor="main"
         options={options}

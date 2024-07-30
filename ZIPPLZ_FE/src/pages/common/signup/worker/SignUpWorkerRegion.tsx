@@ -1,105 +1,175 @@
 import React, { useEffect, useState } from 'react';
 
-import Button from '@/components/common/Button';
-import { regionList } from '@/components/signup/regionData/region.js';
+import { Worker } from '@apis/member/MemberApi';
+import { getGugun, getSido } from '@apis/member/MemberApi';
+import Button from '@components/common/Button';
 
+interface Sido {
+  sidoCode: number;
+  sidoName: string;
+}
+interface Gugun {
+  gugunCode: number;
+  sidoCode: number;
+  gugunName: string;
+}
+interface location {
+  sidoCode: number;
+  gugunCode: number;
+  localName: string;
+}
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
+  setWorker: React.Dispatch<React.SetStateAction<Worker>>;
 }
-export default function SignUpWorkerRegion({ setNext, setLink }: Props) {
+export default function SignUpWorkerRegion({
+  setNext,
+  setLink,
+  setWorker,
+}: Props) {
+  const [sidoList, setSidoList] = useState<Sido[]>([]);
+  const [guguns, setGuguns] = useState<Gugun[]>([]);
   const [selectedSido, setSelectedSido] = useState<number>(-1);
-  const [selectedGugun, setSelectedGugun] = useState<string[]>([]);
-
-  const handleButtonClick = (idx: number) => {
-    setSelectedSido(idx);
+  const [selectedLocation, setSelectedLocation] = useState<location[]>([]);
+  const fetchSido = async () => {
+    try {
+      const response = await getSido();
+      setSidoList(response.data.data);
+    } catch (error) {
+      console.error('Error fetching Sido list: ', error);
+    }
+  };
+  const fetchGugun = async (sidoCode: number) => {
+    try {
+      const response = await getGugun(sidoCode);
+      setGuguns(response.data.data);
+    } catch (error) {
+      console.error('Error fetching Gugun list: ', error);
+    }
+  };
+  useEffect(() => {
+    fetchSido();
+  }, []);
+  useEffect(() => {
+    if (selectedSido > 0) fetchGugun(selectedSido);
+  }, [selectedSido]);
+  const handleButtonClick = (sidoCode: number) => {
+    setSelectedSido(sidoCode);
   };
   const [isFull, setIsFull] = useState<boolean>(false);
 
-  const handleGugunClick = (gugun: string) => {
-    setSelectedGugun((prev: string[]) => {
-      if (prev.includes(gugun)) {
-        return prev.filter((g: string) => g !== gugun);
+  const handleGugunClick = (gugun: Gugun) => {
+    const sidoName = sidoList[gugun.sidoCode - 1].sidoName;
+    setSelectedLocation((prev: location[]) => {
+      if (prev.some((loc) => loc.gugunCode === gugun.gugunCode)) {
+        return prev.filter((l: location) => l.gugunCode !== gugun.gugunCode);
       } else {
-        return [...prev, gugun];
+        return [
+          ...prev,
+          {
+            sidoCode: gugun.sidoCode,
+            gugunCode: gugun.gugunCode,
+            localName: `${sidoName} ${gugun.gugunName}`,
+          },
+        ];
       }
     });
   };
-  const handleDeleteClick = (region: string) => {
-    setSelectedGugun((prev: string[]) => {
-      return prev.filter((g) => g !== region);
+  const handleDeleteClick = (region: location) => {
+    setSelectedLocation((prev: location[]) => {
+      return prev.filter((l) => l.gugunCode !== region.gugunCode);
     });
   };
   useEffect(() => {
-    if (selectedGugun.length > 0) setNext(true);
+    if (setSelectedLocation.length > 0) setNext(true);
     else setNext(false);
-    if (selectedGugun.length === 8) {
+    if (setSelectedLocation.length === 8) {
       setIsFull(true);
     } else {
       setIsFull(false);
     }
     setLink('/member/join/worker/3/skills');
-  }, [selectedGugun]);
+    setWorker((prev: Worker) => ({
+      ...prev,
+      locationList: selectedLocation,
+    }));
+  }, [setSelectedLocation]);
   return (
     <div className="flex flex-col gap-4 overflow-auto mb-[6rem]">
       <p className="text-zp-xl font-bold">
         작업 가능한 지역을 모두 선택해주세요.
       </p>
       <div className="w-full grid grid-cols-4 gap-4">
-        {regionList.map((item, idx) => (
-          <Button
-            buttonType={
-              selectedSido >= 0 && regionList[selectedSido].sido === item.sido
-                ? 'second'
-                : 'normal'
-            }
-            height={3.075}
-            radius="big"
-            fontSize="xl"
-            key={item.sido}
-            onClick={() => handleButtonClick(idx)}
-            children={item.sido}
-          />
-        ))}
+        {sidoList.length > 0 ? (
+          sidoList.map((item) => (
+            <Button
+              buttonType={
+                selectedSido > 0 && selectedSido === item.sidoCode
+                  ? 'second'
+                  : 'normal'
+              }
+              height={3.075}
+              radius="big"
+              fontSize="xl"
+              key={item.sidoCode}
+              onClick={() => handleButtonClick(item.sidoCode)}
+              children={item.sidoName}
+            />
+          ))
+        ) : (
+          <p>Loading...</p>
+        )}
       </div>
-      {selectedSido >= 0 && (
+      {selectedSido > 0 && (
         <>
           <hr className="text-zp-light-gray" />
           <div className="w-full grid grid-cols-4 gap-4">
-            {regionList[selectedSido].guguns.map((gugun) => (
+            {guguns.map((gugun) => (
               <Button
-                buttonType={selectedGugun.includes(gugun) ? 'second' : 'normal'}
+                buttonType={
+                  selectedLocation.some(
+                    (loc) => loc.gugunCode === gugun.gugunCode
+                  )
+                    ? 'second'
+                    : 'normal'
+                }
                 height={3.075}
                 radius="big"
                 fontSize="xl"
-                key={gugun}
+                key={gugun.gugunCode}
                 onClick={() => handleGugunClick(gugun)}
-                children={gugun}
-                disabled={isFull && !selectedGugun.includes(gugun)}
+                children={gugun.gugunName}
+                disabled={
+                  isFull &&
+                  !selectedLocation.some(
+                    (loc) => loc.gugunCode === gugun.gugunCode
+                  )
+                }
               />
             ))}
           </div>
         </>
       )}
-      {selectedGugun.length > 0 && (
+      {selectedLocation.length > 0 && (
         <>
           <div className="relative w-full grid grid-cols-4 gap-4 p-4">
             <div className="absolute top-0 left-0 w-full h-[18px] backdrop-blur-lg bg-gradient-to-b from-white to-transparent z-0"></div>
-            {selectedGugun.map((gugun) => (
+            {selectedLocation.map((location) => (
               <Button
                 buttonType="primary" // 또는 원하는 버튼 타입
                 height={3}
                 radius="big"
-                fontSize="lg"
-                key={`${regionList[selectedSido].sido} ${gugun}`}
-                children={`${regionList[selectedSido].sido} ${gugun}`}
+                fontSize="xs"
+                key={location.localName}
+                children={location.localName}
                 onClick={() => {
-                  handleDeleteClick(`${gugun}`);
+                  handleDeleteClick(location);
                 }}
               />
             ))}
             <p className="text-zp-light-gray text-zp-lg absolute right-0 bottom-0">
-              {selectedGugun.length}/8
+              {selectedLocation.length}/8
             </p>
           </div>
         </>

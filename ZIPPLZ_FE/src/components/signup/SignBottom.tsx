@@ -1,7 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
+import {
+  Customer,
+  User,
+  Worker,
+  signUp,
+  signUpCustomer,
+  signUpWorker,
+} from '@apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Loading from '@components/common/Loading';
 
@@ -11,8 +19,14 @@ interface Props {
   next: boolean;
   phrase?: string;
   link: string;
+  user: User;
+  type?: string;
+  customer: Customer;
+  worker: Worker;
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
+  setCustomer: React.Dispatch<React.SetStateAction<Customer>>;
+  setWorker: React.Dispatch<React.SetStateAction<Worker>>;
 }
 const customModalStyles: ReactModal.Styles = {
   overlay: {
@@ -48,9 +62,16 @@ export default function SignBottom({
   next,
   phrase,
   link,
+  user,
   setNext,
   setActive,
+  type,
+  setCustomer,
+  customer,
+  setWorker,
+  worker,
 }: Props) {
+  const [userSerial, setUserSerial] = useState<number>(0);
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
@@ -67,6 +88,38 @@ export default function SignBottom({
       setModalIsOpen(true);
     }, 3000);
   };
+  const registUser = async (user: User) => {
+    const response = await signUp(user);
+    setUserSerial(response.data.data.userSerial);
+  };
+  const registCustomer = async (customer: Customer) => {
+    const response = await signUpCustomer(customer);
+    console.log('Customer registration response:', response);
+    return response.data;
+  };
+  const registWorker = async (worker: Worker) => {
+    const response = await signUpWorker(worker);
+    console.log('Customer registration response:', response);
+    return response.data;
+  };
+  useEffect(() => {
+    console.log(user);
+    console.log(userSerial);
+    if (type === 'customer') {
+      setCustomer((prev: Customer) => ({
+        ...prev,
+        userSerial: userSerial,
+      }));
+    } else {
+      setWorker((prev: Worker) => ({
+        ...prev,
+        userSerial: userSerial,
+      }));
+    }
+  }, [userSerial]);
+  useEffect(() => {
+    console.log(customer);
+  }, [customer]);
   return (
     <>
       <div className="w-full flex flex-col gap-2 absolute bottom-0 left-0 p-4">
@@ -109,7 +162,11 @@ export default function SignBottom({
             setActive(false);
             if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
               navigate(link);
-            else openModal();
+            else {
+              registUser(user);
+              console.log(user);
+              openModal();
+            }
           }}
         />
       </div>
@@ -145,7 +202,14 @@ export default function SignBottom({
                 setActive(false);
                 setNext(true);
                 closeModal();
-              } else navigate(link);
+              } else {
+                if (type === 'customer') {
+                  registCustomer(customer);
+                } else {
+                  registWorker(worker);
+                }
+                navigate(link);
+              }
             }}
           />
         </div>

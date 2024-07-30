@@ -1,12 +1,19 @@
 import React from 'react';
 
-import Input from '@/components/common/Input';
+import Input from '@components/common/Input';
 
 interface PhoneInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
-  inputType: string;
+  inputType:
+    | 'search'
+    | 'login'
+    | 'signup'
+    | 'normal'
+    | 'textArea'
+    | 'file'
+    | 'error';
   height: number | string;
   fontSize: string;
   radius: string;
