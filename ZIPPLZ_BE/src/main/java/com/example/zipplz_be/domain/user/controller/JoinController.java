@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.user.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.user.dto.InsertCustomerDTO;
 import com.example.zipplz_be.domain.user.dto.JoinDTO;
 import com.example.zipplz_be.domain.user.dto.JoinResponseDTO;
 import com.example.zipplz_be.domain.user.service.JoinService;
@@ -38,4 +39,46 @@ public class JoinController {
         }
         return new ResponseEntity<>(responseDTO, status);
     }
+
+    @PostMapping("/join/customer")
+    public ResponseEntity<ResponseDTO> insertCustomerInfo(@RequestBody InsertCustomerDTO insertCustomerDTO) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            boolean result = joinService.insertCustomerInfo(insertCustomerDTO);
+            if (!result) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "해당 유저를 찾을 수 없습니다.");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "고객 세부사항 입력 성공");
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+//    @PostMapping("/join/customer")
+//    public ResponseEntity<ResponseDTO> insertWorkerInfo(@RequestBody InsertCustomerDTO insertCustomerDTO) {
+//        ResponseDTO responseDTO;
+//        HttpStatus status;
+//        try {
+//            boolean result = joinService.insertCustomerInfo(insertCustomerDTO);
+//            if (!result) {
+//                status = HttpStatus.NOT_FOUND;
+//                responseDTO = new ResponseDTO<>(status.value(), "해당 유저를 찾을 수 없습니다.");
+//            } else {
+//                status = HttpStatus.OK;
+//                responseDTO = new ResponseDTO<>(status.value(), "고객 세부사항 입력 성공");
+//            }
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
+
+
 }

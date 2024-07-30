@@ -4,10 +4,10 @@ import { LuMinimize2 } from 'react-icons/lu';
 import ReactModal from 'react-modal';
 import Modal from 'react-modal';
 
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
-import Selectbar from '@/components/common/Selectbar';
-import { ConstructionData } from '@/pages/user/Schedule';
+import Button from '@components/common/Button';
+import Input from '@components/common/Input';
+import Selectbar from '@components/common/Selectbar';
+import { ConstructionData } from '@pages/user/Schedule';
 
 import PrivateScheduleModal from './PrivateScheduleModal';
 

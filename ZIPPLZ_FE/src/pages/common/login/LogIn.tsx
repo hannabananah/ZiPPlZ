@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
+import Button from '@components/common/Button';
+import Input from '@components/common/Input';
 
 export default function Login() {
   const navigate = useNavigate();

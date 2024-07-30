@@ -1,23 +1,22 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import com.example.zipplz_be.domain.chatting.entity.RecordingFile;
 import com.example.zipplz_be.domain.chatting.service.OpenviduService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
+import com.example.zipplz_be.domain.user.jwt.JWTUtil;
+import io.openvidu.java.client.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-
-import io.openvidu.java.client.Connection;
-import io.openvidu.java.client.ConnectionProperties;
-import io.openvidu.java.client.OpenVidu;
-import io.openvidu.java.client.OpenViduHttpException;
-import io.openvidu.java.client.OpenViduJavaClientException;
-import io.openvidu.java.client.Session;
-import io.openvidu.java.client.SessionProperties;
 
 import java.util.Map;
 
@@ -26,9 +25,11 @@ import java.util.Map;
 @RequestMapping("/openvidu")
 public class OpenviduController {
     private final OpenviduService openviduService;
+    JWTUtil jwtUtil;
 
-    public OpenviduController(OpenviduService openviduService) {
+    public OpenviduController(OpenviduService openviduService, JWTUtil jwtUtil) {
         this.openviduService = openviduService;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -47,34 +48,33 @@ public class OpenviduController {
 
     //세션 생성
     @PostMapping("/api/sessions")
-    public ResponseEntity<ResponseDTO<String>> initializeSession(@RequestBody(required = false) Map<String, Object> params)
+    public ResponseEntity<ResponseDTO<?>> initializeSession(@RequestBody(required = false) Map<String, Object> params)
             throws OpenViduJavaClientException, OpenViduHttpException {
-        ResponseDTO<String> responseDTO;
+        ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            if(params.get("chatroomSerial") == null || params.get("customSessionId") == null || params.get("customSessionId") == "") {
+            openvidu.fetch();
+
+            if (params.get("chatroomSerial") == null || params.get("customSessionId") == null || params.get("customSessionId") == "") {
                 status = HttpStatus.BAD_REQUEST;
                 responseDTO = new ResponseDTO<>(status.value(), "필수 항목을 입력해주세요.");
-            }
-            else {
+            } else {
                 SessionProperties properties = SessionProperties.fromJson(params).build();
                 Session session = openvidu.createSession(properties);
 
-                boolean flag = openviduService.initializeSession((Integer)params.get("chatroomSerial"), session.getSessionId());
+                boolean flag = openviduService.initializeSession((Integer) params.get("chatroomSerial"), session.getSessionId());
 
-                if(!flag) {
+                if (!flag) {
                     status = HttpStatus.NOT_FOUND;
                     responseDTO = new ResponseDTO<>(status.value(), "유효하지 않은 채팅방 번호");
-                }
-                else {
+                } else {
                     status = HttpStatus.OK;
                     responseDTO = new ResponseDTO<>(status.value(), "응답 성공", session.getSessionId());
-
                 }
             }
 
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -110,7 +110,7 @@ public class OpenviduController {
 
     //해당 클라이언트를 세션에서 연결 삭제
     @DeleteMapping("/api/sessions")
-    public ResponseEntity<ResponseDTO<?>> deleteSession(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
+    public ResponseEntity<ResponseDTO<?>> deleteSession(Authentication authentication, @RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
             throws OpenViduJavaClientException, OpenViduHttpException {
         ResponseDTO<String> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -126,37 +126,36 @@ public class OpenviduController {
             String connectionId = "";
 
             //세션이 없으면 404
-            if(session == null) {
+            if (session == null) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "세션이 존재하지 않음");
-            }
-            else {
-                //임시 설정
-                int userSerial = 1;
+            } else {
+                CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+                int userSerial = customUserDetails.getUserSerial();
+
                 String token = openviduService.deleteConnection((String) params.get("sessionId"), userSerial);
 
                 //세션의 연결된 유저 리스트 중 해당 토큰과 똑같은 값을 가진 커넥션 아이디를 뽑아와야 한다!!
                 List<Connection> connectionList = session.getConnections();
 
-                for(Connection c : connectionList) {
-                    if(c.getToken().equals(token)) {
+                for (Connection c : connectionList) {
+                    if (c.getToken().equals(token)) {
                         connectionId = c.getConnectionId();
                         break;
                     }
                 }
 
-                if(connectionId.isEmpty()) {
+                if (connectionId.isEmpty()) {
                     status = HttpStatus.NOT_FOUND;
                     responseDTO = new ResponseDTO<>(status.value(), "해당 토큰을 가진 커넥션이 존재하지 않음");
-                }
-                else {
+                } else {
                     session.forceDisconnect(connectionId);
 
                     status = HttpStatus.OK;
                     responseDTO = new ResponseDTO<>(status.value(), "삭제 완료");
                 }
             }
-        }catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -166,7 +165,7 @@ public class OpenviduController {
 
     //connection 생성, 토큰 발급
     @PostMapping("/api/sessions/connections")
-    public ResponseEntity<ResponseDTO<String>> createConnection(@RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
+    public ResponseEntity<ResponseDTO<String>> createConnection(Authentication authentication, @RequestBody(required = false) Map<String, Object> params, HttpServletRequest request)
             throws OpenViduJavaClientException, OpenViduHttpException {
         ResponseDTO<String> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
@@ -177,21 +176,20 @@ public class OpenviduController {
             if (session == null) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "그런 세션은 없습니다.");
-            }
-            else {
+            } else {
                 ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
                 Connection connection = session.createConnection(properties);
 
-                //임시
-                int userSerial = 1;
+                CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+                int userSerial = customUserDetails.getUserSerial();
 
                 //토큰 암호화 필요?
-                openviduService.createConnection(connection.getToken(),userSerial, (Integer)params.get("chatroomSerial"));
+                openviduService.createConnection(connection.getToken(), userSerial, (Integer) params.get("chatroomSerial"));
 
                 status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "응답 성공" ,connection.getToken());
+                responseDTO = new ResponseDTO<>(status.value(), "응답 성공", connection.getToken());
             }
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -200,14 +198,135 @@ public class OpenviduController {
     }
 
     //녹화 시작
-    //@PostMapping("/api/sessions/connections")
+    @PostMapping("/api/sessions/recording")
+    public ResponseEntity<ResponseDTO<?>> startRecording(@RequestBody(required = false) Map<String, Object> params)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            Session session = openvidu.getActiveSession((String) params.get("sessionId"));
+            if (session == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "그런 세션은 없습니다.");
+            } else {
+                String recordingFileName = session.getSessionId() +
+                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
+                //video, audio 둘 다 녹음, composed로, best-fit으로 디폴트 설정됨
+                RecordingProperties recordingProperties = new RecordingProperties.Builder()
+                        .hasAudio(true)
+                        .hasVideo(true)
+                        .name(recordingFileName)
+                        .build();
+
+                Recording recording = openvidu.startRecording(session.getSessionId(), recordingProperties);
+
+                //시작 시 채팅방 연번과 recording_id, 시작시간 모두 넣어두기
+                openviduService.insertRecordingFile(recording, (String) params.get("sessionId"));
+
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "녹화 시작 완료", recording);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
     //녹화 종료
+    @PostMapping("/api/sessions/recording/stop")
+    public ResponseEntity<ResponseDTO<?>> stopRecording(@RequestBody(required = false) Map<String, Object> params)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            String recordingId = (String) params.get("recordingId");
+            Recording recording = openvidu.stopRecording(recordingId);
+
+            //갱신된 URL 저장 필요
+            openviduService.insertRecordingFile(recording, null);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "녹화 중지 완료", recording);
+
+        } catch (Exception e) {
+            if (e.getMessage().equals("404")) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "id 존재하지 않음");
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+            }
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
 
+    //채팅방별 녹화된 파일 조회
+    //채팅방 연번 받으면, 그거에 대한 recording 객체들을 다 가져온다!!
+    @GetMapping("/api/sessions/recording/{chatroomSerial}")
+    public ResponseEntity<ResponseDTO<?>> getRecording(@PathVariable("chatroomSerial") int chatroomSerial)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
-    //녹화된 파일 조회
+        try {
+            //채팅방 번호 전달하면 해당 번호에 맞는 recording 객체들 모두 가져옴!!
+            List<RecordingFile> recordingFileList = openviduService.getRecordingFiles(chatroomSerial);
+            List<Recording> recordingList = new ArrayList<Recording>();
+
+
+            for(RecordingFile recordingFile : recordingFileList) {
+                recordingList.add(openvidu.getRecording(recordingFile.getRecordingId()));
+            }
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 완료", recordingList);
+        } catch (Exception e) {
+            if (e.getMessage().equals("404")) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "id 존재하지 않음");
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+            }
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+
+    //채팅방별 녹화된 파일 일괄 삭제
+    @DeleteMapping("/api/sessions/recording/{chatroomSerial}")
+    public ResponseEntity<ResponseDTO<?>> deleteRecording(@PathVariable("chatroomSerial") int chatroomSerial)
+            throws OpenViduJavaClientException, OpenViduHttpException {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+        try {
+            List<RecordingFile> recordingFileList = openviduService.deleteRecordingFile(chatroomSerial);
+
+            for(RecordingFile recordingFile : recordingFileList) {
+                openvidu.deleteRecording(recordingFile.getRecordingId());
+            }
+
+            status = HttpStatus.NO_CONTENT;
+
+            responseDTO = new ResponseDTO<>(status.value(), "삭제 완료!!");
+        } catch (Exception e) {
+            if (e.getMessage().equals("404")) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "id 존재하지 않음");
+            } else {
+                status = HttpStatus.INTERNAL_SERVER_ERROR;
+                responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+            }
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
 }
-

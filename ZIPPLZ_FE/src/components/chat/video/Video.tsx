@@ -18,7 +18,7 @@ const Video = forwardRef<HTMLVideoElement, VideoProps>(
       <video
         autoPlay
         ref={ref}
-        className="flex justify-center object-cover w-full h-full rounded-zp-radius-big"
+        className="flex justify-center object-cover w-full h-full overflow-hidden max-h-[380px] rounded-zp-radius-big"
       >
         <track kind="captions" />
       </video>

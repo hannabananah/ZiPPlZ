@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import SignBottom from '@/components/signup/SignBottom';
-import SignUpHead from '@/components/signup/SignUpHead';
+import SignBottom from '@components/signup/SignBottom';
+import SignUpHead from '@components/signup/SignUpHead';
 
 import SignUpAgree from './common/SignUpAgree';
 import SignUpInfo from './common/SignUpInfo';
