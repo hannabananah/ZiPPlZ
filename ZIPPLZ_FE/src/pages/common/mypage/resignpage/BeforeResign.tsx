@@ -3,7 +3,7 @@ import { IoAlertCircleOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 export default function BeforeResign() {
-  let user = '강신구';
+  let user: string = '강신구';
   const navigate = useNavigate();
 
   // 페이지 돌아가기 핸들러

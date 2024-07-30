@@ -7,8 +7,8 @@ import { useNavigate } from 'react-router-dom';
 import Button from '@components/common/Button';
 
 export default function Portfolio() {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [isBookmarked, setIsBookmarked] = useState(false); // 북마크 상태 추가
+  const [activeTab, setActiveTab] = useState<string>('overview');
+  const [isBookmarked, setIsBookmarked] = useState<boolean>(false); // 북마크 상태 추가
   const navigate = useNavigate();
 
   const overviewClick = () => {
@@ -30,8 +30,8 @@ export default function Portfolio() {
     setIsBookmarked(!isBookmarked); // 북마크 상태 토글
   };
 
-  let [area, setArea] = useState('서울, 경기');
-  let [tel, setTel] = useState('010-9909-8322');
+  let [area, setArea] = useState<string>('서울, 경기');
+  let [tel, setTel] = useState<string>('010-9909-8322');
   let [skills, setSkills] = useState<string[]>(['도배', '타일', '벽지']);
 
   return (

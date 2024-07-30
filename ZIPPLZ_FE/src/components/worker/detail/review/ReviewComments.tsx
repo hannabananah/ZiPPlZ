@@ -1,7 +1,25 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 
-const comments = [
+interface Reply {
+  id: number;
+  profilePic: string;
+  name: string;
+  date: string;
+  content: string;
+}
+
+interface Comment {
+  id: number;
+  profilePic: string;
+  name: string;
+  rating: number;
+  date: string;
+  content: string;
+  replies: Reply[];
+}
+
+const comments: Comment[] = [
   {
     id: 1,
     profilePic: 'https://via.placeholder.com/40',
@@ -23,11 +41,12 @@ const comments = [
 ];
 
 export default function ReviewComments() {
-  const [showReplyBox, setShowReplyBox] = useState(null);
+  const [showReplyBox, setShowReplyBox] = useState<number | null>(null);
 
-  const handleReplyButtonClick = (commentId) => {
+  const handleReplyButtonClick = (commentId: number) => {
     setShowReplyBox(showReplyBox === commentId ? null : commentId);
   };
+
   return (
     <>
       <div className="font-bold text-zp-xs">리뷰</div>
@@ -69,7 +88,7 @@ export default function ReviewComments() {
           {showReplyBox === comment.id && (
             <div className="mt-2 bg-zp-light-beige p-4 rounded-zp-radius-big">
               <textarea
-                rows="3"
+                rows={3}
                 placeholder="대댓글을 작성하세요..."
                 className="w-full mt-2 p-2 border border-zp-sub-color rounded"
               />

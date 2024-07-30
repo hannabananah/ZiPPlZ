@@ -1,15 +1,25 @@
 import { IoHammerOutline } from 'react-icons/io5';
 
-const manners = {
-  기술: 5.0, // 별점 5.0 기준
+// 분야별 매너 온도 데이터의 타입 정의
+interface Manners {
+  기술: number;
+  커뮤니케이션: number;
+  작업완성도: number;
+  추천의사: number;
+}
+
+// 매너 온도 데이터
+const manners: Manners = {
+  기술: 5.0,
   커뮤니케이션: 4.0,
   작업완성도: 4.1,
   추천의사: 3.2,
 };
 
-const temperature = 56.5;
-
 export default function MannerTemperature() {
+  // 전체 매너 온도를 계산합니다.
+  const totalScore = 56.5; // 예시로 제공된 값
+
   return (
     <>
       <div className="mt-6 font-bold text-zp-xs">매너 온도</div>

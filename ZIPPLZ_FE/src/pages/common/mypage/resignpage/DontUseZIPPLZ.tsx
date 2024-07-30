@@ -5,7 +5,7 @@ import { MdOutlineDesignServices } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 export default function DontUseZIPPLZ() {
-  let user = '강신구';
+  let user: string = '강신구';
   const navigate = useNavigate();
 
   // 페이지 돌아가기 핸들러
@@ -61,7 +61,7 @@ export default function DontUseZIPPLZ() {
             </div>
             <div className="h-5 p-2 font-bold text-zp-xl">
               캘린더
-              <div className="h-5 mt-2 h-10 font-bold text-zp-gray text-zp-xl">
+              <div className="mt-2 font-bold text-zp-gray text-zp-xl">
                 나만의 인테리어 일정 세우기
               </div>
             </div>
@@ -73,7 +73,7 @@ export default function DontUseZIPPLZ() {
             </div>
             <div className="h-5 p-2 font-bold text-zp-xl">
               시공자 검색
-              <div className="h-5 mt-2 h-10 font-bold text-zp-gray text-zp-xl">
+              <div className="mt-2 font-bold text-zp-gray text-zp-xl">
                 공종별 최고의 시공 전문가와 함께 인테리어 하기
               </div>
             </div>

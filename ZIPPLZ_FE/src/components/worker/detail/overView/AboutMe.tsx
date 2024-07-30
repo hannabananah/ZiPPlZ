@@ -4,10 +4,11 @@ import { PiNotePencil } from 'react-icons/pi';
 export default function AboutMe() {
   // 모달 열림, 한줄 소개 입력 값, 임시 값 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [introduce, setIntroduce] = useState('한줄 소개가 여기에 들어갑니다.');
-  const [asPeriod, setAsPeriod] = useState('1개월 이하');
-  const [tempIntroduce, setTempIntroduce] = useState(introduce);
-  const [tempAsPeriod, setTempAsPeriod] = useState(asPeriod);
+  const [introduce, setIntroduce] =
+    useState<string>('한줄 소개가 여기에 들어갑니다.');
+  const [asPeriod, setAsPeriod] = useState<string>('1개월 이하');
+  const [tempIntroduce, setTempIntroduce] = useState<string>(introduce);
+  const [tempAsPeriod, setTempAsPeriod] = useState<string>(asPeriod);
 
   // 모달 열기
   const handleOpenModal = () => {

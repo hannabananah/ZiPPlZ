@@ -4,15 +4,18 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 
+type Location = {
+  city: string;
+  district: string;
+};
+
 export default function WorkerInfoLocationDetail() {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
-  const [selectedLocations, setSelectedLocations] = useState<
-    { city: string; district: string }[]
-  >([]); // 선택된 도시와 구역의 배열
+  const [selectedLocations, setSelectedLocations] = useState<Location[]>([]); // 선택된 도시와 구역의 배열
 
   const navigate = useNavigate();
-  const maxSelections = 8; // 최대 선택 가능한 조합 수
+  const maxSelections: number = 8; // 최대 선택 가능한 조합 수
 
   const handleCityClick = (city: string) => {
     setSelectedCity(city);
@@ -23,7 +26,7 @@ export default function WorkerInfoLocationDetail() {
     setSelectedDistrict(district);
 
     if (selectedCity) {
-      const location = { city: selectedCity, district };
+      const location: Location = { city: selectedCity, district };
 
       setSelectedLocations((prev) => {
         // 이미 선택된 조합이 아닌 경우에만 추가하고 최대 개수를 초과하지 않도록 제한
@@ -54,7 +57,7 @@ export default function WorkerInfoLocationDetail() {
     setSelectedLocations((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const cityButtons = [
+  const cityButtons: string[] = [
     '서울',
     '부산',
     '경기',
@@ -74,7 +77,7 @@ export default function WorkerInfoLocationDetail() {
     '제주',
   ];
 
-  const districtMap = {
+  const districtMap: { [key: string]: string[] } = {
     서울: ['강남구', '강북구', '강서구'],
     부산: ['강서구', '금정구', '남구'],
     경기: ['수원시', '용인시', '성남시'],

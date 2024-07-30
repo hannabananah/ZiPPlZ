@@ -7,7 +7,7 @@ import Portfolio from '../Portfolio';
 
 export default function WorkerSchedule() {
   // 현재 날짜를 `7.25` 형식으로 변환
-  const formatDate = (date: Date) => {
+  const formatDate = (date: Date): string => {
     const month = date.getMonth() + 1; // 월은 0부터 시작하므로 1을 더함
     const day = date.getDate();
     return `${month}.${day}`;

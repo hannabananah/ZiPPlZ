@@ -1,23 +1,32 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { GoArrowLeft } from 'react-icons/go';
 import { PiEyeLight, PiEyeSlash } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
+
+interface ErrorState {
+  current: boolean;
+  new: boolean;
+  confirm: boolean;
+  emptyFields: boolean;
+}
 
 export default function MyPasswordModify() {
   const navigate = useNavigate();
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('-1');
+    navigate(-1);
   };
 
-  const [currentPassword, setCurrentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
-  const [showNewPassword, setShowNewPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [error, setError] = useState({
+  const [currentPassword, setCurrentPassword] = useState<string>('');
+  const [newPassword, setNewPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
+  const [showCurrentPassword, setShowCurrentPassword] =
+    useState<boolean>(false);
+  const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
+  const [showConfirmPassword, setShowConfirmPassword] =
+    useState<boolean>(false);
+  const [error, setError] = useState<ErrorState>({
     current: false,
     new: false,
     confirm: false,
@@ -25,15 +34,17 @@ export default function MyPasswordModify() {
   });
   const existingPassword = '1234'; // 기존 비밀번호 설정
 
-  const handlePasswordChange = (e) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentPassword(e.target.value);
   };
 
-  const handleNewPasswordChange = (e) => {
+  const handleNewPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNewPassword(e.target.value);
   };
 
-  const handleConfirmPasswordChange = (e) => {
+  const handleConfirmPasswordChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setConfirmPassword(e.target.value);
   };
 
@@ -181,7 +192,7 @@ export default function MyPasswordModify() {
               />
             ) : (
               <PiEyeSlash
-                className="absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                className="w-8 h-8 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
                 onClick={() => setShowConfirmPassword(true)}
               />
             )}

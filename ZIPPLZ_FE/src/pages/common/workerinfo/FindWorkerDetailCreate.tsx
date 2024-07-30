@@ -1,28 +1,33 @@
-import { useState } from 'react';
+import { ChangeEvent, MouseEvent, useState } from 'react';
 import { CiCamera, CiSearch } from 'react-icons/ci';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
+import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
+// 이미지 상태의 타입 정의
+type Image = string;
+
+// 상태와 핸들러 인자의 타입을 정의합니다.
 export default function FindWorkerDetailCreate() {
-  const [images, setImages] = useState([]);
-  const [title, setTitle] = useState('');
-  const [address, setAddress] = useState('');
-  const [addressDetail, setAddressDetail] = useState('');
-  const [workDetail, setWorkDetail] = useState('');
+  const [images, setImages] = useState<Image[]>([]);
+  const [title, setTitle] = useState<string>('');
+  const [address, setAddress] = useState<string>('');
+  const [addressDetail, setAddressDetail] = useState<string>('');
+  const [workDetail, setWorkDetail] = useState<string>('');
 
   const navigate = useNavigate();
   const maxImages = 10;
 
-  const handleImageUpload = (event) => {
-    const files = Array.from(event.target.files);
+  // 이미지 업로드 핸들러
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(event.target.files || []);
     const readerPromises = files.map((file) => {
       const reader = new FileReader();
-      return new Promise((resolve) => {
-        reader.onloadend = () => resolve(reader.result);
+      return new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
         reader.readAsDataURL(file);
       });
     });
@@ -35,10 +40,12 @@ export default function FindWorkerDetailCreate() {
     });
   };
 
-  const handleImageRemove = (index) => {
+  // 이미지 삭제 핸들러
+  const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  // 확인 버튼 핸들러
   const handleConfirm = () => {
     navigate('/FindWorkerList', {
       state: {
@@ -145,7 +152,9 @@ export default function FindWorkerDetailCreate() {
                   fontSize="xs"
                   radius="btn"
                   value={title}
-                  onChange={(e) => setTitle(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setTitle(e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -166,7 +175,9 @@ export default function FindWorkerDetailCreate() {
                   fontSize="xs"
                   radius="btn"
                   value={address}
-                  onChange={(e) => setAddress(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setAddress(e.target.value)
+                  }
                 />
                 <CiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2" />
               </div>
@@ -188,7 +199,9 @@ export default function FindWorkerDetailCreate() {
                   fontSize="xs"
                   radius="btn"
                   value={addressDetail}
-                  onChange={(e) => setAddressDetail(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setAddressDetail(e.target.value)
+                  }
                 />
               </div>
             </div>
@@ -209,7 +222,9 @@ export default function FindWorkerDetailCreate() {
                   fontSize="xs"
                   radius="btn"
                   value={workDetail}
-                  onChange={(e) => setWorkDetail(e.target.value)}
+                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                    setWorkDetail(e.target.value)
+                  }
                 />
               </div>
             </div>
