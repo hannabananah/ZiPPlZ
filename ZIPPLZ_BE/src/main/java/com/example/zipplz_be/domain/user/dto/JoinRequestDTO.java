@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 
 @Getter
 @Setter
-public class JoinDTO {
+public class JoinRequestDTO {
     private String email;
     private String password;
     private String userName;
