@@ -14,17 +14,19 @@ import SignUpWorkerSkill from './worker/SignUpWorkerSkill';
 
 export default function SignUp() {
   const { order, type, phrase } = useParams<{
-    order: string;
-    type: string;
-    phrase: string;
+    order?: string;
+    type?: string;
+    phrase?: string;
   }>();
+
   const orderNumber: number = order ? parseInt(order) : 0;
   const [next, setNext] = useState<boolean>(false);
   const [active, setActive] = useState<boolean>(false);
   const [link, setLink] = useState<string>('');
+
   return (
-    <div className="w-full relative  bg-zp-white  min-h-screen p-4 gap-4 flex flex-col  max-w-[600px] ">
-      <SignUpHead type={type} />
+    <div className="w-full relative bg-zp-white min-h-screen p-4 gap-4 flex flex-col max-w-[600px]">
+      <SignUpHead type={type || ''} />
       {orderNumber === 2 && type === 'common' && phrase === 'info' && (
         <SignUpInfo setActive={setActive} setLink={setLink} />
       )}
@@ -48,7 +50,7 @@ export default function SignUp() {
       )}
       <SignBottom
         order={orderNumber}
-        phrase={phrase}
+        phrase={phrase || ''}
         active={active}
         next={next}
         link={link}
