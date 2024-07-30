@@ -13,4 +13,5 @@ public class ChatMessageRequestDTO {
     private int userSerial;
     private String userName;
     private int otherUserSerial;
+    private Boolean isFile;
 }
