@@ -1,4 +1,4 @@
-export const BASE_URL: string = import.meta.env.BASE_URL;
+export const BASE_URL: string = import.meta.env.VITE_APP_BASE_URL;
 
 export const END_POINT = {
   LOGIN: 'login',

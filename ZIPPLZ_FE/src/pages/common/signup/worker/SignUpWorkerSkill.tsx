@@ -5,7 +5,7 @@ import { setAppElement } from 'react-modal';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 
-import value from './../../../../../svg.d';
+// import value from './../../../../../svg.d';
 
 const skills: string[] = [
   '철거',
@@ -61,8 +61,8 @@ export default function SignUpWorkerSkill({ setNext, setLink }: Props) {
   return (
     <>
       <div className="flex flex-col gap-6">
-        <p className="text-zp-2xl font-bold">작업 분야 선택</p>
-        <div className="w-full grid grid-cols-4 gap-4">
+        <p className="font-bold text-zp-2xl">작업 분야 선택</p>
+        <div className="grid w-full grid-cols-4 gap-4">
           {skills.map((skill) => (
             <Button
               buttonType={selectedSkills.includes(skill) ? 'primary' : 'normal'}

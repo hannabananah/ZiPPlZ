@@ -97,7 +97,7 @@ export default function useOpenVidu() {
   const startRecording = async () => {
     try {
       const response = await axios.post(
-        `${base_url}/api/sessions/recording`,
+        `${base_url}/openvidu/api/sessions/recording`,
         { sessionId },
         {
           headers: {
@@ -117,7 +117,7 @@ export default function useOpenVidu() {
     try {
       if (!recordingId) throw new Error('No recording ID available');
       const response = await axios.post(
-        `${base_url}/api/sessions/recording/stop`,
+        `${base_url}/openvidu/api/sessions/recording/stop`,
         { recordingId },
         {
           headers: {
@@ -142,12 +142,16 @@ export default function useOpenVidu() {
           customSessionId: sessionIds,
           chatroomSerial: 1,
         });
-        const response = await axios.post(`${base_url}/api/sessions`, data, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        });
+        const response = await axios.post(
+          `${base_url}/openvidu/api/sessions`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
         return (response.data as { id: string }).id;
       } catch (error) {
         const errorResponse = (error as AxiosError)?.response;
@@ -169,7 +173,7 @@ export default function useOpenVidu() {
           chatroomSerial: 1,
         });
         const response = await axios.post(
-          `${base_url}/api/sessions/connections`,
+          `${base_url}/openvidu/api/sessions/connections`,
           data,
           {
             headers: {
