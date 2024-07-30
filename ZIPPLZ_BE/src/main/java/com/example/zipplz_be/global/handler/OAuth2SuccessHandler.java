@@ -34,5 +34,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         response.addHeader("Authorization", "Bearer " + token);
         response.sendRedirect("http://localhost:5173/member/join/common/1/extrainfo");
+        System.out.println(token);
     }
 }
