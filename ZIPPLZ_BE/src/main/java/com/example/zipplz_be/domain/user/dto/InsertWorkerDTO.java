@@ -9,9 +9,9 @@ import java.util.List;
 @Setter
 public class InsertWorkerDTO {
     private int userSerial;
-    private List<LocationDTO> locationList;
-    private List<Integer> specialty;
+    private List<WorkerLocationDTO> locationList;
+    private List<WorkerSpecialtyDTO> specialtyList;
     private String businessNumber;
     private String company;
-//    private String
+    private String companyAddress;
 }
