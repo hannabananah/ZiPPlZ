@@ -1,8 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+import Video from '@components/chat/video/Video';
 import { Publisher, Subscriber } from 'openvidu-browser';
-
-import Video from './Video';
 
 interface SessionProps {
   subscriber: Subscriber | null;

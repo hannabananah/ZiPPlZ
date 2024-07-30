@@ -5,6 +5,9 @@ interface ChatRoom {
   user_serial: number;
   session_id: string;
   chatroom_name: string;
+  name: string;
+  imageUrl: string;
+  temp: string;
 }
 
 interface ChatStore {

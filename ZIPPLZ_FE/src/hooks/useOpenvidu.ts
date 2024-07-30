@@ -168,8 +168,8 @@ export default function useOpenVidu() {
       try {
         const data = JSON.stringify({
           role: 'PUBLISHER',
-          // sessionId: sessionIds,
-          sessionId: 'monkey',
+          sessionId: sessionIds,
+          // sessionId: 'monkey',
           chatroomSerial: 1,
         });
         const response = await axios.post(

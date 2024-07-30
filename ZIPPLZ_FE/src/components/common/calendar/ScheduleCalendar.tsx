@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -47,7 +46,7 @@ const getRandomColor = (): string => {
 const CalendarTest: React.FC = function () {
   const navigate = useNavigate();
   return (
-    <div className="w-full relative">
+    <div className="relative w-full">
       <div
         className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-zp-yellow bg-opacity-0 z-1000 cursor-pointer w-[7rem] h-[2rem]"
         onClick={() => navigate('/schedule')}
@@ -88,7 +87,7 @@ const CalendarTest: React.FC = function () {
         })}
         eventContent={(eventInfo) => (
           <div
-            className="p-1  text-zp-white text-zp-xl rounded-zp-radius-btn "
+            className="p-1 text-zp-white text-zp-xl rounded-zp-radius-btn "
             style={{
               backgroundColor: eventInfo.event.extendedProps.backgroundColor,
             }}

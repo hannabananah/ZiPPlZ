@@ -106,7 +106,7 @@ export default function ScheduleRegist({
       {!isRegist ? (
         <FiPlusCircle size={32} onClick={handleClickPlus} />
       ) : !isNormalScehdule && !isPrivateSchedule ? (
-        <div className="w-full flex justify-center w-full items-center gap-4">
+        <div className="flex items-center justify-center w-full gap-4">
           <Button
             buttonType="primary"
             children="메인 시공"
@@ -149,7 +149,7 @@ export default function ScheduleRegist({
           radius="btn"
           width="full"
           fontSize="xl"
-          onKeydown={handleKeyDown}
+          onKeyDown={handleKeyDown}
         />
       )}
       <Modal
