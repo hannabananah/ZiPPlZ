@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface PlanRepository extends JpaRepository<Plan, Integer> {
     List<Plan> findBycustomerSerial(Customer customerSerial);
-
+    Plan findByPlanSerial(int planSerial);
 }
