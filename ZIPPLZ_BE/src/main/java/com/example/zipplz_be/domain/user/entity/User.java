@@ -42,4 +42,13 @@ public class User {
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
         this.role = "";
     }
+
+    @Builder
+    public User(String email, String userName) {
+        this.email = email;
+        this.userName = userName;
+        this.fileSerial = 0;
+        this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
+        this.role = "";
+    }
 }

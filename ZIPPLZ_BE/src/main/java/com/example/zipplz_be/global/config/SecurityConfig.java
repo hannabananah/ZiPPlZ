@@ -63,8 +63,10 @@ public class SecurityConfig {
         // oauth2 설정
         http
                 .oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
+                        // OAuth2 로그인 성공 이후 사용자 정보를 가져올 때의 설정을 담당
                         oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService))
-                        .successHandler(oAuth2SuccessHandler));
+                                // 로그인 성공 시 핸들러
+                                .successHandler(oAuth2SuccessHandler));
 
         // jwt 관련 설정
         http

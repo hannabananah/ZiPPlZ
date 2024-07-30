@@ -49,7 +49,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = customUserDetails.getUsername();
         User user = userRepository.findByEmail(email);
         int userSerial = user.getUserSerial();
-        String role = user.getRole();
+//        String role = user.getRole();
 
         System.out.println("email when success :" + email);
 
@@ -59,7 +59,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //
 //        String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(email, userSerial, role, 600000000L);
+        String token = jwtUtil.createJwt(email, userSerial);
 
         response.addHeader("Authorization", "Bearer " + token);
     }
