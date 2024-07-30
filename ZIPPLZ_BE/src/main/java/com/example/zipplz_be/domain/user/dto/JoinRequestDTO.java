@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 
 @Getter
 @Setter
-public class JoinDTO {
+public class JoinRequestDTO {
     private String email;
     private String password;
     private String userName;
@@ -22,7 +22,7 @@ public class JoinDTO {
     public User toEntity() {
 
         // SimpleDateFormat을 사용하여 문자열을 java.util.Date로 변환
-        SimpleDateFormat formatter = new SimpleDateFormat("yy/MM/dd");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
         java.util.Date utilDate;
         try {
             utilDate = formatter.parse(birthDate);
