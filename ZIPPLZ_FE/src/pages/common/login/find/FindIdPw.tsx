@@ -1,4 +1,3 @@
-import React from 'react';
 import { FaArrowLeft } from 'react-icons/fa6';
 import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 
@@ -14,9 +13,9 @@ export default function FindIdPw() {
   const type = searchParams.get('type');
 
   return (
-    <div className="w-full p-6 flex flex-col gap-6">
+    <div className="flex flex-col w-full gap-6 p-6">
       <FaArrowLeft size={16} onClick={() => navigate('/member/login')} />
-      <p className="text-zp-3xl font-extrabold mt-6">FIND ID / PW</p>
+      <p className="mt-6 font-extrabold text-zp-3xl">FIND ID / PW</p>
       <div className="flex gap-5 mt-3">
         <NavLink
           to="?type=id"

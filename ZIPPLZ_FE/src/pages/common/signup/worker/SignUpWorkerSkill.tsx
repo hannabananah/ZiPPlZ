@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { HiChevronRight } from 'react-icons/hi2';
-import { setAppElement } from 'react-modal';
 
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
+// import { HiChevronRight } from 'react-icons/hi2';
+// import { setAppElement } from 'react-modal';
+import Button from '@components/common/Button';
+
+// import Input from '@components/common/Input';
 
 // import value from './../../../../../svg.d';
 

@@ -18,7 +18,7 @@ export default function ChatRoomHeader() {
 
   const handleClickVideo = () => {
     if (selectedChatRoom) {
-      navigate(`/chatrooms/${selectedChatRoom.id}/videoroom`);
+      navigate(`/chatrooms/${selectedChatRoom.chatroom_serial}/videoroom`);
     }
   };
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { PiNotePencil } from 'react-icons/pi';
 
 // Import Swiper styles
@@ -37,46 +37,46 @@ export default function OverView() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+      <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
         <div className="w-full max-w-3xl">
           {/* Portfolio 컴포넌트 상단에 배치 */}
           <Portfolio />
 
-          <div className="mt-6 w-24 h-6 font-bold text-zp-xs flex items-center justify-start">
+          <div className="flex items-center justify-start w-24 h-6 mt-6 font-bold text-zp-xs">
             <div>About Me</div>
           </div>
 
           {/* 우측 상단에 글쓰기 버튼 누르면, 한줄 소개와 A/S 기간을 선택할 수 있는 modal 창 */}
-          <div className="relative w-full bg-zp-white p-4 rounded-zp-radius-big">
+          <div className="relative w-full p-4 bg-zp-white rounded-zp-radius-big">
             <PiNotePencil
               onClick={handleOpenModal}
-              className="absolute top-4 right-4 cursor-pointer"
+              className="absolute cursor-pointer top-4 right-4"
               size={24}
             />
-            <div className="text-zp-2xs flex flex-col space-y-2">
+            <div className="flex flex-col space-y-2 text-zp-2xs">
               <div className="flex items-center">
                 <div className="w-20">나이</div>
-                <div className="border-l border-black h-full mx-2"></div>
+                <div className="h-full mx-2 border-l border-black"></div>
                 <div className="flex-grow">30</div>
               </div>
               <div className="flex items-center">
                 <div className="w-20">E-MAIL</div>
-                <div className="border-l border-black h-full mx-2"></div>
+                <div className="h-full mx-2 border-l border-black"></div>
                 <div className="flex-grow">saffy@ssafy.com</div>
               </div>
               <div className="flex items-center">
                 <div className="w-20">성별</div>
-                <div className="border-l border-black h-full mx-2"></div>
+                <div className="h-full mx-2 border-l border-black"></div>
                 <div className="flex-grow">남성</div>
               </div>
               <div className="flex items-center">
                 <div className="w-20">한줄소개</div>
-                <div className="border-l border-black h-full mx-2"></div>
+                <div className="h-full mx-2 border-l border-black"></div>
                 <div className="flex-grow">{introduce}</div>
               </div>
               <div className="flex items-center">
                 <div className="w-20">A/S 보증 기간</div>
-                <div className="border-l border-black h-full mx-2"></div>
+                <div className="h-full mx-2 border-l border-black"></div>
                 <div className="flex-grow">{asPeriod}</div>
               </div>
             </div>
@@ -84,7 +84,7 @@ export default function OverView() {
 
           {/* 모달 창 */}
           {isModalOpen && (
-            <div className="fixed inset-0 flex items-center justify-center z-50">
+            <div className="fixed inset-0 z-50 flex items-center justify-center">
               {/* 배경 오버레이 */}
               <div
                 className="absolute inset-0 bg-black bg-opacity-50"
@@ -92,7 +92,7 @@ export default function OverView() {
               ></div>
               {/* 모달 창 */}
               <div className="border border-zp-main-color rounded-zp-radius-big bg-zp-white p-6 shadow-lg w-[300px]">
-                <div className="text-lg font-bold mb-4">
+                <div className="mb-4 text-lg font-bold">
                   한줄소개 및 A/S 기간 수정
                 </div>
                 <div className="mb-4">
@@ -101,7 +101,7 @@ export default function OverView() {
                     type="text"
                     value={tempIntroduce}
                     onChange={(e) => setTempIntroduce(e.target.value)}
-                    className="border border-gray-300 p-2 w-full"
+                    className="w-full p-2 border border-gray-300"
                   />
                 </div>
                 <div className="mb-4">
@@ -109,7 +109,7 @@ export default function OverView() {
                   <select
                     value={tempAsPeriod}
                     onChange={(e) => setTempAsPeriod(e.target.value)}
-                    className="border border-gray-300 p-2 w-full"
+                    className="w-full p-2 border border-gray-300"
                   >
                     <option value="" disabled>
                       A/S 기간을 선택해주세요
@@ -124,13 +124,13 @@ export default function OverView() {
                 <div className="flex justify-end">
                   <button
                     onClick={handleCloseModal}
-                    className="bg-gray-300 text-black px-4 py-2 rounded mr-2"
+                    className="px-4 py-2 mr-2 text-black bg-gray-300 rounded"
                   >
                     취소
                   </button>
                   <button
                     onClick={handleSave}
-                    className="bg-blue-500 text-white px-4 py-2 rounded"
+                    className="px-4 py-2 text-white bg-blue-500 rounded"
                   >
                     저장
                   </button>
@@ -139,7 +139,7 @@ export default function OverView() {
             </div>
           )}
 
-          <div className="mt-6 w-24 h-6 font-bold text-zp-xs">Photos</div>
+          <div className="w-24 h-6 mt-6 font-bold text-zp-xs">Photos</div>
           <Swiper
             spaceBetween={50}
             slidesPerView={3}
@@ -147,43 +147,43 @@ export default function OverView() {
             onSwiper={(swiper) => console.log(swiper)}
           >
             <SwiperSlide>
-              <div className="rounded-zp-radius-big w-40 h-40 bg-zp-white">
+              <div className="w-40 h-40 rounded-zp-radius-big bg-zp-white">
                 <button className="w-40 h-40">사진1</button>
               </div>
             </SwiperSlide>
             <SwiperSlide>
-              <div className="rounded-zp-radius-big w-40 h-40 bg-zp-white">
+              <div className="w-40 h-40 rounded-zp-radius-big bg-zp-white">
                 <button className="w-40 h-40">사진2</button>
               </div>
             </SwiperSlide>
             <SwiperSlide>
-              <div className="rounded-zp-radius-big w-40 h-40 bg-zp-white">
+              <div className="w-40 h-40 rounded-zp-radius-big bg-zp-white">
                 <button className="w-40 h-40">사진3</button>
               </div>
             </SwiperSlide>
             <SwiperSlide>
-              <div className="rounded-zp-radius-big w-40 h-40 bg-zp-white">
+              <div className="w-40 h-40 rounded-zp-radius-big bg-zp-white">
                 <button className="w-40 h-40">사진4</button>
               </div>
             </SwiperSlide>
           </Swiper>
 
-          <div className="mt-6 w-24 h-6 font-bold text-zp-xs">
+          <div className="w-24 h-6 mt-6 font-bold text-zp-xs">
             경력 및 자격증
           </div>
-          <div className="w-full h-24 bg-zp-white p-4 rounded-zp-radius-big font-bold">
-            <div className="text-zp-2xs flex flex-col space-y-2">
+          <div className="w-full h-24 p-4 font-bold bg-zp-white rounded-zp-radius-big">
+            <div className="flex flex-col space-y-2 text-zp-2xs">
               <div>20.01.01 실내 건축 기사 취득</div>
               <div>20.02.01 ~ 22.03.01 ~~~~~~</div>
               <div>21.01.01 ~~~~~~~</div>
             </div>
           </div>
 
-          <div className="mt-6 w-24 h-6 font-bold text-zp-xs">
+          <div className="w-24 h-6 mt-6 font-bold text-zp-xs">
             하고 싶은 얘기
           </div>
-          <div className="w-full h-24 bg-zp-white p-4 rounded-zp-radius-big font-bold">
-            <div className="text-zp-2xs flex flex-col space-y-2">
+          <div className="w-full h-24 p-4 font-bold bg-zp-white rounded-zp-radius-big">
+            <div className="flex flex-col space-y-2 text-zp-2xs">
               <div>잘 부탁드려요</div>
             </div>
           </div>

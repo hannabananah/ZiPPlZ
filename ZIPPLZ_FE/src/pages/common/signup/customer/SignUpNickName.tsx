@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import Input from '@/components/common/Input';
+import Input from '@components/common/Input';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
@@ -15,7 +15,7 @@ export default function SignUpNickName({ setNext, setLink }: Props) {
   });
   return (
     <>
-      <p className="w-full text-zp-xl font-bold">닉네임</p>
+      <p className="w-full font-bold text-zp-xl">닉네임</p>
       <Input
         inputType="signup"
         type="text"

@@ -17,6 +17,10 @@ const chatRooms = [
     temp: '36.5℃',
     unread: 5,
     imageUrl: 'https://i.pravatar.cc/50?img=1',
+    chatroom_serial: 1,
+    user_serial: 101,
+    session_id: 'session1',
+    chatroom_name: 'Chatroom 1',
   },
   {
     id: 2,
@@ -26,6 +30,10 @@ const chatRooms = [
     temp: '36.5℃',
     unread: 5,
     imageUrl: 'https://i.pravatar.cc/50?img=2',
+    chatroom_serial: 2,
+    user_serial: 102,
+    session_id: 'session2',
+    chatroom_name: 'Chatroom 2',
   },
   {
     id: 3,
@@ -35,6 +43,10 @@ const chatRooms = [
     temp: '36.5℃',
     unread: 5,
     imageUrl: 'https://i.pravatar.cc/50?img=3',
+    chatroom_serial: 3,
+    user_serial: 103,
+    session_id: 'session3',
+    chatroom_name: 'Chatroom 3',
   },
   {
     id: 4,
@@ -44,6 +56,10 @@ const chatRooms = [
     temp: '36.5℃',
     unread: 5,
     imageUrl: 'https://i.pravatar.cc/50?img=4',
+    chatroom_serial: 4,
+    user_serial: 104,
+    session_id: 'session4',
+    chatroom_name: 'Chatroom 4',
   },
   {
     id: 5,
@@ -52,6 +68,10 @@ const chatRooms = [
     temp: '36.5℃',
     unread: 5,
     imageUrl: 'https://i.pravatar.cc/50?img=5',
+    chatroom_serial: 5,
+    user_serial: 105,
+    session_id: 'session5',
+    chatroom_name: 'Chatroom 5',
   },
   {
     id: 6,
@@ -60,6 +80,10 @@ const chatRooms = [
     temp: '36.5℃',
     unread: 5,
     imageUrl: 'https://i.pravatar.cc/50?img=6',
+    chatroom_serial: 6,
+    user_serial: 106,
+    session_id: 'session6',
+    chatroom_name: 'Chatroom 6',
   },
 ];
 

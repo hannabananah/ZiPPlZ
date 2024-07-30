@@ -28,9 +28,9 @@ export default function Portfolio() {
     setIsBookmarked(!isBookmarked); // 북마크 상태 토글
   };
 
-  let [area, setArea] = useState('서울, 경기');
-  let [tel, setTel] = useState('010-9909-8322');
-  let [skills, setSkills] = useState<string[]>(['도배', '타일', '벽지']);
+  let area = '서울, 경기';
+  let tel = '010-9909-8322';
+  let skills = ['도배', '타일', '벽지'];
 
   return (
     <>
@@ -51,13 +51,13 @@ export default function Portfolio() {
         )}
       </div>
 
-      <div className="font-bold flex items-start space-x-8 p-4">
+      <div className="flex items-start p-4 space-x-8 font-bold">
         {/* 사진, 이름 */}
         <div>
-          <div className="w-32 h-32 grid place-items-center">
+          <div className="grid w-32 h-32 place-items-center">
             <CgProfile size={120} />
           </div>
-          <div className="w-32 h-8 grid place-items-center text-zp-xl text-zp-black">
+          <div className="grid w-32 h-8 place-items-center text-zp-xl text-zp-black">
             강신구
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function Portfolio() {
         <div className="flex flex-col space-y-2 text-zp-xs text-zp-black">
           <div className="w-64 h-8">Area : {area}</div>
           <div className="w-64 h-8">Phone : {tel}</div>
-          <div className="w-64 h-8 flex space-x-2">
+          <div className="flex w-64 h-8 space-x-2">
             {/* Skills as buttons */}
             {skills.map((skill, index) => (
               <button

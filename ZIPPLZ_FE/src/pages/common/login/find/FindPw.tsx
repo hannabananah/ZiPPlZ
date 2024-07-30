@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
-import PhoneInput from '@/components/signup/PhoneInput';
+import Button from '@components/common/Button';
+import Input from '@components/common/Input';
+import PhoneInput from '@components/signup/PhoneInput';
 
 export default function FindPw() {
   const [id, setId] = useState<string>('');

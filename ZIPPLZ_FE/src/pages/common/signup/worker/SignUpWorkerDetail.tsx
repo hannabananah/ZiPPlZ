@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import Input from '@/components/common/Input';
-import RegistrationInput from '@/components/signup/RegistrationInput';
+import Input from '@components/common/Input';
+import RegistrationInput from '@components/signup/RegistrationInput';
 
 interface Props {
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
@@ -29,7 +29,7 @@ export default function SignupInfo({ setActive, setLink }: Props) {
 
   return (
     <>
-      <div className="relative flex flex-col bg-zp-white w-full p-4 gap-4">
+      <div className="relative flex flex-col w-full gap-4 p-4 bg-zp-white">
         <p className="text-xl font-bold">사업자등록번호</p>
         <RegistrationInput
           placeholder="000-00-00000"

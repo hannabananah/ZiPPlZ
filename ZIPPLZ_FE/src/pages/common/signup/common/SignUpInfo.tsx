@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 
-import Input from '@/components/common/Input';
-import DateInput from '@/components/signup/DateInput';
-import PhoneInput from '@/components/signup/PhoneInput';
+import Input from '@components/common/Input';
+import DateInput from '@components/signup/DateInput';
+import PhoneInput from '@components/signup/PhoneInput';
 
 interface Props {
   setActive: React.Dispatch<React.SetStateAction<boolean>>;

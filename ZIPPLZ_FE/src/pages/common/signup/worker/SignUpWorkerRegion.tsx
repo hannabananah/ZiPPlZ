@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import Button from '@/components/common/Button';
-import { regionList } from '@/components/signup/regionData/region.js';
+import Button from '@components/common/Button';
+import { regionList } from '@components/signup/regionData/region.js';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
@@ -42,10 +42,10 @@ export default function SignUpWorkerRegion({ setNext, setLink }: Props) {
   }, [selectedGugun]);
   return (
     <div className="flex flex-col gap-4 overflow-auto mb-[6rem]">
-      <p className="text-zp-xl font-bold">
+      <p className="font-bold text-zp-xl">
         작업 가능한 지역을 모두 선택해주세요.
       </p>
-      <div className="w-full grid grid-cols-4 gap-4">
+      <div className="grid w-full grid-cols-4 gap-4">
         {regionList.map((item, idx) => (
           <Button
             buttonType={
@@ -65,7 +65,7 @@ export default function SignUpWorkerRegion({ setNext, setLink }: Props) {
       {selectedSido >= 0 && (
         <>
           <hr className="text-zp-light-gray" />
-          <div className="w-full grid grid-cols-4 gap-4">
+          <div className="grid w-full grid-cols-4 gap-4">
             {regionList[selectedSido].guguns.map((gugun) => (
               <Button
                 buttonType={selectedGugun.includes(gugun) ? 'second' : 'normal'}
@@ -83,7 +83,7 @@ export default function SignUpWorkerRegion({ setNext, setLink }: Props) {
       )}
       {selectedGugun.length > 0 && (
         <>
-          <div className="relative w-full grid grid-cols-4 gap-4 p-4">
+          <div className="relative grid w-full grid-cols-4 gap-4 p-4">
             <div className="absolute top-0 left-0 w-full h-[18px] backdrop-blur-lg bg-gradient-to-b from-white to-transparent z-0"></div>
             {selectedGugun.map((gugun) => (
               <Button
@@ -98,7 +98,7 @@ export default function SignUpWorkerRegion({ setNext, setLink }: Props) {
                 }}
               />
             ))}
-            <p className="text-zp-light-gray text-zp-lg absolute right-0 bottom-0">
+            <p className="absolute bottom-0 right-0 text-zp-light-gray text-zp-lg">
               {selectedGugun.length}/8
             </p>
           </div>
