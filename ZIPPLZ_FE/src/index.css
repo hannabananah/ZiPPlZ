@@ -17,6 +17,6 @@ html {
     @apply rounded-zp-radius-full min-w-8 max-w-16 max-h-16 w-full aspect-square drop-shadow-zp-deep;
   }
   .btn {
-    @apply flex items-center justify-center w-12 border-zp-main-color aspect-square rounded-zp-radius-full bg-zp-white;
+    @apply flex items-center justify-center w-12 border-zp-main-color aspect-square rounded-zp-radius-full bg-zp-white outline-none;
   }
 }

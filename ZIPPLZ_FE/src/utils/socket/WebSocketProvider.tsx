@@ -10,14 +10,14 @@ export default function ({ children }: { children: React.ReactNode }) {
   if (!ws.current) {
     ws.current = new WebSocket(webSocketUrl);
     ws.current.onopen = () => {
-      console.log('connected to ' + webSocketUrl);
+      console.log('WebSocket Url ' + webSocketUrl);
     };
     ws.current.onclose = (error) => {
-      console.log('disconnect from ' + webSocketUrl);
+      console.log('WebSocket 끊김:' + webSocketUrl);
       console.log(error);
     };
     ws.current.onerror = (error) => {
-      console.log('connection error ' + webSocketUrl);
+      console.log('WebSocket 연결에러: ' + webSocketUrl);
       console.log(error);
     };
   }

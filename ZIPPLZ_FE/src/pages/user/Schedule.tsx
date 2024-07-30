@@ -148,12 +148,12 @@ export default function Schedule() {
         backgroundColor="white"
       />
       <ScheduleCalendar />
-      <p className="w-full text-zp-xl font-bold ">공유 문서</p>
-      <div className="flex justify-between items-center gap-4">
+      <p className="w-full font-bold text-zp-xl ">공유 문서</p>
+      <div className="flex items-center justify-between gap-4">
         <SharedImg />
         <SharedMemo />
       </div>
-      <p className="w-full text-right text-zp-xl font-bold ">
+      <p className="w-full font-bold text-right text-zp-xl ">
         총 시공 가격 : {numberWithCommas(1000000)}원
       </p>
       {scheduleList.map((item, idx) =>

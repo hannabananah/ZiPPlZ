@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Customer, User, Worker } from '@/apis/member/MemberApi';
-import SignBottom from '@/components/signup/SignBottom';
-import SignUpHead from '@/components/signup/SignUpHead';
+import { Customer, User, Worker } from '@apis/member/MemberApi';
+import SignBottom from '@components/signup/SignBottom';
+import SignUpHead from '@components/signup/SignUpHead';
 
 import SignUpAgree from './common/SignUpAgree';
 import SignUpInfo from './common/SignUpInfo';
@@ -15,9 +15,9 @@ import SignUpWorkerSkill from './worker/SignUpWorkerSkill';
 
 export default function SignUp() {
   const { order, type, phrase } = useParams<{
-    order: string;
-    type: string;
-    phrase: string;
+    order?: string;
+    type?: string;
+    phrase?: string;
   }>();
   const [user, setUser] = useState<User>({
     email: '',
@@ -42,6 +42,7 @@ export default function SignUp() {
   const [next, setNext] = useState<boolean>(false);
   const [active, setActive] = useState<boolean>(false);
   const [link, setLink] = useState<string>('');
+
   return (
     <div className="w-full relative  bg-zp-white  min-h-screen p-4 gap-4 flex flex-col  max-w-[600px] ">
       <SignUpHead />
@@ -84,7 +85,7 @@ export default function SignUp() {
       )}
       <SignBottom
         order={orderNumber}
-        phrase={phrase}
+        phrase={phrase || ''}
         active={active}
         next={next}
         link={link}
