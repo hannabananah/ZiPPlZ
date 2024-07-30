@@ -4,6 +4,8 @@ import com.example.zipplz_be.domain.user.jwt.JWTFilter;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import com.example.zipplz_be.domain.user.jwt.LoginFilter;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
+import com.example.zipplz_be.domain.user.service.CustomOAuth2UserService;
+import com.example.zipplz_be.global.handler.OAuth2SuccessHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,10 +23,14 @@ public class SecurityConfig {
 
     private final AuthenticationConfiguration authenticationConfiguration;
     private final JWTUtil jwtUtil;
+    private final CustomOAuth2UserService oAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil) {
+    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomOAuth2UserService oAuth2UserService, OAuth2SuccessHandler oAuth2SuccessHandler) {
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
+        this.oAuth2UserService = oAuth2UserService;
+        this.oAuth2SuccessHandler = oAuth2SuccessHandler;
     }
 
     @Bean
@@ -46,17 +52,25 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
         http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/users/login", "/", "/users/join").permitAll()
+                        .requestMatchers("/users/login", "/", "/users/join", "/auth/successf").permitAll()
 //                        .anyRequest().authenticated());
                         .anyRequest().authenticated());
+
+        // oauth2 설정
+        http
+                .oauth2Login(oauth -> // OAuth2 로그인 기능에 대한 여러 설정의 진입점
+                        oauth.userInfoEndpoint(c -> c.userService(oAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler));
+
+        // jwt 관련 설정
         http
                 .addFilterAt(new JWTFilter(jwtUtil), LoginFilter.class);
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
-        http
-                .sessionManagement((session) -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
