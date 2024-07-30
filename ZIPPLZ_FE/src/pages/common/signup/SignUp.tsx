@@ -10,6 +10,7 @@ import SignUpSelectType from './common/SignUpSelectType';
 import SignUpNickName from './customer/SignUpNickName';
 import SignUpWorkerDetail from './worker/SignUpWorkerDetail';
 import SignUpWorkerRegion from './worker/SignUpWorkerRegion';
+import SignUpWorkerSkill from './worker/SignUpWorkerSkill';
 
 export default function SignUp() {
   const { order, type, phrase } = useParams<{
@@ -22,15 +23,15 @@ export default function SignUp() {
   const [active, setActive] = useState<boolean>(false);
   const [link, setLink] = useState<string>('');
   return (
-    <div className="w-full relative flex flex-col bg-zp-white  min-h-screen max-h-screen p-4 gap-4">
+    <div className="w-full relative  bg-zp-white  min-h-screen p-4 gap-4 flex flex-col  max-w-[600px] ">
       <SignUpHead type={type} />
-      {orderNumber === 1 && type === 'common' && phrase === 'info' && (
+      {orderNumber === 2 && type === 'common' && phrase === 'info' && (
         <SignUpInfo setActive={setActive} setLink={setLink} />
       )}
-      {orderNumber === 1 && type === 'common' && phrase === 'type' && (
+      {orderNumber === 2 && type === 'common' && phrase === 'type' && (
         <SignUpSelectType setNext={setNext} setLink={setLink} />
       )}
-      {orderNumber === 2 && phrase === 'nickname' && (
+      {orderNumber === 3 && phrase === 'nickname' && (
         <SignUpNickName setLink={setLink} setNext={setNext} />
       )}
       {phrase === 'agree' && (
@@ -38,6 +39,9 @@ export default function SignUp() {
       )}
       {phrase === 'detail' && type === 'worker' && (
         <SignUpWorkerDetail setActive={setActive} setLink={setLink} />
+      )}
+      {phrase === 'skills' && type === 'worker' && (
+        <SignUpWorkerSkill setNext={setNext} setLink={setLink} />
       )}
       {phrase === 'region' && type === 'worker' && (
         <SignUpWorkerRegion setNext={setNext} setLink={setLink} />

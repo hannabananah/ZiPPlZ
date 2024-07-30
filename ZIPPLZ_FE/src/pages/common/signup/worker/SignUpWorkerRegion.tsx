@@ -38,10 +38,10 @@ export default function SignUpWorkerRegion({ setNext, setLink }: Props) {
     } else {
       setIsFull(false);
     }
-    setLink('/member/join/common/3/agree');
+    setLink('/member/join/worker/3/skills');
   }, [selectedGugun]);
   return (
-    <>
+    <div className="flex flex-col gap-4 overflow-auto mb-[6rem]">
       <p className="text-zp-xl font-bold">
         작업 가능한 지역을 모두 선택해주세요.
       </p>
@@ -104,6 +104,6 @@ export default function SignUpWorkerRegion({ setNext, setLink }: Props) {
           </div>
         </>
       )}
-    </>
+    </div>
   );
 }

@@ -6,12 +6,20 @@ interface PhoneInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
+  inputType: string;
+  height: number | string;
+  fontSize: string;
+  radius: string;
 }
 
 const PhoneInput: React.FC<PhoneInputProps> = ({
   value,
   onChange,
   placeholder,
+  inputType,
+  height,
+  fontSize,
+  radius,
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let inputValue = e.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
@@ -34,14 +42,14 @@ const PhoneInput: React.FC<PhoneInputProps> = ({
   return (
     <Input
       type="text"
-      inputType="signup"
+      inputType={inputType}
       value={value}
       onChange={handleChange}
       placeholder={placeholder}
       width="full"
-      height={2}
-      fontSize="xl"
-      radius="none"
+      height={height}
+      fontSize={fontSize}
+      radius={radius}
     />
   );
 };

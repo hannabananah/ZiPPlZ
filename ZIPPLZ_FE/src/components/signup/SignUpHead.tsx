@@ -54,14 +54,14 @@ export default function SignUpHead({ type }: Props) {
           className="text-zp-gray cursor-pointer"
           onClick={() => navigate(-1)}
         />
-        {type === 'worker' && (
+        {/* {type === 'worker' && (
           <p
             className="text-zp-light-gray text-zp-2xl cursor-pointer"
             onClick={() => openModal()}
           >
             건너뛰기
           </p>
-        )}
+        )} */}
       </div>
       <Modal
         isOpen={modalIsOpen}

@@ -51,7 +51,7 @@ export default function Input({
   onChange,
   onKeyDown,
 }: Props) {
-  const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} `;
+  const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} bg-zp-transparent  `;
 
   let typeStyle = '';
   switch (inputType) {
@@ -64,8 +64,7 @@ export default function Input({
         'border border-zp-main-color focus:outline-none caret-zp-main-color placeholder-zp-main-color px-10';
       break;
     case 'login':
-      typeStyle =
-        'bg-zp-transparent  border-b border-zp-main-color focus:outline-none';
+      typeStyle = ' border-b border-zp-main-color focus:outline-none';
       break;
     case 'signup':
       typeStyle =
