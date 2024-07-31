@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.user.service;
 
+import com.example.zipplz_be.domain.user.dto.CustomOAuth2User;
 import com.example.zipplz_be.domain.user.dto.OAuth2UserInfoRecord;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -34,23 +35,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         OAuth2UserInfoRecord oAuth2UserInfoRecord = OAuth2UserInfoRecord.of(registrationId, oAuth2UserAttributes);
 
         // 4. 회원가입 및 로그인
-        User user = getOrSave(oAuth2UserInfoRecord);
+        Boolean isNewUser = saveIfNewUser(oAuth2UserInfoRecord);
 
-        // 5. OAuth2User 반환
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("USER")),
-                oAuth2UserAttributes,
-                "email"
+        // 5. CustomOAuth2User 반환
+        return new CustomOAuth2User(
+                new DefaultOAuth2User(
+                        Collections.singleton(new SimpleGrantedAuthority("USER")),
+                        oAuth2UserAttributes,
+                        "email"
+                ),
+                isNewUser
         );
     }
 
-    private User getOrSave(OAuth2UserInfoRecord oAuth2UserInfoRecord) {
+    private Boolean saveIfNewUser(OAuth2UserInfoRecord oAuth2UserInfoRecord) {
         User user;
-        if (!userRepository.existsByEmail(oAuth2UserInfoRecord.email())) {
-            user = oAuth2UserInfoRecord.toEntity();
-        } else {
-            user = userRepository.findByEmail(oAuth2UserInfoRecord.email());
+        if (userRepository.existsByEmail(oAuth2UserInfoRecord.email())) {
+            return false;
         }
-        return userRepository.save(user);
+        user = oAuth2UserInfoRecord.toEntity();
+        userRepository.save(user);
+        return true;
     }
 }

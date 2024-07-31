@@ -40,13 +40,11 @@ public class JoinController {
     }
 
     @PutMapping("/join/social")
-    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(Authentication authentication, @RequestBody JoinRequestDTO joinRequestDTO) {
+    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            int userSerial = customUserDetails.getUserSerial();
-            joinService.joinAfterSocialProcess(userSerial, joinRequestDTO);
+            int userSerial = joinService.joinAfterSocialProcess(joinRequestDTO);
             if (userSerial == -1) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "소셜 로그인 후, 회원가입 실패");

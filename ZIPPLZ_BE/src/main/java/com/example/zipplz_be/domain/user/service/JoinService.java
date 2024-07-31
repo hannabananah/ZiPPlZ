@@ -47,17 +47,17 @@ public class JoinService {
         return user.getUserSerial();
     }
 
-    public void joinAfterSocialProcess(int userSerial, JoinRequestDTO joinRequestDTO) {
+    public int joinAfterSocialProcess(JoinRequestDTO joinRequestDTO) {
 
-        if (!userRepository.existsByUserSerial(userSerial)) {
+        if (!userRepository.existsByEmail(joinRequestDTO.getEmail())) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
         }
 
-        User user = userRepository.findByUserSerial(userSerial);
+        User user = userRepository.findByEmail(joinRequestDTO.getEmail());
         user.setUserName(joinRequestDTO.getUserName());
         user.setTel(joinRequestDTO.getTel());
         user.setBirthDate(joinRequestDTO.getBirthDate());
-        userRepository.save(user);
+        return userRepository.save(user).getUserSerial();
     }
 
     public boolean insertCustomerInfo(InsertCustomerDTO insertCustomerDTO) {
