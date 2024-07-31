@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import { Customer, User, Worker } from '@apis/member/MemberApi';
+import { Customer, User, Worker, socialUser } from '@apis/member/MemberApi';
 import SignBottom from '@components/signup/SignBottom';
 import SignUpHead from '@components/signup/SignUpHead';
 
@@ -23,6 +23,11 @@ export default function SignUp() {
   const [user, setUser] = useState<User>({
     email: '',
     password: '',
+    userName: '',
+    birthDate: '',
+    tel: '',
+  });
+  const [socialUser, setSocialUser] = useState<socialUser>({
     userName: '',
     birthDate: '',
     tel: '',
@@ -60,8 +65,8 @@ export default function SignUp() {
           setCustomer={setCustomer}
         />
       )}
-      {phrase === 'agree' && (
-        <SignUpAgree setLink={setLink} setNext={setNext} />
+      {(phrase === 'agree' || phrase === 'extra-agree') && (
+        <SignUpAgree setLink={setLink} setNext={setNext} phrase={phrase} />
       )}
       {phrase === 'detail' && type === 'worker' && (
         <SignUpWorkerDetail
@@ -84,11 +89,11 @@ export default function SignUp() {
           setWorker={setWorker}
         />
       )}
-      {phrase === 'extraInfo' && type === 'common' && orderNumber === 1 && (
+      {phrase === 'extrainfo' && type === 'common' && orderNumber === 1 && (
         <SignUpExtraInfo
           setNext={setNext}
           setLink={setLink}
-          setUser={setUser}
+          setSocialUser={setSocialUser}
         />
       )}
       <SignBottom
@@ -102,6 +107,7 @@ export default function SignUp() {
         setCustomer={setCustomer}
         setWorker={setWorker}
         user={user}
+        socialUser={socialUser}
         type={type}
         customer={customer}
         worker={worker}

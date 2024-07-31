@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { User } from '@apis/member/MemberApi';
+import { User, socialUser } from '@apis/member/MemberApi';
 import Input from '@components/common/Input';
 import DateInput from '@components/signup/DateInput';
 import PhoneInput from '@components/signup/PhoneInput';
@@ -8,9 +8,13 @@ import PhoneInput from '@components/signup/PhoneInput';
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
-  setUser: React.Dispatch<React.SetStateAction<User>>;
+  setSocialUser: React.Dispatch<React.SetStateAction<socialUser>>;
 }
-export default function SignUpExtraInfo({ setNext, setLink, setUser }: Props) {
+export default function SignUpExtraInfo({
+  setNext,
+  setLink,
+  setSocialUser,
+}: Props) {
   setLink('/member/join/common/2/type');
   const [name, setName] = useState<string>('');
   const [birthDate, setBirthDate] = useState<string>('');
@@ -29,13 +33,13 @@ export default function SignUpExtraInfo({ setNext, setLink, setUser }: Props) {
     }
   }, [name, birthDate, phone]);
   useEffect(() => {
-    setUser((prev: User) => ({
+    setSocialUser((prev: socialUser) => ({
       ...prev,
       birthDate: birthDate,
     }));
   }, [birthDate]);
   useEffect(() => {
-    setUser((prev: User) => ({
+    setSocialUser((prev: socialUser) => ({
       ...prev,
       tel: phone,
     }));
@@ -52,9 +56,9 @@ export default function SignUpExtraInfo({ setNext, setLink, setUser }: Props) {
         width="full"
         height={2}
         onChange={(e: React.ChangeEvent) => {
-          setUser((prev: User) => ({
+          setSocialUser((prev: socialUser) => ({
             ...prev,
-            userName: (e.target as HTMLInputElement).value,
+            username: (e.target as HTMLInputElement).value,
           }));
           setName((e.target as HTMLInputElement).value);
         }}

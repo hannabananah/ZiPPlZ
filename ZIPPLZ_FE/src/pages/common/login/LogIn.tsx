@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
+import { requestLogin } from '@/apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import Cookies from 'js-cookie';
 
 export default function Login() {
+  const GOOGLE_LOGIN_URL: string = import.meta.env.VITE_GOOGLE_LOGIN_URL;
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -17,6 +21,21 @@ export default function Login() {
   }
   const handleClickEye = function () {
     setShowPassword(!showPassword);
+  };
+  const login = async (email: string, password: string) => {
+    setEmail('');
+    setPassword('');
+    const response = await requestLogin(email, password);
+    const token: string = response.headers.authorization.split(' ')[1];
+    Cookies.set('accesstoken', token, { expires: 1 });
+    console.log('data :', response.data);
+    console.log('headers :', response.headers);
+    console.log('status :', response.status);
+    if (response.status === 200) {
+      navigate('/');
+    } else {
+      alert('로그인 실패');
+    }
   };
   function validateEmail(email: string): boolean {
     let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
@@ -51,6 +70,7 @@ export default function Login() {
             type="email"
             inputType="login"
             placeholder="이메일"
+            value={email}
             width="full"
             height={2}
             onChange={(e: React.ChangeEvent) => {
@@ -71,6 +91,7 @@ export default function Login() {
             inputType={
               !password || validatePassword(password) ? 'login' : 'error'
             }
+            value={password}
             placeholder="비밀번호를 입력하세요"
             width="full"
             height={2}
@@ -108,7 +129,7 @@ export default function Login() {
             fontSize="xl"
             radius="btn"
             onClick={() => {
-              navigate('/');
+              login(email, password);
             }}
           />
         </div>
@@ -131,9 +152,16 @@ export default function Login() {
           </p>
         </div>
         <div className="absolute  left-0 bottom-[4rem] px-4 w-full flex flex-col gap-4 z-30">
-          <div className="w-full h-[3rem] bg-zp-white rounded-zp-radius-btn">
-            소셜로그인
-          </div>
+          <Link to={GOOGLE_LOGIN_URL}>
+            <div
+              className="w-full h-[3rem] bg-zp-white rounded-zp-radius-btn"
+              onClick={() => {
+                console.log(GOOGLE_LOGIN_URL);
+              }}
+            >
+              소셜로그인
+            </div>
+          </Link>
           <div className="w-full h-[3rem] bg-zp-yellow rounded-zp-radius-btn">
             소셜로그인
           </div>
