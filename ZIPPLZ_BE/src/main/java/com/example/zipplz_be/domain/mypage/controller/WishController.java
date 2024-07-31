@@ -35,10 +35,10 @@ public class WishController {
             int result = wishService.addWish(user_serial, wish_type, wish_serial);
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "삽입 실패 없음");
             } else {
                 status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", true);
+                responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;

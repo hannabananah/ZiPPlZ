@@ -9,6 +9,7 @@ import com.example.zipplz_be.domain.mypage.repository.WishRepository;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioFileDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -27,8 +28,12 @@ public class WishServiceImpl implements WishService {
     }
 
     @Override
-    public int addWish(int userSerial, int wishType, int wishSerial) {
-        return wishRepository.addWish(userSerial, wishType, wishSerial);
+    public int addWish(int userSerial, int wishType, int wishSerial) throws DataIntegrityViolationException {
+        try {
+            return wishRepository.addWish(userSerial, wishType, wishSerial);
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("중복 발생", e);
+        }
     }
 
     @Override
