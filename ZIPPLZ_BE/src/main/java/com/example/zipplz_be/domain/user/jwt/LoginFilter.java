@@ -63,7 +63,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String token = jwtUtil.createJwt(email, userSerial, role);
 
         response.addHeader("Authorization", "Bearer " + token);
-        response.sendRedirect("http://localhost:5173/");
+//        response.sendRedirect("http://localhost:5173/");
     }
 
     @Override
