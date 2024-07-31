@@ -61,9 +61,9 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http
                 .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/users/login", "/", "/users/join", "/auth/success", "/users/join/*").permitAll()
+                        .requestMatchers("/users/login", "/", "/users/join", "/auth/success", "/users/join/*", "/default/**", "/workerlist/portfolios").permitAll()
 //                        .anyRequest().authenticated());
-                        .anyRequest().permitAll());
+                        .anyRequest().authenticated());
 
         // oauth2 설정
         http

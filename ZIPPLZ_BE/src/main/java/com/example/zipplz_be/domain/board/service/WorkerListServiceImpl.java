@@ -32,7 +32,7 @@ public class WorkerListServiceImpl implements WorkerListService {
             List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
             String img = null;
             if (!files.isEmpty()) {
-                img = fileRepository.getImg(portfolio.getPortfolio_serial()).getFirst().getSaveFile();
+                img = files.getFirst().getSaveFile();
             }
             PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
             portfolioViews.add(portfolioView);
