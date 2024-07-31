@@ -2,25 +2,21 @@ import { useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
+import Button from '@components/common/Button';
+import Input from '@components/common/Input';
 
 export default function Login() {
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showCheckPassword, setShowCheckPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
   function validatePassword(password: string): boolean {
     if (!password) return true;
     var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$/;
     return passwordRegex.test(password);
   }
-  const handleCickEye = function () {
+  const handleClickEye = function () {
     setShowPassword(!showPassword);
-  };
-  const handleCickCheckEye = function () {
-    setShowCheckPassword(!showCheckPassword);
   };
   function validateEmail(email: string): boolean {
     let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
@@ -28,23 +24,23 @@ export default function Login() {
     return regex.test(email);
   }
   return (
-    <div className="w-full relative min-h-screen overflow-hidden">
+    <div className="relative w-full min-h-screen overflow-hidden">
       <div
-        className="px-4 min-h-screen flex flex-col gap-6 z-10"
+        className="z-10 flex flex-col min-h-screen gap-6 px-4"
         style={{
           backgroundImage: "url('/src/assets/landing-cover1.svg')",
           backgroundSize: '130%',
           backgroundPosition: '50% top',
         }}
       >
-        <div className="absolute inset-0 bg-zp-white bg-opacity-20 z-20"></div>
+        <div className="absolute inset-0 z-20 bg-zp-white bg-opacity-20"></div>
         <div className="flex flex-col items-center gap-6 mt-[25%] z-30">
           <p className="font-bodoni text-zp-3xl">Zip plz</p>
           <div className="text-center">
-            <p className="text-zp-xl font-bold">
+            <p className="font-bold text-zp-xl">
               완벽한 인테리어, 편리한 시공 스케줄링,
             </p>
-            <p className="text-zp-xl font-bold">
+            <p className="font-bold text-zp-xl">
               나만의 공간을 더욱 특별하게 만드는 단 하나의 플랫폼
             </p>
           </div>
@@ -88,13 +84,13 @@ export default function Login() {
             <FaRegEyeSlash
               className="absolute top-[0.5rem] right-[1rem]"
               size={16}
-              onClick={handleCickEye}
+              onClick={handleClickEye}
             />
           ) : (
             <FaRegEye
               className="absolute top-[0.5rem] right-[1rem]"
               size={16}
-              onClick={handleCickEye}
+              onClick={handleClickEye}
             />
           )}
           {!validatePassword(password) && (
@@ -120,13 +116,13 @@ export default function Login() {
           <p
             className="text-zp-md text-zp-gray  ml-[5%] cursor-pointer font-bold"
             onClick={() => {
-              navigate('/member/join/common/1/info');
+              navigate('/member/join/common/1/agree');
             }}
           >
             회원가입
           </p>
           <p
-            className="text-zp-md text-zp-gray cursor-pointer font-bold"
+            className="font-bold cursor-pointer text-zp-md text-zp-gray"
             onClick={() => {
               navigate('/member/find?type=id');
             }}

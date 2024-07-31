@@ -5,7 +5,7 @@ import { MdOutlineCancel } from 'react-icons/md';
 import { VscKebabVertical } from 'react-icons/vsc';
 import Modal from 'react-modal';
 
-import Button from '@/components/common/Button';
+import Button from '@components/common/Button';
 
 const customModalStyles: ReactModal.Styles = {
   overlay: {

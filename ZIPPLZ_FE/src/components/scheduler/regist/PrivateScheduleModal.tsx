@@ -1,8 +1,8 @@
 import { useState } from 'react';
 
-import Button from '@/components/common/Button';
-import Input from '@/components/common/Input';
-import { ConstructionData } from '@/pages/user/Schedule';
+import Button from '@components/common/Button';
+import Input from '@components/common/Input';
+import { ConstructionData } from '@pages/user/Schedule';
 
 interface Props {
   scheduleList: ConstructionData[];

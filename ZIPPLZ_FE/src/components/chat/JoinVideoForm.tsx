@@ -1,13 +1,11 @@
-import React from 'react';
-
-import { useVideoStore } from '@stores/videoStore';
+import React, { useState } from 'react';
 
 interface FormProps {
   joinSession: () => void;
 }
 
 export default function JoinVideoForm({ joinSession }: FormProps) {
-  const { sessionId, setSessionId } = useVideoStore();
+  const [sessionId, setSessionId] = useState<string>('');
 
   const onSubmitHandler = (event: React.FormEvent) => {
     event.preventDefault();

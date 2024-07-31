@@ -1,25 +1,12 @@
 import { useState } from 'react';
 
-import Calendar from '@/components/common/Calendar';
-import Selectbar from '@/components/common/Selectbar';
-import SchedulerCardExist from '@/components/scheduler/card/SchedulerCardExist';
-import ScheduleRegist from '@/components/scheduler/regist/ScheduleRegist';
-import SharedImg from '@/components/scheduler/sharedFile/SharedImg';
-import SharedMemo from '@/components/scheduler/sharedFile/SharedMemo';
+import Selectbar from '@components/common/Selectbar';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import SchedulerCard from '@components/scheduler/card/SchedulerCard';
-
-type ConstructionField =
-  | '철거'
-  | '설비'
-  | '샷시'
-  | '목공'
-  | '전기'
-  | '욕실'
-  | '타일'
-  | '마루'
-  | '도배'
-  | '가구';
+import SchedulerCardExist from '@components/scheduler/card/SchedulerCardExist';
+import ScheduleRegist from '@components/scheduler/regist/ScheduleRegist';
+import SharedImg from '@components/scheduler/sharedFile/SharedImg';
+import SharedMemo from '@components/scheduler/sharedFile/SharedMemo';
 
 interface ConstructionSchedule {
   시공자이름: string;
@@ -146,7 +133,7 @@ export default function Schedule() {
   const [scheduleList, setScheduleList] =
     useState<ConstructionData[]>(dummyData);
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center bg-zp-light-beige gap-4 sm px-2 lg px-4">
+    <div className="flex flex-col w-full max-w-screen-md items-center bg-zp-light-beige gap-4 sm lg px-4">
       <Selectbar
         fontColor="main"
         options={options}
@@ -161,12 +148,12 @@ export default function Schedule() {
         backgroundColor="white"
       />
       <ScheduleCalendar />
-      <p className="w-full text-zp-xl font-bold ">공유 문서</p>
-      <div className="flex justify-between items-center gap-4">
+      <p className="w-full font-bold text-zp-xl ">공유 문서</p>
+      <div className="flex items-center justify-between gap-4">
         <SharedImg />
         <SharedMemo />
       </div>
-      <p className="w-full text-right text-zp-xl font-bold ">
+      <p className="w-full font-bold text-right text-zp-xl ">
         총 시공 가격 : {numberWithCommas(1000000)}원
       </p>
       {scheduleList.map((item, idx) =>

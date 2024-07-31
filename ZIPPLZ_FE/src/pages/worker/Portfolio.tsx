@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
 import Button from '@components/common/Button';
 
 export default function Portfolio() {
@@ -47,19 +48,27 @@ export default function Portfolio() {
       {/* 북마크 이미지 */}
       <div className="w-full flex justify-end">
         {isBookmarked ? (
-          <IoBookmark size={24} className="cursor-pointer" onClick={toggleBookmark} />
+          <IoBookmark
+            size={24}
+            className="cursor-pointer"
+            onClick={toggleBookmark}
+          />
         ) : (
-          <IoBookmarkOutline size={24} className="cursor-pointer" onClick={toggleBookmark} />
+          <IoBookmarkOutline
+            size={24}
+            className="cursor-pointer"
+            onClick={toggleBookmark}
+          />
         )}
       </div>
 
       <div className="w-full font-bold flex items-start space-x-8 p-2">
         {/* 사진, 이름 */}
         <div>
-          <div className="w-32 h-32 grid place-items-center">
+          <div className="grid w-32 h-32 place-items-center">
             <CgProfile size={120} />
           </div>
-          <div className="w-32 h-8 grid place-items-center text-zp-xl text-zp-black">
+          <div className="grid w-32 h-8 place-items-center text-zp-xl text-zp-black">
             강신구
           </div>
         </div>

@@ -49,7 +49,7 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="schedule" element={<Schedule />} />
         <Route path="community" element={<Community />} />
-        <Route path="workers" element={<Workers />} />
+        {/* <Route path="workers" element={<Workers />} /> */}
         <Route path="portfolio" element={<Portfolio />} />
         <Route path="overview" element={<OverView />} />
         <Route path="workerschedule" element={<WorkerSchedule />} />
@@ -88,6 +88,9 @@ export default function App() {
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
       <Route path="/member/login" element={<Login />} />
       <Route path="/member/find" element={<FindIdPw />} />
+
+      <Route path="404" element={<Custom404 />} />
+      <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
   );
 }

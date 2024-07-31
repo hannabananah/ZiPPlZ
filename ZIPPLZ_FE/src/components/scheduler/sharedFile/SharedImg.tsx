@@ -3,8 +3,8 @@ import { FiPlusCircle } from 'react-icons/fi';
 import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 import Modal from 'react-modal';
 
-import { ImageDragIcon } from '@/assets/svg/icons';
-import Button from '@/components/common/Button';
+import { ImageDragIcon } from '@assets/svg/icons';
+import Button from '@components/common/Button';
 
 const customModalStyles: ReactModal.Styles = {
   overlay: {
