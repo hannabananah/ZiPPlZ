@@ -89,7 +89,7 @@ export default function SignUp() {
           setWorker={setWorker}
         />
       )}
-      {phrase === 'extrainfo' && type === 'common' && orderNumber === 1 && (
+      {phrase === 'extrainfo' && type === 'common' && orderNumber === 2 && (
         <SignUpExtraInfo
           setNext={setNext}
           setLink={setLink}

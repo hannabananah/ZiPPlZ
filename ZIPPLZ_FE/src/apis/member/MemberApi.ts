@@ -44,7 +44,7 @@ export const signUp = async (data: User) => {
 };
 
 export const socialSignUp = async (data: socialUser) => {
-  return await axiosInstance.post(END_POINT.SIGNUP + '/social', data);
+  return await axiosInstance.put(END_POINT.SIGNUP + '/social', data);
 };
 
 export const signUpCustomer = async (data: Customer) => {
@@ -57,7 +57,7 @@ export const signUpWorker = async (data: Worker) => {
 
 //로그인
 export const requestLogin = async (email: string, pw: string) => {
-  return await axiosInstance.post(
+  const response = await axiosInstance.post(
     END_POINT.LOGIN,
     {},
     {
@@ -67,6 +67,7 @@ export const requestLogin = async (email: string, pw: string) => {
       },
     }
   );
+  return response;
 };
 
 //Default

@@ -15,7 +15,6 @@ export default function SignUpExtraInfo({
   setLink,
   setSocialUser,
 }: Props) {
-  setLink('/member/join/common/2/type');
   const [name, setName] = useState<string>('');
   const [birthDate, setBirthDate] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
@@ -58,7 +57,7 @@ export default function SignUpExtraInfo({
         onChange={(e: React.ChangeEvent) => {
           setSocialUser((prev: socialUser) => ({
             ...prev,
-            username: (e.target as HTMLInputElement).value,
+            userName: (e.target as HTMLInputElement).value,
           }));
           setName((e.target as HTMLInputElement).value);
         }}

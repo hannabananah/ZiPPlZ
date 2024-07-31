@@ -9,5 +9,5 @@ export const axiosInstance = axios.create({
     // 'Access-Control-Allow-Origin': '*',
     // 'Access-Control-Allow-Credentials': 'true',
   },
-  withCredentials: true, //요청에 쿠키담기
+  // withCredentials: true, //요청에 쿠키담기
 });

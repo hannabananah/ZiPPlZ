@@ -169,6 +169,7 @@ export default function SignBottom({
             setNext(false);
             setActive(false);
             if (phrase === 'extrainfo') {
+              console.log(socialUser);
               registSocialUser(socialUser);
               navigate(link);
             } else {
