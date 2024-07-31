@@ -3,8 +3,10 @@ package com.example.zipplz_be.domain.material.controller;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
 import com.example.zipplz_be.domain.material.serivce.MaterialService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,8 +24,8 @@ public class MaterialController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<ResponseDTO> getMaterialList() {
-        ResponseDTO responseDTO;
+    public ResponseEntity<ResponseDTO<List<MaterialViewDTO>>> getMaterialList(Authentication authentication) {
+        ResponseDTO<List<MaterialViewDTO>> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
