@@ -24,9 +24,9 @@ public class WishServiceImpl implements WishService {
     }
 
     @Override
-    public List<PortfolioViewDTO> getWorkerWishList(int type, int wishSerial) {
+    public List<PortfolioViewDTO> getWorkerWishList(int type, int userSerial) {
         List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
-        List<PortfolioJoinDTO> portfolios = wishRepository.getWorkerWishList(type, wishSerial);
+        List<PortfolioJoinDTO> portfolios = wishRepository.getWorkerWishList(type, userSerial);
         for (PortfolioJoinDTO portfolio : portfolios) {
             List<String> locations = localRepository.getLocalNames(portfolio.getUser_serial());
             List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());

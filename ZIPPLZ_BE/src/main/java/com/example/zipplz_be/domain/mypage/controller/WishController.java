@@ -25,8 +25,8 @@ public class WishController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            int wish_serial = params.get("wish_serial");
-            List<PortfolioViewDTO> workers = wishService.getWorkerWishList(1, wish_serial);
+            int user_serial = params.get("user_serial");
+            List<PortfolioViewDTO> workers = wishService.getWorkerWishList(1, user_serial);
             if (workers == null) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
@@ -40,4 +40,26 @@ public class WishController {
         }
         return new ResponseEntity<>(responseDTO, status);
     }
+
+//    @PostMapping("/Materiallist")
+//    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getMaterialWishList(@RequestBody(required = false) Map<String, Integer> params) {
+//        ResponseDTO<List<PortfolioViewDTO>> responseDTO;
+//        HttpStatus status = HttpStatus.ACCEPTED;
+//
+//        try {
+//            int wish_serial = params.get("wish_serial");
+//            List<PortfolioViewDTO> workers = wishService.getMaterialWishList(2, wish_serial);
+//            if (workers == null) {
+//                status = HttpStatus.NOT_FOUND;
+//                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+//            } else {
+//                status = HttpStatus.OK;
+//                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", workers);
+//            }
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
 }

@@ -5,5 +5,5 @@ import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import java.util.List;
 
 public interface WishService {
-    List<PortfolioViewDTO> getWorkerWishList(int type, int wishSerial);
+    List<PortfolioViewDTO> getWorkerWishList(int type, int userSerial);
 }
