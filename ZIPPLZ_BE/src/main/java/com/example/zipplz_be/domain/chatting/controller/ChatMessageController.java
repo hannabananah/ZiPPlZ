@@ -34,16 +34,23 @@ public class ChatMessageController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
-        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor));
+        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor), getRole(headerAccessor));
 //        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial());
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {
         String token = headerAccessor.getFirstNativeHeader("X-AUTH-TOKEN");
-        System.out.println("!!!!!!!!!X-AUTH-TOKEN!!!!!!!!!!" + token);
 
         Authentication authentication = jwtUtil.getAuthentication(token);
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         return customUserDetails.getUserSerial();
+    }
+
+    public String getRole(SimpMessageHeaderAccessor headerAccessor) {
+        String token = headerAccessor.getFirstNativeHeader("X-AUTH-TOKEN");
+
+        Authentication authentication = jwtUtil.getAuthentication(token);
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        return customUserDetails.getRole();
     }
 }

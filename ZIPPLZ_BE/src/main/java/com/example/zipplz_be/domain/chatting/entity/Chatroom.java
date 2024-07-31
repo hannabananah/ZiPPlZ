@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.chatting.entity;
 
 import com.example.zipplz_be.domain.user.entity.Customer;
+import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
 import jakarta.persistence.*;
 import lombok.*;
@@ -17,11 +18,11 @@ public class Chatroom {
     @Column(name="chatroom_serial")
     private int chatroomSerial;
     @ManyToOne
-    @JoinColumn(name="customer_serial")
-    private Customer customerSerial;
+    @JoinColumn(name="c_user_serial")
+    private User cUserSerial;
     @ManyToOne
-    @JoinColumn(name="worker_serial")
-    private Worker workerSerial;
+    @JoinColumn(name="w_user_serial")
+    private User wUserSerial;
     @Column(name="chatroom_name")
     private String chatroomName;
     @Column(name="chatroom_date")
@@ -31,8 +32,8 @@ public class Chatroom {
     private String sessionId;
 
     @Builder
-    Chatroom(Customer customerSerial, Worker workerSerial) {
-        this.customerSerial = customerSerial;
-        this.workerSerial = workerSerial;
+    Chatroom(User cUserSerial, User wUserSerial) {
+        this.cUserSerial = cUserSerial;
+        this.wUserSerial = wUserSerial;
     }
 }

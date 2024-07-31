@@ -28,7 +28,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChannelTopic channelTopic;
 
     @Override
-    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial) {
+    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
         User user = userRepository.findByUserSerial(userSerial);
         if (user == null) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
@@ -44,17 +44,15 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                 .build();
 
-//        chatMessageRepository.save(chatMessage); // 아직 MongoDB 연결 안함.
+        chatMessageRepository.save(chatMessage);
 
         chatMessageRequestDTO.setUserName(user.getUserName());
 
         int otherUserSerial;
-        if (!customerRepository.existsByUserSerial(user) && !workerRepository.existsByUserSerial(user)) {
-            throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
-        } else if (customerRepository.existsByUserSerial(user)) {
-            otherUserSerial = chatroom.getWorkerSerial().getWorkerSerial();
+        if (role.equals("customer")) {
+            otherUserSerial = chatroom.getWUserSerial().getUserSerial();
         } else {
-            otherUserSerial = chatroom.getCustomerSerial().getCustomerSerial();
+            otherUserSerial = chatroom.getCUserSerial().getUserSerial();
         }
         chatMessageRequestDTO.setOtherUserSerial(otherUserSerial);
 
