@@ -27,7 +27,6 @@ import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCre
 import FindWorkerList from '@pages/common/workerinfo/FindWorkerList';
 import WorkerInfoDateDetail from '@pages/common/workerinfo/WorkerInfoDateDetail';
 import WorkerInfoList from '@pages/common/workerinfo/WorkerInfoList';
-import Workers from '@pages/common/workerinfo/WorkerInfoList';
 import WorkerInfoLocationDetail from '@pages/common/workerinfo/WorkerInfoLocationDetail';
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
@@ -37,9 +36,7 @@ import Review from '@pages/worker/tabs/Review';
 import WorkerSchedule from '@pages/worker/tabs/WorkerSchedule';
 
 import Login from './pages/common/login/LogIn';
-import FindId from './pages/common/login/find/FindId';
 import FindIdPw from './pages/common/login/find/FindIdPw';
-import FindPw from './pages/common/login/find/FindPw';
 import SignUp from './pages/common/signup/SignUp';
 
 export default function App() {
