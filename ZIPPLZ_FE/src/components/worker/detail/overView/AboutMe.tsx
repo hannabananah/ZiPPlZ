@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { PiNotePencil } from 'react-icons/pi';
 
 export default function AboutMe() {

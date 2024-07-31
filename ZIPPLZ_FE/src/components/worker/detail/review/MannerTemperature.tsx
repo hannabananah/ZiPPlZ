@@ -18,7 +18,7 @@ const manners: Manners = {
 
 export default function MannerTemperature() {
   // 전체 매너 온도를 계산합니다.
-  const totalScore = 56.5; // 예시로 제공된 값
+  // const totalScore: = 56.5; // 예시로 제공된 값
 
   return (
     <>

@@ -232,16 +232,14 @@ export default function FindWorkerDetailCreate() {
 
           <div className="mt-6 font-bold h-20 flex items-center justify-center">
             <Button
+              children="채팅하기"
               buttonType="second"
               width="full"
               height={2.375}
               fontSize="xl"
               radius="btn"
               onClick={handleConfirm}
-              className="flex items-center justify-center w-full"
-            >
-              <span className="ml-2">채팅하기</span>
-            </Button>
+            />
           </div>
         </div>
       </div>

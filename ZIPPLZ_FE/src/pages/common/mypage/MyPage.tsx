@@ -78,7 +78,7 @@ export default function MyPage() {
           <hr className="mt-6 w-full border-zp-light-gray" />
 
           {/* 1. 내 정보 수정하기 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">내 정보 수정하기</div>
             <div>
               <HiChevronRight
@@ -89,7 +89,7 @@ export default function MyPage() {
           </div>
 
           {/* 2. 비밀번호 변경 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full ">
             <div className="text-zp-lg">비밀번호 변경</div>
             <div>
               <HiChevronRight
@@ -100,7 +100,7 @@ export default function MyPage() {
           </div>
 
           {/* 3. 내가 쓴 글 / 스크랩 글 목록 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full ">
             <div className="text-zp-lg">내가 쓴 글 / 스크랩 글 목록</div>
             <div>
               <HiChevronRight
@@ -111,7 +111,7 @@ export default function MyPage() {
           </div>
 
           {/* 4. 관심있는 시공업자 / 찜한 자재 목록 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">관심있는 시공업자 / 찜한 자재 목록</div>
             <div>
               <HiChevronRight
@@ -124,7 +124,7 @@ export default function MyPage() {
           <hr className="mt-6 w-full border-zp-light-gray" />
 
           {/* 5. 이용약관 / 개인정보처리방침 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">이용약관 / 개인정보처리방침</div>
             <div>
               <HiChevronRight
@@ -135,7 +135,7 @@ export default function MyPage() {
           </div>
 
           {/* 6. 버전 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">버전</div>
             <div className="flex align-middle">
               <div className="px-2">1.1.0</div>
@@ -147,7 +147,7 @@ export default function MyPage() {
           </div>
 
           {/* 7. 로그아웃 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">로그아웃</div>
             <div>
               <HiChevronRight
@@ -158,7 +158,7 @@ export default function MyPage() {
           </div>
 
           {/* 8. 탈퇴하기 + 해당 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">탈퇴하기</div>
             <div>
               <HiChevronRight

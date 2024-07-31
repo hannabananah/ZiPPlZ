@@ -34,7 +34,7 @@ export default function Resign() {
           <div>탈퇴하는 이유가 무엇인가요?</div>
 
           {/* 1. 더 이상 ZIP-PlZ를 사용하지 않아요 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">더 이상 ZIP-PlZ를 사용하지 않아요</div>
             <div>
               <HiChevronRight
@@ -45,7 +45,7 @@ export default function Resign() {
           </div>
 
           {/* 2. 개인정보가 불안해요 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">개인정보가 불안해요</div>
             <div>
               <HiChevronRight
@@ -56,7 +56,7 @@ export default function Resign() {
           </div>
 
           {/* 3. 오류가 생겨서 쓸 수 없어요 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">오류가 생겨서 쓸 수 없어요</div>
             <div>
               <HiChevronRight
@@ -67,7 +67,7 @@ export default function Resign() {
           </div>
 
           {/* 4. 사용법을 모르겠어요 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full ">
             <div className="text-zp-lg">사용법을 모르겠어요</div>
             <div>
               <HiChevronRight
@@ -78,7 +78,7 @@ export default function Resign() {
           </div>
 
           {/* 5. 비매너 시공업자를 만났어요 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">비매너 시공업자를 만났어요</div>
             <div>
               <HiChevronRight
@@ -89,7 +89,7 @@ export default function Resign() {
           </div>
 
           {/* 6. 기타 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full mt-4">
+          <div className="mt-6 flex items-center justify-between w-full">
             <div className="text-zp-lg">기타</div>
             <div>
               <HiChevronRight

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { IoIosClose } from 'react-icons/io';
@@ -47,8 +47,8 @@ export default function WorkerInfoDateDetail() {
               setStartDate(start);
               setEndDate(end);
             }}
-            startDate={startDate}
-            endDate={endDate}
+            startDate={startDate ?? undefined}
+            endDate={endDate ?? undefined}
             selectsRange
             inline
           />

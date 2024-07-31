@@ -6,34 +6,34 @@ import {
 } from 'react-icons/fa';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 import FindWorkerListItem from '@components/worker/FindWorkerListItem';
 
-interface LocationState {
-  newPost?: boolean;
-}
+// interface LocationState {
+//   newPost?: boolean;
+// }
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function WorkerInfoList() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
+  // const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
 
   const navigate = useNavigate();
-  const location = useLocation();
-  const { state } = location; // location.state를 분리하여 사용
+  // const location = useLocation();
+  // const { state } = location; // location.state를 분리하여 사용
 
   // LocationState 타입을 적용합니다.
-  const newPost = (state as LocationState)?.newPost;
+  // const newPost = (state as LocationState)?.newPost;
 
-  const handleWritePost = () => {
-    navigate('/FindWorkerDetail'); // FindWorkerDetail 페이지로 이동
-  };
+  // const handleWritePost = () => {
+  //   navigate('/FindWorkerDetail'); // FindWorkerDetail 페이지로 이동
+  // };
 
   const handleInputClick = () => {
     navigate('/WorkerInfoLocationDetail'); // 클릭 시 이동할 페이지
@@ -47,15 +47,15 @@ export default function WorkerInfoList() {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  const toggleSortDropdown = () => {
-    setIsSortDropdownOpen((prev) => !prev);
-  };
+  // const toggleSortDropdown = () => {
+  //   setIsSortDropdownOpen((prev) => !prev);
+  // };
 
   const handleSortSelect = (sortOption: string) => {
     // 수정된 부분
     console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption); // 타입 강제 변환
-    setIsSortDropdownOpen(false);
+    // setIsSortDropdownOpen(false);
   };
 
   const handleNavigate = (path: string) => {
@@ -64,7 +64,7 @@ export default function WorkerInfoList() {
   };
 
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
-  const options2 = ['전문 시공자 둘러보기', '전문 시공자 구하기'];
+  // const options2 = ['전문 시공자 둘러보기', '전문 시공자 구하기'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);

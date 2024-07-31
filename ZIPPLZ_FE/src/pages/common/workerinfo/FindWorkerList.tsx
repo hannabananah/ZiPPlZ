@@ -26,6 +26,7 @@ interface LocationState {
 export default function FindWorkerList() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
+
   const navigate = useNavigate();
   const location = useLocation();
   const newPost = (location.state as LocationState)?.newPost;
@@ -45,11 +46,7 @@ export default function FindWorkerList() {
   };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen((prev) => !prev);
-  };
-
-  const toggleSortDropdown = () => {
-    setIsSortDropdownOpen((prev) => !prev);
+    setIsDropdownOpen(!isDropdownOpen);
   };
 
   // 정렬 옵션의 타입을 정의합니다.
@@ -72,7 +69,7 @@ export default function FindWorkerList() {
   };
 
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
-
+  console.log(isSortDropdownOpen);
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
       <div className="w-full">
@@ -109,37 +106,6 @@ export default function FindWorkerList() {
             </div>
           )}
         </div>
-
-        {/* 이전에 만든 위치 및 날짜 입력
-        <div className="flex justify-center space-x-4 my-6">
-          <div className="relative flex items-center space-x-2">
-            <FaMapMarkerAlt
-              className="absolute left-4 text-zp-sub-color"
-              size={20}
-            />
-            <input
-              className="pl-8 bg-zp-light-beige text-zp-xs border-b-2 font-bold border border-zp-sub-color rounded-zp-radius-btn p-2"
-              type="text"
-              name="location"
-              placeholder="인천 계양구, 인천 부평구 외 2개"
-              onClick={handleInputClick} // 클릭 시 handleInputClick 함수 호출
-            />
-          </div>
-
-          <div className="relative flex items-center space-x-2">
-            <FaRegCalendarAlt
-              className="absolute left-4 text-zp-sub-color"
-              size={20}
-            />
-            <input
-              className="pl-8 bg-zp-light-beige text-zp-xs border-b-2 font-bold border border-zp-sub-color rounded-zp-radius-btn p-2"
-              type="text"
-              name="workDateSelect"
-              placeholder="시공 날짜 선택"
-              onClick={handleInputClick2} // 클릭 시 handleInputClick2 함수 호출
-            />
-          </div>
-        </div> */}
 
         {/* 위치 및 날짜 입력 */}
         <div className="flex justify-center space-x-4 my-4">
@@ -185,39 +151,6 @@ export default function FindWorkerList() {
           </div>
         </div>
 
-        {/* 이전에 만든 정렬 버튼
-        <div className="relative flex justify-end">
-          <button
-            className="w-18 h-12 text-zp-xs flex items-center space-x-2"
-            onClick={toggleSortDropdown}
-          >
-            <FaSortAmountDown />
-            <span>정렬</span>
-          </button>
-          {isSortDropdownOpen && (
-            <div className="rounded-zp-radius-big bg-zp-white absolute top-full mt-2 right-0 w-20 bg-white border border-gray-200 shadow-lg rounded-lg z-50">
-              <button
-                onClick={() => handleSortSelect('평점순')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                평점순
-              </button>
-              <button
-                onClick={() => handleSortSelect('최신순')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                최신순
-              </button>
-              <button
-                onClick={() => handleSortSelect('과거순')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                과거순
-              </button>
-            </div>
-          )}
-        </div> */}
-
         {/* 정렬 버튼 */}
         <div className="relative flex justify-end">
           <FaSortAmountDown />
@@ -237,17 +170,6 @@ export default function FindWorkerList() {
             />
           </div>
         </div>
-
-        {/* 이전에 작성한 검색 입력 필드
-        <div className="flex justify-center items-center space-x-2 my-4">
-          <HiMagnifyingGlass />
-          <input
-            className="w-60 bg-zp-light-beige text-zp-xs border-b-2 font-bold border-zp-sub-color outline-none p-2"
-            type="text"
-            name="input"
-            placeholder="글의 제목이나 작성자 이름을 입력하세요"
-          />
-        </div> */}
 
         {/* 검색 입력 필드 */}
         <div className="flex justify-center items-center space-x-2 my-4">

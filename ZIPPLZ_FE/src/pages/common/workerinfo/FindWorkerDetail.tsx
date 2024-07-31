@@ -92,26 +92,33 @@ const FindWorkerDetail: React.FC = () => {
 
         <div className="font-bold flex items-center space-x-4">
           {/* 찜하기 버튼 */}
+          {/* className="flex items-center justify-center w-full" */}
           <div className="flex-grow sm:flex-grow-0 flex justify-center items-center space-x-2 my-4">
             <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full max-w-[200px]">
-              <Button
-                buttonType={isBookmarked ? 'normal' : 'light'}
-                width="full"
-                height={3}
-                fontSize="xl"
-                radius="btn"
-                onClick={handleButtonClick}
-                className="flex items-center justify-center w-full"
-              >
-                {isBookmarked ? (
-                  <IoBookmark size={24} className="text-zp-main-color" />
-                ) : (
-                  <IoBookmarkOutline size={24} className="text-gray-500" />
-                )}
-                <span className="ml-2">찜하기</span>
-              </Button>
+              <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full max-w-[200px]">
+                <Button
+                  buttonType={isBookmarked ? 'normal' : 'light'}
+                  width="full"
+                  height={3}
+                  fontSize="xl"
+                  radius="btn"
+                  onClick={handleButtonClick}
+                >
+                  {isBookmarked ? (
+                    <IoBookmark size={24} className="mr-2 text-zp-main-color" />
+                  ) : (
+                    <IoBookmarkOutline
+                      size={24}
+                      className="mr-2 text-gray-500"
+                    />
+                  )}
+                  찜하기
+                </Button>
+              </div>
             </div>
           </div>
+
+          {/* className="flex items-center justify-center w-full" */}
 
           {/* 채팅하기 버튼 */}
           <div className="flex-grow sm:flex-grow-0 flex justify-center items-center">
@@ -127,10 +134,9 @@ const FindWorkerDetail: React.FC = () => {
                     '현재 화면의 채팅하기 버튼을 누르면 해당 글쓴이와의 채팅방이 열립니다'
                   )
                 }
-                className="flex items-center justify-center w-full"
               >
-                <IoChatbubblesOutline size={24} />
-                <span className="ml-2">채팅하기</span>
+                <IoChatbubblesOutline size={24} className="mr-2" />
+                채팅하기
               </Button>
             </div>
           </div>
