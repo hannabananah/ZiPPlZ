@@ -27,7 +27,7 @@ export default function Policy() {
             </div>
           </div>
 
-          <div className="mt-6 w-full h-60 text-zp-xs font-bold bg-zp-sub-color rounded-zp-radius-big">
+          <div className="mt-6 w-full text-zp-xs font-bold bg-zp-sub-color rounded-zp-radius-big">
             <div className="p-6">
               <div className="mt-6">
                 제 1 장 총칙 제 1 조 (목적) 본 약관은 (주)집플리즈(이하 “회사”라
