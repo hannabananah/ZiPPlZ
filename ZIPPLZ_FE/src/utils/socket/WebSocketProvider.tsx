@@ -1,28 +1,47 @@
-import React, { useRef } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 
-const WebSocketContext = React.createContext<any>(null);
+import { Client } from '@stomp/stompjs';
+
+const WebSocketContext = React.createContext<Client | null>(null);
 export { WebSocketContext };
 
-export default function ({ children }: { children: React.ReactNode }) {
-  const webSocketUrl = `ws://localhost:8080/ws`;
-  let ws = useRef<WebSocket | null>(null);
+const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
+const chat_token = import.meta.env.VITE_APP_CHAT_TOKEN;
 
-  if (!ws.current) {
-    ws.current = new WebSocket(webSocketUrl);
-    ws.current.onopen = () => {
-      console.log('WebSocket Url ' + webSocketUrl);
+const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [client, setClient] = useState<Client | null>(null);
+
+  useEffect(() => {
+    const stompClient = new Client({
+      brokerURL: chat_base_url,
+      connectHeaders: {
+        'X-AUTH-TOKEN': chat_token,
+      },
+      debug: (msg) => console.log('STOMP debug:', msg),
+      onConnect: () => {
+        console.log('STOMP connected');
+      },
+      onDisconnect: () => {
+        console.log('STOMP disconnected');
+      },
+      onStompError: (frame) => {
+        console.error('STOMP error', frame);
+      },
+    });
+
+    stompClient.activate();
+    setClient(stompClient);
+
+    return () => {
+      stompClient.deactivate();
     };
-    ws.current.onclose = (error) => {
-      console.log('WebSocket 끊김:' + webSocketUrl);
-      console.log(error);
-    };
-    ws.current.onerror = (error) => {
-      console.log('WebSocket 연결에러: ' + webSocketUrl);
-      console.log(error);
-    };
-  }
+  }, []);
 
   return (
-    <WebSocketContext.Provider value={ws}>{children}</WebSocketContext.Provider>
+    <WebSocketContext.Provider value={client}>
+      {children}
+    </WebSocketContext.Provider>
   );
-}
+};
+
+export default WebSocketProvider;
