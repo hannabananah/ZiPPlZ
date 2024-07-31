@@ -1,9 +1,14 @@
 import { CgProfile } from 'react-icons/cg';
 import { MdElectricalServices } from 'react-icons/md';
+import { useNavigate } from 'react-router-dom';
 
 export default function FindWorkerListItem() {
+  const navigate = useNavigate();
   return (
-    <div className="w-[170px] h-[220px] p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center">
+    <div
+      className="w-[170px] h-[220px] p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center"
+      onClick={() => navigate('/OverView')}
+    >
       {/* 사진 파일 */}
       <div className="w-[170px] h-[93px] flex items-center justify-center">
         <CgProfile size={93} />
