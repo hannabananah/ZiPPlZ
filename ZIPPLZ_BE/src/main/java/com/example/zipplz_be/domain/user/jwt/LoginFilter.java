@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -42,14 +43,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         String email = customUserDetails.getUsername();
         User user = userRepository.findByEmail(email);
         int userSerial = user.getUserSerial();
-//        String role = user.getRole();
+        String role = user.getRole();
 
         System.out.println("email when success :" + email);
 
@@ -59,9 +60,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //
 //        String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(email, userSerial);
+        String token = jwtUtil.createJwt(email, userSerial, role);
 
         response.addHeader("Authorization", "Bearer " + token);
+//        response.sendRedirect("http://localhost:5173/");
     }
 
     @Override

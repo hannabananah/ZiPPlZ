@@ -19,6 +19,7 @@ public class JoinController {
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDTO> joinProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
+        System.out.println("joinProcess 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
@@ -39,13 +40,11 @@ public class JoinController {
     }
 
     @PutMapping("/join/social")
-    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(Authentication authentication, @RequestBody JoinRequestDTO joinRequestDTO) {
+    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            int userSerial = customUserDetails.getUserSerial();
-            joinService.joinAfterSocialProcess(userSerial, joinRequestDTO);
+            int userSerial = joinService.joinAfterSocialProcess(joinRequestDTO);
             if (userSerial == -1) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "소셜 로그인 후, 회원가입 실패");
@@ -63,6 +62,7 @@ public class JoinController {
 
     @PostMapping("/join/customer")
     public ResponseEntity<ResponseDTO> insertCustomerInfo(@RequestBody InsertCustomerDTO insertCustomerDTO) {
+        System.out.println("insertCustomerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
@@ -83,6 +83,7 @@ public class JoinController {
 
     @PostMapping("/join/worker")
     public ResponseEntity<ResponseDTO> insertWorkerInfo(@RequestBody InsertWorkerDTO insertWorkerDTO) {
+        System.out.println("insertWorkerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
