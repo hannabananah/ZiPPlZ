@@ -49,10 +49,11 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String email, int userSerial) {
+    public String createJwt(String email, int userSerial, String role) {
         return Jwts.builder()
                 .claim("email", email)
                 .claim("userSerial", userSerial)
+                .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey, Jwts.SIG.HS256)

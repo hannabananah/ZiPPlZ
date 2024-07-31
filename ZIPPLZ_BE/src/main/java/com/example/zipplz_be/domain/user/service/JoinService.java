@@ -68,8 +68,12 @@ public class JoinService {
         }
 
         User user = userRepository.findByUserSerial(userSerial);
-        String nickname = insertCustomerDTO.getNickname();
 
+        user.setRole("customer");
+        System.out.println("!!!!!!!!!!!!!insertCustomerInfo, customer's role => " + user.getRole());
+        userRepository.save(user);
+
+        String nickname = insertCustomerDTO.getNickname();
         Customer customer = Customer.builder()
                 .userSerial(user)
                 .nickname(nickname).build();
@@ -86,6 +90,9 @@ public class JoinService {
         }
 
         User user = userRepository.findByUserSerial(userSerial);
+        user.setRole("worker");
+        userRepository.save(user);
+
         String businessNumber = insertWorkerDTO.getBusinessNumber();
         String company = insertWorkerDTO.getCompany();
         String companyAddress = insertWorkerDTO.getCompanyAddress();

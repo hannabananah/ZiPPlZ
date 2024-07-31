@@ -29,8 +29,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         String email = oAuth2User.getAttribute("email");
         User user = userRepository.findByEmail(email);
         int userSerial = user.getUserSerial();
+        String role = user.getRole();
 
-        String token = jwtUtil.createJwt(email, userSerial);
+        String token = jwtUtil.createJwt(email, userSerial, role);
 
         response.addHeader("Authorization", "Bearer " + token);
         response.sendRedirect("http://localhost:5173/member/join/common/1/extrainfo");
