@@ -9,6 +9,7 @@ import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,19 @@ public class JoinService {
         return user.getUserSerial();
     }
 
+    public int joinAfterSocialProcess(JoinRequestDTO joinRequestDTO) {
+
+        if (!userRepository.existsByEmail(joinRequestDTO.getEmail())) {
+            throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+
+        User user = userRepository.findByEmail(joinRequestDTO.getEmail());
+        user.setUserName(joinRequestDTO.getUserName());
+        user.setTel(joinRequestDTO.getTel());
+        user.setBirthDate(joinRequestDTO.getBirthDate());
+        return userRepository.save(user).getUserSerial();
+    }
+
     public boolean insertCustomerInfo(InsertCustomerDTO insertCustomerDTO) {
 
         int userSerial = insertCustomerDTO.getUserSerial();
@@ -54,8 +68,12 @@ public class JoinService {
         }
 
         User user = userRepository.findByUserSerial(userSerial);
-        String nickname = insertCustomerDTO.getNickname();
 
+        user.setRole("customer");
+        System.out.println("!!!!!!!!!!!!!insertCustomerInfo, customer's role => " + user.getRole());
+        userRepository.save(user);
+
+        String nickname = insertCustomerDTO.getNickname();
         Customer customer = Customer.builder()
                 .userSerial(user)
                 .nickname(nickname).build();
@@ -72,6 +90,9 @@ public class JoinService {
         }
 
         User user = userRepository.findByUserSerial(userSerial);
+        user.setRole("worker");
+        userRepository.save(user);
+
         String businessNumber = insertWorkerDTO.getBusinessNumber();
         String company = insertWorkerDTO.getCompany();
         String companyAddress = insertWorkerDTO.getCompanyAddress();

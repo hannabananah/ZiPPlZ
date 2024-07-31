@@ -1,13 +1,11 @@
 package com.example.zipplz_be.domain.user.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
-import com.example.zipplz_be.domain.user.dto.InsertCustomerDTO;
-import com.example.zipplz_be.domain.user.dto.InsertWorkerDTO;
-import com.example.zipplz_be.domain.user.dto.JoinRequestDTO;
-import com.example.zipplz_be.domain.user.dto.JoinResponseDTO;
+import com.example.zipplz_be.domain.user.dto.*;
 import com.example.zipplz_be.domain.user.service.JoinService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +19,7 @@ public class JoinController {
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDTO> joinProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
+        System.out.println("joinProcess 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
@@ -40,8 +39,30 @@ public class JoinController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    @PutMapping("/join/social")
+    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            int userSerial = joinService.joinAfterSocialProcess(joinRequestDTO);
+            if (userSerial == -1) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "소셜 로그인 후, 회원가입 실패");
+            } else {
+                status = HttpStatus.OK;
+                JoinResponseDTO joinResponseDTO = new JoinResponseDTO(userSerial);
+                responseDTO = new ResponseDTO<>(status.value(), "소셜 로그인 후, 회원가입 성공", joinResponseDTO);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
     @PostMapping("/join/customer")
     public ResponseEntity<ResponseDTO> insertCustomerInfo(@RequestBody InsertCustomerDTO insertCustomerDTO) {
+        System.out.println("insertCustomerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
@@ -62,6 +83,7 @@ public class JoinController {
 
     @PostMapping("/join/worker")
     public ResponseEntity<ResponseDTO> insertWorkerInfo(@RequestBody InsertWorkerDTO insertWorkerDTO) {
+        System.out.println("insertWorkerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {

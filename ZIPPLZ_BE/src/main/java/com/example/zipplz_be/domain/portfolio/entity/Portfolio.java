@@ -16,8 +16,8 @@ public class Portfolio {
     @Column(name = "portfolio_serial")
     private int portfolioSerial;
     @ManyToOne
-    @JoinColumn(name = "worker_serial")
-    private Worker workerSerial;
+    @JoinColumn(name = "user_serial")
+    private Worker userSerial;
     @Column(name = "public_relation")
     private String publicRelation;
     private double career;

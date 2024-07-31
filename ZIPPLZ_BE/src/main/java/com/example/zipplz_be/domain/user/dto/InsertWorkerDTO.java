@@ -10,7 +10,7 @@ import java.util.List;
 public class InsertWorkerDTO {
     private int userSerial;
     private List<WorkerLocationDTO> locationList;
-    private List<WorkerSpecialtyDTO> specialtyList;
+    private List<WorkerFieldDTO> fieldList;
     private String businessNumber;
     private String company;
     private String companyAddress;
