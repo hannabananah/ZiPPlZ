@@ -79,23 +79,23 @@ public class SecurityConfig {
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
-        // cors 관련 설정
-        http
-                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-                    @Override
-                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-
-                        CorsConfiguration configuration = new CorsConfiguration();
-
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5000"));
-                        configuration.setAllowedMethods(Collections.singletonList("*"));
-                        configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-                        configuration.setMaxAge(3600L);
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-                        return configuration;
-                    }
-                })));
+//        // cors 관련 설정
+//        http
+//                .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
+//                    @Override
+//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+//
+//                        CorsConfiguration configuration = new CorsConfiguration();
+//
+//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5000"));
+//                        configuration.setAllowedMethods(Collections.singletonList("*"));
+//                        configuration.setAllowCredentials(true);
+//                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+//                        configuration.setMaxAge(3600L);
+//                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+//                        return configuration;
+//                    }
+//                })));
 
         return http.build();
     }
