@@ -19,6 +19,7 @@ public class JoinController {
 
     @PostMapping("/join")
     public ResponseEntity<ResponseDTO> joinProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
+        System.out.println("joinProcess 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
@@ -63,6 +64,7 @@ public class JoinController {
 
     @PostMapping("/join/customer")
     public ResponseEntity<ResponseDTO> insertCustomerInfo(@RequestBody InsertCustomerDTO insertCustomerDTO) {
+        System.out.println("insertCustomerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
@@ -83,6 +85,7 @@ public class JoinController {
 
     @PostMapping("/join/worker")
     public ResponseEntity<ResponseDTO> insertWorkerInfo(@RequestBody InsertWorkerDTO insertWorkerDTO) {
+        System.out.println("insertWorkerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
