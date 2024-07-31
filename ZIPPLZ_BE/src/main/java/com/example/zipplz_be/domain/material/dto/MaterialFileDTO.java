@@ -1,7 +1,7 @@
-package com.example.zipplz_be.domain.portfolio.dto;
+package com.example.zipplz_be.domain.material.dto;
 
-public interface PortfolioFileDTO {
-    int getPortfolioSerial();
+public interface MaterialFileDTO {
+    int getMaterialSerial();
     int getFileSerial();
     String getSaveFolder();
     String getOriginalFile();

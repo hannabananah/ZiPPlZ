@@ -13,6 +13,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -26,6 +27,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.setFilterProcessesUrl("/users/login"); // 로그인 요청 URL 설정
     }
 
     @Override
@@ -41,7 +43,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
@@ -58,9 +60,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //
 //        String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(email, userSerial, role, 600000000L);
+        String token = jwtUtil.createJwt(email, userSerial, role);
 
         response.addHeader("Authorization", "Bearer " + token);
+//        response.sendRedirect("http://localhost:5173/");
     }
 
     @Override

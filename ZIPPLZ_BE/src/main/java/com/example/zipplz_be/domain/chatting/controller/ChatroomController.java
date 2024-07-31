@@ -14,12 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/chatroom")
+//@RequestMapping("/chatroom")
 public class ChatroomController {
 
     private final ChatroomService chatroomService;
 
-    @PostMapping("")
+    @PostMapping("/chatroom")
     public ResponseEntity createChatroom(Authentication authentication, @RequestBody CreateChatroomDTO createChatroomDTO) {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
