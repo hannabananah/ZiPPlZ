@@ -51,8 +51,8 @@ export default function App() {
         <Route path="community" element={<Community />} />
         <Route path="workers" element={<Workers />} />
         <Route path="portfolio" element={<Portfolio />} />
-        <Route path="overView" element={<OverView />} />
-        <Route path="workerSchedule" element={<WorkerSchedule />} />
+        <Route path="overview" element={<OverView />} />
+        <Route path="workerschedule" element={<WorkerSchedule />} />
         <Route path="review" element={<Review />} />
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
@@ -61,7 +61,7 @@ export default function App() {
         <Route path="*" element={<Navigate to="/404" replace />} />
         <Route path="findworkerdetail" element={<FindWorkerDetail />} />
         <Route
-          path="Findworkerdetailcreate"
+          path="findworkerdetailcreate"
           element={<FindWorkerDetailCreate />}
         />
         <Route path="findworkerlist" element={<FindWorkerList />} />
@@ -71,8 +71,8 @@ export default function App() {
           element={<WorkerInfoLocationDetail />}
         />
         <Route path="workerinfolist" element={<WorkerInfoList />} />
-        <Route path="findworkerlistItem" element={<FindWorkerListItem />} />
-        <Route path="workerinfolistItem" element={<WorkerInfoListItem />} />
+        <Route path="findworkerlistitem" element={<FindWorkerListItem />} />
+        <Route path="workerinfolistitem" element={<WorkerInfoListItem />} />
 
         {/* 마이페이지 */}
         <Route path="myboardandscraplist" element={<MyBoardAndScrapList />} />

@@ -75,14 +75,14 @@ export default function FindWorkerList() {
 
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-      <div className="w-full max-w-3xl">
+      <div className="w-full">
         {/* 드롭다운 버튼 */}
         <div className="relative flex justify-center items-center">
           <div
             onClick={toggleDropdown}
             className="cursor-pointer flex items-center space-x-2"
           >
-            <div className="w-44 h-6 font-bold text-zp-lg text-zp-black text-center">
+            <div className="font-bold text-zp-lg text-zp-black text-center">
               전문 시공자 구하기
             </div>
             <IoMdArrowDropdown
@@ -153,7 +153,7 @@ export default function FindWorkerList() {
                 placeholder="인천 계양구, 인천 부평구 외 2개"
                 inputType="search"
                 type="search"
-                width={16.875}
+                width={10}
                 height={2.5}
                 fontSize="xs"
                 radius="btn"
@@ -173,7 +173,7 @@ export default function FindWorkerList() {
                 placeholder="시공 날짜 선택"
                 inputType="search"
                 type="search"
-                width={16.875}
+                width={10}
                 height={2.5}
                 fontSize="xs"
                 radius="btn"
@@ -281,7 +281,7 @@ export default function FindWorkerList() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-3">
+        <div className="w-full flex flex-col gap-3">
           {/* 임시로 하드 코딩 */}
           {/* backend 유저 정보 데이터 받고나서 수정 예정 */}
           <WorkerInfoListItem />

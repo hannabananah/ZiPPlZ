@@ -1,5 +1,3 @@
-import { useState } from 'react';
-
 import AboutMe from '@components/worker/detail/overView/AboutMe';
 import CareerAndCertificate from '@components/worker/detail/overView/CareerAndCertificate';
 import Photos from '@components/worker/detail/overView/Photos';
