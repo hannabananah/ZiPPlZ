@@ -5,16 +5,26 @@ import com.example.zipplz_be.domain.Schedule.entity.Work;
 import com.example.zipplz_be.domain.Schedule.exception.CustomerNotFoundException;
 import com.example.zipplz_be.domain.Schedule.exception.DuplicateFieldException;
 import com.example.zipplz_be.domain.Schedule.exception.PlanNotFoundException;
+import com.example.zipplz_be.domain.Schedule.exception.WorkException;
 import com.example.zipplz_be.domain.Schedule.repository.PlanRepository;
 import com.example.zipplz_be.domain.Schedule.repository.WorkRepository;
 import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
+import com.example.zipplz_be.domain.portfolio.entity.CustomerReview;
+import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
+import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
+import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
+import com.example.zipplz_be.domain.user.entity.Customer;
+import com.example.zipplz_be.domain.user.entity.Worker;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +33,14 @@ public class WorkService {
     private final WorkRepository workRepository;
     private final PlanRepository planRepository;
     private final FieldRepository fieldRepository;
+    private final PortfolioRepository portfolioRepository;
+    private final CustomerReviewRepository customerReviewRepository;
+    PlanService planService;
 
-    WorkService(WorkRepository workRepository, PlanRepository planRepository, FieldRepository fieldRepository) {
+    WorkService(CustomerReviewRepository customerReviewRepository, PortfolioRepository portfolioRepository, PlanService planService,WorkRepository workRepository, PlanRepository planRepository, FieldRepository fieldRepository) {
+        this.customerReviewRepository = customerReviewRepository;
+        this.portfolioRepository = portfolioRepository;
+        this.planService = planService;
         this.workRepository = workRepository;
         this.planRepository = planRepository;
         this.fieldRepository = fieldRepository;
@@ -41,6 +57,24 @@ public class WorkService {
             throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
         }
         Page<Work> workPage = workRepository.findByPlanSerial(plan, pageable);
+
+        //해당 Work들에 대해 완료 검사 진행
+        //만약 end date가 비어있지 않으면서, 현재 날짜보다 이전이라면 is_completed 1로 바꾸기(업데이트 후 return)
+
+        for (Work work: workPage) {
+            Timestamp endDate = work.getEndDate();
+
+            if(work.getEndDate() != null) {
+                Timestamp curDate = new Timestamp(System.currentTimeMillis());
+
+                //끝나는 날짜가 지났다면
+                if(curDate.after(endDate)) {
+                    work.setIsCompleted(1);
+                }
+
+                workRepository.save(work);
+            }
+        }
 
         return workPage.getContent();
     }
@@ -61,19 +95,124 @@ public class WorkService {
         }
 
         Field field = fieldRepository.findByFieldName(fieldName);
+        Work work;
 
         if(field == null) {
+            Timestamp endDate = convertStringToTimestamp((String) params.get("endDate"));
+            Timestamp startDate = convertStringToTimestamp((String) params.get("startDate"));
+
             //커스텀이므로 field_id는 0, 이름은 저장해둔 대로
             field = fieldRepository.findByFieldCode(0);
+
+            work = Work.builder()
+                    .plan(plan)
+                    .field(field)
+                    .fieldName(fieldName)
+                    .startDate(startDate)
+                    .endDate(endDate)
+                    .workPrice((Integer) params.get("workPrice")).build();
+        }
+        else {
+            work = Work.builder()
+                    .plan(plan)
+                    .field(field)
+                    .fieldName(fieldName)
+                    .build();
         }
 
-        Work work = Work.builder()
-                .plan(plan)
-                .field(field)
-                .fieldName(fieldName)
-                .build();
-
         workRepository.save(work);
+    }
+
+    @Transactional
+    public Integer getTotalPriceService(int planSerial) {
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+
+        if(plan == null) {
+            throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        }
+
+        return workRepository.sumWorkPrice(planSerial);
+    }
+
+    private Timestamp convertStringToTimestamp(String dateString) {
+        LocalDateTime localDateTime = LocalDateTime.parse(dateString + "T00:00:00");
+        return Timestamp.valueOf(localDateTime);
+    }
+
+    @Transactional
+    public void modifyWorkMemoService(int userSerial,int planSerial, int workSerial, Map<String, Object> params) {
+        Customer customer = planService.findUser(userSerial);
+
+        //유효한 계획, 공종인지 검사
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        Work work = workRepository.findByWorkSerial(workSerial);
+
+        checkPlanWorkException(customer, plan, work);
+
+        //메모 수정
+        work.setWorkContent((String)params.get("workContent"));
+        workRepository.save(work);
+    }
+
+    @Transactional
+    public void deleteWorkService(int userSerial, int planSerial, int workSerial) {
+        Customer customer = planService.findUser(userSerial);
+
+        //유효한 계획, 공종인지 검사
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        Work work = workRepository.findByWorkSerial(workSerial);
+
+        checkPlanWorkException(customer, plan, work);
+
+        //공종 삭제
+        //해당 공종이 비어 있는 상태여야 함.
+        if(work.getWorkerSerial() != null) {
+            throw new WorkException("계약서가 작성된 공종은 파기 이전엔 삭제할 수 없습니다.");
+        }
+
+        workRepository.delete(work);
+    }
+
+    @Transactional
+    public CustomerReview createReviewService(int userSerial, int planSerial, int workSerial, Map<String, Object> params) {
+        Customer customer = planService.findUser(userSerial);
+
+        //유효한 계획, 공종인지 검사
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        Work work = workRepository.findByWorkSerial(workSerial);
+
+        checkPlanWorkException(customer, plan, work);
+
+        //포트폴리오 찾기
+        Portfolio portfolio = portfolioRepository.findByUserSerialAndFieldId(work.getWorkerSerial(), work.getFieldCode());
+        Timestamp curDate = new Timestamp(System.currentTimeMillis());
+
+        //리뷰 작성
+        CustomerReview customerReview = CustomerReview.builder()
+                .customer(customer)
+                .customerReviewContent((String)params.get("reviewContent"))
+                .customerReviewDate(curDate)
+                .attitudeStar((Integer) params.get("attitudeStar"))
+                .isVisible((Integer)params.get("isVisible"))
+                .communicationStar((Integer) params.get("communicationStar"))
+                .qualityStar((Integer) params.get("qualityStar"))
+                .professionalStar((Integer) params.get("professionalStar"))
+                .portfolio(portfolio).build();
+
+        customerReviewRepository.save(customerReview);
+
+        return customerReview;
+    }
+
+
+    public void checkPlanWorkException(Customer customer, Plan plan, Work work) {
+        if(plan == null) throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        if(work == null || (plan.getPlanSerial() != work.getPlanSerial().getPlanSerial())) throw new WorkException("유효하지 않은 공종 연번입니다.");
+
+        //로그인한 유저가 계획 소유자인지 검사
+        if(!plan.getCustomerSerial().equals(customer)) {
+            throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
+        }
     }
 
 }

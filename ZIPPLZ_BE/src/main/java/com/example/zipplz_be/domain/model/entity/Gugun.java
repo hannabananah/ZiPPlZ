@@ -11,12 +11,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Gugun {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="sido_code")
+    private int sidoCode;
+    @Id
     @Column(name="gugun_code")
     private int gugunCode;
-    @ManyToOne
-    @JoinColumn(name="sido_code")
-    private Sido sidoCode;
     @Column(name="gugun_name")
     private String gugunName;
+    @ManyToOne
+    @JoinColumn(name="sido_code")
+    private Sido sido;
 }
