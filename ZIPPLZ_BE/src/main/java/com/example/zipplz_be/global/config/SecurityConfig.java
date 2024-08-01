@@ -61,7 +61,7 @@ public class SecurityConfig {
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/users/login", "/", "/users/join", "/auth/success", "/users/join/*").permitAll()
+                        .requestMatchers("/users/login", "/", "/users/join", "/auth/success", "/users/join/*", "/default/**", "/workerlist/portfolios").permitAll()
 //                        .anyRequest().authenticated());
                         .anyRequest().authenticated());
 
@@ -88,7 +88,6 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5000"));
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));

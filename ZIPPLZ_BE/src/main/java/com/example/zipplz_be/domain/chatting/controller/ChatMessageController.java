@@ -24,8 +24,8 @@ public class ChatMessageController {
     @MessageMapping("/chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!");
-        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
-//        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
+//        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
+        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
     }
 
     /*
@@ -34,12 +34,13 @@ public class ChatMessageController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
-        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor), getRole(headerAccessor));
-//        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial());
+//        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor), getRole(headerAccessor));
+        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial(), getRole(headerAccessor));
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {
         String token = headerAccessor.getFirstNativeHeader("X-AUTH-TOKEN");
+        System.out.println("!!!!!!!!!X-AUTH-TOKEN!!!!!!!!!!" + token);
 
         Authentication authentication = jwtUtil.getAuthentication(token);
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();

@@ -5,6 +5,7 @@ import com.example.zipplz_be.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import com.example.zipplz_be.domain.user.entity.Worker;
 
@@ -13,6 +14,7 @@ import java.sql.Timestamp;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
 public class Work {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,12 +46,23 @@ public class Work {
     int workPrice;
 
     @Column(name="as_score")
-    int asScore;
+    Integer asScore;
     @Column(name="work_content")
     String workContent;
 
     @Column(name="field_name")
     String fieldName;
+
+    @Builder
+    public Work(Plan plan, Field field, String fieldName, Timestamp startDate, Timestamp endDate, int workPrice) {
+        this.planSerial = plan;
+        this.fieldCode = field;
+        this.fieldName = fieldName;
+        isCompleted = 0;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.workPrice = workPrice;
+    }
 
     @Builder
     public Work(Plan plan, Field field, String fieldName) {
