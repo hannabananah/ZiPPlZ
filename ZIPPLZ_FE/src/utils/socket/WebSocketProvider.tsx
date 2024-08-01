@@ -7,12 +7,26 @@ const chat_token = import.meta.env.VITE_APP_CHAT_TOKEN;
 
 const WebSocketContext = createContext<{
   sendMessage: (message: string) => void;
-  messages: string[];
+  messages: {
+    userSerial: number;
+    userName: string;
+    chatMessageContent: string;
+    createdAt: string;
+    isFile: boolean;
+  }[];
 } | null>(null);
 
 const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [messages, setMessages] = useState<
+    {
+      userSerial: number;
+      userName: string;
+      chatMessageContent: string;
+      createdAt: string;
+      isFile: boolean;
+    }[]
+  >([]);
 
   useEffect(() => {
     const stompClient = new Client({
@@ -61,7 +75,6 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
   }, []);
 
-  // 메시지 보내기
   const sendMessage = (msg: string) => {
     if (msg.trim()) {
       if (client && client.connected) {

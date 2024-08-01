@@ -14,7 +14,11 @@ const Message: React.FC = () => {
     <ul className="space-y-2">
       {messages.map((msg, index) => (
         <li key={index} className="p-2 text-gray-800 bg-blue-100 rounded-lg">
-          {msg}
+          <strong>{msg.userSerial}</strong>
+          <p> {msg.chatMessageContent}</p>
+          <p className="text-zp-gray text-zp-sm">
+            {new Date(msg.createdAt).toLocaleString()}
+          </p>
         </li>
       ))}
     </ul>
