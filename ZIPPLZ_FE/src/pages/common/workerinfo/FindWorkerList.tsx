@@ -103,7 +103,7 @@ export default function FindWorkerList() {
                 placeholder="인천 계양구, 인천 부평구 외 2개"
                 inputType="search"
                 type="search"
-                width={16.875}
+                width="full"
                 height={2.5}
                 fontSize="xs"
                 radius="btn"
@@ -123,7 +123,7 @@ export default function FindWorkerList() {
                 placeholder="시공 날짜 선택"
                 inputType="search"
                 type="search"
-                width={16.875}
+                width="full"
                 height={2.5}
                 fontSize="xs"
                 radius="btn"

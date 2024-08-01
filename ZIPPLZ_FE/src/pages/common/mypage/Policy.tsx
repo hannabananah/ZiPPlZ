@@ -1,19 +1,26 @@
+import { useState } from 'react';
 import { GoArrowLeft } from 'react-icons/go';
 import { useNavigate } from 'react-router-dom';
 
 export default function Policy() {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('-1');
   };
 
+  // "더보기" / "접기" 버튼 핸들러
+  const handleToggleExpand = () => {
+    setIsExpanded(!isExpanded);
+  };
+
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
         <div className="w-full max-w-3xl">
-          {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
+          {/* 뒤로가기 버튼 + "개인정보처리방침" 글자 */}
           <div className="h-12 flex items-center justify-between w-full relative">
             <div className="flex items-center">
               <GoArrowLeft
@@ -22,14 +29,16 @@ export default function Policy() {
                 style={{ width: '27px', height: '20px' }} // 아이콘 크기 조정
               />
             </div>
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">
+            <div className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-center">
               개인정보처리방침
             </div>
           </div>
 
-          <div className="mt-6 w-full text-zp-xs font-bold bg-zp-sub-color rounded-zp-radius-big">
-            <div className="p-6">
-              <div className="mt-6">
+          <div className="mt-6 w-full font-bold bg-zp-sub-color border rounded-zp-radius-big p-6">
+            <div
+              className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'h-auto' : 'h-[calc(2.5rem*10)]'} `}
+            >
+              <div className="whitespace-pre-wrap">
                 제 1 장 총칙 제 1 조 (목적) 본 약관은 (주)집플리즈(이하 “회사”라
                 합니다)이 운영하는 웹사이트 ‘ZIP-PlZ’ (www.zipplz.com) (이하
                 “웹사이트”라 합니다)에서 제공하는 온라인 서비스(이하 “서비스”라
@@ -186,6 +195,14 @@ export default function Policy() {
                 약관은 2024년 07월 17일부터 적용한다.
               </div>
             </div>
+            <button
+              onClick={handleToggleExpand}
+              className={`mt-4 p-2 rounded flex ${
+                isExpanded ? 'bg-gray-700' : ''
+              }`}
+            >
+              {isExpanded ? '접기' : '더보기'}
+            </button>
           </div>
         </div>
       </div>

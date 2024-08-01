@@ -7,7 +7,7 @@ export default function FindWorkerListItem() {
   return (
     <>
       <div className="w-full rounded-zp-radius-big h-32 shadow-lg">
-        <div className="p-8 flex items-start space-x-4">
+        <div className="p-10 flex items-start space-x-4">
           {/* 첫 번째 요소 */}
           <div className="flex flex-col justify-between border-r pr-4">
             <div className="text-zp-xs font-bold">
@@ -24,7 +24,7 @@ export default function FindWorkerListItem() {
           {/* <div className="border-r border-gray-300 h-full"></div> */}
 
           {/* 두 번째 요소 */}
-          <div className="flex flex-col space-y-2 pl-4">
+          <div className="flex flex-col space-y-3 pl-4">
             <div className="flex items-center space-x-2">
               <CgProfile size={14} />
               <div className="text-zp-2xs">조명조랭이떡</div>
@@ -35,7 +35,7 @@ export default function FindWorkerListItem() {
             </div>
             <div className="flex items-center space-x-2">
               <FaMapMarkerAlt size={14} />
-              <div className="w-20 h-4 text-zp-2xs">서울 동작구</div>
+              <div className="w-20 text-zp-2xs">서울 동작구</div>
             </div>
           </div>
         </div>
