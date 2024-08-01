@@ -1,36 +1,21 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext } from 'react';
 
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
-interface MessageProps {
-  roomId: number;
-}
+const Message: React.FC = () => {
+  const context = useContext(WebSocketContext);
+  console.log('context', context);
 
-const Message: React.FC<MessageProps> = ({ roomId }) => {
-  const client = useContext(WebSocketContext);
-  const [items, setItems] = useState<string[]>([]);
+  if (!context) return <p>Loading...</p>;
 
-  const addItem = (item: string) => {
-    setItems((prevItems) => [...prevItems, item]);
-  };
-
-  useEffect(() => {
-    if (client) {
-      const subscription = client.subscribe('/sub/chat/room', (message) => {
-        const data = JSON.parse(message.body);
-        addItem(data.chatMessageContent);
-      });
-
-      return () => {
-        subscription.unsubscribe();
-      };
-    }
-  }, [client, roomId]);
+  const { messages } = context;
 
   return (
-    <ul>
-      {items.map((message, index) => (
-        <li key={index}>{message}</li>
+    <ul className="space-y-2">
+      {messages.map((msg, index) => (
+        <li key={index} className="p-2 text-gray-800 bg-blue-100 rounded-lg">
+          {msg}
+        </li>
       ))}
     </ul>
   );

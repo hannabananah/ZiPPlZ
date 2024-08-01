@@ -24,8 +24,8 @@ public class ChatMessageController {
     @MessageMapping("/chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!");
-        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
-//        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
+        // chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
+       chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial());
     }
 
     /*
