@@ -6,89 +6,34 @@ import {
 } from 'react-icons/fa';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-// 시공자 정보를 가져오기 위해 User, Worker, Portfolio 인터페이스 가져오기
-import { Portfolio, User, Worker } from '@apis/worker/PortfolioApi';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
-import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
+import FindWorkerListItem from '@components/worker/FindWorkerListItem';
 
-// newPost의 타입을 정의합니다.
-interface LocationState {
-  newPost?: {
-    title: string;
-    address: string;
-    addressDetail: string;
-    workDetail: string;
-  };
-}
+// interface LocationState {
+//   newPost?: boolean;
+// }
 
-// worker의 이름, 출생년도 변수
-const [user, setUser] = useState<User>({
-  userName: '',
-  birthDate: '',
-});
+type SortOption = '평점순' | '최신순' | '과거순';
 
-// worker의 지역 변수
-const [worker, setWorker] = useState<Worker>({
-  userSerial: 0,
-});
-
-// worker의 포트폴리오 연변(portfolioSerial), 공종(fieldId), 경력(career) 변수
-const [portfolio, setPortfolio] = useState<Portfolio>({
-  portfolioSerial: 0,
-  career: 0,
-  fieldId: 0,
-  temp: 0,
-  locationList: [],
-  fieldList: [],
-});
-
-// worker의 시도/구군 정보 변수
-interface Sido {
-  sidoCode: number;
-  sidoName: string;
-}
-interface Gugun {
-  gugunCode: number;
-  sidoCode: number;
-  gugunName: string;
-}
-
-interface Props {
-  setUser: React.Dispatch<React.SetStateAction<User>>;
-  setWorker: React.Dispatch<React.SetStateAction<Worker>>;
-  setPortfolio: React.Dispatch<React.SetStateAction<Portfolio>>;
-}
-
-export default function FindWorkerList({
-  setUser,
-  setWorker,
-  setPortfolio,
-}: Props) {
-  // 동적으로 변하는 값들 useState로 정의
-  // 이름, 년생, 온도, 지역, 공종, 경력
-  const [name, setName] = useState<string>('');
-  const [birthDate, setBirthDate] = useState<string>('');
-  const [temp, setTemp] = useState<number>(0);
-  const [location, setLocation] = useState<string>('');
-  const [fieldId, setFieldId] = useState<string>('');
-  const [career, setCareer] = useState<number>(0);
-
+export default function FindWorkerList() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
-
-  const navigate = useNavigate();
-  const location = useLocation();
-  const newPost = (location.state as LocationState)?.newPost;
+  // const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
 
-  const handleWritePost = () => {
-    navigate('/FindWorkerDetailCreate'); // FindWorkerDetail 페이지로 이동
-  };
+  const navigate = useNavigate();
+  // const location = useLocation();
+  // const { state } = location; // location.state를 분리하여 사용
+
+  // LocationState 타입을 적용합니다.
+  // const newPost = (state as LocationState)?.newPost;
+
+  // const handleWritePost = () => {
+  //   navigate('/FindWorkerDetail'); // FindWorkerDetail 페이지로 이동
+  // };
 
   const handleInputClick = () => {
     navigate('/WorkerInfoLocationDetail'); // 클릭 시 이동할 페이지
@@ -99,17 +44,18 @@ export default function FindWorkerList({
   };
 
   const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
+    setIsDropdownOpen((prev) => !prev);
   };
 
-  // 정렬 옵션의 타입을 정의합니다.
-  type SortOption = '평점순' | '최신순' | '과거순';
+  // const toggleSortDropdown = () => {
+  //   setIsSortDropdownOpen((prev) => !prev);
+  // };
 
   const handleSortSelect = (sortOption: string) => {
     // 수정된 부분
     console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption); // 타입 강제 변환
-    setIsSortDropdownOpen(false);
+    // setIsSortDropdownOpen(false);
   };
 
   const handleNavigate = (path: string) => {
@@ -117,23 +63,24 @@ export default function FindWorkerList({
     setIsDropdownOpen(false); // 드롭다운을 닫습니다.
   };
 
+  const options: SortOption[] = ['평점순', '최신순', '과거순'];
+  // const options2 = ['전문 시공자 둘러보기', '전문 시공자 구하기'];
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  const options: SortOption[] = ['평점순', '최신순', '과거순'];
-  console.log(isSortDropdownOpen);
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-      <div className="w-full">
+      <div className="w-full max-w-3xl">
         {/* 드롭다운 버튼 */}
         <div className="relative flex justify-center items-center">
           <div
             onClick={toggleDropdown}
             className="cursor-pointer flex items-center space-x-2"
           >
-            <div className="font-bold text-zp-lg text-zp-black text-center">
-              전문 시공자 구하기
+            <div className="w-64 h-6 font-bold text-zp-lg text-zp-black flex justify-center">
+              전문 시공자 둘러보기
             </div>
             <IoMdArrowDropdown
               className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
@@ -160,6 +107,15 @@ export default function FindWorkerList({
           )}
         </div>
 
+        {/* 공종 선택 버튼 리스트 임시로 만듦 */}
+        <div className="flex justify-center">
+          <div>공종 선택 버튼 리스트</div>
+        </div>
+
+        <div className="w-64 h-6 text-zp-lg font-bold text-zp-black">
+          계획 중인 시공이 있으신가요?
+        </div>
+
         {/* 위치 및 날짜 입력 */}
         <div className="flex justify-center space-x-4 my-4">
           <div className="relative flex items-center space-x-2">
@@ -172,7 +128,7 @@ export default function FindWorkerList({
                 placeholder="인천 계양구, 인천 부평구 외 2개"
                 inputType="search"
                 type="search"
-                width="full"
+                width={16.875}
                 height={2.5}
                 fontSize="xs"
                 radius="btn"
@@ -192,7 +148,7 @@ export default function FindWorkerList({
                 placeholder="시공 날짜 선택"
                 inputType="search"
                 type="search"
-                width="full"
+                width={16.875}
                 height={2.5}
                 fontSize="xs"
                 radius="btn"
@@ -224,14 +180,14 @@ export default function FindWorkerList({
           </div>
         </div>
 
-        {/* 검색 입력 필드 */}
+        {/* 시공업자의 이름을 입력하세요. */}
         <div className="flex justify-center items-center space-x-2 my-4">
           <HiMagnifyingGlass />
           <Input
-            placeholder="글의 제목이나 작성자 이름을 입력하세요"
+            placeholder="시공업자의 이름을 입력하세요"
             inputType="normal"
             type="text"
-            width={15}
+            width={12}
             height={2.5}
             fontSize="xs"
             radius="btn"
@@ -241,46 +197,16 @@ export default function FindWorkerList({
           />
         </div>
 
-        {/* 글 작성하기 버튼 */}
-        <div className="flex justify-end mb-4">
-          <div className="w-18 px-4 text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
-            <Button
-              children="글 작성하기"
-              buttonType="light"
-              width={3.5}
-              height={1}
-              fontSize="2xs"
-              radius="btn"
-              onClick={handleWritePost}
-            />
-          </div>
-        </div>
-
-        <div className="w-full flex flex-col grid grid-cols-3 gap-3">
+        {/* 시공업자 정보 컴포넌트(줄당 3개) */}
+        <div className="grid grid-cols-1 gap-3">
           {/* 임시로 하드 코딩 */}
-          {/* backend 유저 정보 데이터 받고나서 수정 예정 */}
-          <WorkerInfoListItem />
-          <WorkerInfoListItem />
-          <WorkerInfoListItem />
-          <WorkerInfoListItem />
+          <FindWorkerListItem />
+          <FindWorkerListItem />
+          <FindWorkerListItem />
+          <FindWorkerListItem />
         </div>
 
-        {/* 새로운 포스트 정보 표시 */}
-        {newPost && (
-          <div className="p-4 bg-zp-light-beige rounded-zp-radius-big">
-            <h2 className="text-zp-lg font-bold">{newPost.title}</h2>
-            <p className="text-zp-xs">현장 주소: {newPost.address}</p>
-            <p className="text-zp-xs">상세 주소: {newPost.addressDetail}</p>
-            <p className="text-zp-xs">작업 내용: {newPost.workDetail}</p>
-          </div>
-        )}
-
-        {/* 나중에 추가할 요소들 */}
-        {/* 글 제목, 글 내용, 닉네임, 작업희망 날짜, 위치 연동 */}
-        {/* 클릭 시 글 상세 페이지로 이동 */}
-        {/* 해당되는 구인글 없으면 "게시물이 없습니다" 이미지 표시 */}
-        {/* 게시물 개수를 확인하는 변수를 만들고, 개수가 0이면 "게시물이 없습니다" 이미지 띄우기 */}
-        {/* 무한스크롤 */}
+        {/* 해당되는 시공업자가 없으면 관련 이미지 표시 */}
       </div>
     </div>
   );
