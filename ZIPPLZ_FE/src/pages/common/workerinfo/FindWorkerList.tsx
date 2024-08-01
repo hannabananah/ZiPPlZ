@@ -12,62 +12,37 @@ import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 import FindWorkerListItem from '@components/worker/FindWorkerListItem';
 
-// interface LocationState {
-//   newPost?: boolean;
-// }
-
 type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function FindWorkerList() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  // const [isSortDropdownOpen, setIsSortDropdownOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
 
   const navigate = useNavigate();
-  // const location = useLocation();
-  // const { state } = location; // location.state를 분리하여 사용
-
-  // LocationState 타입을 적용합니다.
-  // const newPost = (state as LocationState)?.newPost;
-
-  // const handleWritePost = () => {
-  //   navigate('/FindWorkerDetail'); // FindWorkerDetail 페이지로 이동
-  // };
-
-  const handleInputClick = () => {
-    navigate('/WorkerInfoLocationDetail'); // 클릭 시 이동할 페이지
-  };
-
-  const handleInputClick2 = () => {
-    navigate('/WorkerInfoDateDetail'); // 클릭 시 이동할 페이지
-  };
 
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // const toggleSortDropdown = () => {
-  //   setIsSortDropdownOpen((prev) => !prev);
-  // };
-
   const handleSortSelect = (sortOption: string) => {
-    // 수정된 부분
     console.log(`Selected sort option: ${sortOption}`);
-    setSelectedValue(sortOption as SortOption); // 타입 강제 변환
-    // setIsSortDropdownOpen(false);
+    setSelectedValue(sortOption as SortOption);
   };
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+    setIsDropdownOpen(false);
   };
 
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
-  // const options2 = ['전문 시공자 둘러보기', '전문 시공자 구하기'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
+  };
+
+  const handleFindWorkerClick = () => {
+    navigate('/FindWorkerDetail');
   };
 
   return (
@@ -133,7 +108,7 @@ export default function FindWorkerList() {
                 fontSize="xs"
                 radius="btn"
                 value={inputValue}
-                onClick={handleInputClick}
+                onClick={() => navigate('/WorkerInfoLocationDetail')}
                 additionalStyle="pl-8 bg-zp-light-beige border-b-2 font-bold border-zp-sub-color"
               />
             </div>
@@ -153,7 +128,7 @@ export default function FindWorkerList() {
                 fontSize="xs"
                 radius="btn"
                 value={inputValue}
-                onClick={handleInputClick2}
+                onClick={() => navigate('/WorkerInfoDateDetail')}
                 additionalStyle="pl-8 bg-zp-light-beige border-b-2 font-bold border-zp-sub-color"
               />
             </div>
@@ -199,9 +174,15 @@ export default function FindWorkerList() {
 
         {/* 시공업자 정보 컴포넌트(줄당 3개) */}
         <div className="grid grid-cols-1 gap-3">
-          {/* 임시로 하드 코딩 */}
-          <FindWorkerListItem />
-          <FindWorkerListItem />
+          {/* 버튼 클릭 시 페이지 이동 */}
+          {/* 임시 하드 코딩 */}
+          {/* API 연동 시 코드 변경되어야 함 */}
+          <button onClick={handleFindWorkerClick}>
+            <FindWorkerListItem />
+          </button>
+          <button onClick={handleFindWorkerClick}>
+            <FindWorkerListItem />
+          </button>
           <FindWorkerListItem />
           <FindWorkerListItem />
         </div>
