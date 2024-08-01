@@ -1,7 +1,9 @@
 package com.example.zipplz_be.domain.portfolio.repository;
 
+import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
+import com.example.zipplz_be.domain.user.entity.Worker;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -23,4 +25,7 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Integer> {
 //            "LEFT JOIN File f on f.file_serial = pfr.file_serial " +
 //            "WHERE p.field_id = :field_code", nativeQuery = true)
 //    List<PortfolioJoinDTO> getPortfolioJoinsByField(@Param("field_code") int field_code);
+
+    Portfolio findByUserSerialAndFieldId(Worker userSerial, Field fieldId);
+
 }
