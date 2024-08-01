@@ -44,7 +44,9 @@ export const signUp = async (data: User) => {
 };
 
 export const socialSignUp = async (data: socialUser) => {
-  return await axiosInstance.put(END_POINT.SIGNUP + '/social', data);
+  return await axiosInstance.put(END_POINT.SIGNUP + '/social', data, {
+    withCredentials: true,
+  });
 };
 
 export const signUpCustomer = async (data: Customer) => {
