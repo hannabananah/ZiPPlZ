@@ -27,7 +27,7 @@ export default function Login() {
       const authorizationHeader = response.headers.authorization;
       console.log(authorizationHeader);
       if (authorizationHeader) {
-        const token: string = authorizationHeader.split('  ')[1];
+        const token: string = authorizationHeader.split(' ')[1];
         console.log(token);
         Cookies.set('accesstoken', token, { expires: 1 });
         console.log('status :', response.status);

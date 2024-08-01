@@ -55,40 +55,54 @@ export default function SignUp() {
       {orderNumber === 2 && type === 'common' && phrase === 'info' && (
         <SignUpInfo setActive={setActive} setLink={setLink} setUser={setUser} />
       )}
-      {orderNumber === 2 && type === 'common' && phrase === 'type' && (
-        <SignUpSelectType setNext={setNext} setLink={setLink} />
-      )}
-      {orderNumber === 3 && phrase === 'nickname' && (
-        <SignUpNickName
-          setLink={setLink}
-          setNext={setNext}
-          setCustomer={setCustomer}
-        />
-      )}
+      {orderNumber === 2 &&
+        type === 'common' &&
+        (phrase === 'type' || phrase === 'extratype') && (
+          <SignUpSelectType
+            setNext={setNext}
+            setLink={setLink}
+            phrase={phrase}
+          />
+        )}
+      {orderNumber === 3 &&
+        (phrase === 'nickname' || phrase === 'extranickname') && (
+          <SignUpNickName
+            setLink={setLink}
+            setNext={setNext}
+            setCustomer={setCustomer}
+            phrase={phrase}
+          />
+        )}
       {(phrase === 'agree' || phrase === 'extra-agree') && (
         <SignUpAgree setLink={setLink} setNext={setNext} phrase={phrase} />
       )}
-      {phrase === 'detail' && type === 'worker' && (
-        <SignUpWorkerDetail
-          setActive={setActive}
-          setLink={setLink}
-          setWorker={setWorker}
-        />
-      )}
-      {phrase === 'skills' && type === 'worker' && (
-        <SignUpWorkerSkill
-          setNext={setNext}
-          setLink={setLink}
-          setWorker={setWorker}
-        />
-      )}
-      {phrase === 'region' && type === 'worker' && (
-        <SignUpWorkerRegion
-          setNext={setNext}
-          setLink={setLink}
-          setWorker={setWorker}
-        />
-      )}
+      {(phrase === 'detail' || phrase === 'extradetail') &&
+        type === 'worker' && (
+          <SignUpWorkerDetail
+            setActive={setActive}
+            setLink={setLink}
+            setWorker={setWorker}
+            phrase={phrase}
+          />
+        )}
+      {(phrase === 'skills' || phrase === 'extraskills') &&
+        type === 'worker' && (
+          <SignUpWorkerSkill
+            setNext={setNext}
+            setLink={setLink}
+            setWorker={setWorker}
+            phrase={phrase}
+          />
+        )}
+      {(phrase === 'region' || phrase === 'extraregion') &&
+        type === 'worker' && (
+          <SignUpWorkerRegion
+            setNext={setNext}
+            setLink={setLink}
+            setWorker={setWorker}
+            phrase={phrase}
+          />
+        )}
       {phrase === 'extrainfo' && type === 'common' && orderNumber === 2 && (
         <SignUpExtraInfo
           setNext={setNext}

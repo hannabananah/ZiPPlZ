@@ -141,7 +141,8 @@ export default function SignBottom({
           />
         </div>
         {((order === 2 && phrase === 'info') ||
-          (order === 3 && phrase === 'detail')) && (
+          (order === 3 && phrase === 'detail') ||
+          (order === 3 && phrase === 'extradetail')) && (
           <Button
             buttonType={active ? 'second' : 'light'}
             radius="btn"
@@ -159,7 +160,11 @@ export default function SignBottom({
           width="full"
           height={3.75}
           children={
-            order < 3 || (phrase !== 'nickname' && phrase !== 'skills')
+            order < 3 ||
+            (phrase !== 'nickname' &&
+              phrase !== 'skills' &&
+              phrase !== 'extranickname' &&
+              phrase !== 'extraskills')
               ? '다음'
               : '회원가입 완료'
           }
@@ -170,13 +175,21 @@ export default function SignBottom({
             setActive(false);
             if (phrase === 'extrainfo') {
               console.log(socialUser);
-              registSocialUser(socialUser);
+
               navigate(link);
             } else {
-              if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
+              if (
+                order < 3 ||
+                (phrase !== 'nickname' &&
+                  phrase !== 'skills' &&
+                  phrase !== 'extranickname' &&
+                  phrase !== 'extraskills')
+              )
                 navigate(link);
               else {
-                registUser(user);
+                if (phrase == 'nickname' || phrase == 'skills')
+                  registUser(user);
+                else registSocialUser(socialUser);
                 console.log(user);
                 openModal();
               }
@@ -218,6 +231,7 @@ export default function SignBottom({
                 closeModal();
               } else {
                 if (type === 'customer') {
+                  console.log(customer);
                   registCustomer(customer);
                 } else {
                   registWorker(worker);

@@ -8,11 +8,13 @@ interface Props {
   setActive: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
   setWorker: React.Dispatch<React.SetStateAction<Worker>>;
+  phrase: string;
 }
 export default function SignupWorkerDetail({
   setActive,
   setLink,
   setWorker,
+  phrase,
 }: Props) {
   const [registrationNumber, setRegistrationNumber] = useState<string>('');
 
@@ -21,7 +23,8 @@ export default function SignupWorkerDetail({
 
   function validateInfo() {
     if (address && groupName && registrationNumber.length === 12) {
-      setLink('/member/join/worker/3/region');
+      if (phrase === 'detail') setLink('/member/join/worker/3/region');
+      else setLink('/member/join/worker/3/extraregion');
       return true;
     }
   }
