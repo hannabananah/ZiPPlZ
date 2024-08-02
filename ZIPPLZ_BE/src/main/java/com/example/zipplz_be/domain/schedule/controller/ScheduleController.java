@@ -263,7 +263,6 @@ public class ScheduleController {
     @PostMapping("/plans/{planSerial}/works/{workSerial}/review")
     public ResponseEntity<?> createReview(Authentication authentication, @PathVariable int planSerial, @PathVariable int workSerial, @RequestBody Map<String, Object> params) {
         //시공자 댓글은 null로 두기
-
         ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
@@ -289,20 +288,16 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    //as 요청하기
-
-
-
+    //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
     //평면도 가져오기
     //공유 문서에 이미지 넣기
-
-    //계약서 조회하기
-    //계약서 수정하고 수정요청 보내기(수정 요청 테이블이랑 계약서 테이블도 필요함)
+    //공유 문서의 이미지 조회하기
     //영상 다운로드
 
 
 
-
+    //계약서 조회하기
+    //계약서 수정하고 수정요청 보내기(수정 요청 테이블이랑 계약서 테이블도 필요함)
 
     //연번 가져오기
     public int getUserSerial(Authentication authentication) {
