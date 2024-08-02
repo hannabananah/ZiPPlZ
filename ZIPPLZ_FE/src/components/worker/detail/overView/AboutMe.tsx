@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { PiNotePencil } from 'react-icons/pi';
+import { HiOutlineUser } from 'react-icons/hi2';
 
 export default function AboutMe() {
   // 모달 열림, 한줄 소개 입력 값, 임시 값 상태 관리
@@ -9,13 +9,6 @@ export default function AboutMe() {
   const [asPeriod, setAsPeriod] = useState<string>('1개월 이하');
   const [tempIntroduce, setTempIntroduce] = useState<string>(introduce);
   const [tempAsPeriod, setTempAsPeriod] = useState<string>(asPeriod);
-
-  // 모달 열기
-  const handleOpenModal = () => {
-    setTempIntroduce(introduce);
-    setTempAsPeriod(asPeriod);
-    setIsModalOpen(true);
-  };
 
   // 모달 닫기
   const handleCloseModal = () => {
@@ -31,17 +24,14 @@ export default function AboutMe() {
 
   return (
     <>
-      <div className="mt-6 w-full h-6 font-bold text-zp-xs flex items-center justify-start">
+      <div className="mt-6 w-full h-6 font-bold text-zp-xs flex items-center justify-start space-x-1">
+        <div>
+          <HiOutlineUser />
+        </div>
         <div>About Me</div>
       </div>
 
-      {/* 우측 상단에 글쓰기 버튼 누르면, 한줄 소개와 A/S 기간을 선택할 수 있는 modal 창 */}
       <div className="relative w-full bg-zp-white p-4 rounded-zp-radius-big">
-        <PiNotePencil
-          onClick={handleOpenModal}
-          className="absolute top-4 right-4 cursor-pointer"
-          size={24}
-        />
         <div className="text-zp-2xs flex flex-col space-y-2">
           <div className="flex items-center">
             <div className="w-20">나이</div>
@@ -54,12 +44,12 @@ export default function AboutMe() {
             <div className="flex-grow">saffy@ssafy.com</div>
           </div>
           <div className="flex items-center">
-            <div className="w-20">성별</div>
+            <div className="w-20">경력</div>
             <div className="border-l border-black h-full mx-2"></div>
             <div className="flex-grow">남성</div>
           </div>
           <div className="flex items-center">
-            <div className="w-20">한줄소개</div>
+            <div className="w-20">누적 시공수</div>
             <div className="border-l border-black h-full mx-2"></div>
             <div className="flex-grow">{introduce}</div>
           </div>

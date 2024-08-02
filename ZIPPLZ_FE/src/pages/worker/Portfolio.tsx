@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
+import { CiLocationOn } from 'react-icons/ci';
+import { GrTools } from 'react-icons/gr';
 import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
+import { IoCallOutline } from 'react-icons/io5';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
@@ -75,9 +78,27 @@ export default function Portfolio() {
 
         {/* 지역, 전화번호, 분야 */}
         <div className="w-full flex flex-col text-zp-xs text-zp-black">
-          <div className="w-full h-4">Area : {area}</div>
-          <div className="w-full h-4">Phone : {tel}</div>
+          <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
+            <div>
+              <CiLocationOn />
+            </div>
+            <div className="flex-4 h-4">Area</div>
+            <div className="flex-1 h-4">{area}</div>
+          </div>
+          <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
+            <div>
+              <IoCallOutline />
+            </div>
+            <div className="flex-4 h-4">Phone</div>
+            <div className="flex-1 h-4">{tel}</div>
+          </div>
           <div className="w-full h-4 flex flex-wrap gap-2">
+            <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
+              <div>
+                <GrTools />
+              </div>
+              <div className="w-full h-4">Skills</div>
+            </div>
             {/* Skills as buttons */}
             {skills.map((skill, index) => (
               <button
