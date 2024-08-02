@@ -12,10 +12,10 @@ const ChatRoom: React.FC = () => {
   const roomIdNumber = roomId ? parseInt(roomId, 10) : NaN;
   const isValidRoomId = !isNaN(roomIdNumber);
   const [isMenuVisible, setMenuVisible] = useState(false);
-
+  const userSerial = 1;
   return (
     <WebSocketProvider>
-      <div className="relative flex flex-col h-screen bg-gray-100">
+      <div className="relative flex flex-col h-screen bg-zp-light-orange">
         {isValidRoomId && <ChatRoomHeader />}
         <div className="relative flex flex-col flex-grow p-4 overflow-y-auto">
           {isValidRoomId ? (
@@ -26,6 +26,7 @@ const ChatRoom: React.FC = () => {
               <TextInputBox
                 isMenuVisible={isMenuVisible}
                 onMenuToggle={() => setMenuVisible(!isMenuVisible)}
+                userSerial={userSerial}
               />
               {isMenuVisible && <ToggleChatMenu />}
             </>

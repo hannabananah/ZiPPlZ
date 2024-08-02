@@ -6,7 +6,7 @@ const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
 const chat_token = import.meta.env.VITE_APP_CHAT_TOKEN;
 
 const WebSocketContext = createContext<{
-  sendMessage: (message: string) => void;
+  sendMessage: (message: string, userSerial: number) => void;
   messages: {
     userSerial: number;
     userName: string;
@@ -75,13 +75,13 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
   }, []);
 
-  const sendMessage = (msg: string) => {
+  const sendMessage = (msg: string, userSerial: number) => {
     if (msg.trim()) {
       if (client && client.connected) {
         const data = JSON.stringify({
           chatMessageContent: msg,
           chatroomSerial: 1,
-          userSerial: 1,
+          userSerial,
         });
         client.publish({
           destination: '/pub/chat/message',
