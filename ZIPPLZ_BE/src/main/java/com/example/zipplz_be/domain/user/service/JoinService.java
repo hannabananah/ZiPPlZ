@@ -47,17 +47,18 @@ public class JoinService {
         return user.getUserSerial();
     }
 
-    public void joinAfterSocialProcess(int userSerial, JoinRequestDTO joinRequestDTO) {
+    public int joinAfterSocialProcess(JoinRequestDTO joinRequestDTO) {
 
-        if (!userRepository.existsByUserSerial(userSerial)) {
+        String email = joinRequestDTO.getEmail();
+        if (!userRepository.existsByEmail(email)) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
         }
 
-        User user = userRepository.findByUserSerial(userSerial);
+        User user = userRepository.findByEmail(email);
         user.setUserName(joinRequestDTO.getUserName());
         user.setTel(joinRequestDTO.getTel());
         user.setBirthDate(joinRequestDTO.getBirthDate());
-        userRepository.save(user);
+        return userRepository.save(user).getUserSerial();
     }
 
     public boolean insertCustomerInfo(InsertCustomerDTO insertCustomerDTO) {
@@ -68,8 +69,12 @@ public class JoinService {
         }
 
         User user = userRepository.findByUserSerial(userSerial);
-        String nickname = insertCustomerDTO.getNickname();
 
+        user.setRole("customer");
+        System.out.println("!!!!!!!!!!!!!insertCustomerInfo, customer's role => " + user.getRole());
+        userRepository.save(user);
+
+        String nickname = insertCustomerDTO.getNickname();
         Customer customer = Customer.builder()
                 .userSerial(user)
                 .nickname(nickname).build();
@@ -86,6 +91,9 @@ public class JoinService {
         }
 
         User user = userRepository.findByUserSerial(userSerial);
+        user.setRole("worker");
+        userRepository.save(user);
+
         String businessNumber = insertWorkerDTO.getBusinessNumber();
         String company = insertWorkerDTO.getCompany();
         String companyAddress = insertWorkerDTO.getCompanyAddress();

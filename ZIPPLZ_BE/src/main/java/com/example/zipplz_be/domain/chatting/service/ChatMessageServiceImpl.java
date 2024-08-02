@@ -4,8 +4,8 @@ import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
 import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException;
-import com.example.zipplz_be.domain.chatting.repository.ChatMessageRepository;
-import com.example.zipplz_be.domain.chatting.repository.ChatroomRepository;
+import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
+import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -22,39 +22,36 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final UserRepository userRepository;
     private final ChatroomRepository chatroomRepository;
     private final ChatMessageRepository chatMessageRepository;
-    private final CustomerRepository customerRepository;
-    private final WorkerRepository workerRepository;
     private final RedisPublisher redisPublisher;
     private final ChannelTopic channelTopic;
+    private final ChatroomService chatroomService;
 
     @Override
-    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial) {
+    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
         User user = userRepository.findByUserSerial(userSerial);
         if (user == null) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
         }
-        Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatMessageRequestDTO.getChatroomSerial());
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatMessageRequestDTO.getChatroomSerial());
         if (chatroom == null) {
             throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
 
         ChatMessage chatMessage = ChatMessage.builder()
-                .chatroomSerial(chatroom)
-                .userSerial(user)
+                .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
+                .userSerial(userSerial)
                 .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                 .build();
 
-//        chatMessageRepository.save(chatMessage); // 아직 MongoDB 연결 안함.
+        chatMessageRepository.save(chatMessage);
 
         chatMessageRequestDTO.setUserName(user.getUserName());
 
         int otherUserSerial;
-        if (!customerRepository.existsByUserSerial(user) && !workerRepository.existsByUserSerial(user)) {
-            throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
-        } else if (customerRepository.existsByUserSerial(user)) {
-            otherUserSerial = chatroom.getWorkerSerial().getWorkerSerial();
+        if (role.equals("customer")) {
+            otherUserSerial = chatroom.getWuser().getUserSerial();
         } else {
-            otherUserSerial = chatroom.getCustomerSerial().getCustomerSerial();
+            otherUserSerial = chatroom.getCuser().getUserSerial();
         }
         chatMessageRequestDTO.setOtherUserSerial(otherUserSerial);
 
@@ -66,8 +63,20 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         if (!chatroomRepository.existsByChatroomSerial(chatroomSerial)) {
             throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
-        Chatroom chatroom = chatroomRepository.findBychatroomSerial(chatroomSerial);
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
 
         // 채팅방에 들어온 정보를 Redis에 저장 추가해야 함!
+    }
+
+    @Override
+    public void saveMessage(ChatMessageRequestDTO chatMessageRequestDTO) {
+        System.out.println(chatMessageRequestDTO.toString());
+        ChatMessage msg = ChatMessage.builder()
+                .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
+                .userSerial(chatMessageRequestDTO.getUserSerial())
+                .chatMessageContent(chatMessageRequestDTO.getChatMessageContent()).build();
+        ChatMessage result = chatMessageRepository.insert(msg);
+        result.toString();
+        System.out.println(result);
     }
 }

@@ -66,4 +66,9 @@ public class CustomUserDetails implements UserDetails {
     public int getUserSerial() {
         return user.getUserSerial();
     }
+
+    // 유저 userSerial
+    public String getRole() {
+        return user.getRole();
+    }
 }

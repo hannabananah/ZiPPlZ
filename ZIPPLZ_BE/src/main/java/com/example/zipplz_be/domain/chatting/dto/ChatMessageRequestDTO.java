@@ -14,4 +14,13 @@ public class ChatMessageRequestDTO {
     private String userName;
     private int otherUserSerial;
     private Boolean isFile;
+
+    @Override
+    public String toString() {
+        return "ChatMessageRequestDTO{" +
+                "chatroomSerial=" + chatroomSerial +
+                ", chatMessageContent='" + chatMessageContent + '\'' +
+                ", userSerial=" + userSerial +
+                '}';
+    }
 }
