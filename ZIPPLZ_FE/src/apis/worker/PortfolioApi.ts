@@ -17,6 +17,7 @@ export interface Portfolio extends User, Worker {
   portfolioSerial: number;
   career: number;
   fieldId: number;
+  fieldName: string;
   temp: number;
   locationList: Location[];
   fieldList: Field[];

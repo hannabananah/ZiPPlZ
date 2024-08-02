@@ -1,8 +1,7 @@
-import { CgProfile } from 'react-icons/cg';
 import { MdElectricalServices } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import { WorkerInfo } from '@pages/common/workerinfo/FindWorkerList';
+import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
 // 시공자 정보를 가져오기 위해 Portfolio 인터페이스 가져오기
 // import { Portfolio, getPortfolio } from '@apis/worker/PortfolioApi';
@@ -58,7 +57,7 @@ export default function WorkerInfoListItem({ worker }: Props) {
   const navigate = useNavigate();
   return (
     <div
-      className="p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center"
+      className="h-48 font-bold p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center"
       onClick={() => navigate('/OverView')}
     >
       {/* 사진 파일 */}
@@ -89,7 +88,7 @@ export default function WorkerInfoListItem({ worker }: Props) {
         {/* 공종(전기)) + 경력(경력 3년) */}
         <div className="space-x-2">
           <span className="text-zp-2xs font-bold text-left">
-            {worker && worker.field_id}
+            {worker && worker.field_name}
           </span>
           <span className="text-zp-2xs">
             {worker && `경력 ${worker.career}년`}

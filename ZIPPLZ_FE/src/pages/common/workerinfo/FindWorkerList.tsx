@@ -54,8 +54,8 @@ export default function FindWorkerList() {
             onClick={toggleDropdown}
             className="cursor-pointer flex items-center space-x-2"
           >
-            <div className="w-64 h-6 font-bold text-zp-lg text-zp-black flex justify-center">
-              전문 시공자 둘러보기
+            <div className="font-bold text-zp-lg text-zp-black text-center">
+              전문 시공자 구하기
             </div>
             <IoMdArrowDropdown
               className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
@@ -80,15 +80,6 @@ export default function FindWorkerList() {
               </button>
             </div>
           )}
-        </div>
-
-        {/* 공종 선택 버튼 리스트 임시로 만듦 */}
-        <div className="flex justify-center">
-          <div>공종 선택 버튼 리스트</div>
-        </div>
-
-        <div className="w-64 h-6 text-zp-lg font-bold text-zp-black">
-          계획 중인 시공이 있으신가요?
         </div>
 
         {/* 위치 및 날짜 입력 */}
