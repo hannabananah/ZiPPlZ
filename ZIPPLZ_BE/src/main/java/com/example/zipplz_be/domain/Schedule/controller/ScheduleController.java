@@ -1,13 +1,13 @@
-package com.example.zipplz_be.domain.Schedule.controller;
+package com.example.zipplz_be.domain.schedule.controller;
 
-import com.example.zipplz_be.domain.Schedule.entity.Plan;
-import com.example.zipplz_be.domain.Schedule.entity.Work;
-import com.example.zipplz_be.domain.Schedule.exception.CustomerNotFoundException;
-import com.example.zipplz_be.domain.Schedule.exception.DuplicateFieldException;
-import com.example.zipplz_be.domain.Schedule.exception.PlanNotFoundException;
-import com.example.zipplz_be.domain.Schedule.exception.WorkException;
-import com.example.zipplz_be.domain.Schedule.service.PlanService;
-import com.example.zipplz_be.domain.Schedule.service.WorkService;
+import com.example.zipplz_be.domain.schedule.entity.Plan;
+import com.example.zipplz_be.domain.schedule.entity.Work;
+import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.DuplicateFieldException;
+import com.example.zipplz_be.domain.schedule.exception.PlanNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.WorkException;
+import com.example.zipplz_be.domain.schedule.service.PlanService;
+import com.example.zipplz_be.domain.schedule.service.WorkService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.portfolio.entity.CustomerReview;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;

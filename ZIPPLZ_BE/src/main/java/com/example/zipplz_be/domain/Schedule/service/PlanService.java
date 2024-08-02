@@ -1,12 +1,12 @@
-package com.example.zipplz_be.domain.Schedule.service;
+package com.example.zipplz_be.domain.schedule.service;
 
-import com.example.zipplz_be.domain.Schedule.entity.Plan;
-import com.example.zipplz_be.domain.Schedule.entity.Work;
-import com.example.zipplz_be.domain.Schedule.exception.CustomerNotFoundException;
-import com.example.zipplz_be.domain.Schedule.exception.PlanNotFoundException;
-import com.example.zipplz_be.domain.Schedule.exception.WorkException;
-import com.example.zipplz_be.domain.Schedule.repository.PlanRepository;
-import com.example.zipplz_be.domain.Schedule.repository.WorkRepository;
+import com.example.zipplz_be.domain.schedule.entity.Plan;
+import com.example.zipplz_be.domain.schedule.entity.Work;
+import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.PlanNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.WorkException;
+import com.example.zipplz_be.domain.schedule.repository.PlanRepository;
+import com.example.zipplz_be.domain.schedule.repository.WorkRepository;
 import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
 import com.example.zipplz_be.domain.user.entity.Customer;
@@ -14,11 +14,8 @@ import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.data.domain.Pageable;
-import java.util.HashMap;
+
 import java.util.List;
 import java.util.Map;
 
