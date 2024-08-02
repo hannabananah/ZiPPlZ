@@ -1,44 +1,62 @@
 package com.example.zipplz_be.domain.user.dto;
 
+import com.example.zipplz_be.domain.user.entity.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.Collections;
 import java.util.Map;
 
-public class CustomOAuth2User implements OAuth2User {
+public record CustomOAuth2User(
+        User user,
+        boolean isNewUser,
+        Map<String, Object> attributes,
+        String attributeKey) implements OAuth2User, UserDetails {
 
-    private final OAuth2User oAuth2User;
-    private final boolean isNewUser;
-
-    public CustomOAuth2User(OAuth2User oAuth2User, boolean isNewUser) {
-        this.oAuth2User = oAuth2User;
-        this.isNewUser = isNewUser;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(
+                new GrantedAuthority() {
+                    @Override
+                    public String getAuthority() {
+                        return "USER";
+                    }
+                }
+        );
     }
 
     @Override
     public Map<String, Object> getAttributes() {
-        return oAuth2User.getAttributes();
+        return Map.of();
     }
 
-    public Object getAttribute(String attributeNameKey) {
-        return oAuth2User.getAttribute(attributeNameKey);
+    public int getUserSerial() {
+        return user.getUserSerial();
+    }
+
+    public String getRole() {
+        return user.getRole();
     }
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+    public boolean isNewUser() {
+        return isNewUser;
     }
 
     @Override
     public String getName() {
-        return oAuth2User.getName();
+        return attributes.get(attributeKey).toString();
     }
 
-    public boolean getIsNewUser() {
-        return isNewUser;
+    @Override
+    public String getPassword() {
+        return user.getPassword();
     }
 
-
+    @Override
+    public String getUsername() {
+        return user.getEmail();
+    }
 }

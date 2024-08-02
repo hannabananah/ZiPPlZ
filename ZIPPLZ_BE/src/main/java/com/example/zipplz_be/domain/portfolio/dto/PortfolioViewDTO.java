@@ -9,9 +9,10 @@ public class PortfolioViewDTO{
     private Integer birth_date;
     private double temp;
     private int field_id;
+    private String field_name;
     private double career;
-    List<String> locations;
-    String img;
+    private List<String> locations;
+    private String img;
 
     public PortfolioViewDTO(PortfolioJoinDTO pjDTO, List<String> locations, String img) {
         this.user_serial = pjDTO.getUser_serial();
@@ -20,6 +21,7 @@ public class PortfolioViewDTO{
         this.birth_date = pjDTO.getBirth_date();
         this.temp = pjDTO.getTemp();
         this.field_id = pjDTO.getField_id();
+        this.field_name = pjDTO.getField_name();
         this.career = pjDTO.getCareer();
         this.locations = locations;
         this.img = img;
@@ -53,7 +55,9 @@ public class PortfolioViewDTO{
         return birth_date;
     }
 
-    public void setBirth_date(Integer birth_date) { this.birth_date = birth_date; }
+    public void setBirth_date(Integer birth_date) {
+        this.birth_date = birth_date;
+    }
 
     public double getTemp() {
         return temp;
@@ -69,6 +73,14 @@ public class PortfolioViewDTO{
 
     public void setField_id(int field_id) {
         this.field_id = field_id;
+    }
+
+    public String getField_name() {
+        return field_name;
+    }
+
+    public void setField_name(String field_name) {
+        this.field_name = field_name;
     }
 
     public double getCareer() {
@@ -104,6 +116,7 @@ public class PortfolioViewDTO{
                 ", birth_date=" + birth_date +
                 ", temp=" + temp +
                 ", field_id=" + field_id +
+                ", field_name='" + field_name + '\'' +
                 ", career=" + career +
                 ", locations=" + locations +
                 ", img='" + img + '\'' +

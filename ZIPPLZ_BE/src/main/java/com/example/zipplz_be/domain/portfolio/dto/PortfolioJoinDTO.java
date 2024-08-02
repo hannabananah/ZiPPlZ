@@ -7,5 +7,6 @@ public interface PortfolioJoinDTO {
     Integer getBirth_date();
     double getTemp();
     int getField_id();
+    String getField_name();
     double getCareer();
 }
