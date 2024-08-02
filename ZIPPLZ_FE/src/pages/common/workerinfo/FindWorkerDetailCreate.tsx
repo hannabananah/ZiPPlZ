@@ -10,13 +10,14 @@ import Input from '@components/common/Input';
 // 이미지 상태의 타입 정의
 type Image = string;
 
-// 상태와 핸들러 인자의 타입을 정의합니다.
 export default function FindWorkerDetailCreate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [addressDetail, setAddressDetail] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
   const maxImages = 10;
@@ -47,6 +48,19 @@ export default function FindWorkerDetailCreate() {
 
   // 확인 버튼 핸들러
   const handleConfirm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!title) newErrors.title = '제목이 입력되지 않았습니다';
+    if (!address) newErrors.address = '현장 주소가 입력되지 않았습니다';
+    if (!addressDetail)
+      newErrors.addressDetail = '상세 주소가 입력되지 않았습니다';
+    if (!workDetail) newErrors.workDetail = '작업내용이 입력되지 않았습니다';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     navigate('/FindWorkerList', {
       state: {
         newPost: {
@@ -157,6 +171,9 @@ export default function FindWorkerDetailCreate() {
                   }
                 />
               </div>
+              {errors.title && (
+                <div className="text-red-500 text-xs mt-1">{errors.title}</div>
+              )}
             </div>
           </div>
 
@@ -181,6 +198,11 @@ export default function FindWorkerDetailCreate() {
                 />
                 <CiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2" />
               </div>
+              {errors.address && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.address}
+                </div>
+              )}
             </div>
           </div>
 
@@ -204,6 +226,11 @@ export default function FindWorkerDetailCreate() {
                   }
                 />
               </div>
+              {errors.addressDetail && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.addressDetail}
+                </div>
+              )}
             </div>
           </div>
 
@@ -227,6 +254,11 @@ export default function FindWorkerDetailCreate() {
                   }
                 />
               </div>
+              {errors.workDetail && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.workDetail}
+                </div>
+              )}
             </div>
           </div>
 
@@ -243,10 +275,6 @@ export default function FindWorkerDetailCreate() {
           </div>
         </div>
       </div>
-
-      {/* 추가 해야 하는 기능 */}
-      {/* 같은 사진 파일 안올라가게 */}
-      {/* 사진 10장 넘게 올리려하면 메시지 뜨게 */}
     </>
   );
 }

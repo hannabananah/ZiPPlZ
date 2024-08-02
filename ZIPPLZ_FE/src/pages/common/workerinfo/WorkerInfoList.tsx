@@ -48,9 +48,6 @@ export default function WorkerInfoList() {
   const [workerList, setWorkerList] = useState<WorkerInfo[]>([]);
   const [isListExist, setIsListExist] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const handleWritePost = () => {
-    navigate('/FindWorkerDetailCreate'); // FindWorkerDetail 페이지로 이동
-  };
 
   const handleInputClick = () => {
     navigate('/WorkerInfoLocationDetail'); // 클릭 시 이동할 페이지
@@ -233,21 +230,6 @@ export default function WorkerInfoList() {
             onChange={handleInputChange} // `onChange` 핸들러 추가
             additionalStyle="bg-zp-light-beige font-bold border-zp-sub-color text-zp-gray"
           />
-        </div>
-
-        {/* 글 작성하기 버튼 */}
-        <div className="flex justify-end mb-4">
-          <div className="w-18 px-4 text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
-            <Button
-              children="글 작성하기"
-              buttonType="light"
-              width={3.5}
-              height={1}
-              fontSize="2xs"
-              radius="btn"
-              onClick={handleWritePost}
-            />
-          </div>
         </div>
 
         <div className="w-full flex-col grid grid-cols-3 gap-3">
