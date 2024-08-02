@@ -36,6 +36,7 @@ public class ChatMessageController {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
 //        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor), getRole(headerAccessor));
         chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial(), getRole(headerAccessor));
+        chatMessageService.saveMessage(chatMessageRequest);
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {

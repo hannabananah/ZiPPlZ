@@ -13,6 +13,6 @@ public interface ChatroomService {
 
     int createChatroom(int userSerial, CreateChatroomDTO createChatroomDTO);
 
-    List<Chatroom> getChatroomList(int userSerial, String role, Pageable pageable);
+//    List<Chatroom> getChatroomList(int userSerial, String role, Pageable pageable);
 
 }

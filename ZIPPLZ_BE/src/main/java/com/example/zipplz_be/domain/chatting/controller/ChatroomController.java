@@ -36,28 +36,28 @@ public class ChatroomController {
         return ResponseEntity.ok(createChatroomResponseDTO);
     }
 
-    @GetMapping("")
-    public ResponseEntity getChatroomList(Authentication authentication, Pageable pageable) {
-        ResponseDTO responseDTO;
-        HttpStatus status;
-
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        int userSerial = customUserDetails.getUserSerial();
-        String role = customUserDetails.getRole();
-
-        try {
-            List<Chatroom> chatroomList = chatroomService.getChatroomList(userSerial, role, pageable);
-            if (userSerial == -1) {
-                status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "채팅방 목록 조회 실패");
-            } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "채팅방 목록 조회 성공", chatroomList);
-            }
-        } catch (Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        return new ResponseEntity<>(responseDTO, status);
-    }
+//    @GetMapping("")
+//    public ResponseEntity getChatroomList(Authentication authentication, Pageable pageable) {
+//        ResponseDTO responseDTO;
+//        HttpStatus status;
+//
+//        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+//        int userSerial = customUserDetails.getUserSerial();
+//        String role = customUserDetails.getRole();
+//
+//        try {
+//            List<Chatroom> chatroomList = chatroomService.getChatroomList(userSerial, role, pageable);
+//            if (userSerial == -1) {
+//                status = HttpStatus.NOT_FOUND;
+//                responseDTO = new ResponseDTO<>(status.value(), "채팅방 목록 조회 실패");
+//            } else {
+//                status = HttpStatus.OK;
+//                responseDTO = new ResponseDTO<>(status.value(), "채팅방 목록 조회 성공", chatroomList);
+//            }
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
 }

@@ -19,10 +19,10 @@ public class Chatroom {
     private int chatroomSerial;
     @ManyToOne
     @JoinColumn(name="c_user_serial")
-    private User cUserSerial;
+    private User cuser;
     @ManyToOne
     @JoinColumn(name="w_user_serial")
-    private User wUserSerial;
+    private User wuser;
     @Column(name="chatroom_name")
     private String chatroomName;
     @Column(name="chatroom_date")
@@ -32,8 +32,8 @@ public class Chatroom {
     private String sessionId;
 
     @Builder
-    Chatroom(User cUserSerial, User wUserSerial) {
-        this.cUserSerial = cUserSerial;
-        this.wUserSerial = wUserSerial;
+    Chatroom(User cuser, User wuser) {
+        this.cuser = cuser;
+        this.wuser = wuser;
     }
 }
