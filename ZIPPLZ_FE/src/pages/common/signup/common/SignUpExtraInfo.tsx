@@ -19,7 +19,7 @@ export default function SignUpExtraInfo({
   const [birthDate, setBirthDate] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
   function validateInfo() {
-    if (name.length >= 3 && birthDate.length === 10 && phone.length === 13) {
+    if (name.length >= 2 && birthDate.length === 10 && phone.length === 13) {
       setLink('/member/join/common/2/extratype');
       return true;
     }
