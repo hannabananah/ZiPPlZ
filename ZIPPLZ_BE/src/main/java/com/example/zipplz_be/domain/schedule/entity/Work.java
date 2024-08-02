@@ -1,7 +1,6 @@
-package com.example.zipplz_be.domain.Schedule.entity;
+package com.example.zipplz_be.domain.schedule.entity;
 
 import com.example.zipplz_be.domain.model.entity.Field;
-import com.example.zipplz_be.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Builder;

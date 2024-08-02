@@ -1,6 +1,6 @@
 package com.example.zipplz_be.domain.chatting.entity;
 
-import com.example.zipplz_be.domain.Schedule.entity.Work;
+import com.example.zipplz_be.domain.schedule.entity.Work;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
