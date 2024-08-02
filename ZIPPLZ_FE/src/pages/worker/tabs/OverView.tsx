@@ -37,10 +37,10 @@ export default function OverView() {
   return (
     <>
       {/* 수정 버튼: 우측 상단에 글쓰기 버튼 누르면, 한줄 소개와 A/S 기간을 선택할 수 있는 modal 창 */}
-      <div>
+      <div className="mt-6 flex justify-end">
         <PiNotePencil
           onClick={handleOpenModal}
-          className="absolute top-4 right-4 cursor-pointer"
+          className="cursor-pointer"
           size={24}
         />
       </div>

@@ -35,27 +35,27 @@ export default function AboutMe() {
         <div className="text-zp-2xs flex flex-col space-y-2">
           <div className="flex items-center">
             <div className="w-20">나이</div>
-            <div className="border-l border-black h-full mx-2"></div>
+            <div className="border-black h-full mx-2"></div>
             <div className="flex-grow text-zp-gray">30</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">E-MAIL</div>
-            <div className="border-l border-black h-full mx-2"></div>
+            <div className="border-black h-full mx-2"></div>
             <div className="flex-grow text-zp-gray">saffy@ssafy.com</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">경력</div>
-            <div className="border-l border-black h-full mx-2"></div>
+            <div className="border-black h-full mx-2"></div>
             <div className="flex-grow text-zp-gray">남성</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">누적 시공수</div>
-            <div className="border-l border-black h-full mx-2"></div>
+            <div className="border-black h-full mx-2"></div>
             <div className="flex-grow text-zp-gray">{introduce}</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">A/S 보증 기간</div>
-            <div className="border-l border-black h-full mx-2"></div>
+            <div className="border-black h-full mx-2"></div>
             <div className="flex-grow text-zp-gray">{asPeriod}</div>
           </div>
         </div>

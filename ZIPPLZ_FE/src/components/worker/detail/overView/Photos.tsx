@@ -87,12 +87,8 @@ export default function Photos() {
         </SwiperSlide>
         {/* Swiper Navigation Buttons */}
         <div className="flex justify-between">
-          <button className="absolute top-1/2 left-0 transform -translate-y-1/2 p-2 bg-gray-300 rounded z-10">
-            &lt;
-          </button>
-          <button className="absolute top-1/2 right-0 transform -translate-y-1/2 p-2 bg-gray-300 rounded z-10">
-            &gt;
-          </button>
+          <button className="swiper-button-prev text-zp-black"></button>
+          <button className="swiper-button-next text-zp-black"></button>
         </div>
       </Swiper>
     </>
