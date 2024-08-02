@@ -32,6 +32,7 @@ export interface WorkerInfo {
   field_id: number;
   field_name: string;
   career: number;
+  certificated_badge: number;
   locations: string[];
   img: string;
 }

@@ -6,10 +6,10 @@ import { FaMapMarkerAlt } from 'react-icons/fa';
 export default function FindWorkerListItem() {
   return (
     <>
-      <div className="w-full rounded-zp-radius-big h-32 shadow-lg">
-        <div className="p-10 flex items-start space-x-4">
+      <div className="w-full rounded-zp-radius-big h-32 shadow-lg flex items-center">
+        <div className="p-2 flex space-x-4">
           {/* 첫 번째 요소 */}
-          <div className="flex flex-col justify-between border-r pr-4">
+          <div className="flex justify-start flex-col border-r pr-4">
             <div className="text-zp-xs font-bold">
               깔끔하고 하자 없는 장판 시공 해주실분 구합니다.
             </div>
@@ -24,7 +24,7 @@ export default function FindWorkerListItem() {
           {/* <div className="border-r border-gray-300 h-full"></div> */}
 
           {/* 두 번째 요소 */}
-          <div className="flex flex-col space-y-3 pl-4">
+          <div className="flex flex-col space-y-3">
             <div className="flex items-center space-x-2">
               <CgProfile size={14} />
               <div className="text-zp-2xs">조명조랭이떡</div>

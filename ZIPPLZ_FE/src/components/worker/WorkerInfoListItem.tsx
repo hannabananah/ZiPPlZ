@@ -55,9 +55,15 @@ export default function WorkerInfoListItem({ worker }: Props) {
   // };
 
   const navigate = useNavigate();
+
+  // 배열을 ", "로 구분된 문자열로 변환하는 함수
+  const formatLocations = (locations: string[] | undefined) => {
+    return locations?.join(', ') ?? '';
+  };
+
   return (
     <div
-      className="h-48 font-bold p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center"
+      className="h-48 p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center"
       onClick={() => navigate('/OverView')}
     >
       {/* 사진 파일 */}
@@ -77,15 +83,17 @@ export default function WorkerInfoListItem({ worker }: Props) {
           <div className="text-zp-2xs text-zp-gray">
             {worker && worker.birth_date}년생
           </div>
-          <MdElectricalServices />
+          {worker && worker.certificated_badge === 1 && (
+            <MdElectricalServices />
+          )}
         </div>
         {/* 온도: 36.5 */}
         <div className="text-zp-2xs">{worker && `${worker.temp}°C`}</div>
         {/* 지역: 서울시 강남구, 서울시 서초구, 제주 서귀포시, 경기 포천시, 전북 익산시 */}
         <div className="text-zp-2xs mb-2">
-          {worker && <div>{worker.locations}</div>}
+          {worker && <div>{formatLocations(worker.locations)}</div>}
         </div>
-        {/* 공종(전기)) + 경력(경력 3년) */}
+        {/* 공종(철거)) + 경력(경력 3년) */}
         <div className="space-x-2">
           <span className="text-zp-2xs font-bold text-left">
             {worker && worker.field_name}

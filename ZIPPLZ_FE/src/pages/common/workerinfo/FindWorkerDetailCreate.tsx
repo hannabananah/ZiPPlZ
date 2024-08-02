@@ -232,7 +232,7 @@ export default function FindWorkerDetailCreate() {
 
           <div className="mt-6 font-bold h-20 flex items-center justify-center">
             <Button
-              children="채팅하기"
+              children="확인"
               buttonType="second"
               width="full"
               height={2.375}
