@@ -111,8 +111,6 @@ export default function SignBottom({
     return response.data;
   };
   useEffect(() => {
-    console.log(user);
-    console.log(userSerial);
     if (type === 'customer') {
       setCustomer((prev: Customer) => ({
         ...prev,
@@ -125,9 +123,6 @@ export default function SignBottom({
       }));
     }
   }, [userSerial]);
-  useEffect(() => {
-    console.log(customer);
-  }, [customer]);
   return (
     <>
       <div className="w-full flex flex-col gap-2 absolute bottom-0 left-0 p-4">
@@ -140,8 +135,7 @@ export default function SignBottom({
             className={order > 2 ? 'bg-zp-sub-color' : 'bg-zp-light-beige'}
           />
         </div>
-        {((order === 2 && phrase === 'info') ||
-          (order === 3 && phrase === 'detail')) && (
+        {order === 2 && phrase === 'info' && (
           <Button
             buttonType={active ? 'second' : 'light'}
             radius="btn"
@@ -159,7 +153,11 @@ export default function SignBottom({
           width="full"
           height={3.75}
           children={
-            order < 3 || (phrase !== 'nickname' && phrase !== 'skills')
+            order < 3 ||
+            (phrase !== 'nickname' &&
+              phrase !== 'skills' &&
+              phrase !== 'extranickname' &&
+              phrase !== 'extraskills')
               ? '다음'
               : '회원가입 완료'
           }
@@ -170,13 +168,21 @@ export default function SignBottom({
             setActive(false);
             if (phrase === 'extrainfo') {
               console.log(socialUser);
-              registSocialUser(socialUser);
+
               navigate(link);
             } else {
-              if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
+              if (
+                order < 3 ||
+                (phrase !== 'nickname' &&
+                  phrase !== 'skills' &&
+                  phrase !== 'extranickname' &&
+                  phrase !== 'extraskills')
+              )
                 navigate(link);
               else {
-                registUser(user);
+                if (phrase == 'nickname' || phrase == 'skills')
+                  registUser(user);
+                else registSocialUser(socialUser);
                 console.log(user);
                 openModal();
               }
@@ -218,6 +224,7 @@ export default function SignBottom({
                 closeModal();
               } else {
                 if (type === 'customer') {
+                  console.log(customer);
                   registCustomer(customer);
                 } else {
                   registWorker(worker);

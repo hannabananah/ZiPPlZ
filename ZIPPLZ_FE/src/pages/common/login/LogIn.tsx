@@ -11,6 +11,7 @@ import Cookies from 'js-cookie';
 
 export default function Login() {
   const GOOGLE_LOGIN_URL: string = import.meta.env.VITE_GOOGLE_LOGIN_URL;
+  const KAKAO_LOGIN_URL: string = import.meta.env.VITE_KAKAO_LOGIN_URL;
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -27,7 +28,7 @@ export default function Login() {
       const authorizationHeader = response.headers.authorization;
       console.log(authorizationHeader);
       if (authorizationHeader) {
-        const token: string = authorizationHeader.split('  ')[1];
+        const token: string = authorizationHeader.split(' ')[1];
         console.log(token);
         Cookies.set('accesstoken', token, { expires: 1 });
         console.log('status :', response.status);
@@ -177,15 +178,17 @@ export default function Login() {
               }}
             />
           </Link>
-          <div
-            className="w-full h-[3rem] rounded-zp-radius-btn"
-            style={{
-              backgroundImage: "url('/src/assets/login/KakaoLogin.svg')",
-              backgroundRepeat: 'no-repeat',
-              // backgroundSize: '30%',
-              backgroundPosition: 'center center',
-            }}
-          />
+          <Link to={KAKAO_LOGIN_URL}>
+            <div
+              className="w-full h-[3rem] rounded-zp-radius-btn"
+              style={{
+                backgroundImage: "url('/src/assets/login/KakaoLogin.svg')",
+                backgroundRepeat: 'no-repeat',
+                // backgroundSize: '30%',
+                backgroundPosition: 'center center',
+              }}
+            />
+          </Link>
         </div>
       </div>
     </div>
