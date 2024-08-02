@@ -1,4 +1,5 @@
 interface Props {
+  type?: 'button' | 'submit' | 'reset';
   children: string;
   buttonType: 'normal' | 'light' | 'second' | 'primary';
   width?: number | string;
@@ -26,6 +27,7 @@ const radiusClasses: Record<Props['radius'], string> = {
   none: 'rounded-none',
 };
 export default function Button({
+  type,
   children,
   buttonType,
   width,
@@ -60,6 +62,7 @@ export default function Button({
   const heightStyle = typeof height === 'number' ? `${height}rem` : height;
   return (
     <button
+      type={type}
       className={`${baseStyles} ${typeStyles} ${widthClass} ${heightClass}`}
       style={{
         width: width === 'full' ? '100%' : widthStyle,

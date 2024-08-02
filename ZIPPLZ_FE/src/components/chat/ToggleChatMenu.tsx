@@ -1,9 +1,11 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { CiImageOn } from 'react-icons/ci';
-import { FaRegCalendarCheck, FaRegFileAlt } from 'react-icons/fa';
+import { FaFileContract, FaFolderOpen } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
 import { TbWood } from 'react-icons/tb';
 
+import Contract from '@components/chat/Contract';
+import FullModal from '@components/common/FullModal';
 import { useUserStore } from '@stores/userStore';
 
 interface MenuItem {
@@ -19,6 +21,8 @@ export default function ToggleChatMenu() {
   const { userType } = useUserStore();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleImageUpload = () => {
     imageInputRef.current?.click();
@@ -37,6 +41,14 @@ export default function ToggleChatMenu() {
     }
   };
 
+  const handleContract = () => {
+    setIsModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
+
   const menus: MenuItem[] = [
     {
       id: 1,
@@ -48,7 +60,7 @@ export default function ToggleChatMenu() {
     },
     {
       id: 2,
-      icon: FaRegFileAlt,
+      icon: FaFolderOpen,
       label: '파일',
       bgColor: '#0697FF',
       role: ['user', 'worker'],
@@ -56,17 +68,18 @@ export default function ToggleChatMenu() {
     },
     {
       id: 3,
-      icon: FaRegCalendarCheck,
-      label: '일정 잡기',
+      icon: FaFileContract,
+      label: '계약서',
       bgColor: '#FF9500',
-      role: 'user',
+      role: 'worker',
+      onClick: handleContract,
     },
     {
       id: 4,
       icon: FiTool,
       label: 'A/S 신청',
       bgColor: '#FC7FF0',
-      role: 'worker',
+      role: 'user',
     },
     {
       id: 5,
@@ -130,6 +143,15 @@ export default function ToggleChatMenu() {
         style={{ display: 'none' }}
         onChange={handleFileChange}
       />
+
+      <FullModal
+        isOpen={isModalOpen}
+        onRequestClose={closeModal}
+        height="60%"
+        maxWidth="400px"
+      >
+        <Contract closeModal={closeModal} />
+      </FullModal>
     </div>
   );
 }
