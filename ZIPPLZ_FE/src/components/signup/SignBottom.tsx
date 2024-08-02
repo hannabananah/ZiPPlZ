@@ -111,8 +111,6 @@ export default function SignBottom({
     return response.data;
   };
   useEffect(() => {
-    console.log(user);
-    console.log(userSerial);
     if (type === 'customer') {
       setCustomer((prev: Customer) => ({
         ...prev,
@@ -125,9 +123,6 @@ export default function SignBottom({
       }));
     }
   }, [userSerial]);
-  useEffect(() => {
-    console.log(customer);
-  }, [customer]);
   return (
     <>
       <div className="w-full flex flex-col gap-2 absolute bottom-0 left-0 p-4">
@@ -140,9 +135,7 @@ export default function SignBottom({
             className={order > 2 ? 'bg-zp-sub-color' : 'bg-zp-light-beige'}
           />
         </div>
-        {((order === 2 && phrase === 'info') ||
-          (order === 3 && phrase === 'detail') ||
-          (order === 3 && phrase === 'extradetail')) && (
+        {order === 2 && phrase === 'info' && (
           <Button
             buttonType={active ? 'second' : 'light'}
             radius="btn"

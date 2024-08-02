@@ -70,7 +70,6 @@ export default function SignUp() {
             setLink={setLink}
             setNext={setNext}
             setCustomer={setCustomer}
-            phrase={phrase}
           />
         )}
       {(phrase === 'agree' || phrase === 'extra-agree') && (
@@ -79,10 +78,11 @@ export default function SignUp() {
       {(phrase === 'detail' || phrase === 'extradetail') &&
         type === 'worker' && (
           <SignUpWorkerDetail
-            setActive={setActive}
+            setNext={setNext}
             setLink={setLink}
             setWorker={setWorker}
             phrase={phrase}
+            worker={worker}
           />
         )}
       {(phrase === 'skills' || phrase === 'extraskills') &&
@@ -91,7 +91,6 @@ export default function SignUp() {
             setNext={setNext}
             setLink={setLink}
             setWorker={setWorker}
-            phrase={phrase}
           />
         )}
       {(phrase === 'region' || phrase === 'extraregion') &&

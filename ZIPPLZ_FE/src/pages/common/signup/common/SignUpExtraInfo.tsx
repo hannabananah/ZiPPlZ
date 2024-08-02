@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { User, socialUser } from '@apis/member/MemberApi';
+import { socialUser } from '@apis/member/MemberApi';
 import Input from '@components/common/Input';
 import DateInput from '@components/signup/DateInput';
 import PhoneInput from '@components/signup/PhoneInput';
