@@ -1,6 +1,6 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
-import com.example.zipplz_be.domain.Schedule.exception.WorkException;
+import com.example.zipplz_be.domain.schedule.exception.WorkException;
 import com.example.zipplz_be.domain.chatting.service.AfterServiceService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.chatting.entity.AfterService;
