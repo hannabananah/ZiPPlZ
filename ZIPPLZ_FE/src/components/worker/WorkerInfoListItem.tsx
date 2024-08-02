@@ -6,10 +6,7 @@ import { FaMapMarkerAlt } from 'react-icons/fa';
 export default function WorkerInfoListItem() {
   return (
     <>
-      <div
-        style={{ width: '550px' }}
-        className="rounded-zp-radius-big h-32 shadow-lg"
-      >
+      <div className="w-full rounded-zp-radius-big h-32 shadow-lg">
         <div className="p-8 flex items-start space-x-4">
           {/* 첫 번째 요소 */}
           <div className="w-80 h-20 flex flex-col justify-between border-r border-gray-300 pr-4">

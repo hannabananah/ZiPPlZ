@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Field {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "field_code")
     private int fieldCode;
     @Column(name = "field_name")

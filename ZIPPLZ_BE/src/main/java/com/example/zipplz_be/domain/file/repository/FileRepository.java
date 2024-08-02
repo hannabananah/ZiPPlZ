@@ -11,7 +11,8 @@ import java.util.*;
 public interface FileRepository extends JpaRepository<File, Integer> {
     @Query(value="SELECT * " +
             "FROM PortfolioFileRelation pfr " +
-            "LEFT JOIN File f on f.file_serial = pfr.file_serial" +
-            "WHERE portfolio_serial = :portfolio_serial ", nativeQuery = true)
+            "LEFT JOIN File f on f.file_serial = pfr.file_serial " +
+            "WHERE portfolio_serial = :portfolio_serial " +
+            "LIMIT 1", nativeQuery = true)
     List<PortfolioFileDTO> getImg(@Param("portfolio_serial") int portfolio_serial);
 }

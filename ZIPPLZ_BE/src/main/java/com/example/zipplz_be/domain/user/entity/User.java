@@ -6,6 +6,8 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 @Entity
 @Getter
@@ -41,5 +43,28 @@ public class User {
         this.fileSerial = 0;
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
         this.role = "";
+    }
+
+    @Builder
+    public User(String email, String userName) {
+        this.email = email;
+        this.userName = userName;
+        this.fileSerial = 0;
+        this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
+        this.role = "";
+    }
+
+    public void setBirthDate(String birthDate) {
+        // SimpleDateFormat을 사용하여 문자열을 java.util.Date로 변환
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy/MM/dd");
+        java.util.Date utilDate;
+        try {
+            utilDate = formatter.parse(birthDate);
+        } catch (ParseException e) {
+            throw new IllegalArgumentException("Invalid date format: " + birthDate, e);
+        }
+        // java.util.Date를 java.sql.Date로 변환
+        Date birthDateSql = new Date(utilDate.getTime());
+        this.birthDate = birthDateSql;
     }
 }
