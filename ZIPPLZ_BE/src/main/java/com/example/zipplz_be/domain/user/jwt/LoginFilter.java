@@ -26,7 +26,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
-        this.setFilterProcessesUrl("/users/login"); // 로그인 요청 URL 설정
     }
 
     @Override
@@ -49,7 +48,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = customUserDetails.getUsername();
         User user = userRepository.findByEmail(email);
         int userSerial = user.getUserSerial();
-//        String role = user.getRole();
+        String role = user.getRole();
 
         System.out.println("email when success :" + email);
 
@@ -59,7 +58,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 //
 //        String role = auth.getAuthority();
 
-        String token = jwtUtil.createJwt(email, userSerial);
+        String token = jwtUtil.createJwt(email, userSerial, role, 600000000L);
 
         response.addHeader("Authorization", "Bearer " + token);
     }

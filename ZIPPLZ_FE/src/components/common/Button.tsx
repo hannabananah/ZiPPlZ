@@ -1,7 +1,5 @@
-import React from 'react';
-
 interface Props {
-  children: string | React.ReactNode;
+  children: string;
   buttonType: 'normal' | 'light' | 'second' | 'primary';
   width?: number | string;
   height: number | string;

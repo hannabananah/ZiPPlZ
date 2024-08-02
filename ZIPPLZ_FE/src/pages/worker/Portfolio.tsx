@@ -1,76 +1,57 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
-import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
-import { useLocation, useNavigate } from 'react-router-dom';
-
-import Button from '@components/common/Button';
-
-import OverView from './tabs/OverView';
-import WorkerReview from './tabs/WorkerReview';
-import WorkerSchedule from './tabs/WorkerSchedule';
+import { CiBookmark, CiBookmarkCheck } from 'react-icons/ci';
+// CiBookmarkCheck 추가
+import { useNavigate } from 'react-router-dom';
 
 export default function Portfolio() {
-  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isBookmarked, setIsBookmarked] = useState(false); // 북마크 상태 추가
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<string>('overview');
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false); // 북마크 상태 추가
-
-  // URL 쿼리 파라미터에서 activeTab 읽기
-  useEffect(() => {
-    const queryParams = new URLSearchParams(location.search);
-    const tab = queryParams.get('tab');
-    if (tab) {
-      setActiveTab(tab);
-    }
-  }, [location.search]);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
 
   const overviewClick = () => {
     setActiveTab('overview');
-    navigate('/workers/1/portfolio?tab=overview');
+    navigate('../OverView');
   };
 
   const workerScheduleClick = () => {
-    setActiveTab('workerschedule');
-    navigate('/workers/1/portfolio?tab=workerschedule');
+    setActiveTab('workerSchedule');
+    navigate('../WorkerSchedule');
   };
 
   const reviewClick = () => {
     setActiveTab('review');
-    navigate('/workers/1/portfolio?tab=review');
+    navigate('../Review');
   };
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked); // 북마크 상태 토글
   };
 
-  let area: string = '서울, 경기';
-  let tel: string = '010-9909-8322';
-  let skills: string[] = ['도배', '타일', '벽지'];
+  let area = '서울, 경기';
+  let tel = '010-9909-8322';
+  let skills = ['도배', '타일', '벽지'];
 
   return (
     <>
       {/* 북마크 이미지 */}
-      <div className="w-full flex justify-end">
+      <div className="w-[550px] flex justify-end">
         {isBookmarked ? (
-          <IoBookmark
-            size={24}
+          <CiBookmarkCheck
+            size={32}
             className="cursor-pointer"
             onClick={toggleBookmark}
           />
         ) : (
-          <IoBookmarkOutline
-            size={24}
+          <CiBookmark
+            size={32}
             className="cursor-pointer"
             onClick={toggleBookmark}
           />
         )}
       </div>
 
-      <div className="w-full font-bold flex items-start space-x-8 p-2">
+      <div className="flex items-start p-4 space-x-8 font-bold">
         {/* 사진, 이름 */}
         <div>
           <div className="grid w-32 h-32 place-items-center">
@@ -82,15 +63,15 @@ export default function Portfolio() {
         </div>
 
         {/* 지역, 전화번호, 분야 */}
-        <div className="w-full flex flex-col text-zp-xs text-zp-black">
-          <div className="w-full h-4">Area : {area}</div>
-          <div className="w-full h-4">Phone : {tel}</div>
-          <div className="w-full h-4 flex flex-wrap gap-2">
+        <div className="flex flex-col space-y-2 text-zp-xs text-zp-black">
+          <div className="w-64 h-8">Area : {area}</div>
+          <div className="w-64 h-8">Phone : {tel}</div>
+          <div className="flex w-64 h-8 space-x-2">
             {/* Skills as buttons */}
             {skills.map((skill, index) => (
               <button
                 key={index}
-                className="flex-1 min-w-[100px] h-8 px-2 py-1 bg-zp-sub-color rounded-zp-radius-big"
+                className="w-16 h-8 px-2 py-1 bg-zp-sub-color rounded-zp-radius-big"
               >
                 {skill}
               </button>
@@ -99,64 +80,25 @@ export default function Portfolio() {
         </div>
       </div>
 
-      {/* 버튼 섹션 */}
-      <div className="font-bold w-full flex ">
-        <div
-          className={`flex-1 ${
-            activeTab === 'overview'
-              ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-              : 'rounded-b-lg border-b-2 border-zp-main-color'
-          }`}
+      <div>
+        <button
+          className={`font-bold w-32 h-8 text-zp-xs ${activeTab === 'overview' ? 'rounded-zp-radius-btn border-x-2 border-t-2 border-zp-main-color' : 'rounded-zp-radius-btn border-b-2 border-zp-main-color'}`}
+          onClick={overviewClick}
         >
-          <Button
-            children="종합 정보"
-            buttonType="light"
-            width="100%" // 퍼센트 너비로 설정
-            height={2}
-            fontSize="xs"
-            radius="btn"
-            onClick={overviewClick}
-          />
-        </div>
-        <div
-          className={`flex-1 ${
-            activeTab === 'workerschedule'
-              ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-              : 'rounded-b-lg border-b-2 border-zp-main-color'
-          }`}
+          종합 정보
+        </button>
+        <button
+          className={`font-bold w-32 h-8 text-zp-xs ${activeTab === 'workerSchedule' ? 'rounded-zp-radius-btn border-x-2 border-t-2 border-zp-main-color' : 'rounded-zp-radius-btn border-b-2 border-zp-main-color'}`}
+          onClick={workerScheduleClick}
         >
-          <Button
-            children="시공자 일정"
-            buttonType="light"
-            width="100%" // 퍼센트 너비로 설정
-            height={2}
-            fontSize="xs"
-            radius="btn"
-            onClick={workerScheduleClick}
-          />
-        </div>
-        <div
-          className={`flex-1 ${
-            activeTab === 'review'
-              ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-              : 'rounded-b-lg border-b-2 border-zp-main-color'
-          }`}
+          시공자 일정
+        </button>
+        <button
+          className={`font-bold w-32 h-8 text-zp-xs ${activeTab === 'review' ? 'rounded-zp-radius-btn border-x-2 border-t-2 border-zp-main-color' : 'rounded-zp-radius-btn border-b-2 border-zp-main-color'}`}
+          onClick={reviewClick}
         >
-          <Button
-            children="후기"
-            buttonType="light"
-            width="100%" // 퍼센트 너비로 설정
-            height={2}
-            fontSize="xs"
-            radius="btn"
-            onClick={reviewClick}
-          />
-        </div>
-      </div>
-      <div className="mb-10">
-        {activeTab === 'overview' && <OverView />}
-        {activeTab === 'workerschedule' && <WorkerSchedule />}
-        {activeTab === 'review' && <WorkerReview />}
+          후기
+        </button>
       </div>
     </>
   );

@@ -33,18 +33,9 @@ export interface Worker {
   company: string;
   companyAddress: string;
 }
-export interface socialUser {
-  userName: string;
-  birthDate: string;
-  tel: string;
-}
-//회원가입
+
 export const signUp = async (data: User) => {
   return await axiosInstance.post(END_POINT.SIGNUP, data);
-};
-
-export const socialSignUp = async (data: socialUser) => {
-  return await axiosInstance.put(END_POINT.SIGNUP + '/social', data);
 };
 
 export const signUpCustomer = async (data: Customer) => {
@@ -55,22 +46,6 @@ export const signUpWorker = async (data: Worker) => {
   return await axiosInstance.post(END_POINT.SIGNUP + '/worker', data);
 };
 
-//로그인
-export const requestLogin = async (email: string, pw: string) => {
-  const response = await axiosInstance.post(
-    END_POINT.LOGIN,
-    {},
-    {
-      headers: {
-        email: email,
-        password: pw,
-      },
-    }
-  );
-  return response;
-};
-
-//Default
 export const getSido = async () => {
   return await axiosInstance.get(END_POINT.SIDO);
 };

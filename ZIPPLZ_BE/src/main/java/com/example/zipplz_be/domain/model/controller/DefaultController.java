@@ -30,6 +30,7 @@ public class DefaultController {
         HttpStatus status  = HttpStatus.ACCEPTED;
         try {
             List<SidoDTO> sido = defaultService.getSidoList();
+            System.out.println(sido);
             if (sido.size() == 0) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");

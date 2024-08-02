@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class WorkerFieldDTO {
-    private int fieldCode;
-    private String fieldName;
+public class WorkerSpecialtyDTO {
+    private int specialtyCode;
+    private String specialty;
 }

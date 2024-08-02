@@ -8,7 +8,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
-import java.util.*;
 
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
     @Modifying
@@ -23,9 +22,4 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
             @Param("notificationComment") String notificationComment,
             @Param("notificationDate") LocalDateTime notificationDate,
             @Param("isChecked") int isChecked);
-
-    @Query(value = "SELECT * " +
-            "FROM Notification " +
-            "WHERE user_serial = :userSerial", nativeQuery = true)
-    List<Notification> getNotificationList(@Param("userSerial") int userSerial);
 }

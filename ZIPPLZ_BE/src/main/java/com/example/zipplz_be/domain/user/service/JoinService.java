@@ -9,7 +9,6 @@ import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -45,19 +44,6 @@ public class JoinService {
         System.out.println(user.getUserSerial());
 
         return user.getUserSerial();
-    }
-
-    public void joinAfterSocialProcess(int userSerial, JoinRequestDTO joinRequestDTO) {
-
-        if (!userRepository.existsByUserSerial(userSerial)) {
-            throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
-        }
-
-        User user = userRepository.findByUserSerial(userSerial);
-        user.setUserName(joinRequestDTO.getUserName());
-        user.setTel(joinRequestDTO.getTel());
-        user.setBirthDate(joinRequestDTO.getBirthDate());
-        userRepository.save(user);
     }
 
     public boolean insertCustomerInfo(InsertCustomerDTO insertCustomerDTO) {

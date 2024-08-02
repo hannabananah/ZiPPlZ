@@ -1,11 +1,13 @@
 package com.example.zipplz_be.domain.user.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
-import com.example.zipplz_be.domain.user.dto.*;
+import com.example.zipplz_be.domain.user.dto.InsertCustomerDTO;
+import com.example.zipplz_be.domain.user.dto.InsertWorkerDTO;
+import com.example.zipplz_be.domain.user.dto.JoinRequestDTO;
+import com.example.zipplz_be.domain.user.dto.JoinResponseDTO;
 import com.example.zipplz_be.domain.user.service.JoinService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -30,29 +32,6 @@ public class JoinController {
                 status = HttpStatus.OK;
                 JoinResponseDTO joinResponseDTO = new JoinResponseDTO(userSerial);
                 responseDTO = new ResponseDTO<>(status.value(), "유저 회원가입 성공", joinResponseDTO);
-            }
-        } catch (Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        return new ResponseEntity<>(responseDTO, status);
-    }
-
-    @PutMapping("/join/social")
-    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(Authentication authentication, @RequestBody JoinRequestDTO joinRequestDTO) {
-        ResponseDTO responseDTO;
-        HttpStatus status;
-        try {
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            int userSerial = customUserDetails.getUserSerial();
-            joinService.joinAfterSocialProcess(userSerial, joinRequestDTO);
-            if (userSerial == -1) {
-                status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "소셜 로그인 후, 회원가입 실패");
-            } else {
-                status = HttpStatus.OK;
-                JoinResponseDTO joinResponseDTO = new JoinResponseDTO(userSerial);
-                responseDTO = new ResponseDTO<>(status.value(), "소셜 로그인 후, 회원가입 성공", joinResponseDTO);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;

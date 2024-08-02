@@ -2,7 +2,6 @@ package com.example.zipplz_be.domain.board.service;
 
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.repository.LocalRepository;
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioFileDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
@@ -29,11 +28,7 @@ public class WorkerListServiceImpl implements WorkerListService {
         List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoins();
         for (PortfolioJoinDTO portfolio : portfolios) {
             List<String> locations = localRepository.getLocalNames(portfolio.getUser_serial());
-            List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
-            String img = null;
-            if (!files.isEmpty()) {
-                img = fileRepository.getImg(portfolio.getPortfolio_serial()).getFirst().getSaveFile();
-            }
+            String img = fileRepository.getImg(portfolio.getPortfolio_serial()).get(0).getSave_file();
             PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
             portfolioViews.add(portfolioView);
         }
