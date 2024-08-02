@@ -5,9 +5,10 @@ import Checkbox from '@components/common/Checkbox';
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
+  phrase: string;
 }
 
-export default function SignUpAgree({ setNext, setLink }: Props) {
+export default function SignUpAgree({ setNext, setLink, phrase }: Props) {
   const [showDetail, setShowDetail] = useState<boolean>(false);
   const [privateAgree, setPrivateAgree] = useState<boolean>(false);
   const [serviceAgree, setServiceAgree] = useState<boolean>(false);
@@ -35,7 +36,8 @@ export default function SignUpAgree({ setNext, setLink }: Props) {
   useEffect(() => {
     if (serviceAgree && privateAgree) {
       setNext(true);
-      setLink('/member/join/common/2/info');
+      if (phrase === 'extra-agree') setLink('/member/join/common/2/extrainfo');
+      else setLink('/member/join/common/2/info');
     } else setNext(false);
   }, [privateAgree, serviceAgree, marketingAgree]);
 

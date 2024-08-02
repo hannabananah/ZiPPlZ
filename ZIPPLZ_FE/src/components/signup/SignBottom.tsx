@@ -9,6 +9,8 @@ import {
   signUp,
   signUpCustomer,
   signUpWorker,
+  socialSignUp,
+  socialUser,
 } from '@apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Loading from '@components/common/Loading';
@@ -20,6 +22,7 @@ interface Props {
   phrase?: string;
   link: string;
   user: User;
+  socialUser: socialUser;
   type?: string;
   customer: Customer;
   worker: Worker;
@@ -63,6 +66,7 @@ export default function SignBottom({
   phrase,
   link,
   user,
+  socialUser,
   setNext,
   setActive,
   type,
@@ -90,6 +94,10 @@ export default function SignBottom({
   };
   const registUser = async (user: User) => {
     const response = await signUp(user);
+    setUserSerial(response.data.data.userSerial);
+  };
+  const registSocialUser = async (user: socialUser) => {
+    const response = await socialSignUp(user);
     setUserSerial(response.data.data.userSerial);
   };
   const registCustomer = async (customer: Customer) => {
@@ -160,12 +168,18 @@ export default function SignBottom({
           onClick={() => {
             setNext(false);
             setActive(false);
-            if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
+            if (phrase === 'extrainfo') {
+              console.log(socialUser);
+              registSocialUser(socialUser);
               navigate(link);
-            else {
-              registUser(user);
-              console.log(user);
-              openModal();
+            } else {
+              if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
+                navigate(link);
+              else {
+                registUser(user);
+                console.log(user);
+                openModal();
+              }
             }
           }}
         />

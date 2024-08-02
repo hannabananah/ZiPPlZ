@@ -8,6 +8,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 
+import OverView from './tabs/OverView';
+import WorkerReview from './tabs/WorkerReview';
+import WorkerSchedule from './tabs/WorkerSchedule';
+
 export default function Portfolio() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,19 +27,23 @@ export default function Portfolio() {
     }
   }, [location.search]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const overviewClick = () => {
     setActiveTab('overview');
-    navigate('../OverView?tab=overview');
+    navigate('/workers/1/portfolio?tab=overview');
   };
 
   const workerScheduleClick = () => {
-    setActiveTab('workerSchedule');
-    navigate('../WorkerSchedule?tab=workerSchedule');
+    setActiveTab('workerschedule');
+    navigate('/workers/1/portfolio?tab=workerschedule');
   };
 
   const reviewClick = () => {
     setActiveTab('review');
-    navigate('../Review?tab=review');
+    navigate('/workers/1/portfolio?tab=review');
   };
 
   const toggleBookmark = () => {
@@ -113,7 +121,7 @@ export default function Portfolio() {
       </div>
 
       {/* 버튼 섹션 */}
-      <div className="font-bold w-full flex gap-2">
+      <div className="font-bold w-full flex ">
         <div
           className={`flex-1 ${
             activeTab === 'overview'
@@ -133,7 +141,7 @@ export default function Portfolio() {
         </div>
         <div
           className={`flex-1 ${
-            activeTab === 'workerSchedule'
+            activeTab === 'workerschedule'
               ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
               : 'rounded-b-lg border-b-2 border-zp-main-color'
           }`}
@@ -165,6 +173,11 @@ export default function Portfolio() {
             onClick={reviewClick}
           />
         </div>
+      </div>
+      <div className="mb-10">
+        {activeTab === 'overview' && <OverView />}
+        {activeTab === 'workerschedule' && <WorkerSchedule />}
+        {activeTab === 'review' && <WorkerReview />}
       </div>
     </>
   );

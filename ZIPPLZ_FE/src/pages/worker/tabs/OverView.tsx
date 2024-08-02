@@ -5,7 +5,6 @@ import AboutMe from '@components/worker/detail/overView/AboutMe';
 import CareerAndCertificate from '@components/worker/detail/overView/CareerAndCertificate';
 import Photos from '@components/worker/detail/overView/Photos';
 import WantToTalk from '@components/worker/detail/overView/WantToTalk';
-import Portfolio from '@pages/worker/Portfolio';
 
 export default function OverView() {
   // 모달 열림, 한줄 소개 입력 값, 임시 값 상태 관리
@@ -39,9 +38,6 @@ export default function OverView() {
     <>
       <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
         <div className="w-full max-w-3xl">
-          {/* Portfolio 컴포넌트 상단에 배치 */}
-          <Portfolio />
-
           {/* 수정 버튼: 우측 상단에 글쓰기 버튼 누르면, 한줄 소개와 A/S 기간을 선택할 수 있는 modal 창 */}
           <div>
             <PiNotePencil

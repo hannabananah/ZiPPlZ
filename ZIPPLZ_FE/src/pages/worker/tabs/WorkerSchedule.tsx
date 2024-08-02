@@ -19,8 +19,6 @@ export default function WorkerSchedule() {
     <>
       <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
         <div className="w-full max-w-3xl">
-          {/* Portfolio 컴포넌트 상단에 배치 */}
-          <Portfolio />
           <div className="flex flex-col w-full gap-6">
             <div className="flex justify-center mt-6 ">
               <div className="w-[80%]">
