@@ -3,8 +3,6 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Layout from '@components/layout/Layout';
 // 공통 컴포넌트
 // 구인 게시물 컴포넌트, 시공자 컴포넌트
-import FindWorkerListItem from '@components/worker/FindWorkerListItem';
-import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 import Custom404 from '@pages/common/404';
 import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
@@ -44,32 +42,28 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="schedule" element={<Schedule />} />
+        <Route path="schedule/:id" element={<Schedule />} />
         <Route path="community" element={<Community />} />
         {/* <Route path="workers" element={<Workers />} /> */}
-        <Route path="portfolio" element={<Portfolio />} />
-        <Route path="overview" element={<OverView />} />
-        <Route path="workerschedule" element={<WorkerSchedule />} />
-        <Route path="review" element={<Review />} />
+
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
         <Route path="404" element={<Custom404 />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
-        <Route path="findworkerdetail" element={<FindWorkerDetail />} />
         <Route
           path="findworkerdetailcreate"
           element={<FindWorkerDetailCreate />}
         />
-        <Route path="findworkerlist" element={<FindWorkerList />} />
         <Route path="workerinfodatedetail" element={<WorkerInfoDateDetail />} />
         <Route
           path="workerinfolocationdetail"
           element={<WorkerInfoLocationDetail />}
         />
-        <Route path="workerinfolist" element={<WorkerInfoList />} />
-        <Route path="findworkerlistitem" element={<FindWorkerListItem />} />
-        <Route path="workerinfolistitem" element={<WorkerInfoListItem />} />
+        <Route path="findworkers" element={<FindWorkerList />} />
+        <Route path="findworkers/:id" element={<FindWorkerDetail />} />
+        <Route path="workers" element={<WorkerInfoList />} />
+        <Route path="workers/:id/portfolio" element={<Portfolio />} />
 
         {/* 마이페이지 */}
         <Route path="myboardandscraplist" element={<MyBoardAndScrapList />} />
