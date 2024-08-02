@@ -49,11 +49,12 @@ public class JoinService {
 
     public int joinAfterSocialProcess(JoinRequestDTO joinRequestDTO) {
 
-        if (!userRepository.existsByEmail(joinRequestDTO.getEmail())) {
+        String email = joinRequestDTO.getEmail();
+        if (!userRepository.existsByEmail(email)) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
         }
 
-        User user = userRepository.findByEmail(joinRequestDTO.getEmail());
+        User user = userRepository.findByEmail(email);
         user.setUserName(joinRequestDTO.getUserName());
         user.setTel(joinRequestDTO.getTel());
         user.setBirthDate(joinRequestDTO.getBirthDate());
