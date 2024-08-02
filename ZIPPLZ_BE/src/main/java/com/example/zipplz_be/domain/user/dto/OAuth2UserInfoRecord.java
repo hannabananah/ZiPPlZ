@@ -4,6 +4,7 @@ import com.example.zipplz_be.domain.user.entity.User;
 import jakarta.security.auth.message.AuthException;
 import lombok.Builder;
 
+import java.util.HashMap;
 import java.util.Map;
 
 @Builder
@@ -35,11 +36,11 @@ public record OAuth2UserInfoRecord(
     }
 
     private static OAuth2UserInfoRecord ofKakao(Map<String, Object> attributes) {
-        Map<String, Object> account = (Map<String, Object>) attributes.get("kakao_account");
-        Map<String, Object> profile = (Map<String, Object>) attributes.get("profile");
+        Map accountMap = (Map) attributes.get("kakao_account");
+        Map profileMap = (Map) accountMap.get("profile");
         return OAuth2UserInfoRecord.builder()
-                .name((String) profile.get("nickname"))
-                .email((String) account.get("email")).build();
+                .name((String) profileMap.get("nickname"))
+                .email((String) accountMap.get("email")).build();
 //                .profile((String) profile.get("profile_image_url")).build();
     }
 
