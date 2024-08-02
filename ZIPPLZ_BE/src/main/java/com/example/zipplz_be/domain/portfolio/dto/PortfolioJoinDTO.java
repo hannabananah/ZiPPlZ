@@ -9,4 +9,5 @@ public interface PortfolioJoinDTO {
     int getField_id();
     String getField_name();
     double getCareer();
+    int getCertificated_badge();
 }
