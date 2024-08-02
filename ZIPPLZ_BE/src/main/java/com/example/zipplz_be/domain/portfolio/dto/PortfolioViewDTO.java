@@ -11,6 +11,7 @@ public class PortfolioViewDTO{
     private int field_id;
     private String field_name;
     private double career;
+    private int certificated_badge;
     private List<String> locations;
     private String img;
 
@@ -23,6 +24,7 @@ public class PortfolioViewDTO{
         this.field_id = pjDTO.getField_id();
         this.field_name = pjDTO.getField_name();
         this.career = pjDTO.getCareer();
+        this.certificated_badge = pjDTO.getCertificated_badge();
         this.locations = locations;
         this.img = img;
     }
@@ -91,6 +93,14 @@ public class PortfolioViewDTO{
         this.career = career;
     }
 
+    public int getCertificated_badge() {
+        return certificated_badge;
+    }
+
+    public void setCertificated_badge(int certificated_badge) {
+        this.certificated_badge = certificated_badge;
+    }
+
     public List<String> getLocations() {
         return locations;
     }
@@ -118,6 +128,7 @@ public class PortfolioViewDTO{
                 ", field_id=" + field_id +
                 ", field_name='" + field_name + '\'' +
                 ", career=" + career +
+                ", certificated_badge=" + certificated_badge +
                 ", locations=" + locations +
                 ", img='" + img + '\'' +
                 '}';
