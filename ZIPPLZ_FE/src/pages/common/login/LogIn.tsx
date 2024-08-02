@@ -1,23 +1,55 @@
 import { useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
+import { requestLogin } from '@/apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import { isAxiosError } from 'axios';
+import Cookies from 'js-cookie';
 
 export default function Login() {
+  const GOOGLE_LOGIN_URL: string = import.meta.env.VITE_GOOGLE_LOGIN_URL;
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
-  function validatePassword(password: string): boolean {
-    if (!password) return true;
-    var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$/;
-    return passwordRegex.test(password);
-  }
   const handleClickEye = function () {
     setShowPassword(!showPassword);
   };
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await requestLogin(email, password);
+      console.log('data :', response.data);
+      console.log('headers :', response.headers);
+      console.log(response);
+      const authorizationHeader = response.headers.authorization;
+      console.log(authorizationHeader);
+      if (authorizationHeader) {
+        const token: string = authorizationHeader.split('  ')[1];
+        console.log(token);
+        Cookies.set('accesstoken', token, { expires: 1 });
+        console.log('status :', response.status);
+
+        if (response.status === 200) {
+          navigate('/');
+        } else {
+          alert('로그인 실패');
+        }
+      } else {
+        console.error('Authorization header is missing');
+        alert('로그인 실패: 서버 응답에 문제가 있습니다.');
+      }
+    } catch (error) {
+      if (isAxiosError(error)) {
+        console.log(error);
+      }
+      console.error('Login request failed:', error);
+      alert('로그인 중 오류가 발생했습니다.');
+    }
+  };
+
   function validateEmail(email: string): boolean {
     let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
     if (!email) return true;
@@ -51,6 +83,7 @@ export default function Login() {
             type="email"
             inputType="login"
             placeholder="이메일"
+            value={email}
             width="full"
             height={2}
             onChange={(e: React.ChangeEvent) => {
@@ -68,9 +101,8 @@ export default function Login() {
         <div className="relative z-30">
           <Input
             type={showPassword ? 'text' : 'password'}
-            inputType={
-              !password || validatePassword(password) ? 'login' : 'error'
-            }
+            inputType="login"
+            value={password}
             placeholder="비밀번호를 입력하세요"
             width="full"
             height={2}
@@ -93,11 +125,6 @@ export default function Login() {
               onClick={handleClickEye}
             />
           )}
-          {!validatePassword(password) && (
-            <p className="text-zp-2xs text-zp-red">
-              8~16자 영문 대소문자, 숫자, 특수문자를 사용하세요.
-            </p>
-          )}
         </div>
         <div className="z-30">
           <Button
@@ -108,7 +135,12 @@ export default function Login() {
             fontSize="xl"
             radius="btn"
             onClick={() => {
-              navigate('/');
+              console.log(email);
+              console.log(password);
+              login(email, password);
+
+              setEmail('');
+              setPassword('');
             }}
           />
         </div>
@@ -131,12 +163,29 @@ export default function Login() {
           </p>
         </div>
         <div className="absolute  left-0 bottom-[4rem] px-4 w-full flex flex-col gap-4 z-30">
-          <div className="w-full h-[3rem] bg-zp-white rounded-zp-radius-btn">
-            소셜로그인
-          </div>
-          <div className="w-full h-[3rem] bg-zp-yellow rounded-zp-radius-btn">
-            소셜로그인
-          </div>
+          <Link to={GOOGLE_LOGIN_URL}>
+            <div
+              className="w-full h-[3rem] rounded-zp-radius-btn"
+              onClick={() => {
+                console.log(GOOGLE_LOGIN_URL);
+              }}
+              style={{
+                backgroundImage: "url('/src/assets/login/GoogleLogin.svg')",
+                backgroundRepeat: 'no-repeat',
+                // backgroundSize: '30%',
+                backgroundPosition: 'center center',
+              }}
+            />
+          </Link>
+          <div
+            className="w-full h-[3rem] rounded-zp-radius-btn"
+            style={{
+              backgroundImage: "url('/src/assets/login/KakaoLogin.svg')",
+              backgroundRepeat: 'no-repeat',
+              // backgroundSize: '30%',
+              backgroundPosition: 'center center',
+            }}
+          />
         </div>
       </div>
     </div>
