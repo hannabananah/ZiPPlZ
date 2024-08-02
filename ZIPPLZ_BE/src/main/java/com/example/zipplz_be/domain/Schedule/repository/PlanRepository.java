@@ -1,7 +1,6 @@
-package com.example.zipplz_be.domain.Schedule.repository;
+package com.example.zipplz_be.domain.schedule.repository;
 
-import com.example.zipplz_be.domain.Schedule.entity.Plan;
-import com.example.zipplz_be.domain.chatting.entity.Chatroom;
+import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

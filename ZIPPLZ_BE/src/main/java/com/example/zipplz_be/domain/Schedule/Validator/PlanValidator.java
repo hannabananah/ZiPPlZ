@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.Schedule.Validator;
+package com.example.zipplz_be.domain.schedule.Validator;
 
 public class PlanValidator {
 
