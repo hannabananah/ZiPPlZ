@@ -4,13 +4,11 @@ import MannerTemperature from '@components/worker/detail/review/MannerTemperatur
 import ReviewComments from '@components/worker/detail/review/ReviewComments';
 import Portfolio from '@pages/worker/Portfolio';
 
-export default function Review() {
+export default function WorkerReview() {
   return (
     <>
       <div className="flex flex-col justify-center items-center min-h-screen p-6 bg-gray-100">
         <div className="w-full max-w-3xl">
-          {/* Portfolio 컴포넌트 상단에 배치 */}
-          <Portfolio />
           {/* 매너 온도 + 분야별 매너 온도 */}
           <MannerTemperature />
           {/* [시공업자 이름]님은 이래서 좋아요 */}
