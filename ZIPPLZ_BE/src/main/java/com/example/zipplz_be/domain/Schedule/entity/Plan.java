@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.Schedule.entity;
 
 import com.example.zipplz_be.domain.user.entity.Customer;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +29,7 @@ public class Plan {
     String sharedContents;
 
     @OneToMany(mappedBy = "planSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Work> works = new ArrayList<>();
 
 

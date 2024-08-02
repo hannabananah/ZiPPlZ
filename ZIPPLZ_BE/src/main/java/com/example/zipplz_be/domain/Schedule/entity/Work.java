@@ -2,6 +2,7 @@ package com.example.zipplz_be.domain.Schedule.entity;
 
 import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.user.entity.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,7 @@ public class Work {
 
     @ManyToOne
     @JoinColumn(name="plan_serial")
+    @JsonBackReference
     Plan planSerial;
 
     @ManyToOne
@@ -34,9 +36,11 @@ public class Work {
     Field fieldCode;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="start_date")
     private Timestamp startDate;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name="end_date")
     private Timestamp endDate;
 
     @Column(name="is_completed")
@@ -45,8 +49,6 @@ public class Work {
     @Column(name="work_price")
     int workPrice;
 
-    @Column(name="as_score")
-    Integer asScore;
     @Column(name="work_content")
     String workContent;
 
