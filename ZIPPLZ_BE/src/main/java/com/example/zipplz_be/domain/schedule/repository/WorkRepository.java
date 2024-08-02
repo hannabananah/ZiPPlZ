@@ -1,7 +1,7 @@
-package com.example.zipplz_be.domain.Schedule.repository;
+package com.example.zipplz_be.domain.schedule.repository;
 
-import com.example.zipplz_be.domain.Schedule.entity.Plan;
-import com.example.zipplz_be.domain.Schedule.entity.Work;
+import com.example.zipplz_be.domain.schedule.entity.Plan;
+import com.example.zipplz_be.domain.schedule.entity.Work;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
