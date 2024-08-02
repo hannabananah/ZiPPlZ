@@ -17,7 +17,6 @@ interface MenuItem {
 
 export default function ToggleChatMenu() {
   const { userType } = useUserStore();
-
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -32,7 +31,9 @@ export default function ToggleChatMenu() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (files) {
+      const file = files[0];
       console.log('Files selected:', files);
+      console.log('file selected:', file);
     }
   };
 
@@ -115,7 +116,13 @@ export default function ToggleChatMenu() {
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
-        onChange={handleFileChange}
+        onChange={(e) => {
+          const files = e.target.files;
+          if (files && files[0]) {
+            const file = files[0];
+            console.log('Image selected:', file);
+          }
+        }}
       />
       <input
         ref={fileInputRef}

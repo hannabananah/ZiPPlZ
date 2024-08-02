@@ -17,7 +17,7 @@ const ChatRoom: React.FC = () => {
     <WebSocketProvider>
       <div className="relative flex flex-col h-screen bg-zp-light-orange">
         {isValidRoomId && <ChatRoomHeader />}
-        <div className="relative flex flex-col flex-grow p-4 overflow-y-auto">
+        <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
           {isValidRoomId ? (
             <>
               <div className="flex-1 overflow-y-auto">
@@ -27,6 +27,7 @@ const ChatRoom: React.FC = () => {
                 isMenuVisible={isMenuVisible}
                 onMenuToggle={() => setMenuVisible(!isMenuVisible)}
                 userSerial={userSerial}
+                // type={type}
               />
               {isMenuVisible && <ToggleChatMenu />}
             </>

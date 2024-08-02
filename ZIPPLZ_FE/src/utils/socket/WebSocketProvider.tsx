@@ -75,6 +75,8 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
   }, []);
 
+  // TODO 이미지, 파일 첨부
+  // const sendMessage = (message: string, userSerial: number, type: 'text' | 'image' = 'text') => {
   const sendMessage = (msg: string, userSerial: number) => {
     if (msg.trim()) {
       if (client && client.connected) {
@@ -82,6 +84,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           chatMessageContent: msg,
           chatroomSerial: 1,
           userSerial,
+          // type,
         });
         client.publish({
           destination: '/pub/chat/message',

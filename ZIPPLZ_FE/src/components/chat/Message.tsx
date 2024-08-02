@@ -24,7 +24,7 @@ export default function Message() {
         >
           {msg.userSerial !== currUserSerial && (
             <img
-              className="w-10 mr-3 border profile-img"
+              className="w-10 mr-3 profile-img"
               src="https://i.pravatar.cc/50?img=1"
               alt="프로필 이미지"
             />

@@ -31,7 +31,8 @@ export default function useOpenVidu() {
     setSubscriber(null);
     setPublisher(null);
     setRecordingId(null);
-    navigate('/');
+    // 이전 채팅방으로 돌아가기
+    navigate(-1);
   }, [session, navigate]);
 
   const joinSession = () => {

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { FiSend } from 'react-icons/fi';
 
@@ -10,12 +10,14 @@ interface TextInputBoxProps {
   isMenuVisible: boolean;
   onMenuToggle: () => void;
   userSerial: number;
+  onImageUpload: (file: File) => void;
 }
 
 export default function TextInputBox({
   isMenuVisible,
   onMenuToggle,
   userSerial,
+  onImageUpload,
 }: TextInputBoxProps) {
   const [message, setMessage] = useState('');
   const context = useContext(WebSocketContext);
@@ -40,8 +42,18 @@ export default function TextInputBox({
     }
   };
 
+  const handleImageUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      if (reader.result) {
+        sendMessage(reader.result as string, userSerial, 'image');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
-    <div className="sticky bottom-0 flex items-center justify-between w-full gap-3 px-4 max-h-12 bg-zp-transparent">
+    <div className="sticky bottom-0 flex items-center justify-between w-full gap-3 px-4 my-4 max-h-12 bg-zp-transparent">
       <button className="relative" onClick={onMenuToggle}>
         <Circle width={28} height={28} />
         <div className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
