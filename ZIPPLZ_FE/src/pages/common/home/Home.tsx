@@ -1,5 +1,7 @@
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import FieldListItem from '@components/home/FieldListItem';
+import TodaySchedule from '@components/home/TodaySchedule';
+import WeekSchedule from '@components/home/WeekSchedule';
 import WorkerCard from '@components/home/WorkerCard';
 
 const fields: string[] = [
@@ -33,16 +35,20 @@ const list: HotWorker[] = [
 ];
 export default function Home() {
   return (
-    <div className="bg-zp-light-beige flex flex-col p-7 gap-6 overflow-auto min-h-screen mb-6">
+    <div className="bg-zp-light-beige flex flex-col p-7 gap-6 overflow-auto  mb-6">
       <ScheduleCalendar />
-      <div className="w-full flex gap-6 justify-center items-center">
-        <div className="basis-2/3">
+      <div className="w-full flex md:gap-6 gap-2 justify-center items-start ">
+        <div className="basis-7/12">
           <p className="font-extrabold text-zp-xl">Today</p>
-          <div className="w-full bg-zp-main-color h-5"></div>
+          {/* <div className="w-full h-[4rem]"> */}
+          <TodaySchedule />
+          {/* </div> */}
         </div>
-        <div className="basis-1/3">
+        <div className="basis-5/12">
           <p className="font-extrabold text-zp-xl">This week</p>
-          <div className="w-full bg-zp-main-color h-5"></div>
+          {/* <div className="w-full h-[4rem]"> */}
+          <WeekSchedule />
+          {/* </div> */}
         </div>
       </div>
       <div className="w-full">
