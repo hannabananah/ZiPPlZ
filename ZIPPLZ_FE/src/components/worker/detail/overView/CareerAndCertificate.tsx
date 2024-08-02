@@ -14,17 +14,17 @@ export default function CareerAndCertificate() {
           <div className="flex items-center">
             <div className="w-20">업체이름</div>
             <div className="border-l border-black h-full mx-2"></div>
-            <div className="flex-grow">멀티캠퍼스</div>
+            <div className="flex-grow text-zp-gray">멀티캠퍼스</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">주소</div>
             <div className="border-l border-black h-full mx-2"></div>
-            <div className="flex-grow">역삼 멀티캠퍼스</div>
+            <div className="flex-grow text-zp-gray">역삼 멀티캠퍼스</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">사업자 등록번호</div>
             <div className="border-l border-black h-full mx-2"></div>
-            <div className="flex-grow">123-4567</div>
+            <div className="flex-grow text-zp-gray">123-4567</div>
           </div>
         </div>
       </div>
