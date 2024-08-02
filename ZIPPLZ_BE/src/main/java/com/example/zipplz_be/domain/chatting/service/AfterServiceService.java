@@ -1,12 +1,10 @@
 package com.example.zipplz_be.domain.chatting.service;
 
-import com.example.zipplz_be.domain.Schedule.entity.Plan;
-import com.example.zipplz_be.domain.Schedule.entity.Work;
-import com.example.zipplz_be.domain.Schedule.exception.PlanNotFoundException;
-import com.example.zipplz_be.domain.Schedule.exception.WorkException;
-import com.example.zipplz_be.domain.Schedule.repository.WorkRepository;
+import com.example.zipplz_be.domain.chatting.repository.jpa.AfterServciceRepository;
+import com.example.zipplz_be.domain.schedule.entity.Work;
+import com.example.zipplz_be.domain.schedule.exception.WorkException;
+import com.example.zipplz_be.domain.schedule.repository.WorkRepository;
 import com.example.zipplz_be.domain.chatting.entity.AfterService;
-import com.example.zipplz_be.domain.chatting.repository.AfterServciceRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
