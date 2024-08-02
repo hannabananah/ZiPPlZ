@@ -94,8 +94,8 @@ const FindWorkerDetail: React.FC = () => {
           {/* 찜하기 버튼 */}
           {/* className="flex items-center justify-center w-full" */}
           <div className="flex-grow sm:flex-grow-0 flex justify-center items-center space-x-2 my-4">
-            <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full max-w-[200px]">
-              <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full max-w-[200px]">
+            <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full">
+              <div className="w-full border border-zp-sub-color rounded-zp-radius-btn">
                 <Button
                   buttonType={isBookmarked ? 'normal' : 'light'}
                   width="full"
@@ -122,7 +122,7 @@ const FindWorkerDetail: React.FC = () => {
 
           {/* 채팅하기 버튼 */}
           <div className="flex-grow sm:flex-grow-0 flex justify-center items-center">
-            <div className="relative w-full max-w-[250px]">
+            <div className="w-full max-w-[250px]">
               <Button
                 buttonType="second"
                 width="full"

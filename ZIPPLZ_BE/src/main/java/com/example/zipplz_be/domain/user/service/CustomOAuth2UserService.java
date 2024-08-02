@@ -1,18 +1,16 @@
 package com.example.zipplz_be.domain.user.service;
 
+import com.example.zipplz_be.domain.user.dto.CustomOAuth2User;
 import com.example.zipplz_be.domain.user.dto.OAuth2UserInfoRecord;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -20,6 +18,7 @@ import java.util.Map;
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UserRepository userRepository;
+    private Boolean isNewUser;
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -30,27 +29,26 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 2. registrationId 가져오기 (third-party id)
         String registrationId = userRequest.getClientRegistration().getRegistrationId();
 
-        // 3. 유저 정보 dto 생성
+        // 3. userNameAttributeName 가져오기
+        String userNameAttributeName = userRequest.getClientRegistration().getProviderDetails()
+                .getUserInfoEndpoint().getUserNameAttributeName();
+
+        // 4. 유저 정보 dto 생성
         OAuth2UserInfoRecord oAuth2UserInfoRecord = OAuth2UserInfoRecord.of(registrationId, oAuth2UserAttributes);
 
-        // 4. 회원가입 및 로그인
-        User user = getOrSave(oAuth2UserInfoRecord);
+        // 5. 회원가입 및 로그인
+        User user = getOrSaveUser(oAuth2UserInfoRecord);
 
-        // 5. OAuth2User 반환
-        return new DefaultOAuth2User(
-                Collections.singleton(new SimpleGrantedAuthority("USER")),
-                oAuth2UserAttributes,
-                "email"
-        );
+        // 6. CustomOAuth2User 반환
+        return new CustomOAuth2User(user, isNewUser, oAuth2UserAttributes, userNameAttributeName);
     }
 
-    private User getOrSave(OAuth2UserInfoRecord oAuth2UserInfoRecord) {
-        User user;
-        if (!userRepository.existsByEmail(oAuth2UserInfoRecord.email())) {
-            user = oAuth2UserInfoRecord.toEntity();
-        } else {
-            user = userRepository.findByEmail(oAuth2UserInfoRecord.email());
+    private User getOrSaveUser(OAuth2UserInfoRecord oAuth2UserInfoRecord) {
+        if (userRepository.existsByEmail(oAuth2UserInfoRecord.email())) {
+            isNewUser = false;
+            return userRepository.findByEmail(oAuth2UserInfoRecord.email());
         }
-        return userRepository.save(user);
+        isNewUser = true;
+        return userRepository.save(oAuth2UserInfoRecord.toEntity());
     }
 }
