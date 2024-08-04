@@ -20,10 +20,10 @@ export default function FloatingChatButton() {
     <>
       <button
         onClick={handleToggleModal}
-        className="absolute right-4 drop-shadow-zp-deep bottom-24"
+        className="z-[999] absolute right-4 drop-shadow-zp-deep bottom-24 p-1 -m-1"
       >
         <Circle />
-        <div className="absolute transform -translate-x-1/2 -translate-y-[14px] top-1/2 left-1/2">
+        <div className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
           {currentModals.includes('chatRooms') ? (
             <IoIosClose size={24} />
           ) : (
