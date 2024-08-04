@@ -1,19 +1,29 @@
+import { useState } from 'react';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoAlertCircleOutline } from 'react-icons/io5';
+import { PiWarningCircleBold } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 
 export default function BeforeResign() {
   let user: string = '강신구';
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('-1');
+    navigate(-1);
   };
 
   // 탈퇴하기 핸들러
   const handleResign = () => {
-    navigate('/resigncomplete');
+    setShowModal(true);
+  };
+
+  // 모달 확인 버튼 핸들러
+  // 확인 버튼 누르면 로그아웃이 되고 홈 화면으로 이동하게 수정
+  // 로그아웃 추후 구현 필요
+  const handleConfirm = () => {
+    navigate('/');
   };
 
   return (
@@ -46,15 +56,6 @@ export default function BeforeResign() {
               <li>탈퇴 후 모든 데이터가 삭제되고 복구하실 수 없습니다.</li>
             </ul>
           </div>
-
-          <div>
-            <ul className="mt-6 list-disc pl-6 text-zp-xl font-bold">
-              <li className="mb-6">
-                ZIP-PlZ에서 관리했던 000님의 모든 개인정보를 다시 볼 수 없어요!
-              </li>
-              <li className="mb-6">사업자등록증, 경력 인증서는 폐기돼요!</li>
-            </ul>
-          </div>
         </div>
 
         {/* 탈퇴하기 버튼 */}
@@ -65,6 +66,24 @@ export default function BeforeResign() {
           <div className="text-zp-2xl font-bold">탈퇴하기</div>
         </div>
       </div>
+
+      {showModal && (
+        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center rounded-zp-radius-big">
+          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+            <h2 className="text-zp-3xl font-bold mb-4">탈퇴 완료</h2>
+            <p className="mb-6 text-zp-sm font-bold">
+              ZIP-PlZ를 이용해주시고 사랑해주셔서 감사합니다.<br/>
+              더욱더 노력하고 발전하는 ZIP-PlZ가 되겠습니다.
+            </p>
+            <button
+              className="w-4/5 h-8 mt-6 font-bold text-zp-xs bg-zp-sub-color rounded-zp-radius-btn"
+              onClick={handleConfirm}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

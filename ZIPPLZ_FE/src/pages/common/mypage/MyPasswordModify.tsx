@@ -61,21 +61,21 @@ export default function MyPasswordModify() {
         ...prev,
         emptyFields: true,
       }));
-    }
+    } else {
+      if (currentPassword !== existingPassword) {
+        setError((prev) => ({
+          ...prev,
+          current: true,
+        }));
+      }
 
-    if (currentPassword !== existingPassword) {
-      setError((prev) => ({
-        ...prev,
-        current: true,
-      }));
-    }
-
-    if (newPassword !== confirmPassword) {
-      setError((prev) => ({
-        ...prev,
-        new: true,
-        confirm: true,
-      }));
+      if (newPassword !== confirmPassword) {
+        setError((prev) => ({
+          ...prev,
+          new: true,
+          confirm: true,
+        }));
+      }
     }
   };
 
@@ -102,7 +102,7 @@ export default function MyPasswordModify() {
             <input
               type={showCurrentPassword ? 'text' : 'password'}
               placeholder="비밀번호를 입력하세요."
-              className="w-full px-2 mt-4 font-bold text-zp-2xl text-zp-light-gray bg-zp-light-beige border-none focus:outline-none"
+              className="w-full px-2 mt-4 font-bold text-zp-2xl text-zp-black bg-zp-light-beige border-none focus:outline-none"
               value={currentPassword}
               onChange={handlePasswordChange}
             />
@@ -120,12 +120,10 @@ export default function MyPasswordModify() {
           </div>
           <hr
             className={`mt-2 w-full ${
-              error.current || error.emptyFields
-                ? 'border-zp-red'
-                : 'border-zp-light-gray'
+              error.current && currentPassword ? 'border-zp-red' : 'border-zp-light-gray'
             }`}
           />
-          {error.current && (
+          {error.current && currentPassword && (
             <div className="mt-2 font-bold text-zp-xs text-zp-red">
               현재 비밀번호와 다릅니다. 다시 입력해주세요
             </div>
@@ -141,7 +139,7 @@ export default function MyPasswordModify() {
             <input
               type={showNewPassword ? 'text' : 'password'}
               placeholder="새 비밀번호를 입력하세요."
-              className="w-full px-2 mt-4 font-bold text-zp-2xl text-zp-light-gray bg-zp-light-beige border-none focus:outline-none"
+              className="w-full px-2 mt-4 font-bold text-zp-2xl text-zp-black bg-zp-light-beige border-none focus:outline-none"
               value={newPassword}
               onChange={handleNewPasswordChange}
             />
@@ -159,12 +157,12 @@ export default function MyPasswordModify() {
           </div>
           <hr
             className={`mt-2 w-full ${
-              error.new || error.emptyFields
+              (error.new || error.confirm) && newPassword && confirmPassword
                 ? 'border-zp-red'
                 : 'border-zp-light-gray'
             }`}
           />
-          {error.new && (
+          {error.new && newPassword && (
             <div className="mt-2 font-bold text-zp-xs text-zp-red">
               입력한 비밀번호가 서로 다릅니다. 변경할 Password를 다시
               확인해주세요
@@ -181,7 +179,7 @@ export default function MyPasswordModify() {
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="새 비밀번호를 다시 입력하세요."
-              className="w-full px-2 mt-4 font-bold text-zp-2xl text-zp-light-gray bg-zp-light-beige border-none focus:outline-none"
+              className="w-full px-2 mt-4 font-bold text-zp-2xl text-zp-black bg-zp-light-beige border-none focus:outline-none"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
             />
@@ -199,12 +197,10 @@ export default function MyPasswordModify() {
           </div>
           <hr
             className={`mt-2 w-full ${
-              error.confirm || error.emptyFields
-                ? 'border-zp-red'
-                : 'border-zp-light-gray'
+              error.confirm && confirmPassword ? 'border-zp-red' : 'border-zp-light-gray'
             }`}
           />
-          {error.confirm && (
+          {error.confirm && confirmPassword && (
             <div className="mt-2 font-bold text-zp-xs text-zp-red">
               입력한 비밀번호가 서로 다릅니다. 변경할 Password를 다시
               확인해주세요
