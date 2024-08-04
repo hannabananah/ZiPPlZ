@@ -20,7 +20,7 @@ export default function FloatingChatButton() {
     <>
       <button
         onClick={handleToggleModal}
-        className="z-50 absolute right-4 drop-shadow-zp-deep bottom-24 p-1 -m-1"
+        className="z-50 fixed right-4 drop-shadow-zp-deep bottom-24 p-1 -m-1"
       >
         <Circle />
         <div className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
