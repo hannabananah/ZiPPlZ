@@ -66,6 +66,7 @@ export default {
         'Trebuchet MS',
         'sans-serif',
       ],
+      metamorphous: 'Metamorphous',
     },
     extend: {},
   },
