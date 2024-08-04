@@ -7,15 +7,15 @@ import FullModal from '@components/common/FullModal';
 import NotificationModal from '@components/notification/NotificationModal';
 
 export default function Header() {
-  const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const navigate = useNavigate();
 
-  const handleOpenAlert = () => {
-    setIsAlertOpen(true);
+  const handleOpenNotification = () => {
+    setIsNotificationOpen(true);
   };
 
-  const handleCloseAlert = () => {
-    setIsAlertOpen(false);
+  const handleCloseNotification = () => {
+    setIsNotificationOpen(false);
   };
 
   return (
@@ -29,11 +29,14 @@ export default function Header() {
         fontFamily="metamorphous"
         radius="none"
       />
-      <button onClick={handleOpenAlert}>
+      <button onClick={handleOpenNotification}>
         <FaRegBell size={24} />
       </button>
-      <FullModal isOpen={isAlertOpen} onRequestClose={handleCloseAlert}>
-        <NotificationModal handleCloseAlert={handleCloseAlert} />
+      <FullModal
+        isOpen={isNotificationOpen}
+        onRequestClose={handleCloseNotification}
+      >
+        <NotificationModal handleCloseNotification={handleCloseNotification} />
       </FullModal>
     </div>
   );
