@@ -11,6 +11,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PortfolioWorkerDTO {
+    private int workerSerial;
     private String company;
     private String companyAddress;
     private String businessNumber;
@@ -18,7 +19,8 @@ public class PortfolioWorkerDTO {
     private int certificatedBadge;
 
     @Builder
-    public PortfolioWorkerDTO(String company, String companyAddress, String businessNumber, int hasAsBadge, int certificatedBadge) {
+    public PortfolioWorkerDTO(int workerSerial, String company, String companyAddress, String businessNumber, int hasAsBadge, int certificatedBadge) {
+        this.workerSerial = workerSerial;
         this.company = company;
         this.companyAddress = companyAddress;
         this.businessNumber = businessNumber;
