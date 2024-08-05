@@ -10,9 +10,10 @@ import {
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
+  phrase: string;
 }
 
-export default function SignUpSelectType({ setNext, setLink }: Props) {
+export default function SignUpSelectType({ setNext, setLink, phrase }: Props) {
   const [userType, setUserType] = useState<string>('');
   const [isUserHovered, setIsUserHovered] = useState<boolean>(false);
   const [isWorkerUserHovered, setIsWorkerHovered] = useState<boolean>(false);
@@ -26,7 +27,9 @@ export default function SignUpSelectType({ setNext, setLink }: Props) {
           onMouseLeave={() => setIsUserHovered(false)}
           onClick={() => {
             setNext(true);
-            setLink('/member/join/customer/3/nickname');
+            if (phrase === 'extratype')
+              setLink('/member/join/customer/3/extranickname');
+            else setLink('/member/join/customer/3/nickname');
             setUserType('customer');
           }}
         >
@@ -46,7 +49,9 @@ export default function SignUpSelectType({ setNext, setLink }: Props) {
           onMouseLeave={() => setIsWorkerHovered(false)}
           onClick={() => {
             setNext(true);
-            setLink('/member/join/worker/3/detail');
+            if (phrase === 'extratype')
+              setLink('/member/join/worker/3/extradetail');
+            else setLink('/member/join/worker/3/detail');
             setUserType('worker');
           }}
         >
