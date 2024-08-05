@@ -29,5 +29,6 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Integer> {
 //    List<PortfolioJoinDTO> getPortfolioJoinsByField(@Param("field_code") int field_code);
 
     Portfolio findByUserSerialAndFieldId(Worker userSerial, Field fieldId);
-
+    List<Portfolio> findByUserSerial(Worker userSerial);
+    Portfolio findByPortfolioSerial(int portfolioSerial);
 }

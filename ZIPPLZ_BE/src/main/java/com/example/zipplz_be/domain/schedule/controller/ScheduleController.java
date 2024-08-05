@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.schedule.controller;
 
+import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
 import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
@@ -25,13 +26,15 @@ import java.util.Map;
 public class ScheduleController {
     private final PlanService planService;
     private final WorkService workService;
+    private final PortfolioService portfolioService;
 
-    public ScheduleController(PlanService planService, WorkService workService) {
+    public ScheduleController(PortfolioService portfolioService, PlanService planService, WorkService workService) {
+        this.portfolioService = portfolioService;
         this.planService = planService;
         this.workService = workService;
     }
 
-    //계획 조회
+    //계획 목록 조회
     @GetMapping("/plans")
     public ResponseEntity<ResponseDTO<?>> getPlan(Authentication authentication) {
         //plan 테이블에서 현재 로그인한 유저의 계획 정보들 모두 가져오기
@@ -39,7 +42,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            List<Plan> planList = planService.getPlanService(getUserSerial(authentication));
+            List<Plan> planList = planService.getPlanService(portfolioService.getUserSerial(authentication));
 
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공", planList);
@@ -47,6 +50,25 @@ public class ScheduleController {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //계획 상세조회
+    @GetMapping("/plans/{planSerial}")
+    public ResponseEntity<ResponseDTO<?>> getPlanDetail(Authentication authentication, @PathVariable int planSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            Plan plan = planService.getPlanDetailService(portfolioService.getUserSerial(authentication), planSerial);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공", plan);
+        }catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -113,7 +135,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            int userSerial = getUserSerial(authentication);
+            int userSerial = portfolioService.getUserSerial(authentication);
 
             planService.insertPlanService(userSerial, params);
 
@@ -157,7 +179,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            planService.modifyPlanService(getUserSerial(authentication), planSerial, params);
+            planService.modifyPlanService(portfolioService.getUserSerial(authentication), planSerial, params);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 성공!");
@@ -182,7 +204,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            workService.modifyWorkMemoService(getUserSerial(authentication), planSerial,workSerial, params);
+            workService.modifyWorkMemoService(portfolioService.getUserSerial(authentication), planSerial,workSerial, params);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 성공!");
@@ -210,7 +232,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            workService.deleteWorkService(getUserSerial(authentication), planSerial,workSerial);
+            workService.deleteWorkService(portfolioService.getUserSerial(authentication), planSerial,workSerial);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
@@ -238,7 +260,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            planService.deletePlanService(getUserSerial(authentication), planSerial);
+            planService.deletePlanService(portfolioService.getUserSerial(authentication), planSerial);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
@@ -263,12 +285,11 @@ public class ScheduleController {
     @PostMapping("/plans/{planSerial}/works/{workSerial}/review")
     public ResponseEntity<?> createReview(Authentication authentication, @PathVariable int planSerial, @PathVariable int workSerial, @RequestBody Map<String, Object> params) {
         //시공자 댓글은 null로 두기
-
         ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            CustomerReview customerReview = workService.createReviewService(getUserSerial(authentication), planSerial, workSerial, params);
+            CustomerReview customerReview = workService.createReviewService(portfolioService.getUserSerial(authentication), planSerial, workSerial, params);
 
             status= HttpStatus.CREATED;
             responseDTO = new ResponseDTO<>(status.value(), "리뷰 작성 성공!", customerReview);
@@ -289,25 +310,17 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    //as 요청하기
-
-
-
+    //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
     //평면도 가져오기
     //공유 문서에 이미지 넣기
-
-    //계약서 조회하기
-    //계약서 수정하고 수정요청 보내기(수정 요청 테이블이랑 계약서 테이블도 필요함)
+    //공유 문서의 이미지 조회하기
     //영상 다운로드
 
 
 
+    //계약서 조회하기
+    //계약서 수정하고 수정요청 보내기(수정 요청 테이블이랑 계약서 테이블도 필요함)
 
 
-    //연번 가져오기
-    public int getUserSerial(Authentication authentication) {
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        return customUserDetails.getUserSerial();
-    }
 }
 

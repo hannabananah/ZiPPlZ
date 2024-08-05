@@ -30,7 +30,6 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 @EnableMongoAuditing
 @SpringBootApplication
 public class ZipplzBeApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(ZipplzBeApplication.class, args);
 	}
