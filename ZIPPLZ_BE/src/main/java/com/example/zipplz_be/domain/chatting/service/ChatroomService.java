@@ -16,4 +16,6 @@ public interface ChatroomService {
     List<ChatroomListDTO> getChatroomList(int userSerial, String role, Pageable pageable);
 
     List<ChatMessageResponseDTO> getPreviousMessage(int chatroomSerial, int userSerial);
+
+    void deleteChatroom(int chatroomSerial, int userSerial);
 }
