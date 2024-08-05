@@ -35,6 +35,7 @@ export default {
       'zp-radius-bubble': '0.844rem',
       'zp-radius-btn': '0.375rem',
       'zp-radius-full': '9999px',
+      'zp-radius-none': '0px',
     },
     dropShadow: {
       'zp-normal': '0 3px 6px rgba(0, 0, 0, 0.1)',
@@ -65,6 +66,7 @@ export default {
         'Trebuchet MS',
         'sans-serif',
       ],
+      metamorphous: 'Metamorphous',
     },
     extend: {
       screens: {

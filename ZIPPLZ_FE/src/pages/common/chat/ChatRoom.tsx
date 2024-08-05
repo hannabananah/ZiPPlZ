@@ -1,41 +1,43 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useParams } from 'react-router-dom';
 
 import ChatRoomHeader from '@components/chat/ChatRoomHeader';
 import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
 import ToggleChatMenu from '@components/chat/ToggleChatMenu';
-import WebSocketProvider from '@utils/socket/WebSocketProvider';
+import { WebSocketProvider } from '@utils/socket/WebSocketProvider';
 
-export default function ChatRoom() {
+const ChatRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId?: string }>();
-
   const roomIdNumber = roomId ? parseInt(roomId, 10) : NaN;
   const isValidRoomId = !isNaN(roomIdNumber);
-
   const [isMenuVisible, setMenuVisible] = useState(false);
-
+  const userSerial = 1;
   return (
-    <div className="relative flex flex-col max-h-screen min-h-screen overflow-y-auto bg-zp-light-orange">
-      {isValidRoomId && <ChatRoomHeader />}
-      <div className="relative flex flex-col flex-grow overflow-y-auto">
-        {isValidRoomId ? (
-          <>
-            <WebSocketProvider>
-              <div className="flex-grow overflow-y-auto">
-                <Message roomId={roomIdNumber} />
+    <WebSocketProvider>
+      <div className="relative flex flex-col h-screen bg-zp-light-orange">
+        {isValidRoomId && <ChatRoomHeader />}
+        <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
+          {isValidRoomId ? (
+            <>
+              <div className="flex-1 overflow-y-auto">
+                <Message />
               </div>
               <TextInputBox
                 isMenuVisible={isMenuVisible}
                 onMenuToggle={() => setMenuVisible(!isMenuVisible)}
+                userSerial={userSerial}
+                // type={type}
               />
               {isMenuVisible && <ToggleChatMenu />}
-            </WebSocketProvider>
-          </>
-        ) : (
-          <p className="text-red-500">Invalid room ID</p>
-        )}
+            </>
+          ) : (
+            <p className="py-4 text-center bg-gray-300">Invalid room ID</p>
+          )}
+        </div>
       </div>
-    </div>
+    </WebSocketProvider>
   );
-}
+};
+
+export default ChatRoom;

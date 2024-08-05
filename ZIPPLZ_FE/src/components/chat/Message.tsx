@@ -1,41 +1,61 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 
+import { formatTime } from '@utils/formatDateWithTime';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
-interface MessageProps {
-  roomId: number;
-}
+export default function Message() {
+  const context = useContext(WebSocketContext);
+  console.log('context====>', context);
 
-export default function Message({ roomId }: MessageProps) {
-  const ws = useContext(WebSocketContext);
-  const [items, setItems] = useState<string[]>([]);
+  if (!context) return <p>Loading...</p>;
 
-  const addItem = (item: string) => {
-    setItems([...items, item]);
-  };
-
-  useEffect(() => {
-    ws.current.onmessage = (e: MessageEvent) => {
-      const data = JSON.parse(e.data);
-      if (data.roomId === roomId) {
-        addItem(data.chat);
-      }
-    };
-  }, [roomId, ws]);
+  const { messages } = context;
+  // 임시 설정
+  const currUserSerial = 2;
 
   return (
     <ul>
-      {items.map((message, index) => {
-        return (
-          <li
-            key={index}
-            className="flex flex-col w-full max-w-[380px] leading-1.5 py-2.5 px-2 border-zp-main-color bg-zp-white rounded-e-zp-radius-bubble rounded-es-zp-radius-bubble items-center space-x-2 border rtl:space-x-reverse"
+      {messages.map((msg, index) => (
+        <li
+          key={index}
+          className={`flex items-start p-2 ${
+            msg.userSerial === currUserSerial ? 'justify-end' : 'justify-start'
+          }`}
+        >
+          {msg.userSerial !== currUserSerial && (
+            <img
+              className="w-10 mr-3 profile-img"
+              src="https://i.pravatar.cc/50?img=1"
+              alt="프로필 이미지"
+            />
+          )}
+          <div
+            className={`p-4 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 ${
+              msg.userSerial === currUserSerial
+                ? 'text-right rounded-se-zp-radius-none'
+                : 'text-left rounded-ss-zp-radius-none'
+            }`}
           >
-            <p className="text-zp-md py-2.5">{message}</p>
-            <span className="text-zp-2xs text-zp-light-gray">시간</span>
-          </li>
-        );
-      })}
+            <p className="text-left whitespace-pre-wrap text-zp-md">
+              {msg.chatMessageContent}
+            </p>
+            <p
+              className={`text-zp-gray text-zp-2xs break-keep ${
+                msg.userSerial === currUserSerial ? 'text-left' : 'text-right'
+              }`}
+            >
+              {formatTime(msg.createdAt)}
+            </p>
+          </div>
+          {msg.userSerial === currUserSerial && (
+            <img
+              className="w-10 ml-3 border border-zp-light-gray profile-img"
+              src="https://i.pravatar.cc/50?img=1"
+              alt="프로필 이미지"
+            />
+          )}
+        </li>
+      ))}
     </ul>
   );
 }
