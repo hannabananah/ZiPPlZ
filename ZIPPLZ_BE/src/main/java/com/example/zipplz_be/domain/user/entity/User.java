@@ -19,8 +19,10 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_serial")
     private int userSerial;     // 유저 연번
-    @Column(name = "file_serial", nullable=true)
-    private int fileSerial;
+
+    @ManyToOne
+    @JoinColumn(name="file_serial")
+    private File fileSerial;
     private String email;       // 이메일
     private String password;    // 비밀번호
     @Column(name = "user_name")
@@ -40,7 +42,6 @@ public class User {
         this.userName = userName;
         this.birthDate = birthDate;
         this.tel = tel;
-        this.fileSerial = 0;
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
         this.role = "";
     }
@@ -49,7 +50,6 @@ public class User {
     public User(String email, String userName) {
         this.email = email;
         this.userName = userName;
-        this.fileSerial = 0;
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
         this.role = "";
     }
@@ -66,5 +66,14 @@ public class User {
         // java.util.Date를 java.sql.Date로 변환
         Date birthDateSql = new Date(utilDate.getTime());
         this.birthDate = birthDateSql;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userSerial=" + userSerial +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                '}';
     }
 }

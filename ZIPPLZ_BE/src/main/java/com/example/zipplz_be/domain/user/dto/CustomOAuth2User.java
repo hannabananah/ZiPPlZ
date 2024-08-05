@@ -29,7 +29,7 @@ public record CustomOAuth2User(
 
     @Override
     public Map<String, Object> getAttributes() {
-        return Map.of();
+        return attributes;
     }
 
     public int getUserSerial() {
