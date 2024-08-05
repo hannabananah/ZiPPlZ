@@ -5,9 +5,11 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class File {
@@ -21,7 +23,6 @@ public class File {
     private String originalFile;
     @Column(name = "save_file")
     private String saveFile;
-    @OneToOne
-    @JoinColumn(name = "user_serial", referencedColumnName = "user_serial")
-    private User userSerial;
+    @Column(name= "file_name")
+    private String fileName;
 }

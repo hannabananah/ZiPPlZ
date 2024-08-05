@@ -25,11 +25,13 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-websocket' 	// websocket 관련
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis' 	// redis 관련
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE' //S3 관련
 	implementation 'io.openvidu:openvidu-java-client:2.28.0'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

@@ -39,8 +39,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 5. 회원가입 및 로그인
         User user = getOrSaveUser(oAuth2UserInfoRecord);
 
+        String principalName = oAuth2UserInfoRecord.email();
+
         // 6. CustomOAuth2User 반환
-        return new CustomOAuth2User(user, isNewUser, oAuth2UserAttributes, userNameAttributeName);
+        return new CustomOAuth2User(user, isNewUser, oAuth2UserAttributes, principalName);
     }
 
     private User getOrSaveUser(OAuth2UserInfoRecord oAuth2UserInfoRecord) {

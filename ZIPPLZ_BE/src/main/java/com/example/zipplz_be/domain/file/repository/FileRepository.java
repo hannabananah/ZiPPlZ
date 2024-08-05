@@ -3,6 +3,7 @@ package com.example.zipplz_be.domain.file.repository;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.material.dto.MaterialFileDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioFileDTO;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioUserDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -21,4 +22,7 @@ public interface FileRepository extends JpaRepository<File, Integer> {
             "LEFT JOIN File f on f.file_serial = mfr.file_serial " +
             "WHERE material_serial = :material_serial", nativeQuery = true)
     List<MaterialFileDTO> getMaterialImg(@Param("material_serial") int material_serial);
+
+    File findByFileSerial(int fileSerial);
+    File findBySaveFile(String saveFile);
 }

@@ -1,0 +1,293 @@
+package com.example.zipplz_be.domain.schedule.service;
+
+import com.example.zipplz_be.domain.file.entity.File;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
+import com.example.zipplz_be.domain.file.repository.FileRepository;
+import com.example.zipplz_be.domain.model.PlanFileRelation;
+import com.example.zipplz_be.domain.model.repository.PlanFileRelationRepository;
+import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
+import com.example.zipplz_be.domain.schedule.entity.Plan;
+import com.example.zipplz_be.domain.schedule.entity.Work;
+import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.PlanNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
+import com.example.zipplz_be.domain.schedule.exception.WorkException;
+import com.example.zipplz_be.domain.schedule.repository.PlanRepository;
+import com.example.zipplz_be.domain.schedule.repository.WorkRepository;
+import com.example.zipplz_be.domain.model.entity.Field;
+import com.example.zipplz_be.domain.model.repository.FieldRepository;
+import com.example.zipplz_be.domain.user.entity.Customer;
+import com.example.zipplz_be.domain.user.entity.User;
+import com.example.zipplz_be.domain.user.repository.CustomerRepository;
+import com.example.zipplz_be.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import org.springframework.beans.factory.annotation.Value;
+
+@Service
+public class PlanService {
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucketName}")
+    private String bucketName;
+
+    private final PlanRepository planRepository;
+    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
+    private final FieldRepository fieldRepository;
+    private final WorkRepository workRepository;
+    private final FileRepository fileRepository;
+    private final PlanFileRelationRepository planFileRelationRepository;
+
+    PlanService(PlanFileRelationRepository planFileRelationRepository , FileRepository fileRepository,AmazonS3 amazonS3, WorkRepository workRepository, PlanRepository planRepository, CustomerRepository customerRepository, UserRepository userRepository,FieldRepository fieldRepository) {
+        this.planFileRelationRepository = planFileRelationRepository;
+        this.fileRepository = fileRepository;
+        this.amazonS3 = amazonS3;
+        this.workRepository = workRepository;
+        this.planRepository = planRepository;
+        this.customerRepository= customerRepository;
+        this.userRepository = userRepository;
+        this.fieldRepository = fieldRepository;
+    }
+
+    @Transactional
+    public List<Plan> getPlanService(int userSerial) {
+        Customer customer = findUser(userSerial);
+
+        return planRepository.findBycustomerSerial(customer);
+    }
+
+    @Transactional
+    public void insertPlanService(int userSerial, Map<String, Object> params) {
+        Customer customer = findUser(userSerial);
+
+        String planName = (String) params.get("planName");
+
+        if(planName == null) {
+            planName = customer.getNickname() + "의 계획";
+        }
+
+        Plan plan = Plan.builder()
+                .planName(planName)
+                .address((String) params.get("address"))
+                .sharedContents((String) params.get("sharedContents"))
+                .customer(customer)
+                .build();
+
+        planRepository.save(plan);
+
+        //메인 기본 공종들 work에 추가
+        //공종들 불러와서 필드 리스트에 저장
+        List<Field> fieldList = fieldRepository.findAll();
+
+        //리스트 돌면서 각각 필드 id와 이름을 채우며 빈 공종들을 만들자!!
+        for(Field field : fieldList) {
+            if(field.getFieldCode() != 0) {
+                Work work = Work.builder()
+                        .field(field)
+                        .fieldName(field.getFieldName())
+                        .plan(plan).build();
+
+                workRepository.save(work);
+            }
+        }
+    }
+
+    @Transactional
+    public void modifyPlanService(int userSerial, int planSerial, Map<String, Object> params) {
+        System.out.println(userSerial);
+        Customer customer = findUser(userSerial);
+
+        //계획 소유자인지 검사
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        if(plan == null) {
+            throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        }
+        if(plan.getCustomerSerial().getCustomerSerial() != customer.getCustomerSerial()) {
+            throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
+        }
+
+        //주어진 요소 수정(수정되지 않은 부분은 원본으로 들어와야 함!!)
+        plan.setPlanName((String) params.get("planName"));
+        plan.setSharedContents((String) params.get("sharedContents"));
+
+        planRepository.save(plan);
+    }
+
+    @Transactional
+    public void deletePlanService(int userSerial, int planSerial) {
+        Customer customer = findUser(userSerial);
+
+        //계획 소유자인지 검사
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        if(plan == null) {
+            throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        }
+        if(!plan.getCustomerSerial().equals(customer)) {
+            throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
+        }
+
+        //계획의 모든 공종들을 살펴보며, 모두 비어있다면, 그 공종들도 모두 날리고 마지막으로 plan을 삭제한다.
+        List<Work> workList = workRepository.findByPlanSerial(plan);
+
+        for(Work work: workList) {
+            if(work.getWorkerSerial() != null) {
+                throw new WorkException("계약서가 작성된 공종은 파기 이전엔 삭제할 수 없습니다.");
+            }
+        }
+
+        planRepository.delete(plan);
+    }
+
+
+    public Customer findUser(int userSerial) {
+        //현재 로그인한 유저의 계획으로 집주소, 공유내용 포함하여 추가
+        User user = userRepository.findByUserSerial(userSerial);
+
+        Customer customer = customerRepository.findByUserSerial(user);
+
+        //여기서 null이면 고객이 아닌 것
+        if(customer == null) {
+            throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
+        }
+
+        return customer;
+    }
+
+    @Transactional
+    public PlanDetailDTO getPlanDetailService(int userSerial, int planSerial) {
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+
+        User user = userRepository.findByUserSerial(userSerial);
+        Customer customer = customerRepository.findByUserSerial(user);
+        if(plan == null) {
+            throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        }
+        if(!plan.getCustomerSerial().equals(customer)) {
+            throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
+        }
+
+        List<PlanFileRelation> planFileRelationList = planFileRelationRepository.findByPlanSerial(plan);
+
+        List<File> fileList = new ArrayList<>();
+
+        for(PlanFileRelation planFileRelation : planFileRelationList) {
+            fileList.add(planFileRelation.getFileSerial());
+        }
+
+        PlanDetailDTO planDetailDTO = PlanDetailDTO.builder()
+                .plan(plan)
+                .fileList(fileList)
+                .build();
+
+        return planDetailDTO;
+    }
+
+    //이미지 업로드 시리즈
+    @Transactional
+    public File uploadImageService(MultipartFile image, int planSerial) {
+        if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
+            throw new S3Exception("파일이 비었습니다.");
+        }
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+
+        if(plan == null) {
+            throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        }
+
+        String url = this.uploadImage(image);
+        File file = fileRepository.findBySaveFile(url);
+
+        PlanFileRelation planFileRelation = PlanFileRelation.builder()
+                .fileSerial(file)
+                .planSerial(plan)
+                .build();
+
+        planFileRelationRepository.save(planFileRelation);
+        return file;
+    }
+
+    private String uploadImage(MultipartFile image) {
+        this.validateImageFileExtension(image.getOriginalFilename());
+
+        try {
+            return this.uploadToS3(image);
+        }catch(IOException e) {
+            throw new S3Exception("이미지 업로드 중 에러 발생했습니다.");
+        }
+
+    }
+
+    private String uploadToS3(MultipartFile image) throws IOException {
+        String originalFilename = image.getOriginalFilename();
+
+        String extention = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+        //파일명
+        String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename;
+
+        InputStream is = image.getInputStream();
+        byte[] bytes = IOUtils.toByteArray(is);
+
+        ObjectMetadata metadata = new ObjectMetadata(); //metadata 생성
+        metadata.setContentType("image/" + extention);
+        metadata.setContentLength(bytes.length);
+
+        //S3에 요청할 때 사용할 byteInputStream 생성
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        String url = "";
+
+        try {
+            //S3로 putObject 할 때 사용할 요청 객체
+            //생성자 : bucket 이름, 파일 명, byteInputStream, metadata
+            PutObjectRequest putObjectRequest =
+                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead);
+
+            //실제로 S3에 이미지 데이터를 넣는 부분
+            amazonS3.putObject(putObjectRequest);
+
+            url = amazonS3.getUrl(bucketName, s3FileName).toString();
+
+            //file 객체 하나 만들어서 repository로 db에 추가
+            File file = new File();
+            file.setSaveFile(url);
+            file.setFileName(s3FileName);
+            file.setOriginalFile(image.getOriginalFilename());
+
+            fileRepository.save(file);
+        } catch (Exception e){
+            throw new S3Exception("Put Object 도중에 에러 발생");
+        }finally {
+            byteArrayInputStream.close();
+            is.close();
+        }
+
+        return url;
+    }
+
+    private void validateImageFileExtension(String filename) {
+        int lastDotIndex = filename.lastIndexOf(".");
+        if (lastDotIndex == -1) {
+            throw new S3Exception("파일 형식이 존재하지 않습니다.");
+        }
+
+        String extention = filename.substring(lastDotIndex + 1).toLowerCase();
+        List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
+
+        if (!allowedExtentionList.contains(extention)) {
+            throw new S3Exception("유효하지 않은 파일 형식입니다.");
+        }
+
+    }
+}
