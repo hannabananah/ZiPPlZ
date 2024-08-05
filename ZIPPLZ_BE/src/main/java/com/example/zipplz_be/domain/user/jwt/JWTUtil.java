@@ -70,6 +70,14 @@ public class JWTUtil {
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
+    public String updateRole(String token, String newRole) {
+        Claims claims = Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
+        String email = claims.get("email", String.class);
+        int userSerial = claims.get("userSerial", Integer.class);
+
+        return createJwt(email, userSerial, newRole);
+    }
+
     // 토큰에서 email 정보 추출
     private String extractEmailFromJwt(String token) {
         Claims claims = Jwts.parser()

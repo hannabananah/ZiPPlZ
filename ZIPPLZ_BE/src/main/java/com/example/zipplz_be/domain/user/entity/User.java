@@ -67,4 +67,13 @@ public class User {
         Date birthDateSql = new Date(utilDate.getTime());
         this.birthDate = birthDateSql;
     }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "userSerial=" + userSerial +
+                ", email='" + email + '\'' +
+                ", role='" + role + '\'' +
+                '}';
+    }
 }
