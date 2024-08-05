@@ -8,13 +8,15 @@ import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
 import Community from '@pages/common/community/HousePostList';
 import Home from '@pages/common/home/Home';
-import MyBoardAndScrapList from '@pages/common/mypage/MyBoardAndScrapList';
+import MyBoardList from '@pages/common/mypage/MyBoardList';
 import MyInformationModify from '@pages/common/mypage/MyInformationModify';
 import MyPage from '@pages/common/mypage/MyPage';
 import MyPasswordModify from '@pages/common/mypage/MyPasswordModify';
+import MyScrapList from '@pages/common/mypage/MyScrapList';
 import Policy from '@pages/common/mypage/Policy';
 import Resign from '@pages/common/mypage/Resign';
 import Version from '@pages/common/mypage/Version';
+import WishWorkerList from '@pages/common/mypage/WishWorkerList';
 import BeforeResign from '@pages/common/mypage/resignpage/BeforeResign';
 import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
@@ -51,10 +53,7 @@ export default function App() {
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
         <Route path="404" element={<Custom404 />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
-        <Route
-          path="findworkerdetailcreate"
-          element={<FindWorkerDetailCreate />}
-        />
+        <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
         <Route path="workerinfodatedetail" element={<WorkerInfoDateDetail />} />
         <Route
           path="workerinfolocationdetail"
@@ -66,15 +65,20 @@ export default function App() {
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
 
         {/* 마이페이지 */}
-        <Route path="myboardandscraplist" element={<MyBoardAndScrapList />} />
-        <Route path="myinformationmodify" element={<MyInformationModify />} />
-        <Route path="mypasswordModify" element={<MyPasswordModify />} />
-        <Route path="policy" element={<Policy />} />
-        <Route path="resign" element={<Resign />} />
-        <Route path="version" element={<Version />} />
-        <Route path="resigncomplete" element={<ResignComplete />} />
-        <Route path="beforeresign" element={<BeforeResign />} />
-        <Route path="dontusezipplz" element={<DontUseZIPPLZ />} />
+        <Route path="mypage/myboardlist" element={<MyBoardList />} />
+        <Route path="mypage/myscraplist" element={<MyScrapList />} />
+        <Route
+          path="mypage/myinformationmodify"
+          element={<MyInformationModify />}
+        />
+        <Route path="mypage/mypasswordmodify" element={<MyPasswordModify />} />
+        <Route path="mypage/policy" element={<Policy />} />
+        <Route path="mypage/resign" element={<Resign />} />
+        <Route path="mypage/version" element={<Version />} />
+        <Route path="mypage/resigncomplete" element={<ResignComplete />} />
+        <Route path="mypage/beforeresign" element={<BeforeResign />} />
+        <Route path="mypage/dontusezipplz" element={<DontUseZIPPLZ />} />
+        <Route path="mypage/wishworkerlist" element={<WishWorkerList />} />
       </Route>
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
       <Route path="/member/login" element={<Login />} />

@@ -19,14 +19,14 @@ export default function Resign() {
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-        <div className="w-full max-w-3xl">
+        <div className="w-full">
           {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
           <div className="flex items-center justify-between w-full relative">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
-                style={{ width: '27px', height: '20px' }} // 아이콘 크기 조정
+                size={20} // 아이콘 크기 조정
               />
             </div>
             <div className="">건너뛰기</div>

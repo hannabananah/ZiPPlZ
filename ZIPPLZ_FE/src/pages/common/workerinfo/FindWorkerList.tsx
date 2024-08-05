@@ -53,7 +53,7 @@ export default function FindWorkerList() {
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-        <div className="w-full max-w-3xl">
+        <div className="w-full">
           {/* 드롭다운 버튼 */}
           <div className="relative flex justify-center items-center">
             <div

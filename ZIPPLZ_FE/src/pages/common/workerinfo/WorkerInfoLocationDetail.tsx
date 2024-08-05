@@ -141,7 +141,7 @@ export default function WorkerInfoLocationDetail() {
 
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-      <div className="w-full max-w-3xl">
+      <div className="w-full">
         <div className="flex justify-between items-center w-full mb-4">
           <div className="ml-5 flex-1 text-center font-bold">
             작업 지역 선택

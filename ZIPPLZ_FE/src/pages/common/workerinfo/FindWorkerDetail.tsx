@@ -29,7 +29,7 @@ const FindWorkerDetail: React.FC = () => {
 
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-      <div className="w-full max-w-3xl">
+      <div className="w-full">
         {/* 나가기 버튼, 구인 글쓰기 text */}
         <div className="w-full flex items-center justify-between relative">
           <div className="flex items-center">
