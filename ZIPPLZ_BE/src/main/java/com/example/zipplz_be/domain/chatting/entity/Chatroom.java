@@ -32,8 +32,9 @@ public class Chatroom {
     private String sessionId;
 
     @Builder
-    Chatroom(User cuser, User wuser) {
+    Chatroom(User cuser, User wuser, String chatroomName) {
         this.cuser = cuser;
         this.wuser = wuser;
+        this.chatroomName = chatroomName;
     }
 }

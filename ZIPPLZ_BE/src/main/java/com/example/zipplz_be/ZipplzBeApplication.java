@@ -6,6 +6,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
 
@@ -26,6 +27,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 		excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "com\\.example\\.zipplz_be\\.domain\\.chatting\\.repository\\.mongodb\\..*")
 )
 @EnableJpaAuditing
+@EnableMongoAuditing
 @SpringBootApplication
 public class ZipplzBeApplication {
 
