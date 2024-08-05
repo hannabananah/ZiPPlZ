@@ -6,6 +6,7 @@ import com.example.zipplz_be.domain.chatting.entity.Chatroom;
 import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
+import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -24,7 +25,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChatMessageRepository chatMessageRepository;
     private final RedisPublisher redisPublisher;
     private final ChannelTopic channelTopic;
-    private final ChatroomService chatroomService;
+    private final RedisRepository redisRepository;
 
     @Override
     public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
@@ -40,11 +41,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         ChatMessage chatMessage = ChatMessage.builder()
                 .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
                 .userSerial(userSerial)
+                .userName(userRepository.findByUserSerial(userSerial).getUserName())
                 .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
+                .isFile(chatMessageRequestDTO.getIsFile())
                 .build();
 
         chatMessageRepository.save(chatMessage);
-
+        chatMessageRequestDTO.setUserSerial(userSerial);
         chatMessageRequestDTO.setUserName(user.getUserName());
 
         int otherUserSerial;
@@ -55,9 +58,25 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         }
         chatMessageRequestDTO.setOtherUserSerial(otherUserSerial);
 
-        redisPublisher.publish(channelTopic, chatMessageRequestDTO);
+        if (chatMessageRequestDTO.getType() == ChatMessageRequestDTO.MessageType.TALK) {
+            redisPublisher.publish(channelTopic, chatMessageRequestDTO);
+            updateUnReadMessageCount(chatMessageRequestDTO);
+        }
     }
 
+    // 안읽은 메세지 업데이트
+    private void updateUnReadMessageCount(ChatMessageRequestDTO chatMessageRequestDTO) {
+        int otherUserSerial = chatMessageRequestDTO.getOtherUserSerial();
+        String chatroomSerial = String.valueOf(chatMessageRequestDTO.getChatroomSerial());
+        if (!redisRepository.existChatRoomUserInfo(otherUserSerial) || !redisRepository.getUserEnterRoomId(otherUserSerial).equals(chatMessageRequestDTO.getChatroomSerial())) {
+            redisRepository.addChatRoomMessageCount(chatroomSerial, otherUserSerial);
+            int unReadMessageCount = redisRepository.getChatRoomMessageCount(chatroomSerial, otherUserSerial);
+            ChatMessageRequestDTO messageRequest = new ChatMessageRequestDTO(chatMessageRequestDTO, unReadMessageCount);
+            redisPublisher.publish(channelTopic, messageRequest);
+        }
+    }
+
+    // 채팅방 입장
     @Override
     public void enter(int userSerial, int chatroomSerial) {
         if (!chatroomRepository.existsByChatroomSerial(chatroomSerial)) {
@@ -65,18 +84,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         }
         Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
 
-        // 채팅방에 들어온 정보를 Redis에 저장 추가해야 함!
-    }
-
-    @Override
-    public void saveMessage(ChatMessageRequestDTO chatMessageRequestDTO) {
-        System.out.println(chatMessageRequestDTO.toString());
-        ChatMessage msg = ChatMessage.builder()
-                .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
-                .userSerial(chatMessageRequestDTO.getUserSerial())
-                .chatMessageContent(chatMessageRequestDTO.getChatMessageContent()).build();
-        ChatMessage result = chatMessageRepository.insert(msg);
-        result.toString();
-        System.out.println(result);
+        // 채팅방에 들어온 정보를 Redis에 저장
+        redisRepository.userEnterRoomInfo(userSerial, chatroomSerial);
+        redisRepository.initChatRoomMessageInfo(String.valueOf(chatroom.getChatroomSerial()), userSerial);
     }
 }

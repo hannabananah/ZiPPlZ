@@ -49,18 +49,11 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         int userSerial = user.getUserSerial();
         String role = user.getRole();
 
-        System.out.println("email when success :" + email);
-
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//        GrantedAuthority auth = iterator.next();
-//
-//        String role = auth.getAuthority();
+        System.out.println("succesfulAuthentication => " + user.toString());
 
         String token = jwtUtil.createJwt(email, userSerial, role);
 
         response.addHeader("Authorization", "Bearer " + token);
-//        response.sendRedirect("http://localhost:5173/");
     }
 
     @Override

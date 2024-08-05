@@ -1,8 +1,9 @@
 interface Props {
   className?: string;
-  placeholder: string;
+  placeholder?: string;
   type: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel';
   inputType:
+    | 'none'
     | 'login'
     | 'signup'
     | 'normal'
@@ -74,6 +75,9 @@ export default function Input({
       break;
     case 'error':
       typeStyle = 'border-b border-zp-red focus:outline-none';
+      break;
+    case 'none':
+      typeStyle = 'focus:outline-none';
       break;
   }
 

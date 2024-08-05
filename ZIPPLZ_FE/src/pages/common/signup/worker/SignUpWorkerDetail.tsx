@@ -4,7 +4,8 @@ import Modal from 'react-modal';
 import Button from '@/components/common/Button';
 import { Worker, checkBusiness } from '@apis/member/MemberApi';
 import Input from '@components/common/Input';
-import RegistrationInput from '@components/signup/RegistrationInput';
+
+// import RegistrationInput from '@components/signup/RegistrationInput';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
@@ -48,7 +49,7 @@ export default function SignupWorkerDetail({
   setNext,
   setLink,
   setWorker,
-  worker,
+  // worker,
   phrase,
 }: Props) {
   const [isOk, setIsOk] = useState<boolean>(false);
@@ -169,7 +170,7 @@ export default function SignupWorkerDetail({
           인증 결과
         </p>
         <div className="w-full flex flex-col mt-[4rem] items-center gap-6">
-          <p className="text-zp-xl font-bold text-center">
+          <p className="font-bold text-center text-zp-xl">
             {isOk ? '인증이 완료되었습니다.' : '번호가 올바르지 않습니다.'}
           </p>
           <Button

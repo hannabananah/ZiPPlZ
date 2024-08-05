@@ -30,11 +30,11 @@ import WorkerInfoList from '@pages/common/workerinfo/WorkerInfoList';
 import WorkerInfoLocationDetail from '@pages/common/workerinfo/WorkerInfoLocationDetail';
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
-// 포트폴리오+시공자 상세보기
-import OverView from '@pages/worker/tabs/OverView';
-import Review from '@pages/worker/tabs/Review';
-import WorkerSchedule from '@pages/worker/tabs/WorkerSchedule';
 
+// 포트폴리오+시공자 상세보기
+// import OverView from '@pages/worker/tabs/OverView';
+// import Review from '@pages/worker/tabs/Review';
+// import WorkerSchedule from '@pages/worker/tabs/WorkerSchedule';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
 import SignUp from './pages/common/signup/SignUp';

@@ -60,7 +60,6 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
                         .anyRequest().permitAll());
-
         // OAuth2 설정
         http.oauth2Login(oauth ->
                 oauth.userInfoEndpoint(userInfo -> userInfo.userService(oAuth2UserService))
@@ -71,17 +70,17 @@ public class SecurityConfig {
         http.addFilterAt(new JWTFilter(jwtUtil), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
-        // CORS 설정
-        http.cors(cors -> cors.configurationSource(request -> {
-            CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-            configuration.setAllowedMethods(Collections.singletonList("*"));
-            configuration.setAllowCredentials(true);
-            configuration.setAllowedHeaders(Collections.singletonList("*"));
-            configuration.setMaxAge(3600L);
-            configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
-            return configuration;
-        }));
+//        // CORS 설정
+//        http.cors(cors -> cors.configurationSource(request -> {
+//            CorsConfiguration configuration = new CorsConfiguration();
+//            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+//            configuration.setAllowedMethods(Collections.singletonList("*"));
+//            configuration.setAllowCredentials(true);
+//            configuration.setAllowedHeaders(Collections.singletonList("*"));
+//            configuration.setMaxAge(3600L);
+//            configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
+//            return configuration;
+//        }));
 
         return http.build();
     }
