@@ -25,16 +25,24 @@ public class ChatMessage extends BaseTimeEntity {
     @JsonProperty("user_serial")
     private int userSerial;
 
+    @JsonProperty("user_name")
+    private String userName;
+
     @JsonProperty("chat_message_content")
     private String chatMessageContent;
+
+    @JsonProperty("is_file")
+    private boolean isFile;
 
     // 시간은 BaseTimeEntity에서 자동으로 컬럼 생성됨
 
     @Builder
-    public ChatMessage(int chatroomSerial, int userSerial, String chatMessageContent) {
+    public ChatMessage(int chatroomSerial, int userSerial, String userName, String chatMessageContent, boolean isFile) {
         this.chatroomSerial = chatroomSerial;
         this.userSerial = userSerial;
+        this.userName = userName;
         this.chatMessageContent = chatMessageContent;
+        this.isFile = isFile;
     }
 
     @Override
@@ -43,7 +51,9 @@ public class ChatMessage extends BaseTimeEntity {
                 "id='" + id + '\'' +
                 ", chatroomSerial=" + chatroomSerial +
                 ", userSerial=" + userSerial +
+                ", userName='" + userName + '\'' +
                 ", chatMessageContent='" + chatMessageContent + '\'' +
+                ", isFile=" + isFile +
                 '}';
     }
 }

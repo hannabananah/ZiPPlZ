@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.chatting.dto;
 
+import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,5 +27,13 @@ public class ChatMessageResponseDTO {
         this.chatMessageContent = request.getChatMessageContent();
         this.isFile = request.getIsFile();
         this.createdAt = LocalDateTime.now();
+    }
+
+    public ChatMessageResponseDTO(ChatMessage chatMessage) {
+        this.userSerial = chatMessage.getUserSerial();
+        this.userName = chatMessage.getUserName();
+        this.chatMessageContent = chatMessage.getChatMessageContent();
+        this.createdAt = chatMessage.getCreatedAt();
+        this.isFile = chatMessage.isFile();
     }
 }

@@ -1,12 +1,24 @@
 package com.example.zipplz_be.domain.chatting.dto;
 
-import java.sql.Timestamp;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
+@Getter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ChatroomListDTO {
-    private int chatroomSerial;
     private String chatroomName;
+    private String chatroomSerial;
     private String lastMessage;
 
-    private Timestamp chatroomDate;
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+    private String dayBefore;
     private int unreadCount;
 }
