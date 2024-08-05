@@ -53,7 +53,8 @@ export default function ChatRoomHeader() {
             <span>뱃지</span>
           </div>
           <div className="flex gap-2 text-sm text-zp-gray">
-            <span>지역</span> |<span>{selectedChatRoom.temp}</span>
+            <span>{selectedChatRoom.chatroom_name}</span> |
+            <span>{selectedChatRoom.temp}</span>
           </div>
         </div>
         <div className="relative flex gap-3">

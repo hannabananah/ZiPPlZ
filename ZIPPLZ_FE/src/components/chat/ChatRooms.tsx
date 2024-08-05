@@ -7,19 +7,73 @@ import Input from '@components/common/Input';
 import ModalComponent from '@components/common/Modal';
 import { useChatStore } from '@stores/chatStore';
 import { useModalActions } from '@stores/modalStore';
+import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
+const mockChatRooms = [
+  {
+    chatroom_serial: 1,
+    name: 'hansssssssssnah',
+    chatroom_name: 'John DoeDoeDoeDoeDoDoeDoee',
+    lastMessage: 'Hello! How are you?',
+    createdAt: '2024-08-05 22:00:39',
+    unreadCount: 3,
+    imageUrl: 'https://i.pravatar.cc/50?img=1',
+    temp: '36.5℃',
+  },
+  {
+    chatroom_serial: 2,
+    name: 'hannah2',
+    chatroom_name: 'Jane Smith',
+    lastMessage: 'Are we still on for tomorrow?',
+    createdAt: '2024-08-05 23:00:39',
+    unreadCount: 0,
+    imageUrl: 'https://i.pravatar.cc/50?img=2',
+    temp: '80℃',
+  },
+  {
+    chatroom_serial: 3,
+    name: 'hannah3',
+    chatroom_name: 'Alice Johnson',
+    lastMessage: 'Great job on the project!',
+    createdAt: '2024-08-05 11:00:39',
+    unreadCount: 1,
+    imageUrl: 'https://i.pravatar.cc/50?img=3',
+    temp: '165℃',
+  },
+  {
+    chatroom_serial: 4,
+    name: 'hannah4',
+    chatroom_name: 'Bob Brown',
+    lastMessage: 'Can we reschssssssssssedule our meeting?',
+    createdAt: '2024-08-05 11:00:39',
+    unreadCount: 5,
+    imageUrl: 'https://i.pravatar.cc/50?img=4',
+    temp: '6.5℃',
+  },
+  {
+    chatroom_serial: 5,
+    name: 'hannah5',
+    chatroom_name: 'Charlie Green',
+    lastMessage: 'See you soon!',
+    createdAt: '2024-08-05 11:00:39',
+    unreadCount: 2,
+    imageUrl: 'https://i.pravatar.cc/50?img=5',
+    temp: '15℃',
+  },
+];
+
 interface ChatRoom {
-  id: number;
+  chatroom_serial: number;
   name: string;
+  chatroom_name: string;
   message: string;
-  temp: string;
+  time: string;
   unread: number;
   imageUrl: string;
-  chatroom_serial: number;
+  temp: string;
   user_serial: number;
   session_id: string;
-  chatroom_name: string;
 }
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
@@ -43,20 +97,18 @@ export default function ChatRooms() {
             Authorization: `Bearer ${token}`,
           },
         });
-        const fetchedChatRooms: ChatRoom[] = response.data.data.map(
-          (room: any) => ({
-            id: parseInt(room.chatroom_serial),
-            name: room.chatroom_name,
-            message: room.lastMessage,
-            temp: '36.5℃',
-            unread: room.unreadCount,
-            imageUrl: 'https://i.pravatar.cc/50?img=1',
-            chatroom_serial: parseInt(room.chatroom_serial),
-            user_serial: 1,
-            session_id: 'session1',
-            chatroom_name: room.chatroom_name,
-          })
-        );
+        const fetchedChatRooms: ChatRoom[] = mockChatRooms.map((room: any) => ({
+          name: room.name,
+          message: room.lastMessage,
+          temp: room.temp,
+          unread: room.unreadCount,
+          imageUrl: 'https://i.pravatar.cc/50?img=1',
+          chatroom_serial: parseInt(room.chatroom_serial),
+          chatroom_name: room.chatroom_name,
+          time: room.createdAt,
+          user_serial: 1,
+          session_id: 'monkey',
+        }));
 
         setChatRooms(fetchedChatRooms);
       } catch (error) {
@@ -70,7 +122,7 @@ export default function ChatRooms() {
   const handleRoomClick = (room: ChatRoom) => {
     setSelectedChatRoom(room);
     closeModal('chatRooms');
-    navigate(`/chatrooms/${room.id}`);
+    navigate(`/chatrooms/${room.chatroom_serial}`);
   };
 
   const handleClearInput = () => {
@@ -122,10 +174,10 @@ export default function ChatRooms() {
           </button>
         </div>
       </div>
-      <ul className="grid w-full px-8 gap-x-5 gap-y-4 md:grid-cols-2 sm:grid-cols-1">
+      <ul className="grid w-full grid-cols-2 px-8 gap-x-5 gap-y-4 max-[460px]:grid-cols-1">
         {chatRooms.map((room) => (
           <li
-            key={room.id}
+            key={room.chatroom_serial}
             className="flex flex-col items-center p-2.5 bg-zp-light-orange rounded-zp-radius-big drop-shadow-zp-normal cursor-pointer"
             onClick={() => handleRoomClick(room)}
           >
@@ -133,7 +185,7 @@ export default function ChatRooms() {
               className="self-end rounded-zp-radius-full"
               onClick={(e) => {
                 e.stopPropagation();
-                handleDeleteChatroom(room.id);
+                handleDeleteChatroom(room.chatroom_serial);
               }}
             >
               <IoIosClose size={20} />
@@ -151,23 +203,25 @@ export default function ChatRooms() {
                   </span>
                 )}
               </div>
-              <div className="flex flex-col items-center justify-center flex-grow gap-1 basis-3/5">
-                <div className="flex items-center gap-1">
-                  <span className="font-semibold break-keep text-zp-sm">
+              <div className="flex flex-col items-center justify-between flex-grow gap-1 basis-3/5 max-w-36">
+                <div className="flex items-center justify-start w-11/12 gap-1">
+                  <span className="font-semibold truncate max-w-24 break-keep text-zp-sm">
                     {room.name}
                   </span>
                   <Badge />
                 </div>
-                <div className="flex gap-2 text-sm text-zp-light-gray text-zp-3xs">
-                  <span className="text-zp-gray break-keep">분야</span> |
-                  <span className="text-zp-gray break-keep">{room.temp}</span>
+                <div className="flex w-full gap-2 text-zp-light-gray text-zp-3xs">
+                  <span className="truncate text-zp-gray break-keep">
+                    {room.chatroom_name}
+                  </span>{' '}
+                  |<span className="text-zp-gray break-keep">{room.temp}</span>
                 </div>
               </div>
             </div>
-            <div className="mt-2 flex w-full max-w-48 leading-1.5 py-2.5 px-2 border-zp-main-color border bg-zp-white rounded-e-zp-radius-bubble rounded-es-zp-radius-bubble items-center space-x-2 rtl:space-x-reverse">
-              <p className="text-zp-2xs line-clamp-2">{room.message}</p>
-              <span className="self-end break-keep text-zp-2xs text-zp-light-gray">
-                시간
+            <div className="mt-2 flex w-full  leading-1.5 py-2.5 px-3 border-zp-main-color border bg-zp-white rounded-e-zp-radius-bubble rounded-es-zp-radius-bubble items-center space-x-2 rtl:space-x-reverse justify-between">
+              <p className="truncate text-zp-2xs basis-9.5">{room.message}</p>
+              <span className="self-end break-keep text-zp-3xs text-zp-light-gray">
+                {formatTime(room.time)}
               </span>
             </div>
           </li>
