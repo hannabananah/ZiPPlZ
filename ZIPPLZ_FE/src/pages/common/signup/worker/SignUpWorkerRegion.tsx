@@ -22,11 +22,13 @@ interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;
   setLink: React.Dispatch<React.SetStateAction<string>>;
   setWorker: React.Dispatch<React.SetStateAction<Worker>>;
+  phrase: string;
 }
 export default function SignUpWorkerRegion({
   setNext,
   setLink,
   setWorker,
+  phrase,
 }: Props) {
   const [sidoList, setSidoList] = useState<Sido[]>([]);
   const [guguns, setGuguns] = useState<Gugun[]>([]);
@@ -89,7 +91,8 @@ export default function SignUpWorkerRegion({
     } else {
       setIsFull(false);
     }
-    setLink('/member/join/worker/3/skills');
+    if (phrase === 'region') setLink('/member/join/worker/3/skills');
+    else setLink('/member/join/worker/3/extraskills');
     setWorker((prev: Worker) => ({
       ...prev,
       locationList: selectedLocation,

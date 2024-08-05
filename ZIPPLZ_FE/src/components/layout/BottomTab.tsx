@@ -23,7 +23,7 @@ const tabItems = [
     role: ['user', 'worker'],
   },
   {
-    path: '/schedule',
+    path: '/schedule/1',
     icon: <FaRegCalendarCheck size={30} />,
     label: '시공일정',
     role: 'user',

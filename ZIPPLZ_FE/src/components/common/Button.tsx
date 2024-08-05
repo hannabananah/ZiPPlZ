@@ -1,13 +1,17 @@
+import React from 'react';
+
 interface Props {
+  className?: string;
   type?: 'button' | 'submit' | 'reset';
-  children: string;
+  children: string | React.ReactNode;
   buttonType: 'normal' | 'light' | 'second' | 'primary';
   width?: number | string;
-  height: number | string;
+  height?: number | string;
   fontSize: string;
   radius: string;
   onClick?: () => void;
   disabled?: boolean;
+  fontFamily?: string;
 }
 const fontSizeClasses: Record<Props['fontSize'], string> = {
   '3xl': 'text-zp-3xl',
@@ -36,6 +40,7 @@ export default function Button({
   radius,
   disabled,
   onClick,
+  fontFamily,
 }: Props) {
   const baseStyles = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} ${
     disabled ? 'cursor-not-allowed' : ''
@@ -63,7 +68,7 @@ export default function Button({
   return (
     <button
       type={type}
-      className={`${baseStyles} ${typeStyles} ${widthClass} ${heightClass}`}
+      className={`${baseStyles} ${typeStyles} ${widthClass} ${heightClass} font-${fontFamily}`}
       style={{
         width: width === 'full' ? '100%' : widthStyle,
         height: height === 'full' ? '100%' : heightStyle,

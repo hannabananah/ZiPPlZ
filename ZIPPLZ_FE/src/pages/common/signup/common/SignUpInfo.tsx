@@ -51,7 +51,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
 
   function validateInfo() {
     if (
-      name.length >= 3 &&
+      name.length >= 2 &&
       validateEmail(email) &&
       validatePassword(password) &&
       validateCheckPassword(password, checkPassword) &&
