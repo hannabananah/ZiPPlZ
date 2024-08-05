@@ -38,7 +38,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 2-1. 만약 아직 회원가입을 하지 않은 유저라면
         if (isNewUser) {
             String token = jwtUtil.createJwt(email, userSerial, "");
-//            response.addHeader("Authorization", "Bearer " + token);
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
 //            emailCookie.setSecure(true); // HTTPS 환경에서만 쿠키가 전송

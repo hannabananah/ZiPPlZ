@@ -10,5 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateChatroomDTO {
+    private String field;
     private int anotherUserSerial;
 }

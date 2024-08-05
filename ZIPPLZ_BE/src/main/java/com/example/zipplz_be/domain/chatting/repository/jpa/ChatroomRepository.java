@@ -2,6 +2,8 @@ package com.example.zipplz_be.domain.chatting.repository.jpa;
 
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
 import com.example.zipplz_be.domain.user.entity.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -20,7 +22,7 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Integer> {
 
     Chatroom findByCuserAndWuser(User cuser, User wuser);
 
-    List<Chatroom> findAllByCuser(User cuser);
+    Page<Chatroom> findAllByCuser(User cuser, Pageable pageable);
 
-    List<Chatroom> findAllByWuser(User wuser);
+    Page<Chatroom> findAllByWuser(User wuser, Pageable pageable);
 }
