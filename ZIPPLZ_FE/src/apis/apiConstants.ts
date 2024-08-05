@@ -1,4 +1,6 @@
-export const BASE_URL: string = import.meta.env.VITE_APP_BASE_URL;
+export const BASE_URL: string = `http://localhost:5000/`;
+// import.meta.env.BASE_URL
+// 주소 비동기 문제 해결
 
 export const END_POINT = {
   //로그인 회원가입
@@ -15,6 +17,7 @@ export const END_POINT = {
   WORK: (planSerial: number) => `schedule/plans/${planSerial}/works`,
   WORK_SERIAL: (planSerial: number, workSerial: number) =>
     `schedule/plans/${planSerial}/works/${workSerial}`,
+  PORTFOLIO: 'workerlist/portfolios',
 } as const;
 
 export const HTTP_STATUS_CODE = {

@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.model.entity;
 
-import com.example.zipplz_be.domain.user.entity.Worker;
+
+import com.example.zipplz_be.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,7 +18,7 @@ public class Local {
     private int localSerial;
     @ManyToOne
     @JoinColumn(name="user_serial")
-    private Worker userSerial;
+    private User userSerial;
     @Column(name="sido_code")
     private int sidoCode;
     @Column(name="gugun_code")

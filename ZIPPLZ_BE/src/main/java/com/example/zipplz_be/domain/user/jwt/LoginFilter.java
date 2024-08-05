@@ -10,11 +10,9 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.io.IOException;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
@@ -42,24 +40,18 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
+    public void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
         String email = customUserDetails.getUsername();
         User user = userRepository.findByEmail(email);
         int userSerial = user.getUserSerial();
-//        String role = user.getRole();
+        String role = user.getRole();
 
-        System.out.println("email when success :" + email);
+        System.out.println("succesfulAuthentication => " + user.toString());
 
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//        GrantedAuthority auth = iterator.next();
-//
-//        String role = auth.getAuthority();
-
-        String token = jwtUtil.createJwt(email, userSerial);
+        String token = jwtUtil.createJwt(email, userSerial, role);
 
         response.addHeader("Authorization", "Bearer " + token);
     }

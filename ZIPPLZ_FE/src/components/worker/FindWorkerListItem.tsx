@@ -1,37 +1,45 @@
+// 워커찾기-전문 시공자 구하기 페이지의 게시물 컴포넌트
 import { CgProfile } from 'react-icons/cg';
-import { MdElectricalServices } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { FaRegCalendarAlt } from 'react-icons/fa';
+import { FaMapMarkerAlt } from 'react-icons/fa';
 
 export default function FindWorkerListItem() {
-  const navigate = useNavigate();
   return (
-    <div
-      className="w-[170px] h-[220px] p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center"
-      onClick={() => navigate('/OverView')}
-    >
-      {/* 사진 파일 */}
-      <div className="w-[170px] h-[93px] flex items-center justify-center">
-        <CgProfile size={93} />
+    <>
+      <div className="w-full rounded-zp-radius-big h-32 shadow-lg flex items-center">
+        <div className="p-2 flex space-x-4">
+          {/* 첫 번째 요소 */}
+          <div className="flex justify-start flex-col border-r pr-4">
+            <div className="text-zp-xs font-bold">
+              깔끔하고 하자 없는 장판 시공 해주실분 구합니다.
+            </div>
+            <div className="text-zp-2xs text-zp-gray">
+              모던하면서도 너무 밋밋하지 않은 디자인의 장판으로 바닥을 한번 싹다
+              바꿔볼까하는데 잘 해주시는 분 찾고 있습니다. 시공쪽을 잘 몰라서
+              친절하게 알려주실 분 계신가요?
+            </div>
+          </div>
+
+          {/* 세로선 */}
+          {/* <div className="border-r border-gray-300 h-full"></div> */}
+
+          {/* 두 번째 요소 */}
+          <div className="flex flex-col space-y-3">
+            <div className="flex items-center space-x-2">
+              <CgProfile size={14} />
+              <div className="text-zp-2xs">조명조랭이떡</div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <FaRegCalendarAlt size={14} />
+              <div className="text-zp-2xs">07.21~07.23</div>
+            </div>
+            <div className="flex items-center space-x-2">
+              <FaMapMarkerAlt size={14} />
+              <div className="w-20 text-zp-2xs">서울 동작구</div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div className="flex flex-col items-start px-2">
-        {/* 이름 + 나이 + 공종 아이콘 */}
-        <div className="flex items-center space-x-2 mb-2">
-          <div className="text-left font-bold text-zp-sm">이가은</div>
-          <div className="text-zp-2xs text-zp-gray">1999년생</div>
-          <MdElectricalServices />
-        </div>
-        {/* 온도 */}
-        <div className="text-zp-2xs">36.5°C</div>
-        {/* 지역 */}
-        <div className="text-zp-2xs  mb-2">
-          서울시 강남구, 서울시 서초구, 제주 서귀포시, 경기 포천시, 전북 익산시
-        </div>
-        {/* 공종 + 경력 */}
-        <div className="space-x-2">
-          <span className="text-zp-2xs font-bold text-left">전기</span>
-          <span className="text-zp-2xs">경력 3년</span>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
