@@ -43,6 +43,15 @@ const FindWorkerDetail: React.FC = () => {
           </div>
         </div>
 
+        {/* 사진 */}
+        <div className="mt-4 flex justify-center">
+          <img
+            src="https://via.placeholder.com/600x400"
+            alt="placeholder"
+            className="rounded-lg shadow-md"
+          />
+        </div>
+
         {/* 글 제목 */}
         <div className="pt-6 text-zp-xl font-bold">
           깔끔하고 하자 없는 장판 시공 해주실분 구합니다.
@@ -51,9 +60,10 @@ const FindWorkerDetail: React.FC = () => {
         {/* 글쓴이 프로필 사진, 닉네임, 주소 */}
         <div className="pt-6 pb-2 flex items-center space-x-2">
           <div>
+            {/* API 연동 후 사용자 프로필 사진으로 변경 필요 */}
             <CgProfile />
           </div>
-          <div className="text-zp-xs font-bold">눈누난나</div>
+          <div className="text-zp-xs font-bold">눈누난냐</div>
         </div>
 
         <div className="rounded-zp-radius-big border-zp-main-color bg-zp-white p-4 border border-gray-300 rounded-lg">

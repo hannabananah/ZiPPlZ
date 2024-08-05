@@ -17,13 +17,13 @@ type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function FindWorkerList() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+  const [selectedValue, setSelectedValue] = useState<SortOption>('정렬');
   const [inputValue, setInputValue] = useState<string>('');
 
   const navigate = useNavigate();
 
   const handleWritePost = () => {
-    navigate('/FindWorkerDetailCreate'); // FindWorkerDetail 페이지로 이동
+    navigate('/findworker/write'); // FindWorkerDetail 페이지로 이동
   };
 
   const toggleDropdown = () => {
@@ -52,7 +52,7 @@ export default function FindWorkerList() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+      <div className="flex justify-center items-start min-h-screen p-6">
         <div className="w-full">
           {/* 드롭다운 버튼 */}
           <div className="relative flex justify-center items-center">
@@ -87,7 +87,6 @@ export default function FindWorkerList() {
               </div>
             )}
           </div>
-
           {/* 위치 및 날짜 입력 */}
           <div className="flex justify-center space-x-4 my-4">
             <div className="relative flex items-center space-x-2">
@@ -98,7 +97,7 @@ export default function FindWorkerList() {
               <div>
                 <Input
                   placeholder="인천 계양구, 인천 부평구 외 2개"
-                  inputType="search"
+                  inputType="signup"
                   type="search"
                   width="full"
                   height={2.5}
@@ -118,7 +117,7 @@ export default function FindWorkerList() {
               <div>
                 <Input
                   placeholder="시공 날짜 선택"
-                  inputType="search"
+                  inputType="signup"
                   type="search"
                   width="full"
                   height={2.5}
@@ -131,27 +130,23 @@ export default function FindWorkerList() {
               </div>
             </div>
           </div>
-
           {/* 정렬 버튼 */}
-          <div className="relative flex justify-end">
-            <FaSortAmountDown />
-            <div>
-              <Selectbar
-                backgroundColor="none"
-                fontColor="black"
-                options={options}
-                selectedValue={selectedValue}
-                setSelectedValue={handleSortSelect}
-                width={6}
-                height={2.5}
-                fontSize="xs"
-                radius="btn"
-                border="none"
-                hover="light-gray"
-              />
-            </div>
+          <div className="relative left-3 flex justify-end">
+            <FaSortAmountDown size={16} className="relative left-4" />
+            <Selectbar
+              backgroundColor="none"
+              fontColor="black"
+              options={options}
+              selectedValue={selectedValue}
+              setSelectedValue={handleSortSelect}
+              width={5}
+              height={2}
+              fontSize="xs"
+              radius="btn"
+              border="none"
+              hover="light-gray"
+            />
           </div>
-
           {/* 글 작성하기 버튼 */}
           <div className="flex justify-end mb-4">
             <div className="w-18 px-4 text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
@@ -159,33 +154,32 @@ export default function FindWorkerList() {
                 children="글 작성하기"
                 buttonType="light"
                 width={3.5}
-                height={1}
+                height={0.75}
                 fontSize="2xs"
                 radius="btn"
                 onClick={handleWritePost}
               />
             </div>
           </div>
-
           {/* 시공업자의 이름을 입력하세요. */}
-          <div className="flex justify-center items-center space-x-2 my-4">
-            <HiMagnifyingGlass />
+          <div className="w-full relative flex justify-center items-center">
+            <HiMagnifyingGlass className="relative left-4" />
             <Input
-              placeholder="시공업자의 이름을 입력하세요"
-              inputType="normal"
+              placeholder="글의 제목이나 작성자 이름을 입력하세요."
+              inputType="signup"
               type="text"
-              width={12}
+              width={14}
               height={2.5}
-              fontSize="xs"
-              radius="btn"
+              fontSize="2xs"
+              radius="none"
               value={inputValue}
               onChange={handleInputChange}
-              additionalStyle="bg-zp-light-beige font-bold border-zp-sub-color text-zp-gray"
+              additionalStyle="pl-6 bg-zp-light-beige border-b-2 font-bold text-zp-gray"
             />
           </div>
 
           {/* 시공업자 정보 컴포넌트(줄당 3개) */}
-          <div className="grid grid-cols-1 gap-3">
+          <div className="mt-6 grid grid-cols-1 gap-3">
             {/* 버튼 클릭 시 페이지 이동 */}
             {/* 임시 하드 코딩 */}
             {/* API 연동 시 코드 변경되어야 함 */}
@@ -196,7 +190,6 @@ export default function FindWorkerList() {
               <FindWorkerListItem />
             </button>
           </div>
-
           {/* 해당되는 시공업자가 없으면 관련 이미지 표시 */}
         </div>
       </div>
