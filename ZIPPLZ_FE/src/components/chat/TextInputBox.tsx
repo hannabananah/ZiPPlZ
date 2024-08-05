@@ -11,12 +11,15 @@ interface TextInputBoxProps {
   onMenuToggle: () => void;
   userSerial: number;
   onImageUpload: (file: File) => void;
+  type: string;
 }
 
 export default function TextInputBox({
   isMenuVisible,
   onMenuToggle,
   userSerial,
+  // onImageUpload,
+  // type,
 }: TextInputBoxProps) {
   const [message, setMessage] = useState('');
   const context = useContext(WebSocketContext);

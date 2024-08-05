@@ -56,6 +56,10 @@ export default function ChatRoom() {
     }
   }, [roomIdNumber, isValidRoomId]);
 
+  const handleImageUpload = (file: File) => {
+    console.log('Image uploaded:', file);
+  };
+
   return (
     <WebSocketProvider>
       <div className="relative flex flex-col h-screen bg-zp-light-orange">
@@ -72,6 +76,8 @@ export default function ChatRoom() {
                 isMenuVisible={isMenuVisible}
                 onMenuToggle={() => setMenuVisible(!isMenuVisible)}
                 userSerial={userSerial}
+                onImageUpload={handleImageUpload}
+                type="text"
               />
               {isMenuVisible && <ToggleChatMenu />}
             </>

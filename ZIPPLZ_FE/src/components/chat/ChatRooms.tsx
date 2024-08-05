@@ -92,11 +92,11 @@ export default function ChatRooms() {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const response = await axios.get(`${base_url}/chatroom`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // const response = await axios.get(`${base_url}/chatroom`, {
+        //   headers: {
+        //     Authorization: `Bearer ${token}`,
+        //   },
+        // });
         const fetchedChatRooms: ChatRoom[] = mockChatRooms.map((room: any) => ({
           name: room.name,
           message: room.lastMessage,
