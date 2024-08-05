@@ -27,7 +27,7 @@ export default function Layout() {
           {!isChatRoomsPage && !is404Page && <Header />}
           <div
             style={{ height: `calc(100% - 64px)` }}
-            className="flex-1 w-full mt-7 justify-self-center"
+            className="flex-1 w-full justify-self-center"
           >
             <Outlet />
           </div>
