@@ -9,7 +9,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getPortfolio } from '@/apis/worker/PortfolioApi';
-import Button from '@/components/common/Button';
+// import Button from '@/components/common/Button';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
@@ -104,15 +104,15 @@ export default function WorkerInfoList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
   console.log(isSortDropdownOpen);
   return (
-    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+    <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
       <div className="w-full">
         {/* 드롭다운 버튼 */}
-        <div className="relative flex justify-center items-center">
+        <div className="relative flex items-center justify-center">
           <div
             onClick={toggleDropdown}
-            className="cursor-pointer flex items-center space-x-2"
+            className="flex items-center space-x-2 cursor-pointer"
           >
-            <div className="w-64 h-6 font-bold text-zp-lg text-zp-black flex justify-center">
+            <div className="flex justify-center w-64 h-6 font-bold text-zp-lg text-zp-black">
               전문 시공자 둘러보기
             </div>
             <IoMdArrowDropdown
@@ -123,16 +123,16 @@ export default function WorkerInfoList() {
 
           {/* 드롭다운 메뉴 */}
           {isDropdownOpen && (
-            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
+            <div className="absolute z-50 w-64 mt-2 border border-gray-200 rounded-lg shadow-lg top-full bg-zp-white">
               <button
                 onClick={() => handleNavigate('/WorkerInfoList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
               >
                 전문 시공자 둘러보기
               </button>
               <button
                 onClick={() => handleNavigate('/FindWorkerList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
               >
                 전문 시공자 구하기
               </button>
@@ -145,12 +145,12 @@ export default function WorkerInfoList() {
           <div>공종 선택 버튼 리스트</div>
         </div>
 
-        <div className="w-64 h-6 text-zp-lg font-bold text-zp-black">
+        <div className="w-64 h-6 font-bold text-zp-lg text-zp-black">
           계획 중인 시공이 있으신가요?
         </div>
 
         {/* 위치 및 날짜 입력 */}
-        <div className="flex justify-center space-x-4 my-4">
+        <div className="flex justify-center my-4 space-x-4">
           <div className="relative flex items-center space-x-2">
             <FaMapMarkerAlt
               className="absolute left-4 text-zp-sub-color"
@@ -216,7 +216,7 @@ export default function WorkerInfoList() {
         </div>
 
         {/* 검색 입력 필드 */}
-        <div className="flex justify-center items-center space-x-2 my-4">
+        <div className="flex items-center justify-center my-4 space-x-2">
           <HiMagnifyingGlass />
           <Input
             placeholder="글의 제목이나 작성자 이름을 입력하세요"
@@ -232,7 +232,7 @@ export default function WorkerInfoList() {
           />
         </div>
 
-        <div className="w-full flex-col grid grid-cols-3 gap-3">
+        <div className="grid flex-col w-full grid-cols-3 gap-3">
           {/* 임시로 하드 코딩 */}
           {/* backend 유저 정보 데이터 받고나서 수정 예정 */}
           {isListExist &&
@@ -242,7 +242,7 @@ export default function WorkerInfoList() {
         {/* 새로운 포스트 정보 표시 */}
         {newPost && (
           <div className="p-4 bg-zp-light-beige rounded-zp-radius-big">
-            <h2 className="text-zp-lg font-bold">{newPost.title}</h2>
+            <h2 className="font-bold text-zp-lg">{newPost.title}</h2>
             <p className="text-zp-xs">현장 주소: {newPost.address}</p>
             <p className="text-zp-xs">상세 주소: {newPost.addressDetail}</p>
             <p className="text-zp-xs">작업 내용: {newPost.workDetail}</p>

@@ -2,12 +2,13 @@ import HateWorkers from '@components/worker/detail/review/HateWorkers';
 import LikeWorkers from '@components/worker/detail/review/LikeWorkers';
 import MannerTemperature from '@components/worker/detail/review/MannerTemperature';
 import ReviewComments from '@components/worker/detail/review/ReviewComments';
-import Portfolio from '@pages/worker/Portfolio';
+
+// import Portfolio from '@pages/worker/Portfolio';
 
 export default function WorkerReview() {
   return (
     <>
-      <div className="flex flex-col justify-center items-center min-h-screen p-6 bg-gray-100">
+      <div className="flex flex-col items-center justify-center min-h-screen p-6 bg-gray-100">
         <div className="w-full max-w-3xl">
           {/* 매너 온도 + 분야별 매너 온도 */}
           <MannerTemperature />

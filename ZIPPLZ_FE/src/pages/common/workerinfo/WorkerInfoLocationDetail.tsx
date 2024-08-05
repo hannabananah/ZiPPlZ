@@ -3,7 +3,7 @@ import { IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import { User, Worker } from '@apis/worker/WorkerApi';
-import { getGugun, getSido } from '@apis/worker/WorkerApi';
+// import { getGugun, getSido } from '@apis/worker/WorkerApi';
 import Button from '@components/common/Button';
 
 type Location = {
@@ -140,10 +140,10 @@ export default function WorkerInfoLocationDetail() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+    <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
       <div className="w-full max-w-3xl">
-        <div className="flex justify-between items-center w-full mb-4">
-          <div className="ml-5 flex-1 text-center font-bold">
+        <div className="flex items-center justify-between w-full mb-4">
+          <div className="flex-1 ml-5 font-bold text-center">
             작업 지역 선택
           </div>
           <IoIosClose
@@ -199,7 +199,7 @@ export default function WorkerInfoLocationDetail() {
           {selectedLocations.map((location, index) => (
             <div
               key={index}
-              className="flex items-center space-x-2 bg-gray-200 p-2 font-bold text-zp-white bg-zp-main-color rounded-zp-radius-big cursor-pointer mr-2 mb-2"
+              className="flex items-center p-2 mb-2 mr-2 space-x-2 font-bold bg-gray-200 cursor-pointer text-zp-white bg-zp-main-color rounded-zp-radius-big"
               onClick={() => handleRemoveLocation(index)}
             >
               <span>
@@ -210,14 +210,14 @@ export default function WorkerInfoLocationDetail() {
         </div>
 
         {/* 선택한 조합의 개수 표시 */}
-        <div className="font-bold text-zp-lg text-zp-light-gray flex justify-end mb-4">
+        <div className="flex justify-end mb-4 font-bold text-zp-lg text-zp-light-gray">
           <span>
             {selectedLocations.length}/{maxSelections}
           </span>
         </div>
 
         {/* 초기화 및 확인 버튼 묶는 div */}
-        <div className="font-bold space-x-2 first-letter:mb-4 h-20 flex items-center justify-between">
+        <div className="flex items-center justify-between h-20 space-x-2 font-bold first-letter:mb-4">
           {/* 초기화 버튼 */}
           <Button
             children="초기화"
