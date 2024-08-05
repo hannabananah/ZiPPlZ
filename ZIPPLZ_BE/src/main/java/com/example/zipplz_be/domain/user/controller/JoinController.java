@@ -2,19 +2,49 @@ package com.example.zipplz_be.domain.user.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.user.dto.*;
+import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import com.example.zipplz_be.domain.user.service.JoinService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/users")
 public class JoinController {
 
     private final JoinService joinService;
-    public JoinController(JoinService joinService) {
+    private final JWTUtil jwtUtil;
+    public JoinController(JoinService joinService, JWTUtil jwtUtil) {
         this.joinService = joinService;
+        this.jwtUtil = jwtUtil;
+    }
+
+    public static class EmailRequest {
+        private String email;
+
+        public String getEmail() {
+            return email;
+        }
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<ResponseDTO> isEmailAlreadyExist(@RequestBody EmailRequest email) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            boolean exists = joinService.isEmailAlreadyExist(email.getEmail());
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "이메일 중복 체크 완료", exists);
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
     }
 
     @PostMapping("/join")
@@ -40,10 +70,14 @@ public class JoinController {
     }
 
     @PutMapping("/join/social")
-    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
+    public ResponseEntity<ResponseDTO> joinAfterSocialProcess(HttpServletRequest request, @RequestBody JoinRequestDTO joinRequestDTO) {
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
+            String token = getCookieValue(request);
+            String email = jwtUtil.getEmail(token);
+            joinRequestDTO.setEmail(email);
+
             int userSerial = joinService.joinAfterSocialProcess(joinRequestDTO);
             if (userSerial == -1) {
                 status = HttpStatus.NOT_FOUND;
@@ -65,6 +99,7 @@ public class JoinController {
         System.out.println("insertCustomerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
+
         try {
             boolean result = joinService.insertCustomerInfo(insertCustomerDTO);
             if (!result) {
@@ -102,5 +137,18 @@ public class JoinController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    public String getCookieValue(HttpServletRequest request) {
+        String tokenValue = null;
 
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("token".equals(cookie.getName())) {
+                    tokenValue = cookie.getValue();
+                    break;
+                }
+            }
+        }
+
+        return tokenValue != null ? tokenValue : "Token not found";
+    }
 }

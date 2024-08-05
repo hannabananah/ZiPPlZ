@@ -9,7 +9,6 @@ import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,10 @@ public class JoinService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.customerRepository = customerRepository;
         this.workerRepository = workerRepository;
+    }
+
+    public boolean isEmailAlreadyExist(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     public int joinProcess(JoinRequestDTO joinRequestDTO) {
@@ -49,11 +52,12 @@ public class JoinService {
 
     public int joinAfterSocialProcess(JoinRequestDTO joinRequestDTO) {
 
-        if (!userRepository.existsByEmail(joinRequestDTO.getEmail())) {
+        String email = joinRequestDTO.getEmail();
+        if (!userRepository.existsByEmail(email)) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
         }
 
-        User user = userRepository.findByEmail(joinRequestDTO.getEmail());
+        User user = userRepository.findByEmail(email);
         user.setUserName(joinRequestDTO.getUserName());
         user.setTel(joinRequestDTO.getTel());
         user.setBirthDate(joinRequestDTO.getBirthDate());
@@ -70,7 +74,6 @@ public class JoinService {
         User user = userRepository.findByUserSerial(userSerial);
 
         user.setRole("customer");
-        System.out.println("!!!!!!!!!!!!!insertCustomerInfo, customer's role => " + user.getRole());
         userRepository.save(user);
 
         String nickname = insertCustomerDTO.getNickname();
