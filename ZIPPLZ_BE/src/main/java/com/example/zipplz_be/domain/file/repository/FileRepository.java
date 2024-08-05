@@ -24,4 +24,5 @@ public interface FileRepository extends JpaRepository<File, Integer> {
     List<MaterialFileDTO> getMaterialImg(@Param("material_serial") int material_serial);
 
     File findByFileSerial(int fileSerial);
+    File findBySaveFile(String saveFile);
 }
