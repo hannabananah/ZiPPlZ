@@ -23,10 +23,9 @@ public class Worker {
     private String companyAddress;
     @Column(name = "business_number")
     private String businessNumber;
-    private String certificate;
     @Column(name = "has_as_badge")
     private int hasAsBadge;
-    @Column(name = "certificated_badge")
+    @Column(name= "certificated_badge")
     private int certificatedBadge;
 
     @Builder
