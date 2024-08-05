@@ -1,7 +1,9 @@
+import React from 'react';
+
 interface Props {
   className?: string;
   type?: 'button' | 'submit' | 'reset';
-  children: string;
+  children: string | React.ReactNode;
   buttonType: 'normal' | 'light' | 'second' | 'primary';
   width?: number | string;
   height?: number | string;

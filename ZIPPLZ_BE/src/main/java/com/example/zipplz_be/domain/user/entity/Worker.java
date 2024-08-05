@@ -26,6 +26,8 @@ public class Worker {
     private String certificate;
     @Column(name = "has_as_badge")
     private int hasAsBadge;
+    @Column(name = "certificated_badge")
+    private int certificatedBadge;
 
     @Builder
     public Worker(User userSerial, String businessNumber, String company, String companyAddress) {

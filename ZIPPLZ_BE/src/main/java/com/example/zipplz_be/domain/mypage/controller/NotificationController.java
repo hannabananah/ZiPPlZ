@@ -3,8 +3,10 @@ package com.example.zipplz_be.domain.mypage.controller;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.mypage.entity.Notification;
 import com.example.zipplz_be.domain.mypage.service.NotificationService;
+import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -21,13 +23,13 @@ public class NotificationController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addNotification(@RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addNotification(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            // 해당 정보 가져오기
-            int user_serial = (int) params.get("user_serial");
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            int user_serial = customUserDetails.getUserSerial();
             String notification_comment = (String) params.get("notification_comment");
             LocalDateTime notification_date = LocalDateTime.now();
             int is_checked = 0;
@@ -48,13 +50,13 @@ public class NotificationController {
     }
 
     @PostMapping("/list")
-    public ResponseEntity<ResponseDTO<List<Notification>>> getNotificationList(@RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<List<Notification>>> getNotificationList(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
         ResponseDTO<List<Notification>> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            // 해당 정보 가져오기
-            int user_serial = (int) params.get("user_serial");
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            int user_serial = customUserDetails.getUserSerial();
             List<Notification> list = notificationService.getNotificationList(user_serial);
             if (list == null) {
                 status = HttpStatus.BAD_REQUEST;

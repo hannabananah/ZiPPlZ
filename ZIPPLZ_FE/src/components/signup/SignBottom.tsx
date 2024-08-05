@@ -9,6 +9,8 @@ import {
   signUp,
   signUpCustomer,
   signUpWorker,
+  socialSignUp,
+  socialUser,
 } from '@apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Loading from '@components/common/Loading';
@@ -20,6 +22,7 @@ interface Props {
   phrase?: string;
   link: string;
   user: User;
+  socialUser: socialUser;
   type?: string;
   customer: Customer;
   worker: Worker;
@@ -63,6 +66,7 @@ export default function SignBottom({
   phrase,
   link,
   user,
+  socialUser,
   setNext,
   setActive,
   type,
@@ -92,6 +96,10 @@ export default function SignBottom({
     const response = await signUp(user);
     setUserSerial(response.data.data.userSerial);
   };
+  const registSocialUser = async (user: socialUser) => {
+    const response = await socialSignUp(user);
+    setUserSerial(response.data.data.userSerial);
+  };
   const registCustomer = async (customer: Customer) => {
     const response = await signUpCustomer(customer);
     console.log('Customer registration response:', response);
@@ -103,8 +111,6 @@ export default function SignBottom({
     return response.data;
   };
   useEffect(() => {
-    console.log(user);
-    console.log(userSerial);
     if (type === 'customer') {
       setCustomer((prev: Customer) => ({
         ...prev,
@@ -117,9 +123,6 @@ export default function SignBottom({
       }));
     }
   }, [userSerial]);
-  useEffect(() => {
-    console.log(customer);
-  }, [customer]);
   return (
     <>
       <div className="w-full flex flex-col gap-2 absolute bottom-0 left-0 p-4">
@@ -132,8 +135,7 @@ export default function SignBottom({
             className={order > 2 ? 'bg-zp-sub-color' : 'bg-zp-light-beige'}
           />
         </div>
-        {((order === 2 && phrase === 'info') ||
-          (order === 3 && phrase === 'detail')) && (
+        {order === 2 && phrase === 'info' && (
           <Button
             buttonType={active ? 'second' : 'light'}
             radius="btn"
@@ -151,7 +153,11 @@ export default function SignBottom({
           width="full"
           height={3.75}
           children={
-            order < 3 || (phrase !== 'nickname' && phrase !== 'skills')
+            order < 3 ||
+            (phrase !== 'nickname' &&
+              phrase !== 'skills' &&
+              phrase !== 'extranickname' &&
+              phrase !== 'extraskills')
               ? '다음'
               : '회원가입 완료'
           }
@@ -160,12 +166,26 @@ export default function SignBottom({
           onClick={() => {
             setNext(false);
             setActive(false);
-            if (order < 3 || (phrase !== 'nickname' && phrase !== 'skills'))
+            if (phrase === 'extrainfo') {
+              console.log(socialUser);
+
               navigate(link);
-            else {
-              registUser(user);
-              console.log(user);
-              openModal();
+            } else {
+              if (
+                order < 3 ||
+                (phrase !== 'nickname' &&
+                  phrase !== 'skills' &&
+                  phrase !== 'extranickname' &&
+                  phrase !== 'extraskills')
+              )
+                navigate(link);
+              else {
+                if (phrase == 'nickname' || phrase == 'skills')
+                  registUser(user);
+                else registSocialUser(socialUser);
+                console.log(user);
+                openModal();
+              }
             }
           }}
         />
@@ -204,6 +224,7 @@ export default function SignBottom({
                 closeModal();
               } else {
                 if (type === 'customer') {
+                  console.log(customer);
                   registCustomer(customer);
                 } else {
                   registWorker(worker);
