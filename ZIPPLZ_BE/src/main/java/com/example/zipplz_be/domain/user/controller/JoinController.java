@@ -23,6 +23,30 @@ public class JoinController {
         this.jwtUtil = jwtUtil;
     }
 
+    public static class EmailRequest {
+        private String email;
+
+        public String getEmail() {
+            return email;
+        }
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<ResponseDTO> isEmailAlreadyExist(@RequestBody EmailRequest email) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            boolean exists = joinService.isEmailAlreadyExist(email.getEmail());
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "이메일 중복 체크 완료", exists);
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
     @PostMapping("/join")
     public ResponseEntity<ResponseDTO> joinProcess(@RequestBody JoinRequestDTO joinRequestDTO) {
         System.out.println("joinProcess 진입=======================================");
@@ -75,6 +99,7 @@ public class JoinController {
         System.out.println("insertCustomerInfo 진입=======================================");
         ResponseDTO responseDTO;
         HttpStatus status;
+
         try {
             boolean result = joinService.insertCustomerInfo(insertCustomerDTO);
             if (!result) {

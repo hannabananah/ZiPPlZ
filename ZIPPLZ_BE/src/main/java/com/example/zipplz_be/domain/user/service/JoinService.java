@@ -9,7 +9,6 @@ import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,10 @@ public class JoinService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.customerRepository = customerRepository;
         this.workerRepository = workerRepository;
+    }
+
+    public boolean isEmailAlreadyExist(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     public int joinProcess(JoinRequestDTO joinRequestDTO) {
@@ -71,7 +74,6 @@ public class JoinService {
         User user = userRepository.findByUserSerial(userSerial);
 
         user.setRole("customer");
-        System.out.println("!!!!!!!!!!!!!insertCustomerInfo, customer's role => " + user.getRole());
         userRepository.save(user);
 
         String nickname = insertCustomerDTO.getNickname();
