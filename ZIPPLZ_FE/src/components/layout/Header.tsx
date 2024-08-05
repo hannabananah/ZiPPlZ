@@ -19,7 +19,7 @@ export default function Header() {
   };
 
   return (
-    <div className="items-center h-14 bg-zp-transparent flex justify-between">
+    <div className="fixed flex items-center justify-between h-14 bg-zp-light-beige px-7 max-w-[600px] w-full z-30">
       <Button
         children="zip-plz"
         buttonType="light"

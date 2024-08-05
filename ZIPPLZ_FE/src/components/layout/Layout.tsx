@@ -23,9 +23,12 @@ export default function Layout() {
   return (
     <Suspense>
       <div className="flex flex-col items-center justify-center w-full max-w-[600px] mx-auto">
-        <div className="px-6 relative flex flex-col w-full min-h-screen bg-zp-light-beige">
+        <div className="relative flex flex-col w-full min-h-screen bg-zp-light-beige">
           {!isChatRoomsPage && !is404Page && <Header />}
-          <div className="flex-1 w-full h-full justify-self-center">
+          <div
+            style={{ height: `calc(100% - 64px)` }}
+            className="flex-1 w-full mt-7 justify-self-center"
+          >
             <Outlet />
           </div>
           {!isChatRoomsPage && !is404Page && <FloatingChatButton />}
