@@ -43,7 +43,6 @@ export default function ChatRooms() {
             Authorization: `Bearer ${token}`,
           },
         });
-
         const fetchedChatRooms: ChatRoom[] = response.data.data.map(
           (room: any) => ({
             id: parseInt(room.chatroom_serial),
@@ -87,7 +86,6 @@ export default function ChatRooms() {
     if (selectedRoomId !== null) {
       console.log('selected');
       setSelectedRoomId(null);
-      // handle deletion logic here
     }
     closeModal('select');
   };

@@ -17,7 +17,6 @@ export default function TextInputBox({
   isMenuVisible,
   onMenuToggle,
   userSerial,
-  onImageUpload,
 }: TextInputBoxProps) {
   const [message, setMessage] = useState('');
   const context = useContext(WebSocketContext);
@@ -40,16 +39,6 @@ export default function TextInputBox({
         e.preventDefault();
       }
     }
-  };
-
-  const handleImageUpload = (file: File) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      if (reader.result) {
-        sendMessage(reader.result as string, userSerial, 'image');
-      }
-    };
-    reader.readAsDataURL(file);
   };
 
   return (
