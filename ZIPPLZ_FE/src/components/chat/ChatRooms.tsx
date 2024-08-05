@@ -8,7 +8,8 @@ import ModalComponent from '@components/common/Modal';
 import { useChatStore } from '@stores/chatStore';
 import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
-import axios from 'axios';
+
+// import axios from 'axios';
 
 const mockChatRooms = [
   {
@@ -76,8 +77,8 @@ interface ChatRoom {
   session_id: string;
 }
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
-const token = import.meta.env.VITE_APP_AUTH_TOKEN;
+// const base_url = import.meta.env.VITE_APP_BASE_URL;
+// const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 export default function ChatRooms() {
   const navigate = useNavigate();
