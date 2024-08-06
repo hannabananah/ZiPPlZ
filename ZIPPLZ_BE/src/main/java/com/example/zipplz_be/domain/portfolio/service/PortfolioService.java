@@ -3,6 +3,7 @@ package com.example.zipplz_be.domain.portfolio.service;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
+import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.entity.Local;
 import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.model.repository.PlanFileRelationRepository;
@@ -58,6 +59,16 @@ public class PortfolioService {
         this.workerRepository = workerRepository;
     }
 
+    public Portfolio createPortfolio(Worker worker, Field field) {
+
+        Portfolio portfolio = Portfolio.builder()
+                .worker(worker)
+                .field(field).build();
+        Portfolio savedPortfolio = portfolioRepository.save(portfolio);
+
+        return savedPortfolio;
+    }
+
     @Transactional
     public List<PortfolioListDTO> getPortfolioListService(int userSerial) {
         User user = userRepository.findByUserSerial(userSerial);
@@ -67,7 +78,7 @@ public class PortfolioService {
             throw new UserNotFoundException("해당 유저 연번은 유효하지 않습니다.");
         }
 
-        List<Portfolio> portfolioList = portfolioRepository.findByUserSerial(worker);
+        List<Portfolio> portfolioList = portfolioRepository.findByWorker(worker);
         List<PortfolioListDTO> portfolioListDTOList = new ArrayList<>();
 
         for(Portfolio portfolio: portfolioList) {
@@ -93,7 +104,7 @@ public class PortfolioService {
 
         System.out.println(portfolio.toString());
 
-        Worker worker = portfolio.getUserSerial();
+        Worker worker = portfolio.getWorker();
         PortfolioWorkerDTO portfolioWorkerDTO = PortfolioWorkerDTO.builder()
                 .workerSerial(worker.getWorkerSerial())
                 .businessNumber(worker.getBusinessNumber())
