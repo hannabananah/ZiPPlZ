@@ -80,16 +80,17 @@ public class ChatroomServiceImpl implements ChatroomService {
 
         User cUser = customerRepository.existsByUserSerial(user) ? user : anotherUser;
         User wUser = customerRepository.existsByUserSerial(user) ? anotherUser : user;
+        String fieldName = createChatroomDTO.getField();
 
-        if (chatroomRepository.existsByStatusAndCuserAndWuser(Status.ACTIVE, cUser, wUser)) {
-            Chatroom savedChatroom =chatroomRepository.findByCuserAndWuserAndStatus(cUser, wUser, Status.ACTIVE);
+        if (chatroomRepository.existsByStatusAndCuserAndWuserAndFieldName(Status.ACTIVE, cUser, wUser, fieldName)) {
+            Chatroom savedChatroom =chatroomRepository.findByCuserAndWuserAndStatusAndFieldName(cUser, wUser, Status.ACTIVE, fieldName);
             return savedChatroom.getChatroomSerial();
         }
 
         Chatroom newChatroom = Chatroom.builder()
                 .cuser(cUser)
                 .wuser(wUser)
-                .fieldName(createChatroomDTO.getField()).build();
+                .fieldName(fieldName).build();
         chatroomRepository.save(newChatroom);
 
         return newChatroom.getChatroomSerial();

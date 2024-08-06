@@ -20,9 +20,9 @@ public interface ChatroomRepository extends JpaRepository<Chatroom, Integer> {
     Boolean existsByChatroomSerialAndStatus(int chatroomSerial, Status active);
 
     // 엔티티 필드에 맞는 메소드 정의
-    Boolean existsByStatusAndCuserAndWuser(Status status, User cuser, User wuser);
+    Boolean existsByStatusAndCuserAndWuserAndFieldName(Status status, User cuser, User wuser, String fieldName);
 
-    Chatroom findByCuserAndWuserAndStatus(User cuser, User wuser, Status active);
+    Chatroom findByCuserAndWuserAndStatusAndFieldName(User cuser, User wuser, Status active, String fieldName);
 
     Page<Chatroom> findAllByCuserAndStatus(User cuser, Status active, Pageable pageable);
 
