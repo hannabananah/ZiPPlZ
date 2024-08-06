@@ -33,10 +33,10 @@ const customModalStyles: ReactModal.Styles = {
   },
 };
 Modal.setAppElement('#root');
-
-export default function SharedImg() {
-  const isNull: boolean = false;
-  const items = Array.from({ length: 20 }, (_, index) => index + 1);
+interface Props {
+  fileList: any;
+}
+export default function SharedImg({ fileList }: Props) {
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const openModal = function () {
     setModalIsOpen(true);
@@ -45,62 +45,74 @@ export default function SharedImg() {
     setModalIsOpen(false);
   };
   return (
-    <div className="relative min-w-[60%] max-w-[328px] flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-2 min-h-[5rem] max-h-[7rem]">
-      {isNull ? (
-        <>
-          <ImageDragIcon className="max-w-[3rem] max-h-[3rem]" />
-          <p className="text-zp-xs text-zp-light-gray">
-            공유할 이미지 가져오기
-          </p>
-          <Button
-            buttonType="normal"
-            children="이미지 가져오기"
-            width={8}
-            height={1.5}
-            fontSize="xs"
-            radius="btn"
-          />
-        </>
-      ) : (
-        <>
-          <LuMaximize2
-            className="absolute top-[10%] right-[5%] cursor-pointer"
-            size={16}
-            onClick={openModal}
-          />
-          <div className="flex items-center justify-center gap-4">
-            <img className="border min-w-[24px] max-w-[48px] aspect-square" />
-            <img className="border min-w-[24px] max-w-[48px] aspect-square" />
-            <img className="border min-w-[24px] max-w-[48px] aspect-square" />
-            <FiPlusCircle
-              className="cursor-pointer"
-              size={16}
-              onClick={() => alert('이미지추가')}
+    <>
+      <div className="relative w-full flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-2 min-h-[5rem] max-h-[7rem]">
+        {fileList.length === 0 ? (
+          <>
+            <ImageDragIcon className="max-w-[18%] aspect-square" />
+            <p className="text-zp-2xs text-zp-light-gray">
+              공유할 이미지 가져오기
+            </p>
+            <Button
+              buttonType="normal"
+              children="이미지 가져오기"
+              width={7}
+              height={1}
+              fontSize="2xs"
+              radius="btn"
             />
+          </>
+        ) : (
+          <>
+            <LuMaximize2
+              className="absolute top-[10%] right-[5%] cursor-pointer"
+              size="10%"
+              onClick={openModal}
+            />
+            <div className="flex w-full items-center justify-center gap-4">
+              <img className="border w-[18%] aspect-square" src={fileList[0]} />
+              {fileList.length > 1 && (
+                <img
+                  className="border w-[18%] aspect-square"
+                  src={fileList[1]}
+                />
+              )}
+              {fileList.length > 2 && (
+                <img
+                  className="border w-[18%] aspect-square"
+                  src={fileList[2]}
+                />
+              )}
+              <FiPlusCircle
+                className="cursor-pointer"
+                size="9%"
+                onClick={() => alert('이미지추가')}
+              />
+            </div>
+          </>
+        )}
+        <Modal
+          isOpen={modalIsOpen}
+          onRequestClose={closeModal}
+          style={customModalStyles}
+        >
+          <LuMinimize2
+            className="absolute top-[1rem] right-[1rem] cursor-pointer"
+            size={16}
+            onClick={closeModal}
+          />
+          <hr className="absolute top-[3rem] w-full border border-zp-sub-color" />
+          <div className="w-full mt-[4rem] px-[1rem] overflow-auto">
+            <div className="grid grid-cols-3 gap-4">
+              {fileList.map((item: any) => (
+                <div className="border aspect-square" key={item.fileSerial}>
+                  <img className="w-full h-full" src={item.saveFile} />
+                </div>
+              ))}
+            </div>
           </div>
-        </>
-      )}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        style={customModalStyles}
-      >
-        <LuMinimize2
-          className="absolute top-[1rem] right-[1rem] cursor-pointer"
-          size={16}
-          onClick={closeModal}
-        />
-        <hr className="absolute top-[3rem] w-full border border-zp-sub-color" />
-        <div className="w-full mt-[4rem] px-[1rem] overflow-auto">
-          <div className="grid grid-cols-3 gap-4">
-            {items.map((item) => (
-              <div className="border aspect-square" key={item}>
-                이미지
-              </div>
-            ))}
-          </div>
-        </div>
-      </Modal>
-    </div>
+        </Modal>
+      </div>
+    </>
   );
 }
