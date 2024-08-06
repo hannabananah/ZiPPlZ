@@ -22,9 +22,9 @@ export default function MyInformationModify() {
   };
 
   // 입력 필드 초기화 핸들러
-  const handleClear = (setter) => {
-    setter('');
-  };
+  // const handleClear = (setter) => {
+  //   setter('');
+  // };
 
   // 수정완료 버튼 핸들러
   const handleSubmit = () => {
@@ -76,7 +76,7 @@ export default function MyInformationModify() {
             />
             <IoIosCloseCircleOutline
               className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => handleClear(setNickname)}
+              onClick={() => setNickname}
               style={{ width: '24px', height: '24px' }} // 아이콘 크기 조정
             />
             {nicknameError && (
@@ -107,7 +107,7 @@ export default function MyInformationModify() {
             />
             <IoIosCloseCircleOutline
               className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => handleClear(setPhoneNumber)}
+              onClick={() => setPhoneNumber}
               style={{ width: '24px', height: '24px' }}
             />
             {phoneNumberError && (
@@ -130,7 +130,7 @@ export default function MyInformationModify() {
             />
             <IoIosCloseCircleOutline
               className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => handleClear(setAddress)}
+              onClick={() => setAddress}
               style={{ width: '24px', height: '24px' }}
             />
             {addressError && (

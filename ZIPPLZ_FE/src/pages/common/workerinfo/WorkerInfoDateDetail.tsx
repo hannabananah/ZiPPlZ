@@ -48,7 +48,7 @@ export default function WorkerInfoDateDetail() {
             onChange={(range) => setDateRange(range as [Date, Date])}
             value={dateRange}
             className="react-calendar w-full h-[450px] border-none bg-zp-transparent text-zp-2xl"
-            formatDay={(locale, date) => date.getDate().toString()} // "일" 텍스트 제거
+            // formatDay={(locale, date) => date.getDate().toString()} // "일" 텍스트 제거
           />
         </div>
 

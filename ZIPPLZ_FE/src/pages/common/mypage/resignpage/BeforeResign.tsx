@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoAlertCircleOutline } from 'react-icons/io5';
-import { PiWarningCircleBold } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 
 export default function BeforeResign() {

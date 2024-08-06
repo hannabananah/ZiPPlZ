@@ -1,10 +1,9 @@
 import { useState } from 'react';
 import {
-  FaRegCircle,
-  FaRegCircleCheck,
+  FaRegCircle, // FaRegCircleCheck,
   FaSortAmountDown,
 } from 'react-icons/fa';
-import { FaRegCircleDot } from 'react-icons/fa6';
+// import { FaRegCircleDot } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoIosClose } from 'react-icons/io';
@@ -13,7 +12,8 @@ import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
 import Input from '@components/common/Input';
-import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
+
+// import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 

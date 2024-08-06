@@ -18,7 +18,7 @@ export default function Version() {
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
-                ssize={20} // 아이콘 크기 조정
+                size={20} // 아이콘 크기 조정
               />
             </div>
             <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">

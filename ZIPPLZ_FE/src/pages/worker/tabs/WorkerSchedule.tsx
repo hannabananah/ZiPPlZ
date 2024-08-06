@@ -1,7 +1,8 @@
 import { MdOpenInFull } from 'react-icons/md';
 
 import Button from '@components/common/Button';
-import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
+
+// import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 
 // import Portfolio from '../Portfolio';
 
@@ -21,9 +22,7 @@ export default function WorkerSchedule() {
         <div className="w-full">
           <div className="flex flex-col w-full gap-6">
             <div className="flex justify-center mt-6 ">
-              <div className="w-[80%]">
-                <ScheduleCalendar />
-              </div>
+              <div className="w-[80%]">{/* <ScheduleCalendar /> */}</div>
             </div>
             <div className="w-32 h-6 mt-6 mb-6 font-bold text-zp-xl">
               {todayDate}

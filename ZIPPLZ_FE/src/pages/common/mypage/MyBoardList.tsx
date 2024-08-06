@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { FaSortAmountDown } from 'react-icons/fa';
-import { FaRegCircleCheck } from 'react-icons/fa6';
+// import { FaRegCircleCheck } from 'react-icons/fa6';
 import { FaRegCircle, FaRegCircleDot } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';

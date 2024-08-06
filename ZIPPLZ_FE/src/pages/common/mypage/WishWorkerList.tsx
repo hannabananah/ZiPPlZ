@@ -1,10 +1,10 @@
-import React from 'react';
+// import React from 'react';
 import { GoArrowLeft } from 'react-icons/go';
 
 function WishWorkerList() {
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('-1');
+    // navigate('-1');
   };
 
   return (

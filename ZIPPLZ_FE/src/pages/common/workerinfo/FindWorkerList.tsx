@@ -17,7 +17,7 @@ type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function FindWorkerList() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<SortOption>('정렬');
+  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
 
   const navigate = useNavigate();
