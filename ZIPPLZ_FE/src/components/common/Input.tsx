@@ -20,6 +20,9 @@ interface Props {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   additionalStyle?: string;
+  name?: string;
+  maxLength?: number;
+  min?: number;
 }
 
 const fontSizeClasses: Record<Props['fontSize'], string> = {
@@ -44,15 +47,18 @@ export default function Input({
   placeholder,
   inputType,
   type,
-  width,
+  width = 'full',
   height,
   fontSize,
   radius,
-  value,
+  value = '',
   onChange,
   onKeyDown,
   onClick,
-  additionalStyle,
+  additionalStyle = '',
+  name,
+  maxLength,
+  min,
 }: Props) {
   const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} bg-zp-transparent  `;
 
@@ -99,6 +105,9 @@ export default function Input({
       onChange={onChange}
       onKeyDown={onKeyDown}
       onClick={onClick}
+      name={name}
+      maxLength={maxLength}
+      min={min}
     />
   );
 }

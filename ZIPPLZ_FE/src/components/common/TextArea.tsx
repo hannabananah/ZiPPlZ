@@ -7,6 +7,7 @@ interface Props {
   height?: number | string;
   fontSize: string;
   value?: string;
+  name?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }
@@ -25,10 +26,11 @@ export default function TextArea({
   height,
   fontSize,
   value,
+  name,
   onChange,
   onKeyDown,
 }: Props) {
-  const baseStyle: string = `flex justify-center items-center rounded-zp-radius-big ${fontSizeClasses[fontSize]} bg-zp-transparent resize-none p-4 bg-zp-white border border-zp-light-gray outline-none`;
+  const baseStyle: string = `flex justify-center items-center rounded-zp-radius-big ${fontSizeClasses[fontSize]} bg-zp-transparent resize-none p-4 bg-zp-white border border-zp-light-gray outline-none caret-zp-main-color placeholder-zp-main-color`;
 
   const widthClass = width === 'full' ? 'w-full' : '';
   const heightClass = height === 'full' ? 'h-full' : '';
@@ -69,6 +71,7 @@ export default function TextArea({
         height: height === 'full' ? '100%' : heightStyle,
       }}
       value={value}
+      name={name}
       onChange={onChange}
       onKeyDown={handleKeyDown}
     />
