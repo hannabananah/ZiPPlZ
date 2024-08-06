@@ -47,14 +47,16 @@ export default function ChatRoomHeader() {
         />
         <div className="flex flex-col flex-1">
           <div className="flex items-center gap-1">
-            <span className="font-semibold text-zp-md">
+            <span className="font-semibold truncate text-zp-md max-w-28">
               {selectedChatRoom.name}
             </span>
             <span>뱃지</span>
           </div>
           <div className="flex gap-2 text-sm text-zp-gray">
-            <span>{selectedChatRoom.chatroom_name}</span> |
-            <span>{selectedChatRoom.temp}</span>
+            <span className="truncate max-w-20">
+              {selectedChatRoom.chatroom_name}
+            </span>{' '}
+            |<span>{selectedChatRoom.temp}</span>
           </div>
         </div>
         <div className="relative flex gap-3">
@@ -67,16 +69,16 @@ export default function ChatRoomHeader() {
           <Modal
             isOpen={currentModals.includes('mini')}
             onRequestClose={handleCloseModal}
-            className="absolute overflow-hidden right-14 max-w-40 shadow-zp-deep rounded-zp-radius-big"
+            className="absolute right-0 overflow-hidden top-10 max-w-40 shadow-zp-deep rounded-zp-radius-big"
             overlayClassName="bg-transparent bg-opacity-none fixed inset-0"
           >
-            <div className="w-full p-4 text-zp-2xs">
+            <div className="w-full p-3 text-zp-2xs">
               <button
                 onClick={() => {
                   handleCloseModal();
                   navigate('/');
                 }}
-                className="flex items-center w-full p-2 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-gray bg-zp-white border-zp-sub-color"
+                className="flex items-center w-full p-2 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-yellow bg-zp-white border-zp-sub-color"
               >
                 <IoExitOutline size={20} className="mr-2" />
                 <span>채팅방 떠나기</span>
@@ -86,7 +88,7 @@ export default function ChatRoomHeader() {
                   handleCloseModal();
                   navigate('/portfolio');
                 }}
-                className="flex items-center w-full p-2 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-gray bg-zp-white border-zp-sub-color"
+                className="flex items-center w-full p-2 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-yellow bg-zp-white border-zp-sub-color"
               >
                 <TiBusinessCard size={20} className="mr-2" />
                 <span>포트폴리오 보기</span>
