@@ -4,6 +4,7 @@ import { FaFileContract, FaFolderOpen } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
 import { TbWood } from 'react-icons/tb';
 
+import AfterService from '@components/chat/AfterService';
 import Contract from '@components/chat/Contract';
 import Material from '@components/chat/Material';
 import FullModal from '@components/common/FullModal';
@@ -23,6 +24,7 @@ export default function ToggleChatMenu() {
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+  const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
 
@@ -43,12 +45,20 @@ export default function ToggleChatMenu() {
     }
   };
 
+  const handleAfterService = () => {
+    setIsAfterServiceModalOpen(true);
+  };
+
   const handleContract = () => {
     setIsContractModalOpen(true);
   };
 
   const handleMaterial = () => {
     setIsMaterialModalOpen(true);
+  };
+
+  const closeAfterServiceModal = () => {
+    setIsAfterServiceModalOpen(false);
   };
 
   const closeContractModal = () => {
@@ -90,6 +100,7 @@ export default function ToggleChatMenu() {
       label: 'A/S 신청',
       bgColor: '#FC7FF0',
       role: 'user',
+      onClick: handleAfterService,
     },
     {
       id: 5,
@@ -156,6 +167,15 @@ export default function ToggleChatMenu() {
       />
 
       <FullModal
+        isOpen={isAfterServiceModalOpen}
+        onRequestClose={closeAfterServiceModal}
+        height="60%"
+        maxWidth="400px"
+      >
+        <AfterService closeAfterServiceModal={closeAfterServiceModal} />
+      </FullModal>
+
+      <FullModal
         isOpen={isContractModalOpen}
         onRequestClose={closeContractModal}
         height="60%"
@@ -167,7 +187,7 @@ export default function ToggleChatMenu() {
       <FullModal
         isOpen={isMaterialModalOpen}
         onRequestClose={closeMaterialModal}
-        height="60%"
+        height="80%"
         maxWidth="400px"
       >
         <Material closeMaterialModal={closeMaterialModal} />
