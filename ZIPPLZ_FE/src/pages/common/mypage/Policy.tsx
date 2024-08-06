@@ -167,14 +167,14 @@ export default function Policy() {
 
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-      <div className="w-full max-w-3xl">
+      <div className="w-full">
         {/* 뒤로가기 버튼 + "개인정보처리방침" 글자 */}
         <div className="h-12 flex items-center justify-between w-full relative">
           <div className="flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
               onClick={handleGoBack}
-              style={{ width: '27px', height: '20px' }}
+              size={20}
             />
           </div>
           <div className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-center">

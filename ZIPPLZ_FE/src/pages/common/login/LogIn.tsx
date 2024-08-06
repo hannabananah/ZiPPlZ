@@ -6,13 +6,16 @@ import { Link } from 'react-router-dom';
 import { requestLogin } from '@/apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import { isAxiosError } from 'axios';
-import Cookies from 'js-cookie';
+import base64 from 'base-64';
 
 export default function Login() {
+  const { setIsLogin, setLoginUser } = useLoginUserStore();
   const GOOGLE_LOGIN_URL: string = import.meta.env.VITE_GOOGLE_LOGIN_URL;
   const KAKAO_LOGIN_URL: string = import.meta.env.VITE_KAKAO_LOGIN_URL;
   const navigate = useNavigate();
+
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
@@ -22,16 +25,23 @@ export default function Login() {
   const login = async (email: string, password: string) => {
     try {
       const response = await requestLogin(email, password);
-      console.log('data :', response.data);
-      console.log('headers :', response.headers);
-      console.log(response);
       const authorizationHeader = response.headers.authorization;
-      console.log(authorizationHeader);
       if (authorizationHeader) {
-        const token: string = authorizationHeader.split(' ')[1];
-        console.log(token);
-        Cookies.set('accesstoken', token, { expires: 1 });
-        console.log('status :', response.status);
+        let token: string = authorizationHeader.split(' ')[1];
+
+        localStorage.setItem('token', token);
+        let payload = token.substring(
+          token.indexOf('.') + 1,
+          token.lastIndexOf('.')
+        );
+        let dec = base64.decode(payload);
+        let decodingInfoJson = JSON.parse(dec);
+        setLoginUser({
+          userSerial: decodingInfoJson.userSerial,
+          email: decodingInfoJson.email,
+          role: decodingInfoJson.role,
+        });
+        setIsLogin(true);
 
         if (response.status === 200) {
           navigate('/');
@@ -136,8 +146,6 @@ export default function Login() {
             fontSize="xl"
             radius="btn"
             onClick={() => {
-              console.log(email);
-              console.log(password);
               login(email, password);
 
               setEmail('');

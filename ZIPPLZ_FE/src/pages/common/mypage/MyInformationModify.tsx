@@ -22,9 +22,9 @@ export default function MyInformationModify() {
   };
 
   // 입력 필드 초기화 핸들러
-  const handleClear = (setter) => {
-    setter('');
-  };
+  // const handleClear = (setter) => {
+  //   setter('');
+  // };
 
   // 수정완료 버튼 핸들러
   const handleSubmit = () => {
@@ -48,14 +48,14 @@ export default function MyInformationModify() {
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-        <div className="w-full max-w-3xl">
+        <div className="w-full">
           {/* 뒤로가기 버튼 + "내 정보 수정하기" 글자 */}
           <div className="h-12 flex items-center justify-between w-full relative">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
-                style={{ width: '27px', height: '20px' }} // 아이콘 크기 조정
+                size={20} // 아이콘 크기 조정
               />
             </div>
             <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">
@@ -64,7 +64,9 @@ export default function MyInformationModify() {
           </div>
 
           {/* 닉네임 */}
-          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">닉네임</div>
+          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">
+            닉네임
+          </div>
           <div className="relative">
             <input
               className="w-full h-[60px] px-4 text-zp-lg text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
@@ -74,11 +76,13 @@ export default function MyInformationModify() {
             />
             <IoIosCloseCircleOutline
               className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => handleClear(setNickname)}
+              onClick={() => setNickname}
               style={{ width: '24px', height: '24px' }} // 아이콘 크기 조정
             />
             {nicknameError && (
-              <div className="text-zp-red font-bold text-zp-xs mt-1">{nicknameError}</div>
+              <div className="text-zp-red font-bold text-zp-xs mt-1">
+                {nicknameError}
+              </div>
             )}
           </div>
           <ul className="mt-2 list-disc pl-6 text-zp-2xs">
@@ -91,7 +95,9 @@ export default function MyInformationModify() {
           </ul>
 
           {/* 휴대폰 번호 */}
-          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">휴대폰 번호</div>
+          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">
+            휴대폰 번호
+          </div>
           <div className="relative">
             <input
               className="w-full h-[60px] px-4 text-zp-lg text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
@@ -101,16 +107,20 @@ export default function MyInformationModify() {
             />
             <IoIosCloseCircleOutline
               className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => handleClear(setPhoneNumber)}
+              onClick={() => setPhoneNumber}
               style={{ width: '24px', height: '24px' }}
             />
             {phoneNumberError && (
-              <div className="text-zp-red font-bold text-zp-xs mt-1">{phoneNumberError}</div>
+              <div className="text-zp-red font-bold text-zp-xs mt-1">
+                {phoneNumberError}
+              </div>
             )}
           </div>
 
           {/* 집 주소 */}
-          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">집 주소</div>
+          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">
+            집 주소
+          </div>
           <div className="relative">
             <input
               className="w-full h-[60px] px-4 text-zp-lg text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
@@ -120,11 +130,13 @@ export default function MyInformationModify() {
             />
             <IoIosCloseCircleOutline
               className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => handleClear(setAddress)}
+              onClick={() => setAddress}
               style={{ width: '24px', height: '24px' }}
             />
             {addressError && (
-              <div className="text-zp-red font-bold text-zp-xs mt-1">{addressError}</div>
+              <div className="text-zp-red font-bold text-zp-xs mt-1">
+                {addressError}
+              </div>
             )}
           </div>
 

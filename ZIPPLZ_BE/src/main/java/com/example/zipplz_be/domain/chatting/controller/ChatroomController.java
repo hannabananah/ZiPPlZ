@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/chatroom")
@@ -52,7 +53,7 @@ public class ChatroomController {
 
     @GetMapping("")
     public ResponseEntity<ResponseDTO> getChatroomList(Authentication authentication, Pageable pageable) {
-
+    
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
@@ -68,7 +69,7 @@ public class ChatroomController {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
-
+    
         return new ResponseEntity<>(responseDTO, status);
     }
 

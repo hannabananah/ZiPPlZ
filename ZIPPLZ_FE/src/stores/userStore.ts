@@ -69,7 +69,7 @@ const defaultCustomer: Customer = {
 };
 
 export const useUserStore = create<UserStoreState>((set) => ({
-  userType: 'user',
+  userType: 'worker',
   user: defaultUser,
   worker: null,
   customer: null,
