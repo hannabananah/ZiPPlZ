@@ -5,13 +5,11 @@ interface SearchInputProps {
   placeholder?: string;
   onSearch?: (query: string) => void;
   className?: string;
-  inputClassName?: string;
 }
 
 export default function SearchInput({
   placeholder = '검색어를 입력하세요.',
   onSearch,
-  inputClassName = '',
 }: SearchInputProps) {
   const [value, setValue] = useState('');
 
@@ -32,9 +30,9 @@ export default function SearchInput({
   };
 
   return (
-    <div className="relative flex items-center">
+    <div className="relative flex items-center w-full">
       <button
-        className="absolute left-0 px-4 top-3 text-zp-gray focus:outline-none"
+        className="absolute left-0 top-3 text-zp-gray focus:outline-none"
         onClick={handleButtonClick}
       >
         <IoIosSearch size={20} fill="#73744a" />
@@ -44,7 +42,7 @@ export default function SearchInput({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className={`rounded-zp-radius-big border w-full pl-10 pr-4 py-2 text-zp-gray placeholder-zp-light-gray focus:outline-none ${inputClassName}`}
+        className="w-full py-2 pl-8 pr-4 border-b text-zp-gray placeholder-zp-light-gray focus:outline-none border-b-zp-main-color"
         onKeyDown={handleSearch}
       />
       <button className="absolute right-2 top-2.5" onClick={handleReset}>
