@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import formatNumberWithCommas from '@/utils/formatNumberWithCommas';
 import Button from '@components/common/Button';
+import SearchInput from '@components/common/SearchInput';
 import Pagination from '@utils/Pagination';
 
 interface MaterialProps {
@@ -143,15 +144,14 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(4);
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 380) {
-        setPerPage(3);
-      } else if (window.innerWidth < 640) {
         setPerPage(5);
       } else {
-        setPerPage(10);
+        setPerPage(7);
       }
     };
 
@@ -163,22 +163,42 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
     };
   }, []);
 
+  const filteredMaterials = materials.filter((material) =>
+    material.materialName.includes(searchQuery)
+  );
+
+  const numPages = Math.ceil(filteredMaterials.length / perPage);
   const offset = (page - 1) * perPage;
+
+  useEffect(() => {
+    if (page > numPages) {
+      setPage(numPages);
+    }
+  }, [numPages, page]);
 
   const handleSelectMaterial = (serial: number) => {
     setSelectedMaterial(serial);
   };
 
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    setPage(1);
+  };
+
   return (
     <div className="flex flex-col justify-between w-full p-4 bg-zp-white">
-      <div className="flex flex-col">
+      <div className="flex flex-col gap-3">
         <h2 className="font-bold text-center text-zp-2xl">자재 고르기</h2>
+        <SearchInput
+          onSearch={handleSearch}
+          placeholder="자재명을 검색하세요."
+        />
         <div className="flex flex-col">
-          {materials.slice(offset, offset + perPage).map((material) => (
+          {filteredMaterials.slice(offset, offset + perPage).map((material) => (
             <div
               key={material.materialSerial}
               onClick={() => handleSelectMaterial(material.materialSerial)}
-              className={`flex items-center justify-between p-2 border-b-2 cursor-pointer 
+              className={`flex items-center justify-between p-2 border-b cursor-pointer 
                 ${selectedMaterial === material.materialSerial ? 'bg-zp-sub-color' : 'bg-zp-transparent'} 
                 border-zp-sub-color`}
             >
@@ -208,39 +228,37 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
           ))}
         </div>
       </div>
-      {
-        <div className="flex flex-col">
-          <Pagination
-            total={materials.length}
-            limit={perPage}
-            page={page}
-            setPage={setPage}
-          />
-          <div className="flex gap-2">
-            <Button
-              type="button"
-              buttonType="normal"
-              width="full"
-              height={2.5}
-              fontSize="xl"
-              radius="btn"
-              onClick={closeMaterialModal}
-            >
-              닫기
-            </Button>
-            <Button
-              type="submit"
-              buttonType="primary"
-              width="full"
-              height={2.5}
-              fontSize="xl"
-              radius="btn"
-            >
-              확인
-            </Button>
-          </div>
+      <div className="flex flex-col">
+        <Pagination
+          total={filteredMaterials.length}
+          limit={perPage}
+          page={page}
+          setPage={setPage}
+        />
+        <div className="flex gap-2">
+          <Button
+            type="button"
+            buttonType="normal"
+            width="full"
+            height={2.5}
+            fontSize="xl"
+            radius="btn"
+            onClick={closeMaterialModal}
+          >
+            닫기
+          </Button>
+          <Button
+            type="submit"
+            buttonType="primary"
+            width="full"
+            height={2.5}
+            fontSize="xl"
+            radius="btn"
+          >
+            확인
+          </Button>
         </div>
-      }
+      </div>
     </div>
   );
 }
