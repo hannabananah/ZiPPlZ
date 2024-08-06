@@ -11,10 +11,11 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
-import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
+import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
+import com.example.zipplz_be.domain.portfolio.service.CustomerReviewService;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
@@ -61,6 +62,8 @@ public class ChatroomServiceImpl implements ChatroomService {
     );
     private final PortfolioRepository portfolioRepository;
     private final FieldRepository fieldRepository;
+    private final CustomerReviewRepository customerReviewRepository;
+    private final CustomerReviewService customerReviewService;
 
     @Override
     public int createChatroom(int userSerial, CreateChatroomDTO createChatroomDTO) {
@@ -129,13 +132,14 @@ public class ChatroomServiceImpl implements ChatroomService {
         String customerName = chatroom.getCuser().getUserName();
         Worker worker = workerRepository.findByUserSerial(chatroom.getWuser());
         boolean isCertificated = (worker.getCertificatedBadge() == 1);
+        double temperature = customerReviewService.calculateAverageStars(portfolioRepository.findByWorkerAndFieldId(worker, fieldRepository.findByFieldName(fieldName)));
 
         LocalDateTime lastTime = lastMessageOpt.map(ChatMessage::getCreatedAt).orElse(LocalDateTime.now());
 
         long dayBeforeTime = ChronoUnit.MINUTES.between(lastTime, LocalDateTime.now());
         String dayBefore = Calculator.time(dayBeforeTime);
 
-        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, lastTime, dayBefore, unReadMessageCount);
+        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, lastTime, dayBefore, unReadMessageCount);
         System.out.println(chatroomDTO);
         return chatroomDTO;
     }
@@ -167,4 +171,10 @@ public class ChatroomServiceImpl implements ChatroomService {
         Chatroom chatroom = chatroomRepository.findByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE);
         chatroomRepository.save(chatroom.inActive());
     }
+
+//    public double calculateTemperature(Worker worker, String fieldName) {
+//        Field field = fieldRepository.findByFieldName(fieldName);
+//        Portfolio portfolio = portfolioRepository.findByWorkerAndFieldId(worker, field);
+//        customerReviewRepository.findAllByPortfolioSerial(portfolio);
+//    }
 }

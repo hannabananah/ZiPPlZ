@@ -89,14 +89,26 @@ public class ChatroomController {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
-
         return new ResponseEntity<>(responseDTO, status);
     }
 
     @PatchMapping("/{chatroomSerial}")
     public ResponseEntity deleteChatRoom(Authentication authentication, @PathVariable int chatroomSerial) {
-        chatroomService.deleteChatroom(chatroomSerial, getUserSerial(authentication));
-        return ResponseEntity.ok().build();
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            chatroomService.deleteChatroom(chatroomSerial, getUserSerial(authentication));
+
+            status = HttpStatus.OK;
+            // responseDTO 생성
+            responseDTO = new ResponseDTO<>(status.value(), "채팅룸 INACTIVE");
+
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
     }
 
     public int getUserSerial(Authentication authentication) {
