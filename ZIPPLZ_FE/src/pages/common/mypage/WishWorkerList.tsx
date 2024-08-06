@@ -36,9 +36,9 @@ const list: WorkerInfo[] = [
     birth_date: 1990,
     temp: 36.5,
     field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
+    field_name: '철거',
+    career: 4,
+    certificated_badge: 0,
     locations: ['서울 강남구'],
     img: '/',
   },
@@ -49,8 +49,8 @@ const list: WorkerInfo[] = [
     birth_date: 1990,
     temp: 36.5,
     field_id: 1,
-    field_name: '전기',
-    career: 3,
+    field_name: '설비',
+    career: 5,
     certificated_badge: 1,
     locations: ['서울 강남구'],
     img: '/',
@@ -62,9 +62,9 @@ const list: WorkerInfo[] = [
     birth_date: 1990,
     temp: 36.5,
     field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
+    field_name: '타일',
+    career: 6,
+    certificated_badge: 0,
     locations: ['서울 강남구'],
     img: '/',
   },
@@ -92,11 +92,6 @@ export default function WishWorkerList() {
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
-  };
-
-  const handleNavigate = (path: string) => {
-    navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
   };
 
   const toggleSelecting = () => {
@@ -142,6 +137,10 @@ export default function WishWorkerList() {
   // 전체 게시물 개수 변수
   const total: number = 3;
 
+  const handleWorkerClick = (user_serial: number) => {
+    navigate(`/workers/${user_serial}/portfolio`);
+  };
+
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
@@ -153,38 +152,11 @@ export default function WishWorkerList() {
               onClick={handleGoBack}
               size={20}
             />
+            {/* 관심 있는 시공업자 text */}
             <div className="flex items-center space-x-2">
-              <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
-              <div
-                onClick={toggleDropdown}
-                className="cursor-pointer flex items-center space-x-2"
-              >
-                <IoMdArrowDropdown
-                  className={`transition-transform ${
-                    isDropdownOpen ? 'rotate-180' : ''
-                  }`}
-                  size={24}
-                />
-              </div>
+              <div className="text-zp-lg font-bold">관심 있는 시공업자</div>
             </div>
           </div>
-          {/* 드롭다운 메뉴 */}
-          {isDropdownOpen && (
-            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
-              <button
-                onClick={() => handleNavigate('/mypage/myscraplist')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                스크랩 글 목록
-              </button>
-              <button
-                onClick={() => handleNavigate('/mypage/myboardlist')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
-              >
-                내가 쓴 글 목록
-              </button>
-            </div>
-          )}
         </div>
         {/* 검색 input */}
         <div className="w-full relative flex justify-center items-center">
@@ -204,8 +176,7 @@ export default function WishWorkerList() {
             className="absolute right-[7rem] cursor-pointer"
           />
           {/* 정렬 버튼 셀렉트바 */}
-          <div className="relative left-3 flex justify-end items-center">
-            <FaSortAmountDown />
+          <div className="relative top-3 left-3 flex justify-end items-center">
             <div>
               <Selectbar
                 backgroundColor="none"
@@ -280,12 +251,7 @@ export default function WishWorkerList() {
                   ? 'bg-zp-light-gray'
                   : ''
               }`}
-              onClick={(e) => {
-                if (isSelecting) {
-                  e.stopPropagation();
-                  handleWorkerSelect(worker.user_serial);
-                }
-              }}
+              onClick={() => handleWorkerClick(worker.user_serial)}
             >
               {isSelecting && (
                 <div
