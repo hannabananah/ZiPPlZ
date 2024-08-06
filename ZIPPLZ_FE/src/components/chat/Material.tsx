@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import formatNumberWithCommas from '@/utils/formatNumberWithCommas';
 import NothingIcon from '@assets/nothing-icon.svg?react';
+import MaterialItem from '@components/chat/MaterialItem';
 import Button from '@components/common/Button';
 import SearchInput from '@components/common/SearchInput';
 import Pagination from '@utils/Pagination';
@@ -140,7 +140,6 @@ const materials: MaterialDetail[] = [
     img: 'https://picsum.photos/350',
   },
 ];
-
 export default function Material({ closeMaterialModal }: MaterialProps) {
   const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
   const [page, setPage] = useState(1);
@@ -150,9 +149,9 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 380) {
-        setPerPage(5);
+        setPerPage(4);
       } else {
-        setPerPage(7);
+        setPerPage(6);
       }
     };
 
@@ -163,6 +162,10 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
       window.removeEventListener('resize', handleResize);
     };
   }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery]);
 
   const filteredMaterials = materials.filter((material) =>
     material.materialName.includes(searchQuery)
@@ -183,7 +186,6 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
-    setPage(1);
   };
 
   return (
@@ -206,36 +208,12 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
             filteredMaterials
               .slice(offset, offset + perPage)
               .map((material) => (
-                <div
+                <MaterialItem
                   key={material.materialSerial}
-                  onClick={() => handleSelectMaterial(material.materialSerial)}
-                  className={`flex items-center justify-between p-2 border-b cursor-pointer 
-                  ${selectedMaterial === material.materialSerial ? 'bg-zp-sub-color' : 'bg-zp-transparent'} 
-                  border-zp-sub-color`}
-                >
-                  <div className="flex items-center">
-                    <img
-                      src={material.img}
-                      alt={material.materialName}
-                      className="object-cover w-12 mr-2 aspect-square"
-                    />
-                    <h3
-                      className={`mr-2 font-bold truncate min-w-16 max-w-24 text-zp-xs ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
-                    >
-                      {material.materialName}
-                    </h3>
-                    <p
-                      className={`min-w-12 line-clamp-2 max-h text-zp-2xs ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
-                    >
-                      {material.description}
-                    </p>
-                  </div>
-                  <p
-                    className={`text-zp-gray text-zp-xs break-keep ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
-                  >
-                    {formatNumberWithCommas(material.materialPrice)}원
-                  </p>
-                </div>
+                  material={material}
+                  isSelected={selectedMaterial === material.materialSerial}
+                  onSelect={handleSelectMaterial}
+                />
               ))
           )}
         </div>
