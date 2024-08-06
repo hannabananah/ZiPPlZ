@@ -51,8 +51,8 @@ export default function MyScrapList() {
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
         {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
-        <div className="h-10 flex items-center justify-between w-full relative">
-          <div className="mt-16 flex w-full items-center justify-center gap-2">
+        <div className="mt-16 h-10 flex items-center justify-between w-full relative">
+          <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}

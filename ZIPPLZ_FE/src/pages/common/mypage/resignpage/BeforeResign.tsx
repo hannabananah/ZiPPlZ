@@ -19,8 +19,6 @@ export default function BeforeResign() {
   };
 
   // 모달 확인 버튼 핸들러
-  // 확인 버튼 누르면 로그아웃이 되고 홈 화면으로 이동하게 수정
-  // 로그아웃 추후 구현 필요
   const handleConfirm = () => {
     navigate('/');
   };
@@ -58,16 +56,18 @@ export default function BeforeResign() {
         </div>
 
         {/* 탈퇴하기 버튼 */}
-        <div
-          className="w-full h-[60px] rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center mt-auto cursor-pointer"
-          onClick={handleResign}
-        >
-          <div className="text-zp-2xl font-bold">탈퇴하기</div>
+        <div className="mt-auto w-full flex-shrink-0">
+          <div
+            className="w-full h-[60px] rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer"
+            onClick={handleResign}
+          >
+            <div className="text-zp-2xl font-bold">탈퇴하기</div>
+          </div>
         </div>
       </div>
 
       {showModal && (
-        <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center rounded-zp-radius-big">
+        <div className="fixed inset-0 bg-zp-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="p-6 rounded-lg shadow-lg bg-zp-white rounded-zp-radius-big text-center">
             <h2 className="text-zp-3xl font-bold mb-4">탈퇴 완료</h2>
             <p className="mb-6 text-zp-sm font-bold">
