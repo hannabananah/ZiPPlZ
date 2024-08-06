@@ -29,7 +29,7 @@ const FindWorkerDetail: React.FC = () => {
 
   return (
     <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-      <div className="w-full max-w-3xl">
+      <div className="w-full">
         {/* 나가기 버튼, 구인 글쓰기 text */}
         <div className="w-full flex items-center justify-between relative">
           <div className="flex items-center">
@@ -43,6 +43,15 @@ const FindWorkerDetail: React.FC = () => {
           </div>
         </div>
 
+        {/* 사진 */}
+        <div className="mt-4 flex justify-center">
+          <img
+            src="https://via.placeholder.com/600x400"
+            alt="placeholder"
+            className="rounded-lg shadow-md"
+          />
+        </div>
+
         {/* 글 제목 */}
         <div className="pt-6 text-zp-xl font-bold">
           깔끔하고 하자 없는 장판 시공 해주실분 구합니다.
@@ -51,9 +60,10 @@ const FindWorkerDetail: React.FC = () => {
         {/* 글쓴이 프로필 사진, 닉네임, 주소 */}
         <div className="pt-6 pb-2 flex items-center space-x-2">
           <div>
+            {/* API 연동 후 사용자 프로필 사진으로 변경 필요 */}
             <CgProfile />
           </div>
-          <div className="text-zp-xs font-bold">눈누난나</div>
+          <div className="text-zp-xs font-bold">눈누난냐</div>
         </div>
 
         <div className="rounded-zp-radius-big border-zp-main-color bg-zp-white p-4 border border-gray-300 rounded-lg">
@@ -94,8 +104,8 @@ const FindWorkerDetail: React.FC = () => {
           {/* 찜하기 버튼 */}
           {/* className="flex items-center justify-center w-full" */}
           <div className="flex-grow sm:flex-grow-0 flex justify-center items-center space-x-2 my-4">
-            <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full max-w-[200px]">
-              <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full max-w-[200px]">
+            <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full">
+              <div className="w-full border border-zp-sub-color rounded-zp-radius-btn">
                 <Button
                   buttonType={isBookmarked ? 'normal' : 'light'}
                   width="full"
@@ -122,7 +132,7 @@ const FindWorkerDetail: React.FC = () => {
 
           {/* 채팅하기 버튼 */}
           <div className="flex-grow sm:flex-grow-0 flex justify-center items-center">
-            <div className="relative w-full max-w-[250px]">
+            <div className="w-full max-w-[250px]">
               <Button
                 buttonType="second"
                 width="full"

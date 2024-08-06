@@ -47,7 +47,14 @@ public class PlanService {
     public void insertPlanService(int userSerial, Map<String, Object> params) {
         Customer customer = findUser(userSerial);
 
+        String planName = (String) params.get("planName");
+
+        if(planName == null) {
+            planName = customer.getNickname() + "의 계획";
+        }
+
         Plan plan = Plan.builder()
+                .planName(planName)
                 .address((String) params.get("address"))
                 .sharedContents((String) params.get("sharedContents"))
                 .customer(customer)
@@ -74,6 +81,7 @@ public class PlanService {
 
     @Transactional
     public void modifyPlanService(int userSerial, int planSerial, Map<String, Object> params) {
+        System.out.println(userSerial);
         Customer customer = findUser(userSerial);
 
         //계획 소유자인지 검사
@@ -81,12 +89,12 @@ public class PlanService {
         if(plan == null) {
             throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
         }
-        if(!plan.getCustomerSerial().equals(customer)) {
+        if(plan.getCustomerSerial().getCustomerSerial() != customer.getCustomerSerial()) {
             throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
         }
 
         //주어진 요소 수정(수정되지 않은 부분은 원본으로 들어와야 함!!)
-        plan.setAddress((String) params.get("address"));
+        plan.setPlanName((String) params.get("planName"));
         plan.setSharedContents((String) params.get("sharedContents"));
 
         planRepository.save(plan);
@@ -132,4 +140,20 @@ public class PlanService {
         return customer;
     }
 
+    @Transactional
+    public Plan getPlanDetailService(int userSerial, int planSerial) {
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+
+        User user = userRepository.findByUserSerial(userSerial);
+        Customer customer = customerRepository.findByUserSerial(user);
+
+        if(plan == null) {
+            throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        }
+        if(!plan.getCustomerSerial().equals(customer)) {
+            throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
+        }
+
+        return plan;
+    }
 }

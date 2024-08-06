@@ -1,5 +1,6 @@
 import { ChangeEvent, useState } from 'react';
-import { CiCamera, CiSearch } from 'react-icons/ci';
+import { CiSearch } from 'react-icons/ci';
+import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
@@ -10,13 +11,14 @@ import Input from '@components/common/Input';
 // 이미지 상태의 타입 정의
 type Image = string;
 
-// 상태와 핸들러 인자의 타입을 정의합니다.
 export default function FindWorkerDetailCreate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [addressDetail, setAddressDetail] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
+
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
   const maxImages = 10;
@@ -47,6 +49,19 @@ export default function FindWorkerDetailCreate() {
 
   // 확인 버튼 핸들러
   const handleConfirm = () => {
+    const newErrors: { [key: string]: string } = {};
+
+    if (!title) newErrors.title = '제목이 입력되지 않았습니다';
+    if (!address) newErrors.address = '현장 주소가 입력되지 않았습니다';
+    if (!addressDetail)
+      newErrors.addressDetail = '상세 주소가 입력되지 않았습니다';
+    if (!workDetail) newErrors.workDetail = '작업내용이 입력되지 않았습니다';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
     navigate('/FindWorkerList', {
       state: {
         newPost: {
@@ -67,7 +82,7 @@ export default function FindWorkerDetailCreate() {
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-        <div className="w-full max-w-3xl">
+        <div className="w-full">
           {/* 나가기 버튼, 구인 글쓰기 text */}
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
@@ -83,10 +98,10 @@ export default function FindWorkerDetailCreate() {
           </div>
 
           {/* 게시판 가이드 */}
-          <div className="font-bold h-20 flex items-center justify-start">
+          <div className="mt-6 font-bold flex items-center justify-start">
             <div className="text-left">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
-              <div className="text-zp-xs text-zp-gray">
+              <div className="text-zp-xs text-zp-light-gray">
                 사진을 첨부하면 시공자가 작업내용에 대해 보다 상세하게 파악할 수
                 있어요.
               </div>
@@ -99,10 +114,10 @@ export default function FindWorkerDetailCreate() {
               <div className="relative">
                 <label
                   htmlFor="file-upload"
-                  className="flex items-center justify-center w-20 h-20 bg-zp-white border border-zp-main-color rounded-zp-radius-btn p-2 cursor-pointer"
+                  className="flex items-center justify-center w-24 h-24 bg-zp-white border border-zp-main-color rounded-zp-radius-btn p-2 cursor-pointer"
                 >
-                  <CiCamera size={24} className="text-zp-main-color" />
-                  <div className="absolute bottom-2 text-zp-xs text-zp-gray">
+                  <FaCamera size={36} className="" />
+                  <div className="w-full flex justify-center absolute bottom-2 font-bold text-zp-xs text-zp-gray">
                     {images.length}/{maxImages}
                   </div>
                 </label>
@@ -117,20 +132,23 @@ export default function FindWorkerDetailCreate() {
               </div>
             </div>
             {/* 사진 미리보기 */}
-            <div className="flex-1 flex overflow-x-auto space-x-2">
+            <div className="flex-1 flex overflow-x-auto space-x-4">
               {images.map((image, index) => (
-                <div key={index} className="relative w-20 h-20 flex-shrink-0">
+                <div
+                  key={index}
+                  className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
+                >
                   <img
                     src={image}
                     alt={`Preview ${index}`}
-                    className="w-full h-full object-cover rounded-md border border-gray-300"
+                    className="w-full h-full object-cover rounded-zp-radius-btn"
                     onClick={() => handleImageRemove(index)}
                   />
                   <button
                     onClick={() => handleImageRemove(index)}
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
                   >
-                    <MdClose size={16} />
+                    <MdClose size={24} />
                   </button>
                 </div>
               ))}
@@ -141,7 +159,7 @@ export default function FindWorkerDetailCreate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">제목</div>
-              <div className="bg-zp-white border rounded-zp-radius-btn">
+              <div className="bg-zp-white border rounded-zp-radius-btn pl-2">
                 <Input
                   type="text"
                   placeholder="제목 입력"
@@ -157,6 +175,9 @@ export default function FindWorkerDetailCreate() {
                   }
                 />
               </div>
+              {errors.title && (
+                <div className="text-red-500 text-xs mt-1">{errors.title}</div>
+              )}
             </div>
           </div>
 
@@ -164,7 +185,7 @@ export default function FindWorkerDetailCreate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">현장 주소</div>
-              <div className="relative mt-2 bg-zp-white border rounded-zp-radius-btn">
+              <div className="pl-2 relative mt-2 bg-zp-white border rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="현장 주소"
@@ -181,6 +202,11 @@ export default function FindWorkerDetailCreate() {
                 />
                 <CiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2" />
               </div>
+              {errors.address && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.address}
+                </div>
+              )}
             </div>
           </div>
 
@@ -188,7 +214,7 @@ export default function FindWorkerDetailCreate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">상세 주소</div>
-              <div className="bg-zp-white border rounded-zp-radius-btn">
+              <div className="bg-zp-white border rounded-zp-radius-btn pl-2">
                 <Input
                   type="text"
                   placeholder="상세 주소"
@@ -204,6 +230,11 @@ export default function FindWorkerDetailCreate() {
                   }
                 />
               </div>
+              {errors.addressDetail && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.addressDetail}
+                </div>
+              )}
             </div>
           </div>
 
@@ -211,7 +242,7 @@ export default function FindWorkerDetailCreate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">작업내용</div>
-              <div className="bg-zp-white border rounded-zp-radius-btn">
+              <div className="bg-zp-white border rounded-zp-radius-btn  pl-2">
                 <Input
                   type="text"
                   placeholder="시공을 요청하는 작업에 대해 작성해주세요."
@@ -227,12 +258,17 @@ export default function FindWorkerDetailCreate() {
                   }
                 />
               </div>
+              {errors.workDetail && (
+                <div className="text-red-500 text-xs mt-1">
+                  {errors.workDetail}
+                </div>
+              )}
             </div>
           </div>
 
           <div className="mt-6 font-bold h-20 flex items-center justify-center">
             <Button
-              children="채팅하기"
+              children="확인"
               buttonType="second"
               width="full"
               height={2.375}
@@ -243,10 +279,6 @@ export default function FindWorkerDetailCreate() {
           </div>
         </div>
       </div>
-
-      {/* 추가 해야 하는 기능 */}
-      {/* 같은 사진 파일 안올라가게 */}
-      {/* 사진 10장 넘게 올리려하면 메시지 뜨게 */}
     </>
   );
 }

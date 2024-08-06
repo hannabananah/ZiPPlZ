@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -11,30 +12,9 @@ interface Event {
   start: Date;
   end: Date;
 }
-
-// 더미 데이터 생성
-const dummyEvents: Event[] = [
-  {
-    title: 'Event 1',
-    start: new Date(2024, 6, 25),
-    end: new Date(2024, 6, 29),
-  },
-  {
-    title: 'Event 2',
-    start: new Date(2024, 6, 26),
-    end: new Date(2024, 6, 29),
-  },
-  {
-    title: 'Event 3',
-    start: new Date(2024, 6, 27),
-    end: new Date(2024, 6, 29),
-  },
-  {
-    title: 'Event 4',
-    start: new Date(2024, 6, 28),
-    end: new Date(2024, 6, 29),
-  },
-];
+interface Props {
+  workList: any;
+}
 const getRandomColor = (): string => {
   const letters = '0123456789ABCDEF';
   let color = '#';
@@ -43,8 +23,19 @@ const getRandomColor = (): string => {
   }
   return color;
 };
-const CalendarTest: React.FC = function () {
+const ScheduleCalendar = function ({ workList }: Props) {
   const navigate = useNavigate();
+  const [eventList, setEventList] = useState<Event[]>([]);
+  useEffect(() => {
+    const newEventList: Event[] = workList
+      .filter((work: any) => work !== null && work !== undefined)
+      .map((work: any) => ({
+        title: work.fieldCode.fieldName,
+        start: new Date(work.startDate),
+        end: new Date(work.endDate),
+      }));
+    setEventList(newEventList);
+  }, [workList]);
   return (
     <div className="relative w-full">
       <div
@@ -70,7 +61,7 @@ const CalendarTest: React.FC = function () {
         eventBorderColor="none"
         initialView="dayGridMonth"
         dayMaxEvents={true}
-        events={dummyEvents.map((event) => {
+        events={eventList.map((event) => {
           const adjustedEnd = new Date(event.end);
           adjustedEnd.setDate(adjustedEnd.getDate() + 1);
 
@@ -103,4 +94,4 @@ const CalendarTest: React.FC = function () {
     </div>
   );
 };
-export default CalendarTest;
+export default ScheduleCalendar;

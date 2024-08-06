@@ -1,4 +1,4 @@
-import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
+// import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import FieldListItem from '@components/home/FieldListItem';
 import TodaySchedule from '@components/home/TodaySchedule';
 import WeekSchedule from '@components/home/WeekSchedule';
@@ -35,9 +35,9 @@ const list: HotWorker[] = [
 ];
 export default function Home() {
   return (
-    <div className="bg-zp-light-beige flex flex-col p-7 gap-6 overflow-auto  mb-6">
-      <ScheduleCalendar />
-      <div className="w-full flex md:gap-6 gap-2 justify-center items-start ">
+    <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
+      {/* <ScheduleCalendar /> */}
+      <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
         <div className="basis-7/12">
           <p className="font-extrabold text-zp-xl">Today</p>
           {/* <div className="w-full h-[4rem]"> */}
@@ -57,13 +57,13 @@ export default function Home() {
           선택한 시공에 맞춰 인증된 전문 기술자를 추천해드립니다.
         </p>
       </div>
-      <div className="w-full grid grid-cols-6 gap-4">
+      <div className="grid w-full grid-cols-6 gap-4">
         {fields.map((item) => (
           <FieldListItem field={item} />
         ))}
       </div>
       <p className="font-extrabold text-zp-xl">HOT한 시공업자</p>
-      <div className="w-full grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <div className="grid w-full grid-cols-3 gap-4 sm:grid-cols-3 md:grid-cols-4">
         <WorkerCard worker={list[0]} />
         <WorkerCard worker={list[1]} />
         <WorkerCard worker={list[2]} />

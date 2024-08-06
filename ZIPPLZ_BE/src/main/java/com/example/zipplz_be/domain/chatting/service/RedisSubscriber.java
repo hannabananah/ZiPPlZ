@@ -2,6 +2,8 @@ package com.example.zipplz_be.domain.chatting.service;
 
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageResponseDTO;
+import com.example.zipplz_be.domain.chatting.dto.UnreadMessageCount;
+import com.example.zipplz_be.domain.chatting.exception.ChatMessageNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,11 +33,24 @@ public class RedisSubscriber implements MessageListener {
 
            // ChatMessage 객체로 맵핑
            ChatMessageRequestDTO roomMessage = objectMapper.readValue(publishMessage, ChatMessageRequestDTO.class);
+           System.out.println("roomMessage from onMessage (RedisSubscriber) => " + roomMessage.toString());
 
-           ChatMessageResponseDTO chatMessageResponseDTO = new ChatMessageResponseDTO(roomMessage);
-           messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getChatroomSerial(), chatMessageResponseDTO);
+           // getType이 TALK, UNREAD_MESSAGE_COUNT_ALARM 일 경우
+           if (roomMessage.getType() != null) {
+               if (roomMessage.getType().equals(ChatMessageRequestDTO.MessageType.UNREAD_MESSAGE_COUNT_ALARM)) {
+                   // 안읽은 메세지일 경우
+                   UnreadMessageCount messageCount = new UnreadMessageCount(roomMessage);
+                   int otherUserSerial = roomMessage.getOtherUserSerial();
+                   // websocket 구독자에게 안읽은 메세지 반환
+                   messagingTemplate.convertAndSend("/sub/chat/unread/" + otherUserSerial, messageCount);
+               } else {
+                   // 일대일 채팅일 경우
+                   ChatMessageResponseDTO chatMessageResponseDTO = new ChatMessageResponseDTO(roomMessage);
+                   messagingTemplate.convertAndSend("/sub/chat/room/" + roomMessage.getChatroomSerial(), chatMessageResponseDTO);
+               }
+           }
        } catch (Exception e) {
-
+           throw new ChatMessageNotFoundException("해당 채팅 메시지가 없습니다.");
         }
     }
 }

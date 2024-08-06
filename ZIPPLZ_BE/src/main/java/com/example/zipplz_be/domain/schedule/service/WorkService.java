@@ -14,11 +14,13 @@ import com.example.zipplz_be.domain.portfolio.entity.CustomerReview;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
 import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
+import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;

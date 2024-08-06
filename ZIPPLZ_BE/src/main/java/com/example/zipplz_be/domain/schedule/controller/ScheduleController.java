@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.schedule.controller;
 
+import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
 import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
@@ -25,13 +26,15 @@ import java.util.Map;
 public class ScheduleController {
     private final PlanService planService;
     private final WorkService workService;
+    private final PortfolioService portfolioService;
 
-    public ScheduleController(PlanService planService, WorkService workService) {
+    public ScheduleController(PortfolioService portfolioService, PlanService planService, WorkService workService) {
+        this.portfolioService = portfolioService;
         this.planService = planService;
         this.workService = workService;
     }
 
-    //계획 조회
+    //계획 목록 조회
     @GetMapping("/plans")
     public ResponseEntity<ResponseDTO<?>> getPlan(Authentication authentication) {
         //plan 테이블에서 현재 로그인한 유저의 계획 정보들 모두 가져오기
@@ -39,7 +42,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            List<Plan> planList = planService.getPlanService(getUserSerial(authentication));
+            List<Plan> planList = planService.getPlanService(portfolioService.getUserSerial(authentication));
 
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공", planList);
@@ -47,6 +50,25 @@ public class ScheduleController {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //계획 상세조회
+    @GetMapping("/plans/{planSerial}")
+    public ResponseEntity<ResponseDTO<?>> getPlanDetail(Authentication authentication, @PathVariable int planSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            Plan plan = planService.getPlanDetailService(portfolioService.getUserSerial(authentication), planSerial);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공", plan);
+        }catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -113,7 +135,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            int userSerial = getUserSerial(authentication);
+            int userSerial = portfolioService.getUserSerial(authentication);
 
             planService.insertPlanService(userSerial, params);
 
@@ -157,7 +179,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            planService.modifyPlanService(getUserSerial(authentication), planSerial, params);
+            planService.modifyPlanService(portfolioService.getUserSerial(authentication), planSerial, params);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 성공!");
@@ -182,7 +204,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            workService.modifyWorkMemoService(getUserSerial(authentication), planSerial,workSerial, params);
+            workService.modifyWorkMemoService(portfolioService.getUserSerial(authentication), planSerial,workSerial, params);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 성공!");
@@ -210,7 +232,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            workService.deleteWorkService(getUserSerial(authentication), planSerial,workSerial);
+            workService.deleteWorkService(portfolioService.getUserSerial(authentication), planSerial,workSerial);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
@@ -238,7 +260,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            planService.deletePlanService(getUserSerial(authentication), planSerial);
+            planService.deletePlanService(portfolioService.getUserSerial(authentication), planSerial);
 
             status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
@@ -267,7 +289,7 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            CustomerReview customerReview = workService.createReviewService(getUserSerial(authentication), planSerial, workSerial, params);
+            CustomerReview customerReview = workService.createReviewService(portfolioService.getUserSerial(authentication), planSerial, workSerial, params);
 
             status= HttpStatus.CREATED;
             responseDTO = new ResponseDTO<>(status.value(), "리뷰 작성 성공!", customerReview);
@@ -299,10 +321,6 @@ public class ScheduleController {
     //계약서 조회하기
     //계약서 수정하고 수정요청 보내기(수정 요청 테이블이랑 계약서 테이블도 필요함)
 
-    //연번 가져오기
-    public int getUserSerial(Authentication authentication) {
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-        return customUserDetails.getUserSerial();
-    }
+
 }
 

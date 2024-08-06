@@ -4,12 +4,16 @@ interface ModalProps {
   isOpen: boolean;
   onRequestClose: () => void;
   children: React.ReactNode;
+  maxWidth?: string;
+  height?: string;
 }
 
 export default function FullModal({
   isOpen,
   onRequestClose,
   children,
+  maxWidth = '580px',
+  height = '94%',
 }: ModalProps) {
   return (
     <Modal
@@ -24,19 +28,20 @@ export default function FullModal({
           zIndex: 50,
         },
         content: {
-          maxWidth: '580px',
           position: 'absolute',
           top: '40px',
           left: '40px',
           right: '40px',
           bottom: '40px',
+          maxWidth: maxWidth,
+          height: height,
           overflow: 'auto',
           WebkitOverflowScrolling: 'touch',
         },
       }}
       isOpen={isOpen}
       onRequestClose={onRequestClose}
-      className="flex rounded-zp-radius-big bg-zp-white h-[94%] overflow-hidden m-auto drop-shadow-zp-normal"
+      className="box-border flex m-auto overflow-hidden rounded-zp-radius-big bg-zp-white drop-shadow-zp-normal"
       appElement={document.getElementById('root') || undefined}
       shouldCloseOnOverlayClick={true}
     >
