@@ -94,6 +94,12 @@ public class ChatroomController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    @PatchMapping("/{chatroomSerial}")
+    public ResponseEntity deleteChatRoom(Authentication authentication, @PathVariable int chatroomSerial) {
+        chatroomService.deleteChatroom(chatroomSerial, getUserSerial(authentication));
+        return ResponseEntity.ok().build();
+    }
+
     public int getUserSerial(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         return customUserDetails.getUserSerial();

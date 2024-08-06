@@ -5,6 +5,7 @@ import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -18,8 +19,8 @@ public class Portfolio {
     @Column(name = "portfolio_serial")
     private int portfolioSerial;
     @ManyToOne
-    @JoinColumn(name = "user_serial", referencedColumnName = "user_serial")
-    private Worker userSerial;
+    @JoinColumn(name = "worker", referencedColumnName = "worker_serial")
+    private Worker worker;
     @Column(name = "public_relation")
     private String publicRelation;
     private double career;
@@ -36,12 +37,22 @@ public class Portfolio {
     public String toString() {
         return "Portfolio{" +
                 "portfolioSerial=" + portfolioSerial +
-                ", userSerial=" + userSerial +
+                ", worker=" + worker +
                 ", publicRelation='" + publicRelation + '\'' +
                 ", career=" + career +
                 ", fieldId=" + fieldId +
                 ", asPeriod=" + asPeriod +
                 ", workCount=" + workCount +
                 '}';
+    }
+
+    @Builder
+    public Portfolio(Worker worker, Field field) {
+        this.worker = worker;
+        this.fieldId = field;
+        this.publicRelation = "";
+        this.career = 0L;
+        this.asPeriod = 0;
+        this.workCount = 0;
     }
 }

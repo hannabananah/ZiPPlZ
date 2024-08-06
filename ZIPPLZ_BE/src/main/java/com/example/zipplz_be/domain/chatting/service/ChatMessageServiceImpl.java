@@ -7,6 +7,7 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
+import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -79,7 +80,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     // 채팅방 입장
     @Override
     public void enter(int userSerial, int chatroomSerial) {
-        if (!chatroomRepository.existsByChatroomSerial(chatroomSerial)) {
+        if (!chatroomRepository.existsByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE)) {
             throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
         Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);

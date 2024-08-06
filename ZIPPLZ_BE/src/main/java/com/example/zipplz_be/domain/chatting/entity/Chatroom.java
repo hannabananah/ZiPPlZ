@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.chatting.entity;
 
+import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
@@ -23,18 +24,25 @@ public class Chatroom {
     @ManyToOne
     @JoinColumn(name="w_user_serial")
     private User wuser;
-    @Column(name="chatroom_name")
-    private String chatroomName;
+    @Column(name="field_name")
+    private String fieldName;
     @Column(name="chatroom_date")
     @Temporal(TemporalType.TIMESTAMP)
     private Timestamp chatroomDate;
     @Column(name="session_id")
     private String sessionId;
+    private Status status;
 
     @Builder
-    Chatroom(User cuser, User wuser, String chatroomName) {
+    Chatroom(User cuser, User wuser, String fieldName) {
         this.cuser = cuser;
         this.wuser = wuser;
-        this.chatroomName = chatroomName;
+        this.fieldName = fieldName;
+        this.status = Status.ACTIVE;
+    }
+
+    public Chatroom inActive() {
+        this.status = Status.INACTIVE;
+        return this;
     }
 }

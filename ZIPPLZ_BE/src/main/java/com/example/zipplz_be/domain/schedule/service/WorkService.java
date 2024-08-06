@@ -184,7 +184,7 @@ public class WorkService {
         checkPlanWorkException(customer, plan, work);
 
         //포트폴리오 찾기
-        Portfolio portfolio = portfolioRepository.findByUserSerialAndFieldId(work.getWorkerSerial(), work.getFieldCode());
+        Portfolio portfolio = portfolioRepository.findByWorkerAndFieldId(work.getWorkerSerial(), work.getFieldCode());
         Timestamp curDate = new Timestamp(System.currentTimeMillis());
 
         //리뷰 작성

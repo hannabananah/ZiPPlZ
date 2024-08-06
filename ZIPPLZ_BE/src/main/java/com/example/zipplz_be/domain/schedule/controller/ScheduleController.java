@@ -1,12 +1,11 @@
 package com.example.zipplz_be.domain.schedule.controller;
 
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
+import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
-import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
-import com.example.zipplz_be.domain.schedule.exception.DuplicateFieldException;
-import com.example.zipplz_be.domain.schedule.exception.PlanNotFoundException;
-import com.example.zipplz_be.domain.schedule.exception.WorkException;
+import com.example.zipplz_be.domain.schedule.exception.*;
 import com.example.zipplz_be.domain.schedule.service.PlanService;
 import com.example.zipplz_be.domain.schedule.service.WorkService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
@@ -16,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -64,11 +64,17 @@ public class ScheduleController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            Plan plan = planService.getPlanDetailService(portfolioService.getUserSerial(authentication), planSerial);
+            PlanDetailDTO planDetailDTO = planService.getPlanDetailService(portfolioService.getUserSerial(authentication), planSerial);
 
             status = HttpStatus.OK;
-            responseDTO = new ResponseDTO<>(status.value(), "조회 성공", plan);
-        }catch (Exception e) {
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공", planDetailDTO);
+        } catch(PlanNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (CustomerNotFoundException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -310,17 +316,32 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
-    //평면도 가져오기
     //공유 문서에 이미지 넣기
-    //공유 문서의 이미지 조회하기
+    @PostMapping("/plans/{planSerial}/image")
+    public ResponseEntity<?> uploadImage(@RequestPart MultipartFile image, @PathVariable int planSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            File file = planService.uploadImageService(image, planSerial);
+
+            status= HttpStatus.CREATED;
+            responseDTO = new ResponseDTO<>(status.value(), "업로드 성공!", file);
+        } catch (S3Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+
     //영상 다운로드
-
-
-
-    //계약서 조회하기
-    //계약서 수정하고 수정요청 보내기(수정 요청 테이블이랑 계약서 테이블도 필요함)
-
+    //평면도 가져오기
+    //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
 
 }
 
