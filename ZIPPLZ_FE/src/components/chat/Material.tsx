@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import formatNumberWithCommas from '@/utils/formatNumberWithCommas';
+import NothingIcon from '@assets/nothing-icon.svg?react';
 import Button from '@components/common/Button';
 import SearchInput from '@components/common/SearchInput';
 import Pagination from '@utils/Pagination';
@@ -186,55 +187,68 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   };
 
   return (
-    <div className="flex flex-col justify-between w-full p-4 bg-zp-white">
+    <div className="flex flex-col justify-between w-full h-full p-4 bg-zp-white">
       <div className="flex flex-col gap-3">
         <h2 className="font-bold text-center text-zp-2xl">자재 고르기</h2>
         <SearchInput
           onSearch={handleSearch}
           placeholder="자재명을 검색하세요."
         />
-        <div className="flex flex-col">
-          {filteredMaterials.slice(offset, offset + perPage).map((material) => (
-            <div
-              key={material.materialSerial}
-              onClick={() => handleSelectMaterial(material.materialSerial)}
-              className={`flex items-center justify-between p-2 border-b cursor-pointer 
-                ${selectedMaterial === material.materialSerial ? 'bg-zp-sub-color' : 'bg-zp-transparent'} 
-                border-zp-sub-color`}
-            >
-              <div className="flex items-center">
-                <img
-                  src={material.img}
-                  alt={material.materialName}
-                  className="object-cover w-12 mr-2 aspect-square"
-                />
-                <h3
-                  className={`mr-2 font-bold truncate min-w-16 max-w-24 text-zp-xs ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
-                >
-                  {material.materialName}
-                </h3>
-                <p
-                  className={`min-w-12 line-clamp-2 max-h text-zp-2xs ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
-                >
-                  {material.description}
-                </p>
-              </div>
-              <p
-                className={`text-zp-gray text-zp-xs break-keep ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
-              >
-                {formatNumberWithCommas(material.materialPrice)}원
+        <div className="flex flex-col w-full">
+          {filteredMaterials.length === 0 ? (
+            <div className="flex flex-col items-center">
+              <p className="text-center text-zp-gray text-zp-sm">
+                해당하는 자재가 없습니다.
               </p>
+              <NothingIcon className="absolute w-10/12 -translate-y-1/2 top-1/2" />
             </div>
-          ))}
+          ) : (
+            filteredMaterials
+              .slice(offset, offset + perPage)
+              .map((material) => (
+                <div
+                  key={material.materialSerial}
+                  onClick={() => handleSelectMaterial(material.materialSerial)}
+                  className={`flex items-center justify-between p-2 border-b cursor-pointer 
+                  ${selectedMaterial === material.materialSerial ? 'bg-zp-sub-color' : 'bg-zp-transparent'} 
+                  border-zp-sub-color`}
+                >
+                  <div className="flex items-center">
+                    <img
+                      src={material.img}
+                      alt={material.materialName}
+                      className="object-cover w-12 mr-2 aspect-square"
+                    />
+                    <h3
+                      className={`mr-2 font-bold truncate min-w-16 max-w-24 text-zp-xs ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
+                    >
+                      {material.materialName}
+                    </h3>
+                    <p
+                      className={`min-w-12 line-clamp-2 max-h text-zp-2xs ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
+                    >
+                      {material.description}
+                    </p>
+                  </div>
+                  <p
+                    className={`text-zp-gray text-zp-xs break-keep ${selectedMaterial === material.materialSerial ? 'text-zp-black' : 'text-zp-gray'}`}
+                  >
+                    {formatNumberWithCommas(material.materialPrice)}원
+                  </p>
+                </div>
+              ))
+          )}
         </div>
       </div>
       <div className="flex flex-col">
-        <Pagination
-          total={filteredMaterials.length}
-          limit={perPage}
-          page={page}
-          setPage={setPage}
-        />
+        {filteredMaterials.length > 0 && (
+          <Pagination
+            total={filteredMaterials.length}
+            limit={perPage}
+            page={page}
+            setPage={setPage}
+          />
+        )}
         <div className="flex gap-2">
           <Button
             type="button"
