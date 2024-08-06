@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
 
+import {
+  Material as MaterialType,
+  getMaterials,
+} from '@apis/worker/MaterialApi';
 import NothingIcon from '@assets/nothing-icon.svg?react';
 import MaterialItem from '@components/chat/MaterialItem';
 import Button from '@components/common/Button';
@@ -11,159 +15,43 @@ interface MaterialProps {
   closeMaterialModal: () => void;
 }
 
-interface MaterialDetail {
-  materialSerial: number;
-  materialName: string;
-  description: string;
-  materialPrice: number;
-  majorCategory: number;
-  img: string;
-}
+const categoryMap: { [key: string]: number } = {
+  벽면재: 0,
+  바닥재: 1,
+};
 
-const materials: MaterialDetail[] = [
-  {
-    materialSerial: 1,
-    materialName: '강마루강마루강마루강마루',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 2,
-    materialName: '약마루',
-    description: '약함',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-  {
-    materialSerial: 3,
-    materialName: '강약약강약강마루강마루',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 4,
-    materialName: '44444444vvial',
-    description: 'material',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-  {
-    materialSerial: 5,
-    materialName: '555555555555555강마',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 6,
-    materialName: '약마666666666666666666루',
-    description: '약함',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-  {
-    materialSerial: 7,
-    materialName: '777777777777마루',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 8,
-    materialName: '8888888888888888888',
-    description: 'material',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-  {
-    materialSerial: 9,
-    materialName: '강마루강마루강마루강마루',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 10,
-    materialName: '약마루',
-    description: '약함',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-  {
-    materialSerial: 11,
-    materialName: '강약약강약강마루강마루',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 12,
-    materialName: '44444444vvial',
-    description: 'material',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-  {
-    materialSerial: 13,
-    materialName: '555555555555555강마',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 14,
-    materialName: '약마666666666666666666루',
-    description: '약함',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 1,
-  },
-  {
-    materialSerial: 15,
-    materialName: '777777777777마루',
-    description:
-      '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
-    materialPrice: 10000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-  {
-    materialSerial: 16,
-    materialName: '8888888888888888888',
-    description: 'material',
-    materialPrice: 20000,
-    img: 'https://picsum.photos/350',
-    majorCategory: 2,
-  },
-];
 export default function Material({ closeMaterialModal }: MaterialProps) {
   const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(4);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+  const [materials, setMaterials] = useState<MaterialType[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchMaterials = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await getMaterials();
+      setPage(1);
+      setMaterials(response.data.data);
+    } catch (err) {
+      setError('자재를 가져오는 데 실패했습니다.');
+      console.log('Fetch error:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMaterials();
+  }, []);
+
+  useEffect(() => {
+    setPage(1);
+  }, [searchQuery, selectedCategory]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -182,15 +70,6 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
     };
   }, []);
 
-  useEffect(() => {
-    setPage(1);
-  }, [searchQuery, selectedCategory]);
-
-  const categoryMap: { [key: string]: number } = {
-    바닥재: 1,
-    벽면재: 2,
-  };
-
   const filteredMaterials = materials.filter(
     (material) =>
       material.materialName.includes(searchQuery) &&
@@ -206,7 +85,7 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
     if (page > numPages) {
       setPage(numPages);
     }
-  }, [numPages, page]);
+  }, [numPages]);
 
   const handleSelectMaterial = (serial: number) => {
     setSelectedMaterial(serial);
@@ -220,13 +99,20 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
     setSelectedCategory(categoryMap[category] || null);
   };
 
+  if (loading) {
+    return <div className="text-center text-zp-gray">Loading...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center text-zp-red">{error}</div>;
+  }
   return (
     <div className="flex flex-col justify-between w-full h-full p-4 bg-zp-white">
       <div className="flex flex-col gap-3">
         <h2 className="font-bold text-center text-zp-2xl">자재 고르기</h2>
         <div className="flex items-center justify-between gap-x-2">
           <DropDown
-            options={['바닥재', '벽면재']}
+            options={['벽면재', '바닥재']}
             onSelect={handleCategoryChange}
             defaultOption="모든 자재"
           />

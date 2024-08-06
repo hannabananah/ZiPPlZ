@@ -1,18 +1,10 @@
+import { Material } from '@/apis/worker/MaterialApi';
 import formatNumberWithCommas from '@/utils/formatNumberWithCommas';
 
 interface MaterialItemProps {
-  material: MaterialDetail;
+  material: Material;
   isSelected: boolean;
   onSelect: (serial: number) => void;
-}
-
-interface MaterialDetail {
-  materialSerial: number;
-  materialName: string;
-  description: string;
-  materialPrice: number;
-  majorCategory: number;
-  img: string;
 }
 
 export default function MaterialItem({
