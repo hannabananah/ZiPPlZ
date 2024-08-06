@@ -11,6 +11,7 @@ export const END_POINT = {
   SIDO: 'default/sido',
   GUGUN: (sidocode: number) => `default/sido/${sidocode}`,
   PORTFOLIO: 'workerlist/portfolios',
+  MATERIAL: 'material/list',
 } as const;
 
 export const HTTP_STATUS_CODE = {
