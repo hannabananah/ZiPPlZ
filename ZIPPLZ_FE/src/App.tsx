@@ -22,7 +22,7 @@ import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
 //
 // 워커 찾기
-import FindWorkerDetail : '@pages/common/workerinfo/FindWorkerDetail';
+import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
 import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
 import FindWorkerList from '@pages/common/workerinfo/FindWorkerList';
 import WorkerInfoDateDetail from '@pages/common/workerinfo/WorkerInfoDateDetail';
