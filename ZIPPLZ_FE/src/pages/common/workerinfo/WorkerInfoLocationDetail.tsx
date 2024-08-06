@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
-import { User, Worker } from '@apis/worker/WorkerApi';
+// import { User, Worker } from '@apis/worker/WorkerApi';
 // import { getGugun, getSido } from '@apis/worker/WorkerApi';
 import Button from '@components/common/Button';
 
@@ -11,46 +11,46 @@ type Location = {
   district: string;
 };
 
-// 시도 인터페이스
-interface Sido {
-  sidoCode: number;
-  sidoName: string;
-}
-// 구군 인터페이스
-interface Gugun {
-  gugunCode: number;
-  sidoCode: number;
-  gugunName: string;
-}
-// 지역 인터페이스
-interface location {
-  sidoCode: number;
-  gugunCode: number;
-  localName: string;
-}
-interface Props {
-  setNext: React.Dispatch<React.SetStateAction<boolean>>;
-  setLink: React.Dispatch<React.SetStateAction<string>>;
-  setWorker: React.Dispatch<React.SetStateAction<Worker>>;
-}
+// // 시도 인터페이스
+// interface Sido {
+//   sidoCode: number;
+//   sidoName: string;
+// }
+// // 구군 인터페이스
+// interface Gugun {
+//   gugunCode: number;
+//   sidoCode: number;
+//   gugunName: string;
+// }
+// // 지역 인터페이스
+// interface location {
+//   sidoCode: number;
+//   gugunCode: number;
+//   localName: string;
+// }
+// interface Props {
+//   setNext: React.Dispatch<React.SetStateAction<boolean>>;
+//   setLink: React.Dispatch<React.SetStateAction<string>>;
+//   setWorker: React.Dispatch<React.SetStateAction<Worker>>;
+// }
 
 export default function WorkerInfoLocationDetail() {
   // 유저, worker 정보 가져오기
-  const [user, setUser] = useState<User>({
-    email: '',
-    password: '',
-    userName: '',
-    birthDate: '',
-    tel: '',
-  });
-  const [worker, setWorker] = useState<Worker>({
-    userSerial: 0,
-    locationList: [],
-    fieldList: [],
-    businessNumber: '',
-    company: '',
-    companyAddress: '',
-  });
+  // const [user, setUser] = useState<User>({
+  //   email: '',
+  //   password: '',
+  //   userName: '',
+  //   birthDate: '',
+  //   tel: '',
+  // });
+  // const [worker, setWorker] = useState<Worker>({
+  //   userSerial: 0,
+  //   locationList: [],
+  //   fieldList: [],
+  //   businessNumber: '',
+  //   company: '',
+  //   companyAddress: '',
+  // });
 
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
@@ -140,10 +140,10 @@ export default function WorkerInfoLocationDetail() {
   };
 
   return (
-    <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
-      <div className="w-full max-w-3xl">
-        <div className="flex items-center justify-between w-full mb-4">
-          <div className="flex-1 ml-5 font-bold text-center">
+    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+      <div className="w-full">
+        <div className="flex justify-between items-center w-full mb-4">
+          <div className="ml-5 flex-1 text-center font-bold">
             작업 지역 선택
           </div>
           <IoIosClose

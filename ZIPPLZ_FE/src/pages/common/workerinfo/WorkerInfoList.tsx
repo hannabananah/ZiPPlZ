@@ -47,7 +47,7 @@ export default function WorkerInfoList() {
   const [inputValue, setInputValue] = useState<string>('');
   const [workerList, setWorkerList] = useState<WorkerInfo[]>([]);
   const [isListExist, setIsListExist] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [, setError] = useState<string | null>(null); // error 변수 안 쓰여서 우선 지움
 
   const handleInputClick = () => {
     navigate('/WorkerInfoLocationDetail'); // 클릭 시 이동할 페이지
