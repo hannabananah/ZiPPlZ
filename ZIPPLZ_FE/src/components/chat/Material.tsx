@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import NothingIcon from '@assets/nothing-icon.svg?react';
 import MaterialItem from '@components/chat/MaterialItem';
 import Button from '@components/common/Button';
+import DropDown from '@components/common/DropDown';
 import SearchInput from '@components/common/SearchInput';
 import Pagination from '@utils/Pagination';
 
@@ -15,6 +16,7 @@ interface MaterialDetail {
   materialName: string;
   description: string;
   materialPrice: number;
+  majorCategory: number;
   img: string;
 }
 
@@ -26,6 +28,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 2,
@@ -33,6 +36,7 @@ const materials: MaterialDetail[] = [
     description: '약함',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
   {
     materialSerial: 3,
@@ -41,6 +45,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 4,
@@ -48,6 +53,7 @@ const materials: MaterialDetail[] = [
     description: 'material',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
   {
     materialSerial: 5,
@@ -56,6 +62,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 6,
@@ -63,6 +70,7 @@ const materials: MaterialDetail[] = [
     description: '약함',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
   {
     materialSerial: 7,
@@ -71,6 +79,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 8,
@@ -78,6 +87,7 @@ const materials: MaterialDetail[] = [
     description: 'material',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
   {
     materialSerial: 9,
@@ -86,6 +96,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 10,
@@ -93,6 +104,7 @@ const materials: MaterialDetail[] = [
     description: '약함',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
   {
     materialSerial: 11,
@@ -101,6 +113,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 12,
@@ -108,6 +121,7 @@ const materials: MaterialDetail[] = [
     description: 'material',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
   {
     materialSerial: 13,
@@ -116,6 +130,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 14,
@@ -123,6 +138,7 @@ const materials: MaterialDetail[] = [
     description: '약함',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 1,
   },
   {
     materialSerial: 15,
@@ -131,6 +147,7 @@ const materials: MaterialDetail[] = [
       '강함강함강함강함강함강함강함강함강함강함함강함강함강함강함강함',
     materialPrice: 10000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
   {
     materialSerial: 16,
@@ -138,6 +155,7 @@ const materials: MaterialDetail[] = [
     description: 'material',
     materialPrice: 20000,
     img: 'https://picsum.photos/350',
+    majorCategory: 2,
   },
 ];
 export default function Material({ closeMaterialModal }: MaterialProps) {
@@ -145,13 +163,14 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(4);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 380) {
-        setPerPage(4);
+        setPerPage(5);
       } else {
-        setPerPage(6);
+        setPerPage(7);
       }
     };
 
@@ -165,10 +184,19 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
 
   useEffect(() => {
     setPage(1);
-  }, [searchQuery]);
+  }, [searchQuery, selectedCategory]);
 
-  const filteredMaterials = materials.filter((material) =>
-    material.materialName.includes(searchQuery)
+  const categoryMap: { [key: string]: number } = {
+    바닥재: 1,
+    벽면재: 2,
+  };
+
+  const filteredMaterials = materials.filter(
+    (material) =>
+      material.materialName.includes(searchQuery) &&
+      (selectedCategory !== null
+        ? material.majorCategory === selectedCategory
+        : true)
   );
 
   const numPages = Math.ceil(filteredMaterials.length / perPage);
@@ -188,14 +216,25 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
     setSearchQuery(query);
   };
 
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(categoryMap[category] || null);
+  };
+
   return (
     <div className="flex flex-col justify-between w-full h-full p-4 bg-zp-white">
       <div className="flex flex-col gap-3">
         <h2 className="font-bold text-center text-zp-2xl">자재 고르기</h2>
-        <SearchInput
-          onSearch={handleSearch}
-          placeholder="자재명을 검색하세요."
-        />
+        <div className="flex items-center justify-between gap-x-2">
+          <DropDown
+            options={['바닥재', '벽면재']}
+            onSelect={handleCategoryChange}
+            defaultOption="모든 자재"
+          />
+          <SearchInput
+            onSearch={handleSearch}
+            placeholder="자재명을 검색하세요."
+          />
+        </div>
         <div className="flex flex-col w-full">
           {filteredMaterials.length === 0 ? (
             <div className="flex flex-col items-center">

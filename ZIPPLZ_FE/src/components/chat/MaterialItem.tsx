@@ -11,6 +11,7 @@ interface MaterialDetail {
   materialName: string;
   description: string;
   materialPrice: number;
+  majorCategory: number;
   img: string;
 }
 
