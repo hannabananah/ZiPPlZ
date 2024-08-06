@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.chatting.repository.jpa;
 
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
+import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.user.entity.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,17 +13,18 @@ import java.util.List;
 @Repository
 public interface ChatroomRepository extends JpaRepository<Chatroom, Integer> {
     Chatroom findByChatroomSerial(int chatroomSerial);
+    Chatroom findByChatroomSerialAndStatus(int chatroomSerial, Status active);
 
     Chatroom findBySessionId(String sessionId);
 
-    Boolean existsByChatroomSerial(int chatroomSerial);
+    Boolean existsByChatroomSerialAndStatus(int chatroomSerial, Status active);
 
     // 엔티티 필드에 맞는 메소드 정의
-    Boolean existsByCuserAndWuser(User cuser, User wuser);
+    Boolean existsByStatusAndCuserAndWuser(Status status, User cuser, User wuser);
 
-    Chatroom findByCuserAndWuser(User cuser, User wuser);
+    Chatroom findByCuserAndWuserAndStatus(User cuser, User wuser, Status active);
 
-    Page<Chatroom> findAllByCuser(User cuser, Pageable pageable);
+    Page<Chatroom> findAllByCuserAndStatus(User cuser, Status active, Pageable pageable);
 
-    Page<Chatroom> findAllByWuser(User wuser, Pageable pageable);
+    Page<Chatroom> findAllByWuserAndStatus(User wuser, Status active, Pageable pageable);
 }
