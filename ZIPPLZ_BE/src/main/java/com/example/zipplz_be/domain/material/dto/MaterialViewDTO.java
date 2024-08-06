@@ -6,14 +6,17 @@ public class MaterialViewDTO {
     int fieldId;
     String description;
     int materialPrice;
+    int majorCategory;
+    int middleCategory;
     String img;
 
     public MaterialViewDTO(MaterialDTO mDTO, String img) {
         this.materialSerial = mDTO.getMaterialSerial();
         this.materialName = mDTO.getMaterialName();
-        this.fieldId = mDTO.getFieldId();
         this.description = mDTO.getDescription();
         this.materialPrice = mDTO.getMaterialPrice();
+        this.majorCategory = mDTO.getMajorCategory();
+        this.middleCategory = mDTO.getMiddleCategory();
         this.img = img;
     }
 

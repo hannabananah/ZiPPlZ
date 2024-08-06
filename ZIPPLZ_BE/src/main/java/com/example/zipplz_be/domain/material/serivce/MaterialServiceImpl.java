@@ -24,6 +24,8 @@ public class MaterialServiceImpl implements MaterialService {
     public List<MaterialViewDTO> getMaterialList() {
         List<MaterialViewDTO> materialViews = new ArrayList<>();
         List<MaterialDTO> materials = materialRepository.getMaterialList();
+        System.out.println("★★★★★★★★★★★★★★★★★★★★★★★★★★★");
+        System.out.println(materials);
         for (MaterialDTO material : materials) {
             List<MaterialFileDTO> files = fileRepository.getMaterialImg(material.getMaterialSerial());
             String img = null;
