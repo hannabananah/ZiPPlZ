@@ -11,10 +11,25 @@ export default function Resign() {
     navigate('-1');
   };
 
-  // 탈퇴하기 페이지로 이동
-  const handleNavigateToResign = () => {
-    navigate('/Resign'); // '/version' 경로로 이동
+  // 더 이상 ZIP-PlZ를 사용하지 않아요 페이지로 이동
+  const handleNavigateToDontUseZIPPLZ = () => {
+    navigate('/mypage/dontusezipplz');
   };
+
+  // // 개인정보가 불안해요 페이지 삭제 예정
+  // const handleNavigateToInformationNerve = () => {
+  //   navigate('/Resign');
+  // };
+
+  // 비매너 시공업자를 만났어요 페이지로 이동
+  const handleNavigateToRoughWorker = () => {
+    navigate('/mypage/roughworker');
+  };
+
+  // 기타 페이지 보류
+  // const handleNavigateToEtc = () => {
+  //   navigate('/Etc');
+  // };
 
   return (
     <>
@@ -31,11 +46,11 @@ export default function Resign() {
             </div>
             <div className="">건너뛰기</div>
           </div>
-          <div className="mt-6 text-zp-2xl font-bold">
+          <div className="mt-6 text-zp-xl font-bold">
             회원 탈퇴 전 주의사항을 확인해주세요
           </div>
 
-          <div className="mt-6 p-4 bg-zp-light-beige rounded-zp-radius-big">
+          <div className="mt-6 bg-zp-light-beige rounded-zp-radius-big">
             <div className="flex items-center">
               <div className="text-zp-gray">
                 <PiWarningCircleBold />
@@ -52,49 +67,49 @@ export default function Resign() {
             </ul>
           </div>
 
-          <div className="mt-6 text-zp-2xl font-bold">
+          <div className="mt-6 text-zp-xl font-bold">
             회원을 탈퇴하고자 하는 이유를 알려주세요
           </div>
           {/* 1. 더 이상 ZIP-PlZ를 사용하지 않아요 페이지 이동 아이콘 */}
           <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">더 이상 ZIP-PlZ를 사용하지 않아요</div>
+            <div className="text-zp-xs">더 이상 ZIP-PlZ를 사용하지 않아요</div>
+            <div>
+              <HiChevronRight
+                className="cursor-pointer"
+                onClick={handleNavigateToDontUseZIPPLZ}
+              />
+            </div>
+          </div>
+          {/* 2. 개인정보가 불안해요 페이지 삭제 예정 */}
+          {/* <div className="mt-6 flex items-center justify-between w-full">
+            <div className="text-zp-xs">개인정보가 불안해요</div>
             <div>
               <HiChevronRight
                 className="cursor-pointer"
                 onClick={handleNavigateToResign}
               />
             </div>
-          </div>
-          {/* 2. 개인정보가 불안해요 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">개인정보가 불안해요</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToResign}
-              />
-            </div>
-          </div>
+          </div> */}
           {/* 3. 비매너 시공업자를 만났어요 페이지 이동 아이콘 */}
           <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">비매너 시공업자를 만났어요</div>
+            <div className="text-zp-xs">비매너 시공업자를 만났어요</div>
             <div>
               <HiChevronRight
                 className="cursor-pointer"
-                onClick={handleNavigateToResign}
+                onClick={handleNavigateToRoughWorker}
               />
             </div>
           </div>
-          {/* 4. 기타 페이지 이동 아이콘 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">기타</div>
+          {/* 4. 기타 페이지 보류*/}
+          {/* <div className="mt-6 flex items-center justify-between w-full">
+            <div className="text-zp-xs">기타</div>
             <div>
               <HiChevronRight
                 className="cursor-pointer"
-                onClick={handleNavigateToResign}
+                onClick={handleNavigateToEtc}
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </>

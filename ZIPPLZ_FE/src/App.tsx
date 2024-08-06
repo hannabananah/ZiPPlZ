@@ -20,9 +20,8 @@ import WishWorkerList from '@pages/common/mypage/WishWorkerList';
 import BeforeResign from '@pages/common/mypage/resignpage/BeforeResign';
 import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
-//
 // 워커 찾기
-import FindWorkerDetail : '@pages/common/workerinfo/FindWorkerDetail';
+import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
 import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
 import FindWorkerList from '@pages/common/workerinfo/FindWorkerList';
 import WorkerInfoDateDetail from '@pages/common/workerinfo/WorkerInfoDateDetail';
@@ -33,6 +32,7 @@ import Portfolio from '@pages/worker/Portfolio';
 
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
+import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
 import SignUp from './pages/common/signup/SignUp';
 
 export default function App() {
@@ -75,6 +75,7 @@ export default function App() {
         <Route path="mypage/beforeresign" element={<BeforeResign />} />
         <Route path="mypage/dontusezipplz" element={<DontUseZIPPLZ />} />
         <Route path="mypage/wishworkerlist" element={<WishWorkerList />} />
+        <Route path="mypage/roughworker" element={<RoughWorker />} />
       </Route>
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
       <Route path="/member/login" element={<Login />} />

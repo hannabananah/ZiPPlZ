@@ -1,10 +1,22 @@
+import React, { useEffect, useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiChevronRight } from 'react-icons/hi2';
 import { useNavigate } from 'react-router-dom';
 
+interface UserInfo {
+  nickname: string;
+  fullname: string;
+}
+
 export default function MyPage() {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
+  const [userType, setUserType] = useState<'customer' | 'worker'>('customer'); // 'customer' 또는 'worker'
+  const [userInfo, setUserInfo] = useState<UserInfo>({
+    nickname: '',
+    fullname: '',
+  });
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
@@ -13,40 +25,63 @@ export default function MyPage() {
 
   // 내 정보 수정하기 페이지로 이동
   const handleNavigateToMyInformationModify = () => {
-    navigate('/mypage/myinformationmodify'); // '/version' 경로로 이동
+    navigate('/mypage/myinformationmodify');
   };
 
   // 비밀번호 변경 페이지로 이동
   const handleNavigateToMyPasswordModify = () => {
-    navigate('/mypage/mypasswordmodify'); // '/version' 경로로 이동
+    navigate('/mypage/mypasswordmodify');
   };
 
   // 내가 쓴 글 / 스크랩 글 목록 페이지로 이동
   const handleNavigateToMyBoardAndScrapList = () => {
-    navigate('/mypage/myboardlist'); // '/version' 경로로 이동
+    navigate('/mypage/myboardlist');
   };
 
   // 관심있는 시공업자 / 찜한 자재 목록 페이지로 이동
   const handleNavigateToWishWorkerList = () => {
-    navigate('/mypage/wishworkerlist'); // '/version' 경로로 이동
+    navigate('/mypage/wishworkerlist');
   };
 
   // 이용약관 / 개인정보처리방침 페이지로 이동
   const handleNavigateToPolicy = () => {
-    navigate('/mypage/policy'); // '/version' 경로로 이동
+    navigate('/mypage/policy');
   };
 
   // 버전 페이지로 이동
   const handleNavigateToVersion = () => {
-    navigate('/mypage/version'); // '/version' 경로로 이동
+    navigate('/mypage/version');
   };
 
-  // 로그아웃 페이지로 이동(로그아웃 구현 후 적용 예정)
+  // 로그아웃 모달 열기
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  // 로그아웃 모달 닫기
+  const handleCloseModal = () => {
+    setShowLogoutModal(false);
+  };
+
+  // 실제 로그아웃 처리 (로그아웃 구현 후 적용 예정)
+  const handleLogoutConfirm = () => {
+    setShowLogoutModal(false);
+    // 로그아웃 로직 추가 필요
+    // 임시로 홈으로 이동하게 해놓음
+    navigate('/');
+  };
 
   // 탈퇴하기 페이지로 이동
   const handleNavigateToResign = () => {
-    navigate('/mypage/resign'); // '/version' 경로로 이동
+    navigate('/mypage/resign');
   };
+
+  // 사용자 정보 가져오기 (실제 구현에서는 API 호출 등을 통해 가져오게 됨)
+  useEffect(() => {
+    // 예시 데이터를 설정합니다. 실제로는 API 호출 등을 통해 데이터를 가져옵니다.
+    setUserType('customer'); // 'customer' 또는 'worker'
+    setUserInfo({ nickname: '강신구', fullname: '김현태' });
+  }, []);
 
   return (
     <>
@@ -66,14 +101,16 @@ export default function MyPage() {
             </div>
           </div>
 
-          {/* 프로필 사진, 닉네임 */}
+          {/* 프로필 사진, 닉네임 또는 본명 */}
           <div className="flex justify-center w-full mt-4">
             <div className="flex flex-col items-center">
               <div className="w-36 h-36">
                 <CgProfile size={144} />
               </div>
               <div className="w-36 h-8 grid place-items-center text-zp-lg">
-                강신구
+                {userType === 'customer'
+                  ? userInfo.nickname
+                  : userInfo.fullname}
               </div>
             </div>
           </div>
@@ -155,7 +192,7 @@ export default function MyPage() {
             <div>
               <HiChevronRight
                 className="cursor-pointer"
-                onClick={handleNavigateToVersion}
+                onClick={handleLogoutClick}
               />
             </div>
           </div>
@@ -172,6 +209,33 @@ export default function MyPage() {
           </div>
         </div>
       </div>
+
+      {showLogoutModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
+          <div className="px-8 h-[250px] bg-zp-white rounded-zp-radius-big p-6">
+            <h2 className="p-6 text-zp-3xl font-bold flex justify-center">
+              로그아웃
+            </h2>
+            <p className="p-6 text-zp-xl font-bold flex justify-center">
+              정말 로그아웃을 하시겠습니까?
+            </p>
+            <div className="mt-2 flex font-bold justify-center space-x-2">
+              <button
+                className="w-full px-4 py-2 rounded-zp-radius-big bg-zp-light-beige text-zp-xs "
+                onClick={handleCloseModal}
+              >
+                취소
+              </button>
+              <button
+                className="w-full px-4 py-2 rounded-zp-radius-big bg-zp-sub-color text-zp-xs"
+                onClick={handleLogoutConfirm}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

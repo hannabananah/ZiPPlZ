@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { FaSortAmountDown } from 'react-icons/fa';
-// import { FaRegCircleCheck } from 'react-icons/fa6';
 import { FaRegCircle, FaRegCircleDot } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
@@ -69,7 +68,7 @@ export default function MyBoardList() {
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
         {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
-        <div className="h-10 flex items-center justify-between w-full relative">
+        <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
@@ -147,7 +146,7 @@ export default function MyBoardList() {
         {/* 전체 게시글 수 표시 부분 */}
         <div className="text-zp-xl font-bold text-zp-gray">전체 3</div>
         {/* 선택하기-삭제하기 버튼 */}
-        <div className="w-full flex justify-between items-center text-zp-2xs">
+        <div className="w-full flex justify-end items-center text-zp-2xs">
           {isSelecting && (
             <div
               className="flex items-center space-x-2 cursor-pointer"

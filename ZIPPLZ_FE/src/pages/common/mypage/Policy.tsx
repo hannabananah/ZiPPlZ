@@ -177,12 +177,12 @@ export default function Policy() {
               size={20}
             />
           </div>
-          <div className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-center">
+          <div className="mt-12 absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-center">
             개인정보처리방침
           </div>
         </div>
 
-        <div className="mt-6 w-full font-bold bg-zp-sub-color border rounded-zp-radius-big p-6">
+        <div className="mt-6 w-full text-zp-xs font-bold bg-zp-sub-color rounded-zp-radius-big p-6">
           <div
             className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'h-auto' : 'h-[calc(20rem)]'} `}
           >

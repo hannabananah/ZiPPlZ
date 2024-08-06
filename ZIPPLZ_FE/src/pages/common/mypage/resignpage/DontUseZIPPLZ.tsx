@@ -1,8 +1,11 @@
 import { FaRegCalendarAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { GrUserWorker } from 'react-icons/gr';
-import { MdOutlineDesignServices } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
+
+import AiInteriorIcon from '@assets/ai-interior-icon.svg';
+
+// SVG 파일 import
 
 export default function DontUseZIPPLZ() {
   let user: string = '강신구';
@@ -13,17 +16,23 @@ export default function DontUseZIPPLZ() {
     navigate('-1');
   };
 
+  // AI 인테리어 기능 페이지로 이동하는 핸들러
+  // 임시로 홈으로 가게 해놓음
+  const handleNavigateToPage = () => {
+    navigate('/');
+  };
+
   // 탈퇴하기 핸들러
   const handleResign = () => {
-    navigate('/beforeResign');
+    navigate('/mypage/beforeresign');
   };
 
   return (
     <>
       <div className="flex flex-col min-h-screen p-6 bg-gray-100">
-        <div className="w-full flex-grow">
+        <div className="w-full">
           {/* 뒤로가기 버튼 */}
-          <div className="flex items-center">
+          <div className="mt-6 flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
               onClick={handleGoBack}
@@ -31,37 +40,46 @@ export default function DontUseZIPPLZ() {
             />
           </div>
 
-          <div className="mt-6 w-[400px] h-24">
-            <div className="text-zp-3xl font-bold">{user}님,</div>
-            <div className="text-zp-3xl font-bold">이런 기능도 써보셨나요?</div>
+          <div className="mt-6 w-full">
+            <div className="text-zp-2xl font-bold">{user}님,</div>
+            <div className="text-zp-2xl font-bold">이런 기능도 써보셨나요?</div>
           </div>
 
           <div className="flex justify-center items-center">
             <div className="text-center">
-              <div className="mb-6">
-                <MdOutlineDesignServices size={170} />
+              <div className="mt-6 flex justify-center mb-6">
+                <img
+                  src={AiInteriorIcon}
+                  alt="AI 인테리어 아이콘"
+                  width={100}
+                  height={100}
+                />
               </div>
-              <div className="w-[170px] h-7 font-bold text-zp-xl mb-4">
+              <div className="h-2 font-bold text-zp-xl mb-4">
                 편리하게 10분만에
               </div>
-              <div className="w-[168px] h-10 font-bold text-zp-3xl mb-4">
-                AI 인테리어
-              </div>
-              <div className="w-[170px] h-12 font-bold text-zp-xl bg-zp-sub-color rounded-zp-radius-btn flex items-center justify-center cursor-pointer">
+              <div className="h-10 font-bold text-zp-2xl mb-2">AI 인테리어</div>
+              {/* 이용하기 버튼 */}
+              {/* <div className="w-full h-10 font-bold text-zp-xl bg-zp-sub-color rounded-zp-radius-btn flex items-center justify-center cursor-pointer">
                 이용하기
-              </div>
+              </div> */}
+              <button onClick={handleNavigateToPage}>
+                <div className="h-10 font-bold text-zp-xl bg-zp-sub-color rounded-zp-radius-btn flex items-center justify-center cursor-pointer">
+                  이용하기
+                </div>
+              </button>
             </div>
           </div>
 
-          <hr className="mt-6 w-full border-zp-light-gray" />
+          <hr className="mt-6 w-full border-zp-main-color" />
 
           <div className="mt-6 flex items">
             <div>
-              <FaRegCalendarAlt size={72} />
+              <FaRegCalendarAlt size={36} />
             </div>
-            <div className="h-5 p-2 font-bold text-zp-xl">
+            <div className="relative bottom-1 h-5 p-2 font-bold text-zp-xs">
               캘린더
-              <div className="mt-2 font-bold text-zp-gray text-zp-xl">
+              <div className="font-bold text-zp-gray text-zp-xs">
                 나만의 인테리어 일정 세우기
               </div>
             </div>
@@ -69,11 +87,11 @@ export default function DontUseZIPPLZ() {
 
           <div className="mt-6 flex items">
             <div>
-              <GrUserWorker size={72} />
+              <GrUserWorker size={36} />
             </div>
-            <div className="h-5 p-2 font-bold text-zp-xl">
+            <div className="relative bottom-1 h-5 p-2 font-bold text-zp-xs">
               시공자 검색
-              <div className="mt-2 font-bold text-zp-gray text-zp-xl">
+              <div className="font-bold text-zp-gray text-zp-xs">
                 공종별 최고의 시공 전문가와 함께 인테리어 하기
               </div>
             </div>
@@ -81,12 +99,11 @@ export default function DontUseZIPPLZ() {
         </div>
 
         {/* 넘어가기 버튼 */}
-        <div
-          className="w-full h-[60px] rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center mt-auto cursor-pointer"
-          onClick={handleResign}
-        >
-          <div className="text-zp-2xl font-bold">넘어가기</div>
-        </div>
+        <button onClick={handleResign}>
+          <div className="mt-6 w-full font-bold h-10 rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer">
+            넘어가기
+          </div>
+        </button>
       </div>
     </>
   );

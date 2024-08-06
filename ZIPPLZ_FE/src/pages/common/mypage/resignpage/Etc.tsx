@@ -1,8 +1,4 @@
-interface Props {}
-
-function Etc(props: Props) {
-  const {} = props;
-
+function Etc() {
   return;
 }
 

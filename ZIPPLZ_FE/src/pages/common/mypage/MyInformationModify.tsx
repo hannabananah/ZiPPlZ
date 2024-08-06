@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import DaumPostcode from 'react-daum-postcode';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
@@ -10,6 +11,7 @@ export default function MyInformationModify() {
   const [nickname, setNickname] = useState('백승범123');
   const [phoneNumber, setPhoneNumber] = useState('010-1234-5678');
   const [address, setAddress] = useState('서울시 강남구 테헤란로');
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
 
   // 오류 메시지 상태를 관리합니다.
   const [nicknameError, setNicknameError] = useState('');
@@ -18,13 +20,8 @@ export default function MyInformationModify() {
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('-1');
+    navigate('/mypage');
   };
-
-  // 입력 필드 초기화 핸들러
-  // const handleClear = (setter) => {
-  //   setter('');
-  // };
 
   // 수정완료 버튼 핸들러
   const handleSubmit = () => {
@@ -35,14 +32,34 @@ export default function MyInformationModify() {
     if (!phoneNumber) setPhoneNumberError('휴대폰 번호를 적어주세요');
     else setPhoneNumberError('');
 
-    if (!address) setAddressError('집 주소를 적어주세요');
+    if (!address) setAddressError('자택 주소를 적어주세요');
     else setAddressError('');
 
     // 모든 필드가 채워져 있으면 제출 로직 수행
     if (nickname && phoneNumber && address) {
-      console.log('수정완료');
+      // console.log('수정완료');
+      navigate('/mypage');
       // 추가적인 제출 로직을 여기에 작성
     }
+  };
+
+  // Daum Postcode Complete Handler
+  const handleComplete = (data) => {
+    let fullAddress = data.address;
+    let extraAddress = '';
+
+    if (data.addressType === 'R') {
+      if (data.bname !== '') {
+        extraAddress += data.bname;
+      }
+      if (data.buildingName !== '') {
+        extraAddress += (extraAddress !== '' ? ', ' : '') + data.buildingName;
+      }
+      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
+    }
+
+    setAddress(fullAddress);
+    setIsPostcodeOpen(false);
   };
 
   return (
@@ -50,7 +67,7 @@ export default function MyInformationModify() {
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
         <div className="w-full">
           {/* 뒤로가기 버튼 + "내 정보 수정하기" 글자 */}
-          <div className="h-12 flex items-center justify-between w-full relative">
+          <div className="mt-12 h-12 flex items-center justify-between w-full relative">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
@@ -58,25 +75,23 @@ export default function MyInformationModify() {
                 size={20} // 아이콘 크기 조정
               />
             </div>
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">
+            <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold text-center">
               내 정보 수정하기
             </div>
           </div>
 
           {/* 닉네임 */}
-          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">
-            닉네임
-          </div>
+          <div className="mt-6 font-bold text-zp-xl text-zp-gray">닉네임</div>
           <div className="relative">
             <input
-              className="w-full h-[60px] px-4 text-zp-lg text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
-              placeholder="백승범123"
+              className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
+              placeholder="닉네임을 입력하세요"
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
             />
             <IoIosCloseCircleOutline
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => setNickname}
+              className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => setNickname('')}
               style={{ width: '24px', height: '24px' }} // 아이콘 크기 조정
             />
             {nicknameError && (
@@ -90,24 +105,24 @@ export default function MyInformationModify() {
               일부 특수문자 사용 불가 (&, &lt;, &gt;, (, ), ‘, /, “, 콤마),
               이모티콘 사용 불가
             </li>
-            <li>최대 8자 이내</li>
+            <li>최대 10자 이내</li>
             <li>띄어쓰기 불가능</li>
           </ul>
 
           {/* 휴대폰 번호 */}
-          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">
+          <div className="mt-6 font-bold text-zp-xl text-zp-gray">
             휴대폰 번호
           </div>
           <div className="relative">
             <input
-              className="w-full h-[60px] px-4 text-zp-lg text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
+              className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
               placeholder="010-1234-5678"
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
             />
             <IoIosCloseCircleOutline
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => setPhoneNumber}
+              className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => setPhoneNumber('')}
               style={{ width: '24px', height: '24px' }}
             />
             {phoneNumberError && (
@@ -117,20 +132,21 @@ export default function MyInformationModify() {
             )}
           </div>
 
-          {/* 집 주소 */}
-          <div className="mt-6 h-10 font-bold text-zp-lg text-zp-gray">
-            집 주소
+          {/* 자택 주소 */}
+          <div className="mt-6 font-bold text-zp-xl text-zp-gray">
+            자택 주소
           </div>
           <div className="relative">
             <input
-              className="w-full h-[60px] px-4 text-zp-lg text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
-              placeholder="집 주소 api"
+              className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
+              placeholder="자택 주소를 입력하세요"
               value={address}
-              onChange={(e) => setAddress(e.target.value)}
+              onClick={() => setIsPostcodeOpen(true)}
+              readOnly
             />
             <IoIosCloseCircleOutline
-              className="absolute right-4 top-1/2 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => setAddress}
+              className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
+              onClick={() => setAddress('')}
               style={{ width: '24px', height: '24px' }}
             />
             {addressError && (
@@ -140,8 +156,23 @@ export default function MyInformationModify() {
             )}
           </div>
 
+          {/* Daum Postcode Modal */}
+          {isPostcodeOpen && (
+            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+              <div className="bg-zp-white p-4 rounded-zp-radius-btn shadow-lg">
+                <DaumPostcode onComplete={handleComplete} />
+                <button
+                  className="mt-2 w-full bg-zp-sub-color rounded-zp-radius-btn font-bold text-white p-2 rounded-md"
+                  onClick={() => setIsPostcodeOpen(false)}
+                >
+                  닫기
+                </button>
+              </div>
+            </div>
+          )}
+
           <div
-            className="mt-6 w-full h-[60px] text-zp-2xl bg-zp-sub-color rounded-zp-radius-btn flex justify-center items-center cursor-pointer"
+            className="mt-6 w-full h-10 text-zp-xl font-bold bg-zp-sub-color rounded-zp-radius-btn flex justify-center items-center cursor-pointer"
             onClick={handleSubmit}
           >
             수정완료
