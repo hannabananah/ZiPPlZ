@@ -10,9 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class ContractController {
     //계약서 작성
     //이미 만들어진 work를 수정하는 느낌.
-    //worker_serial(업자 검색 필요), 시작날짜, 종료날짜, 시공 가격
+    //고객 연번(plan의), worker_serial(업자 검색 필요, 현재 로그인한 유저),시작날짜, 종료날짜, 시공 가격
     //
-
 
     //계약서 내용 조회
 
