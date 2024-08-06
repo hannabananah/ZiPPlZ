@@ -27,7 +27,7 @@ export default function BeforeResign() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen p-6 bg-gray-100">
+      <div className="flex flex-col min-h-screen p-6">
         <div className="w-full flex-grow">
           {/* 뒤로가기 버튼 */}
           <div className="flex items-center">
@@ -37,14 +37,14 @@ export default function BeforeResign() {
               size={20} // 아이콘 크기 조정
             />
           </div>
-          <div className="mt-6 w-[400px] h-24">
-            <div className="text-zp-3xl font-bold">{user}님,</div>
-            <div className="text-zp-3xl font-bold">
+          <div className="mt-6 w-full h-24">
+            <div className="text-zp-2xl font-bold">{user}님,</div>
+            <div className="text-zp-2xl font-bold">
               탈퇴하기 전에 확인해주세요!
             </div>
           </div>
 
-          <div className="p-4 bg-zp-light-gray rounded-zp-radius-big text-zp-xs font-bold">
+          <div className="p-4 bg-zp-light-beige rounded-zp-radius-big text-zp-xs font-bold">
             <div className="flex items-center space-x-2 text-zp-gray">
               <IoAlertCircleOutline />
               <div>주의사항</div>
@@ -68,7 +68,7 @@ export default function BeforeResign() {
 
       {showModal && (
         <div className="fixed inset-0 bg-opacity-50 flex items-center justify-center rounded-zp-radius-big">
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">
+          <div className="p-6 rounded-lg shadow-lg bg-zp-white rounded-zp-radius-big text-center">
             <h2 className="text-zp-3xl font-bold mb-4">탈퇴 완료</h2>
             <p className="mb-6 text-zp-sm font-bold">
               ZIP-PlZ를 이용해주시고 사랑해주셔서 감사합니다.
@@ -76,7 +76,7 @@ export default function BeforeResign() {
               더욱더 노력하고 발전하는 ZIP-PlZ가 되겠습니다.
             </p>
             <button
-              className="w-4/5 h-8 mt-6 font-bold text-zp-xs bg-zp-sub-color rounded-zp-radius-btn"
+              className="w-4/5 h-8 mt-6 font-bold text-zp-xs bg-zp-sub-color rounded-zp-radius-big"
               onClick={handleConfirm}
             >
               확인

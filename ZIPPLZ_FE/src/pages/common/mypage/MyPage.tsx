@@ -1,3 +1,4 @@
+import React, { useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiChevronRight } from 'react-icons/hi2';
@@ -5,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function MyPage() {
   const navigate = useNavigate();
+  const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
@@ -41,7 +43,23 @@ export default function MyPage() {
     navigate('/mypage/version'); // '/version' 경로로 이동
   };
 
-  // 로그아웃 페이지로 이동(로그아웃 구현 후 적용 예정)
+  // 로그아웃 모달 열기
+  const handleLogoutClick = () => {
+    setShowLogoutModal(true);
+  };
+
+  // 로그아웃 모달 닫기
+  const handleCloseModal = () => {
+    setShowLogoutModal(false);
+  };
+
+  // 실제 로그아웃 처리 (로그아웃 구현 후 적용 예정)
+  const handleLogoutConfirm = () => {
+    setShowLogoutModal(false);
+    // 로그아웃 로직 추가 필요
+    // 임시로 홈으로 이동하게 해놓음
+    navigate('/');
+  };
 
   // 탈퇴하기 페이지로 이동
   const handleNavigateToResign = () => {
@@ -155,7 +173,7 @@ export default function MyPage() {
             <div>
               <HiChevronRight
                 className="cursor-pointer"
-                onClick={handleNavigateToVersion}
+                onClick={handleLogoutClick}
               />
             </div>
           </div>
@@ -172,6 +190,33 @@ export default function MyPage() {
           </div>
         </div>
       </div>
+
+      {showLogoutModal && (
+        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
+          <div className="px-8 h-[250px] bg-zp-white rounded-zp-radius-big p-6">
+            <h2 className="p-6 text-zp-3xl font-bold flex justify-center">
+              로그아웃
+            </h2>
+            <p className="p-6 text-zp-xl font-bold flex justify-center">
+              정말 로그아웃을 하시겠습니까?
+            </p>
+            <div className="mt-2 flex font-bold justify-center space-x-2">
+              <button
+                className="w-full px-4 py-2 rounded-zp-radius-big bg-zp-light-beige text-zp-xs "
+                onClick={handleCloseModal}
+              >
+                취소
+              </button>
+              <button
+                className="w-full px-4 py-2 rounded-zp-radius-big bg-zp-sub-color text-zp-xs"
+                onClick={handleLogoutConfirm}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
