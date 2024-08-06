@@ -60,11 +60,8 @@ export default function DontUseZIPPLZ() {
               </div>
               <div className="h-10 font-bold text-zp-2xl mb-2">AI 인테리어</div>
               {/* 이용하기 버튼 */}
-              {/* <div className="w-full h-10 font-bold text-zp-xl bg-zp-sub-color rounded-zp-radius-btn flex items-center justify-center cursor-pointer">
-                이용하기
-              </div> */}
-              <button onClick={handleNavigateToPage}>
-                <div className="h-10 font-bold text-zp-xl bg-zp-sub-color rounded-zp-radius-btn flex items-center justify-center cursor-pointer">
+              <button onClick={handleNavigateToPage} className="w-full">
+                <div className="h-10 w-full font-bold text-zp-xl bg-zp-sub-color rounded-zp-radius-btn flex items-center justify-center cursor-pointer">
                   이용하기
                 </div>
               </button>

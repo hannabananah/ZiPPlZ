@@ -124,8 +124,7 @@ export default function MyBoardList() {
             className="absolute right-[7rem] cursor-pointer"
           />
           {/* 정렬 버튼 셀렉트바*/}
-          <div className="relative flex justify-end items-center">
-            <FaSortAmountDown />
+          <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
                 backgroundColor="none"
