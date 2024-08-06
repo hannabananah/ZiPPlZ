@@ -22,7 +22,7 @@ import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
 //
 // 워커 찾기
-import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
+import FindWorkerDetail : '@pages/common/workerinfo/FindWorkerDetail';
 import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
 import FindWorkerList from '@pages/common/workerinfo/FindWorkerList';
 import WorkerInfoDateDetail from '@pages/common/workerinfo/WorkerInfoDateDetail';
@@ -40,7 +40,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
-        <Route path="schedule/:id" element={<Schedule />} />
+        <Route path="schedule" element={<Schedule />} />
         <Route path="community" element={<Community />} />
         {/* <Route path="workers" element={<Workers />} /> */}
 

@@ -1,4 +1,4 @@
-import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
+// import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import FieldListItem from '@components/home/FieldListItem';
 import TodaySchedule from '@components/home/TodaySchedule';
 import WeekSchedule from '@components/home/WeekSchedule';
@@ -36,7 +36,7 @@ const list: HotWorker[] = [
 export default function Home() {
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
-      <ScheduleCalendar />
+      {/* <ScheduleCalendar /> */}
       <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
         <div className="basis-7/12">
           <p className="font-extrabold text-zp-xl">Today</p>
