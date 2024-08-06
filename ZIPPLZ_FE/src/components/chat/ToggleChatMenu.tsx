@@ -5,6 +5,7 @@ import { FiTool } from 'react-icons/fi';
 import { TbWood } from 'react-icons/tb';
 
 import Contract from '@components/chat/Contract';
+import Material from '@components/chat/Material';
 import FullModal from '@components/common/FullModal';
 import { useUserStore } from '@stores/userStore';
 
@@ -22,7 +23,8 @@ export default function ToggleChatMenu() {
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+  const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
 
   const handleImageUpload = () => {
     imageInputRef.current?.click();
@@ -42,11 +44,19 @@ export default function ToggleChatMenu() {
   };
 
   const handleContract = () => {
-    setIsModalOpen(true);
+    setIsContractModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const handleMaterial = () => {
+    setIsMaterialModalOpen(true);
+  };
+
+  const closeContractModal = () => {
+    setIsContractModalOpen(false);
+  };
+
+  const closeMaterialModal = () => {
+    setIsMaterialModalOpen(false);
   };
 
   const menus: MenuItem[] = [
@@ -87,6 +97,7 @@ export default function ToggleChatMenu() {
       label: '자재 관리',
       bgColor: '#A2845E',
       role: ['user', 'worker'],
+      onClick: handleMaterial,
     },
   ];
 
@@ -145,12 +156,21 @@ export default function ToggleChatMenu() {
       />
 
       <FullModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
+        isOpen={isContractModalOpen}
+        onRequestClose={closeContractModal}
         height="60%"
         maxWidth="400px"
       >
-        <Contract closeModal={closeModal} />
+        <Contract closeContractModal={closeContractModal} />
+      </FullModal>
+
+      <FullModal
+        isOpen={isMaterialModalOpen}
+        onRequestClose={closeMaterialModal}
+        height="60%"
+        maxWidth="400px"
+      >
+        <Material closeMaterialModal={closeMaterialModal} />
       </FullModal>
     </div>
   );
