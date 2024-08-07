@@ -367,10 +367,32 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    //계획 활성화하기
+    @PatchMapping("/plans/{planSerial}/activate")
+    public ResponseEntity<?> activatePlan(Authentication authentication, @PathVariable int planSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
-    //영상 다운로드
+        try {
+            planService.activatePlanService(portfolioService.getUserSerial(authentication), planSerial);
+
+            status= HttpStatus.CREATED;
+            responseDTO = new ResponseDTO<>(status.value(), "계획 활성화 성공!");
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+
+    }
+
+
+
+        //영상 다운로드
     //평면도 가져오기
     //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
     //이미지 삭제하기
+
 }
 
