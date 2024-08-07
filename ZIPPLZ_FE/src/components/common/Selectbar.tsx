@@ -13,6 +13,7 @@ interface Props {
   radius: string;
   border: string;
   hover: string;
+  status?: number[];
 
   onClick?: () => void;
 }
@@ -108,6 +109,7 @@ export default function Selectbar({
   border,
   hover,
   onClick,
+  status,
 }: Props) {
   const [isShowOptions, setIsShowOptions] = useState<boolean>(false);
   const handleClickOptions = function () {
@@ -121,8 +123,9 @@ export default function Selectbar({
   const Select: string = `relative border ${borderClasses[border]} outline-none ${radiusClasses[radius]} px-1 ${bgClasses[backgroundColor]} ${fontClasses[fontColor]}`;
   const Selected: string = `flex justify-between items-center px-[1rem] cursor-pointer font-bold `;
   const SelectedValue: string = `${fontSizeClasses[fontSize]} bg-white`;
-  const Options: string = `border ${borderClasses[border]} list-none  outline-none ${radiusClasses[radius]} absolute mt-2 left-0  z-[10]  ${bgClasses[backgroundColor]}`;
+  const Options: string = `border ${borderClasses[border]} list-none  outline-none  absolute mt-2 left-0  z-[10]  ${bgClasses[backgroundColor]}`;
   const Option: string = `flex items-center w-full px-[1rem] py-[0.5rem] w-full ${radiusClasses[radius]} cursor-pointer ${hoverClasses[hover]} font-bold z-[100] ${fontClasses[fontColor]}`;
+  const nonActive: string = `flex items-center w-full px-[1rem] py-[0.5rem] w-full  cursor-pointer bg-zp-light-gray font-bold z-[100] ${fontClasses[fontColor]}`;
 
   const widthClass = width === 'full' ? 'w-full' : '';
   const heightClass = height === 'full' ? 'h-full' : '';
@@ -153,7 +156,7 @@ export default function Selectbar({
         >
           {options.map((option, index) => (
             <li
-              className={`${Option}  ${widthClass} ${heightClass}`}
+              className={` ${status && status[index] === 1 ? Option : nonActive}  ${widthClass} ${heightClass}`}
               key={index}
               onClick={() => handleOptionClick(option)}
             >
