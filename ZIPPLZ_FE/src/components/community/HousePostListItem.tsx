@@ -90,9 +90,9 @@ export default function HousePostListItem({ worker }: Props) {
         {/* 온도: 36.5 */}
         <div className="text-zp-2xs">{worker && `${worker.temp}°C`}</div>
         {/* 지역: 서울시 강남구, 서울시 서초구, 제주 서귀포시, 경기 포천시, 전북 익산시 */}
-        <div className="text-zp-2xs mb-2">
+        {/* <div className="text-zp-2xs mb-2">
           {worker && <div>{formatLocations(worker.locations)}</div>}
-        </div>
+        </div> */}
         {/* 공종(철거)) + 경력(경력 3년) */}
         <div className="space-x-2">
           <span className="text-zp-2xs font-bold text-left">

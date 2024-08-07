@@ -7,6 +7,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
+import QuestionPostListItem from '@/components/community/QuestionPostListItem';
 import WorkerInfoListItem from '@/components/worker/WorkerInfoListItem';
 import Input from '@components/common/Input';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
@@ -142,36 +143,41 @@ export default function MyQuestionPostScrapList() {
               size={20} // 아이콘 크기 조정
             />
             <div className="flex items-center space-x-2">
-              <span className="text-zp-lg font-bold">질문글</span>
-              <div
-                onClick={toggleDropdown}
-                className="cursor-pointer flex items-center space-x-2"
-              >
-                <IoMdArrowDropdown
-                  className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-                  size={24}
-                />
-              </div>
+              <span className="text-zp-lg font-bold">스크랩 글 목록</span>
             </div>
           </div>
-          {/* 드롭다운 메뉴 */}
+        </div>
+
+        <div className="flex justify-center space-x-2 w-full relative">
+          <span className="text-zp-lg font-bold">질문글</span>
+          <div
+            onClick={toggleDropdown}
+            className="cursor-pointer flex items-center space-x-2"
+          >
+            <IoMdArrowDropdown
+              className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              size={24}
+            />
+          </div>
           {isDropdownOpen && (
-            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
+            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
               <button
-                onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                onClick={() => handleNavigate('/mypage/MyFindWorkerScrapList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 시공자 구하기
               </button>
               <button
-                onClick={() => handleNavigate('/mypage/MyHousePostList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                onClick={() => handleNavigate('/mypage/MyHousePostScrapList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 집들이
               </button>
               <button
-                onClick={() => handleNavigate('/mypage/MyQuestionPostList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                onClick={() =>
+                  handleNavigate('/mypage/MyQuestionPostScrapList')
+                }
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 질문글
               </button>
@@ -259,37 +265,9 @@ export default function MyQuestionPostScrapList() {
         {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* workerInfoListitem 컴포넌트 */}
-        {/* 화면 width 따라 grid 개수 변화 */}
-        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {list.map((worker) => (
-            <div
-              key={worker.user_serial}
-              className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
-                selectedWorkers.includes(worker.user_serial)
-                  ? 'bg-zp-light-gray'
-                  : ''
-              }`}
-              onClick={() => handleWorkerClick(worker.user_serial)}
-            >
-              {isSelecting && (
-                <div
-                  className="absolute top-2 right-2 z-10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleWorkerSelect(worker.user_serial);
-                  }}
-                >
-                  {selectedWorkers.includes(worker.user_serial) ? (
-                    <FaRegCircleCheck />
-                  ) : (
-                    <FaRegCircle />
-                  )}
-                </div>
-              )}
-              <WorkerInfoListItem worker={worker} />
-            </div>
-          ))}
+        {/* FindWorkerListitem 컴포넌트 */}
+        <div className="w-full mt-2 grid grid-cols-1 gap-4">
+          <QuestionPostListItem />
         </div>
       </div>
 

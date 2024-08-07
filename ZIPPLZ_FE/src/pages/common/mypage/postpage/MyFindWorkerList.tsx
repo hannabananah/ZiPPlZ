@@ -7,7 +7,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
-import WorkerInfoListItem from '@/components/worker/WorkerInfoListItem';
+import FindWorkerListItem from '@/components/worker/FindWorkerListItem';
 import Input from '@components/common/Input';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
@@ -114,6 +114,7 @@ export default function MyFindWorkerList() {
       setSelectedWorkers([...selectedWorkers, user_serial]);
     }
   };
+
   const toggleSelecting = () => {
     if (isSelecting) {
       setSelectedWorkers([]);
@@ -127,7 +128,7 @@ export default function MyFindWorkerList() {
   };
 
   const handleWorkerClick = (user_serial: number) => {
-    navigate(`/workers/${user_serial}/portfolio`);
+    navigate(`/findworkers/${user_serial}`);
   };
 
   return (
@@ -142,42 +143,46 @@ export default function MyFindWorkerList() {
               size={20} // 아이콘 크기 조정
             />
             <div className="flex items-center space-x-2">
-              <span className="text-zp-lg font-bold">시공자 구하기</span>
-              <div
-                onClick={toggleDropdown}
-                className="cursor-pointer flex items-center space-x-2"
-              >
-                <IoMdArrowDropdown
-                  className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-                  size={24}
-                />
-              </div>
+              <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
             </div>
           </div>
-          {/* 드롭다운 메뉴 */}
+        </div>
+
+        <div className="flex justify-center space-x-2 w-full relative">
+          <span className="text-zp-lg font-bold">시공자 구하기</span>
+          <div
+            onClick={toggleDropdown}
+            className="cursor-pointer flex items-center space-x-2"
+          >
+            <IoMdArrowDropdown
+              className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              size={24}
+            />
+          </div>
           {isDropdownOpen && (
-            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
+            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
               <button
                 onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 시공자 구하기
               </button>
               <button
                 onClick={() => handleNavigate('/mypage/MyHousePostList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 집들이
               </button>
               <button
                 onClick={() => handleNavigate('/mypage/MyQuestionPostList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 질문글
               </button>
             </div>
           )}
         </div>
+
         {/* 검색 input */}
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
@@ -259,9 +264,8 @@ export default function MyFindWorkerList() {
         {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* workerInfoListitem 컴포넌트 */}
-        {/* 화면 width 따라 grid 개수 변화 */}
-        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        {/* FindWorkerListItem 컴포넌트 */}
+        <div className="w-full mt-2 grid grid-cols-1 gap-4">
           {list.map((worker) => (
             <div
               key={worker.user_serial}
@@ -270,7 +274,6 @@ export default function MyFindWorkerList() {
                   ? 'bg-zp-light-gray'
                   : ''
               }`}
-              onClick={() => handleWorkerClick(worker.user_serial)}
             >
               {isSelecting && (
                 <div
@@ -287,7 +290,12 @@ export default function MyFindWorkerList() {
                   )}
                 </div>
               )}
-              <WorkerInfoListItem worker={worker} />
+              <div
+                className={`w-full h-full ${isSelecting ? 'pointer-events-none' : ''}`}
+                onClick={() => handleWorkerClick(worker.user_serial)}
+              >
+                <FindWorkerListItem worker={worker} />
+              </div>
             </div>
           ))}
         </div>

@@ -7,7 +7,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
-import WorkerInfoListItem from '@/components/worker/WorkerInfoListItem';
+import HousePostListItem from '@/components/community/HousePostListItem';
 import Input from '@components/common/Input';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
@@ -156,22 +156,22 @@ export default function MyHousePostList() {
           </div>
           {/* 드롭다운 메뉴 */}
           {isDropdownOpen && (
-            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
+            <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
               <button
                 onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 시공자 구하기
               </button>
               <button
                 onClick={() => handleNavigate('/mypage/MyHousePostList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 집들이
               </button>
               <button
                 onClick={() => handleNavigate('/mypage/MyQuestionPostList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
               >
                 질문글
               </button>
@@ -287,7 +287,7 @@ export default function MyHousePostList() {
                   )}
                 </div>
               )}
-              <WorkerInfoListItem worker={worker} />
+              <HousePostListItem worker={worker} />
             </div>
           ))}
         </div>
