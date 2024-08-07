@@ -9,7 +9,10 @@ import com.amazonaws.util.IOUtils;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
 import com.example.zipplz_be.domain.model.repository.PlanFileRelationRepository;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioWorkListDTO;
+import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
+import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
 import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
@@ -22,9 +25,13 @@ import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
+import com.example.zipplz_be.domain.user.entity.Worker;
+import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
+import com.example.zipplz_be.domain.user.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,8 +55,15 @@ public class PlanService {
     private final WorkRepository workRepository;
     private final FileRepository fileRepository;
     private final PlanFileRelationRepository planFileRelationRepository;
+    private final WorkerRepository workerRepository;
 
-    PlanService(PlanFileRelationRepository planFileRelationRepository , FileRepository fileRepository,AmazonS3 amazonS3, WorkRepository workRepository, PlanRepository planRepository, CustomerRepository customerRepository, UserRepository userRepository,FieldRepository fieldRepository) {
+    private final PortfolioService portfolioService;
+//    private final WorkService workService;
+
+    PlanService(PortfolioService portfolioService, WorkerRepository workerRepository, PlanFileRelationRepository planFileRelationRepository , FileRepository fileRepository,AmazonS3 amazonS3, WorkRepository workRepository, PlanRepository planRepository, CustomerRepository customerRepository, UserRepository userRepository,FieldRepository fieldRepository) {
+        //this.workService = workService;
+        this.portfolioService = portfolioService;
+        this.workerRepository = workerRepository;
         this.planFileRelationRepository = planFileRelationRepository;
         this.fileRepository = fileRepository;
         this.amazonS3 = amazonS3;
@@ -68,6 +82,18 @@ public class PlanService {
     }
 
     @Transactional
+    public void deactivatePlanStatus(Customer customer) {
+        List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+        for(Plan plan: planList) {
+            plan.setIsActive(0);
+
+            planRepository.save(plan);
+        }
+    }
+
+
+    @Transactional
     public void insertPlanService(int userSerial, Map<String, Object> params) {
         Customer customer = findUser(userSerial);
 
@@ -76,6 +102,9 @@ public class PlanService {
         if(planName == null) {
             planName = customer.getNickname() + "의 계획";
         }
+
+        //모든 plan을 deactivate
+        this.deactivatePlanStatus(customer);
 
         Plan plan = Plan.builder()
                 .planName(planName)
@@ -94,6 +123,7 @@ public class PlanService {
         for(Field field : fieldList) {
             if(field.getFieldCode() != 0) {
                 Work work = Work.builder()
+                        .status("draft")
                         .field(field)
                         .fieldName(field.getFieldName())
                         .plan(plan).build();
@@ -102,7 +132,6 @@ public class PlanService {
             }
         }
     }
-
     @Transactional
     public void modifyPlanService(int userSerial, int planSerial, Map<String, Object> params) {
         System.out.println(userSerial);
@@ -288,6 +317,59 @@ public class PlanService {
         if (!allowedExtentionList.contains(extention)) {
             throw new S3Exception("유효하지 않은 파일 형식입니다.");
         }
+
+    }
+
+    @Transactional
+    public List<WorkListDTO> getUsersWorkListService(int userSerial) {
+        User user = userRepository.findByUserSerial(userSerial);
+        List<WorkListDTO> workListDTOList = new ArrayList<>();
+
+        if(user.getRole().equals("")) {
+            throw new UserNotFoundException("유저의 역할이 비어 있습니다.");
+        }
+
+        if(user.getRole().equals("worker")) {
+            System.out.println("Worker!!");
+
+            Worker worker = workerRepository.findByUserSerial(user);
+
+            List<PortfolioWorkListDTO> portfolioWorkListDTOList = portfolioService.getWorkerScheduleService(worker.getWorkerSerial());
+
+            for(PortfolioWorkListDTO portfolioWorkListDTO: portfolioWorkListDTOList) {
+                WorkListDTO workListDTO = WorkListDTO.builder()
+                        .startDate(portfolioWorkListDTO.getStartDate())
+                        .endDate(portfolioWorkListDTO.getEndDate())
+                        .field(portfolioWorkListDTO.getFieldName())
+                        .build();
+
+                workListDTOList.add(workListDTO);
+            }
+        }else {
+            System.out.println("Customer!!");
+            //계획에서 해당 고객의 계획 빼오고, 그 계획의 공종들 전부 가져와야함
+            Customer customer = customerRepository.findByUserSerial(user);
+            List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+            //계획 목록에 따른 workList 가져오기
+            for(Plan plan: planList) {
+                //DTO에 담아서 리스트에 추가하기
+                //해당 계획의 work들 가져옴
+                List<Work> workList = workRepository.findByPlanSerial(plan);
+
+                for(Work work : workList) {
+                    WorkListDTO workListDTO = WorkListDTO.builder()
+                            .endDate(portfolioService.convertTimestamp(work.getEndDate()))
+                            .startDate(portfolioService.convertTimestamp(work.getStartDate()))
+                            .field(work.getFieldName())
+                            .build();
+
+                    workListDTOList.add(workListDTO);
+                }
+            }
+        }
+
+        return workListDTOList;
 
     }
 }
