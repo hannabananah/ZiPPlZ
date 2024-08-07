@@ -1,29 +1,21 @@
-import React, { ReactNode, createContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useEffect, useState } from 'react';
 
+import type { ChatMessageData } from '@/types';
 import { Client, IMessage } from '@stomp/stompjs';
 
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
 const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
-interface ChatMessage {
-  type: string;
-  userSerial: number;
-  userName: string;
-  chatMessageContent: string;
-  createdAt: string;
-  isFile: boolean;
-}
-
 interface WebSocketContextType {
   sendMessage: (message: string, userSerial: number) => void;
-  messages: ChatMessage[];
+  messages: ChatMessageData[];
 }
 
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessageData[]>([]);
 
   useEffect(() => {
     const stompClient = new Client({
@@ -37,8 +29,8 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         stompClient.subscribe(`/sub/chat/room/1`, (message: IMessage) => {
           if (message.body) {
             try {
-              const msg: ChatMessage = JSON.parse(message.body);
-              setMessages((prevMessages) => [...prevMessages, msg]);
+              const msg: ChatMessageData = JSON.parse(message.body);
+              setMessages(() => [msg]);
             } catch (error) {
               console.error('Error parsing message:', error);
             }
@@ -52,16 +44,16 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         });
       },
       onDisconnect: () => {
-        console.log('STOMP disconnected');
+        console.log('STOMP 연결이 끊어졌습니다.');
       },
       onStompError: (frame) => {
-        console.error('STOMP error:', frame);
+        console.error('STOMP 에러가 납니다.', frame);
       },
       onWebSocketClose: (frame) => {
-        console.error('WebSocket closed:', frame);
+        console.error('WebSocket이 닫혔습니다.', frame);
       },
       onWebSocketError: (frame) => {
-        console.error('WebSocket error:', frame);
+        console.error('WebSocket에서 에러가 납니다.', frame);
       },
     });
 
@@ -87,7 +79,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         body: data,
       });
     } else {
-      console.error('Client not connected or message is empty');
+      console.error('클라이언트와 연결되지 않았거나 메시자 비어 있습니다.');
     }
   };
 

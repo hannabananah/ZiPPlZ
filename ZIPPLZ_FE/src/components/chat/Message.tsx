@@ -1,24 +1,11 @@
-// import { useContext } from 'react';
+import type { ChatMessageData } from '@/types';
 import { formatTime } from '@utils/formatDateWithTime';
 
-// import { WebSocketContext } from '@utils/socket/WebSocketProvider';
-
-interface ChatMessage {
-  userSerial: number;
-  userName: string;
-  chatMessageContent: string;
-  createdAt: string;
-  isFile: boolean;
-}
-
 interface MessageProps {
-  message: ChatMessage;
+  message: ChatMessageData;
 }
 
 export default function Message({ message }: MessageProps) {
-  // const context = useContext(WebSocketContext);
-  // console.log('context====>', context);
-
   const currUserSerial = 2;
 
   return (
@@ -41,11 +28,11 @@ export default function Message({ message }: MessageProps) {
             : 'text-left rounded-ss-zp-radius-none'
         }`}
       >
-        <p className="text-left whitespace-pre-wrap text-zp-md">
+        <p className="text-left whitespace-pre-wrap text-zp-xs">
           {message.chatMessageContent}
         </p>
         <p
-          className={`text-zp-gray text-zp-2xs break-keep ${
+          className={`text-zp-gray text-zp-3xs break-keep ${
             message.userSerial === currUserSerial ? 'text-left' : 'text-right'
           }`}
         >

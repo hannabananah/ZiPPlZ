@@ -1,24 +1,13 @@
+import type { ChatRoomDetails } from '@/types';
 import { create } from 'zustand';
 
-interface ChatRoom {
-  chatroom_serial: number;
-  message: string;
-  field_name: string;
-  worker_name: string;
-  customer_name: string;
-  temperature: number;
-  time: string;
-  unread: number;
-  certificated: boolean;
-  imageUrl: string;
+interface ChatStoreState {
+  selectedChatRoom: ChatRoomDetails | null;
+  setSelectedChatRoom: (room: ChatRoomDetails) => void;
 }
 
-interface ChatStore {
-  selectedChatRoom: ChatRoom | null;
-  setSelectedChatRoom: (room: ChatRoom | null) => void;
-}
-
-export const useChatStore = create<ChatStore>((set) => ({
+export const useChatStore = create<ChatStoreState>((set) => ({
   selectedChatRoom: null,
-  setSelectedChatRoom: (room) => set({ selectedChatRoom: room }),
+  setSelectedChatRoom: (room: ChatRoomDetails) =>
+    set({ selectedChatRoom: room }),
 }));

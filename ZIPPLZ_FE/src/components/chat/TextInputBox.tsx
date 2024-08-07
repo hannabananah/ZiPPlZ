@@ -2,6 +2,7 @@ import { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { FiSend } from 'react-icons/fi';
 
+import { File } from '@/types';
 import Circle from '@assets/gradient-circle.svg?react';
 import TextArea from '@components/common/TextArea';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
@@ -18,14 +19,16 @@ export default function TextInputBox({
   isMenuVisible,
   onMenuToggle,
   userSerial,
-  // onImageUpload,
-  // type,
+  onImageUpload,
+  type,
 }: TextInputBoxProps) {
   const [message, setMessage] = useState('');
   const context = useContext(WebSocketContext);
 
   if (!context) {
-    throw new Error('TextInputBox must be used within a WebSocketProvider');
+    throw new Error(
+      'TextInputBox는 WebSocketProvider 내에서만 사용해야 합니다.'
+    );
   }
 
   const { sendMessage } = context;
