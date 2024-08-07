@@ -3,14 +3,12 @@ package com.example.zipplz_be.domain.model;
 import com.example.zipplz_be.domain.material.entity.Material;
 import com.example.zipplz_be.domain.schedule.entity.Work;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @IdClass(MaterialWorkRelation.class)
 @Getter
+@Setter
 @NoArgsConstructor
 public class MaterialWorkRelation {
     @Id
