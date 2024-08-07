@@ -13,12 +13,32 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ChatroomListDTO {
-    private String chatroomName;
     private String chatroomSerial;
     private String lastMessage;
+
+    private String fieldName;
+    private String workerName;
+    private String customerName;
+    private boolean isCertificated;
+    private double temperature;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
     private String dayBefore;
     private int unreadCount;
+
+    @Override
+    public String toString() {
+        return "ChatroomListDTO{" +
+                "chatroomSerial='" + chatroomSerial + '\'' +
+                ", lastMessage='" + lastMessage + '\'' +
+                ", fieldName='" + fieldName + '\'' +
+                ", workerName='" + workerName + '\'' +
+                ", customerName='" + customerName + '\'' +
+                ", isCertificated=" + isCertificated +
+                ", createdAt=" + createdAt +
+                ", dayBefore='" + dayBefore + '\'' +
+                ", unreadCount=" + unreadCount +
+                '}';
+    }
 }

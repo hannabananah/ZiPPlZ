@@ -1,17 +1,23 @@
 package com.example.zipplz_be.domain.user.service;
 
-import com.example.zipplz_be.domain.user.dto.InsertCustomerDTO;
-import com.example.zipplz_be.domain.user.dto.InsertWorkerDTO;
-import com.example.zipplz_be.domain.user.dto.JoinRequestDTO;
+import com.example.zipplz_be.domain.model.entity.Field;
+import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
+import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
+import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
+import com.example.zipplz_be.domain.user.dto.*;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
+import com.example.zipplz_be.domain.user.exception.FieldListNullException;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class JoinService {
@@ -20,12 +26,16 @@ public class JoinService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
     private final CustomerRepository customerRepository;
     private final WorkerRepository workerRepository;
+    private final PortfolioService portfolioService;
+    private final PortfolioRepository portfolioRepository;
 
-    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, WorkerRepository workerRepository) {
+    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, WorkerRepository workerRepository, PortfolioService portfolioService, PortfolioRepository portfolioRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.customerRepository = customerRepository;
         this.workerRepository = workerRepository;
+        this.portfolioService = portfolioService;
+        this.portfolioRepository = portfolioRepository;
     }
 
     public boolean isEmailAlreadyExist(String email) {
@@ -85,8 +95,8 @@ public class JoinService {
         return true;
     }
 
-    public boolean insertWorkerInfo(InsertWorkerDTO insertWorkerDTO) {
-
+    public void insertWorkerInfo(InsertWorkerDTO insertWorkerDTO) {
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         int userSerial = insertWorkerDTO.getUserSerial();
         if (!userRepository.existsByUserSerial(userSerial)) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
@@ -105,8 +115,13 @@ public class JoinService {
                 .businessNumber(businessNumber)
                 .company(company)
                 .companyAddress(companyAddress).build();
-        workerRepository.save(worker);
+        Worker savedWorker = workerRepository.save(worker);
 
-        return true;
+        List<WorkerLocationDTO> locationList = insertWorkerDTO.getLocationList();
+        List<Field> fieldList = insertWorkerDTO.getFieldList();
+        if (fieldList == null) {
+            throw new FieldListNullException("전문 분야가 없습니다.");
+        }
+        portfolioService.createPortfolio(savedWorker, fieldList.getFirst());
     }
 }

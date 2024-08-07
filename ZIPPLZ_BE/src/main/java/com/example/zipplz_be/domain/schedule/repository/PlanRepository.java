@@ -12,4 +12,5 @@ import java.util.List;
 public interface PlanRepository extends JpaRepository<Plan, Integer> {
     List<Plan> findBycustomerSerial(Customer customerSerial);
     Plan findByPlanSerial(int planSerial);
+    Plan findByCustomerSerialAndIsActive(Customer customer, int isActive);
 }

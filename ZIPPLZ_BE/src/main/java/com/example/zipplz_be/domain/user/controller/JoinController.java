@@ -1,15 +1,19 @@
 package com.example.zipplz_be.domain.user.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
 import com.example.zipplz_be.domain.user.dto.*;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import com.example.zipplz_be.domain.user.service.JoinService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -23,12 +27,9 @@ public class JoinController {
         this.jwtUtil = jwtUtil;
     }
 
+    @Getter
     public static class EmailRequest {
         private String email;
-
-        public String getEmail() {
-            return email;
-        }
     }
 
     @GetMapping("/check-email")
@@ -122,14 +123,14 @@ public class JoinController {
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
-            boolean result = joinService.insertWorkerInfo(insertWorkerDTO);
-            if (!result) {
-                status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "해당 유저를 찾을 수 없습니다.");
-            } else {
+            joinService.insertWorkerInfo(insertWorkerDTO);
+//            if () {
+//                status = HttpStatus.NOT_FOUND;
+//                responseDTO = new ResponseDTO<>(status.value(), "해당 유저를 찾을 수 없습니다.");
+//            } else {
                 status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "시공자 세부사항 입력 성공");
-            }
+                responseDTO = new ResponseDTO<>(status.value(), "시공자 세부사항 입력 후, 포트폴리오 생성");
+//            }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());

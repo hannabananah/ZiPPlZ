@@ -11,7 +11,13 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
+import com.example.zipplz_be.domain.model.entity.Status;
+import com.example.zipplz_be.domain.model.repository.FieldRepository;
+import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
+import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
+import com.example.zipplz_be.domain.portfolio.service.CustomerReviewService;
 import com.example.zipplz_be.domain.user.entity.User;
+import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
@@ -54,6 +60,10 @@ public class ChatroomServiceImpl implements ChatroomService {
             Map.entry("도배", 9),
             Map.entry("가구", 10)
     );
+    private final PortfolioRepository portfolioRepository;
+    private final FieldRepository fieldRepository;
+    private final CustomerReviewRepository customerReviewRepository;
+    private final CustomerReviewService customerReviewService;
 
     @Override
     public int createChatroom(int userSerial, CreateChatroomDTO createChatroomDTO) {
@@ -70,16 +80,17 @@ public class ChatroomServiceImpl implements ChatroomService {
 
         User cUser = customerRepository.existsByUserSerial(user) ? user : anotherUser;
         User wUser = customerRepository.existsByUserSerial(user) ? anotherUser : user;
+        String fieldName = createChatroomDTO.getField();
 
-        if (chatroomRepository.existsByCuserAndWuser(cUser, wUser)) {
-            Chatroom savedChatroom =chatroomRepository.findByCuserAndWuser(cUser, wUser);
+        if (chatroomRepository.existsByStatusAndCuserAndWuserAndFieldName(Status.ACTIVE, cUser, wUser, fieldName)) {
+            Chatroom savedChatroom =chatroomRepository.findByCuserAndWuserAndStatusAndFieldName(cUser, wUser, Status.ACTIVE, fieldName);
             return savedChatroom.getChatroomSerial();
         }
 
         Chatroom newChatroom = Chatroom.builder()
                 .cuser(cUser)
                 .wuser(wUser)
-                .chatroomName(createChatroomDTO.getField() + " 시공자").build();
+                .fieldName(fieldName).build();
         chatroomRepository.save(newChatroom);
 
         return newChatroom.getChatroomSerial();
@@ -92,9 +103,9 @@ public class ChatroomServiceImpl implements ChatroomService {
         User user = userRepository.findByUserSerial(userSerial);
         Page<Chatroom> chatroomPage;
         if (role.equals("customer")) {
-            chatroomPage = (Page<Chatroom>) chatroomRepository.findAllByCuser(user, pageable);
+            chatroomPage = (Page<Chatroom>) chatroomRepository.findAllByCuserAndStatus(user, Status.ACTIVE, pageable);
         } else {
-            chatroomPage = (Page<Chatroom>) chatroomRepository.findAllByWuser(user, pageable);
+            chatroomPage = (Page<Chatroom>) chatroomRepository.findAllByWuserAndStatus(user, Status.ACTIVE, pageable);
         }
 
         // 2. 조회된 결과를 스트림으로 변환
@@ -108,7 +119,6 @@ public class ChatroomServiceImpl implements ChatroomService {
     }
 
     private ChatroomListDTO createChatroomListDto(Chatroom chatroom, int userSerial) {
-        String chatroomName = chatroom.getChatroomName();
         int chatroomSerial = chatroom.getChatroomSerial();
         String roomSerial = Integer.toString(chatroomSerial);
         int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomSerial, userSerial);
@@ -117,20 +127,30 @@ public class ChatroomServiceImpl implements ChatroomService {
                 .findFirstByChatroomSerialOrderByCreatedAtDesc(chatroomSerial);
 
         String lastMessage = lastMessageOpt.map(ChatMessage::getChatMessageContent).orElse("채팅방이 생성되었습니다.");
+
+        String fieldName = chatroom.getFieldName();
+        String workerName = chatroom.getWuser().getUserName();
+        String customerName = chatroom.getCuser().getUserName();
+        Worker worker = workerRepository.findByUserSerial(chatroom.getWuser());
+        boolean isCertificated = (worker.getCertificatedBadge() == 1);
+        double temperature = customerReviewService.calculateAverageStars(portfolioRepository.findByWorkerAndFieldId(worker, fieldRepository.findByFieldName(fieldName)));
+
         LocalDateTime lastTime = lastMessageOpt.map(ChatMessage::getCreatedAt).orElse(LocalDateTime.now());
 
         long dayBeforeTime = ChronoUnit.MINUTES.between(lastTime, LocalDateTime.now());
         String dayBefore = Calculator.time(dayBeforeTime);
 
-        return new ChatroomListDTO(chatroomName, roomSerial, lastMessage, lastTime, dayBefore, unReadMessageCount);
+        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, lastTime, dayBefore, unReadMessageCount);
+        System.out.println(chatroomDTO);
+        return chatroomDTO;
     }
 
     @Override
     public List<ChatMessageResponseDTO> getPreviousMessage(int chatroomSerial, int userSerial) {
-        if (!chatroomRepository.existsByChatroomSerial(chatroomSerial)) {
+        if (!chatroomRepository.existsByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE)) {
             throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
-        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
+        Chatroom chatroom = chatroomRepository.findByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE);
 
         boolean isUserInChatroom = ((chatroom.getCuser().getUserSerial() == userSerial)
                 || (chatroom.getWuser().getUserSerial() == userSerial));
@@ -143,4 +163,19 @@ public class ChatroomServiceImpl implements ChatroomService {
                 .map(ChatMessageResponseDTO::new)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteChatroom(int chatroomSerial, int userSerial) {
+        if (!chatroomRepository.existsByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE)) {
+            throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
+        }
+        Chatroom chatroom = chatroomRepository.findByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE);
+        chatroomRepository.save(chatroom.inActive());
+    }
+
+//    public double calculateTemperature(Worker worker, String fieldName) {
+//        Field field = fieldRepository.findByFieldName(fieldName);
+//        Portfolio portfolio = portfolioRepository.findByWorkerAndFieldId(worker, field);
+//        customerReviewRepository.findAllByPortfolioSerial(portfolio);
+//    }
 }

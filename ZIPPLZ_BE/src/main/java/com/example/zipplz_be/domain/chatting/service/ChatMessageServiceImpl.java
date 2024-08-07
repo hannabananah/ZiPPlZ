@@ -7,6 +7,8 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
+import com.example.zipplz_be.domain.model.entity.Status;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -15,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +33,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final RedisRepository redisRepository;
 
     @Override
-    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
+    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role, MultipartFile file) {
         User user = userRepository.findByUserSerial(userSerial);
         if (user == null) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");
@@ -62,7 +67,18 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             redisPublisher.publish(channelTopic, chatMessageRequestDTO);
             updateUnReadMessageCount(chatMessageRequestDTO);
         }
+
+        // 파일 저장
+
     }
+
+//    private void saveMessageImage(MultipartFile image, String messageId) {
+//
+//        if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
+//            throw new S3Exception("파일이 비었습니다.");
+//        }
+//        if (!chatMessageRepository.findById)
+//    }
 
     // 안읽은 메세지 업데이트
     private void updateUnReadMessageCount(ChatMessageRequestDTO chatMessageRequestDTO) {
@@ -79,7 +95,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     // 채팅방 입장
     @Override
     public void enter(int userSerial, int chatroomSerial) {
-        if (!chatroomRepository.existsByChatroomSerial(chatroomSerial)) {
+        if (!chatroomRepository.existsByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE)) {
             throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
         Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
