@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.chatting.service;
 
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageResponseDTO;
+import com.example.zipplz_be.domain.chatting.dto.ChatroomDetailDTO;
 import com.example.zipplz_be.domain.chatting.dto.ChatroomListDTO;
 import com.example.zipplz_be.domain.chatting.dto.CreateChatroomDTO;
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
@@ -11,11 +12,17 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
+import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
+import com.example.zipplz_be.domain.model.repository.LocalRepository;
+import com.example.zipplz_be.domain.model.repository.MessageFileRelationRepository;
 import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
 import com.example.zipplz_be.domain.portfolio.service.CustomerReviewService;
+import com.example.zipplz_be.domain.schedule.repository.PlanRepository;
+import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
@@ -30,6 +37,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,6 +72,10 @@ public class ChatroomServiceImpl implements ChatroomService {
     private final FieldRepository fieldRepository;
     private final CustomerReviewRepository customerReviewRepository;
     private final CustomerReviewService customerReviewService;
+    private final MessageFileRelationRepository messageFileRelationRepository;
+    private final FileRepository fileRepository;
+    private final LocalRepository localRepository;
+    private final PlanRepository planRepository;
 
     @Override
     public int createChatroom(int userSerial, CreateChatroomDTO createChatroomDTO) {
@@ -134,15 +146,41 @@ public class ChatroomServiceImpl implements ChatroomService {
         Worker worker = workerRepository.findByUserSerial(chatroom.getWuser());
         boolean isCertificated = (worker.getCertificatedBadge() == 1);
         double temperature = customerReviewService.calculateAverageStars(portfolioRepository.findByWorkerAndFieldId(worker, fieldRepository.findByFieldName(fieldName)));
+        File otherUserImg = userSerial == chatroom.getWuser().getUserSerial() ?
+                chatroom.getCuser().getFileSerial() : chatroom.getWuser().getFileSerial();
 
         LocalDateTime lastTime = lastMessageOpt.map(ChatMessage::getCreatedAt).orElse(LocalDateTime.now());
 
         long dayBeforeTime = ChronoUnit.MINUTES.between(lastTime, LocalDateTime.now());
         String dayBefore = Calculator.time(dayBeforeTime);
 
-        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, lastTime, dayBefore, unReadMessageCount);
+        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, otherUserImg, lastTime, dayBefore, unReadMessageCount);
         System.out.println(chatroomDTO);
         return chatroomDTO;
+    }
+
+    @Override
+    public ChatroomDetailDTO getChatroomDetail(int chatroomSerial, int userSerial) {
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
+
+        String workerLocation;
+        if (!localRepository.existsByUserSerial(chatroom.getWuser())) {
+            workerLocation = "";
+        } else {
+            workerLocation = localRepository.findByUserSerial(chatroom.getWuser()).getLocalName();
+        }
+
+        String customerLocation;
+        Customer customer = customerRepository.findByUserSerial(chatroom.getCuser());
+        if (!planRepository.existsByCustomerSerialAndIsActive(customer, 1)) {
+            customerLocation = "";
+        } else {
+            customerLocation = planRepository.findByCustomerSerialAndIsActive(customer, 1).getAddress();
+        }
+        return ChatroomDetailDTO.builder()
+                        .workerLocation(workerLocation)
+                        .customerLocation(customerLocation)
+                        .chatMessages(getPreviousMessage(chatroomSerial, userSerial)).build();
     }
 
     @Override
@@ -158,10 +196,18 @@ public class ChatroomServiceImpl implements ChatroomService {
         if (!isUserInChatroom) throw new ChatroomForbiddenException("잘못된 접근입니다.");
 
         System.out.println(chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial));
-        return chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial)
-                .stream()
-                .map(ChatMessageResponseDTO::new)
-                .collect(Collectors.toList());
+        List<ChatMessage> messages = chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial);
+        List<ChatMessageResponseDTO> previousMessages = new ArrayList<>();
+        for (ChatMessage message : messages) {
+            if (message.isFile()) {
+                File file = messageFileRelationRepository.findByMessageId(message.getId()).getFile();
+                previousMessages.add(new ChatMessageResponseDTO(message, file));
+            } else {
+                previousMessages.add(new ChatMessageResponseDTO(message));
+            }
+        }
+
+        return previousMessages;
     }
 
     @Override

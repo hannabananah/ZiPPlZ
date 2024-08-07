@@ -16,7 +16,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -66,7 +70,7 @@ public class SecurityConfig {
         http.addFilterAt(new JWTFilter(jwtUtil), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
-//        // CORS 설정
+        // CORS 설정
 //        http.cors(cors -> cors.configurationSource(request -> {
 //            CorsConfiguration configuration = new CorsConfiguration();
 //            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));

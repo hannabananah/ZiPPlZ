@@ -10,7 +10,10 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Controller
@@ -34,7 +37,7 @@ public class ChatMessageController {
      websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
     @MessageMapping("/chat/message/{role}")
-    public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor, @PathVariable String role, MultipartFile file) {
+    public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor, @PathVariable String role, @RequestPart(value = "file", required = false) Optional<MultipartFile> file) {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
 //        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor), getRole(headerAccessor));
         chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial(), role, file); // 테스트용 (테스트는 헤더 인식 못함)

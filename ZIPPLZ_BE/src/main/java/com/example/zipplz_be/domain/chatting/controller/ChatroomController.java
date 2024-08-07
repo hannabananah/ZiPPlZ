@@ -1,9 +1,6 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
-import com.example.zipplz_be.domain.chatting.dto.ChatMessageResponseDTO;
-import com.example.zipplz_be.domain.chatting.dto.ChatroomListDTO;
-import com.example.zipplz_be.domain.chatting.dto.CreateChatroomDTO;
-import com.example.zipplz_be.domain.chatting.dto.CreateChatroomResponseDTO;
+import com.example.zipplz_be.domain.chatting.dto.*;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
 import com.example.zipplz_be.domain.chatting.service.ChatroomService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
@@ -73,17 +70,17 @@ public class ChatroomController {
     }
 
     @GetMapping("/{chatroomSerial}")
-    public ResponseEntity getMessage(Authentication authentication, @PathVariable int chatroomSerial) {
+    public ResponseEntity getChatroomDetail(Authentication authentication, @PathVariable int chatroomSerial) {
         ResponseDTO responseDTO;
         HttpStatus status;
         try {
-            List<ChatMessageResponseDTO> previousMessages = chatroomService.getPreviousMessage(chatroomSerial, getUserSerial(authentication));
-            if (previousMessages == null) {
+            ChatroomDetailDTO chatroomDetail = chatroomService.getChatroomDetail(chatroomSerial, getUserSerial(authentication));
+            if (chatroomDetail == null) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "메세지들 조회 실패");
             } else {
                 status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "메세지들 조회 성공", previousMessages);
+                responseDTO = new ResponseDTO<>(status.value(), "메세지들 조회 성공", chatroomDetail);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
