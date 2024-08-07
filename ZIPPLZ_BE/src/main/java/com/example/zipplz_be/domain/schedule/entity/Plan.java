@@ -31,6 +31,9 @@ public class Plan {
     @Column(name="shared_contents")
     String sharedContents;
 
+    @Column(name="is_active")
+    int isActive;
+
     @OneToMany(mappedBy = "planSerial", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Work> works = new ArrayList<>();
@@ -42,5 +45,6 @@ public class Plan {
         this.customerSerial = customer;
         this.address = address;
         this.sharedContents = sharedContents;
+        this.isActive = 1;
     }
 }

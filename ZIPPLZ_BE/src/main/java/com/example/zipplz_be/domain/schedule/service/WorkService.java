@@ -105,6 +105,7 @@ public class WorkService {
             field = fieldRepository.findByFieldCode(0);
 
             work = Work.builder()
+                    .status("draft")
                     .plan(plan)
                     .field(field)
                     .fieldName(fieldName)
@@ -114,6 +115,7 @@ public class WorkService {
         }
         else {
             work = Work.builder()
+                    .status("draft")
                     .plan(plan)
                     .field(field)
                     .fieldName(fieldName)

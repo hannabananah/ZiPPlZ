@@ -22,4 +22,6 @@ public interface WorkRepository extends JpaRepository<Work, Integer> {
 
     @Query(value="SELECT SUM(WORK_PRICE) FROM WORK WHERE PLAN_SERIAL = :planSerial", nativeQuery = true)
     Integer sumWorkPrice(@Param("planSerial") int planSerial);
+
+    List<Work> findByPlanSerialAndFieldNameAndStatus(Plan plan, String fieldName, String awaiting);
 }
