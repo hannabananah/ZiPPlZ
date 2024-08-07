@@ -1,17 +1,16 @@
 package com.example.zipplz_be.domain.chatting.dto;
 
+import com.example.zipplz_be.domain.file.entity.File;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChatroomDetailDTO {
-    private OtherUserInfoDTO otherUser;
-    private List<ChatMessageResponseDTO> chatMessages;
+public class OtherUserInfoDTO {
+    private String location;
+    private File image;
 }
