@@ -57,15 +57,6 @@ export default function ChatRooms() {
             unread: parseInt(room.unreadCount),
             certificated: room.certificated,
             imageUrl: 'https://i.pravatar.cc/50?img=1',
-            worker_location: room.workerLocation,
-            customer_location: room.customerLocation,
-            file: {
-              file_serial: parseInt(room.fileSerial),
-              save_folder: room.saveFolder,
-              original_file: room.originalFile,
-              save_file: room.saveFile,
-              file_name: room.fileName,
-            },
           })
         );
 

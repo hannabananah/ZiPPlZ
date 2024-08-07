@@ -20,6 +20,30 @@ interface ChatMessage {
   isFile: boolean;
 }
 
+interface OtherUser {
+  name: string;
+  location: string;
+  fieldName: string;
+  certificated: boolean;
+  image: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
+
+interface ChatRoomData {
+  otherUser: OtherUser;
+  chatMessages: ChatMessage[];
+}
+
+interface ChatRoom {
+  otherUser: OtherUser;
+  chatMessages: ChatMessage[];
+}
+
 const base_url = import.meta.env.VITE_APP_BASE_URL;
 const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
@@ -32,64 +56,42 @@ function ChatRoomContent() {
   const { messages: contextMessages } = useContext(WebSocketContext) || {
     messages: [],
   };
-
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
 
-  const fetchChatRoomDetails = async (chatRoomSerial: number) => {
+  const fetchChatRoomDetails = async (
+    chatRoomSerial: number
+  ): Promise<ChatRoom> => {
     try {
-      const response = await axios.get(
+      const response = await axios.get<{ data: ChatRoomData }>(
         `${base_url}/chatroom/${chatRoomSerial}`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
         }
       );
 
       if (response.status === 200) {
-        const chatRoomData = {
-          chatroom_serial: chatRoomSerial,
-          message: '',
-          field_name: response.data.fieldName,
-          worker_name: response.data.userName,
-          customer_name: response.data.workerLocation,
-          temperature: 0,
-          time: '',
-          unread: 0,
-          certificated: response.data.certificated,
-          imageUrl: '',
-        };
-
+        const chatRoomData = response.data.data;
         setSelectedChatRoom(chatRoomData);
-
-        return response.data;
+        return chatRoomData;
       } else {
         console.error('Unexpected response status:', response.status);
         throw new Error('Unexpected response status');
       }
     } catch (error) {
-      if (error instanceof Error) {
-        console.error('Error fetching chat room details:', error.message);
-      } else {
-        console.error('An unknown error occurred:', error);
-      }
+      console.error(
+        'Error fetching chat room details:',
+        error instanceof Error ? error.message : error
+      );
       throw error;
     }
   };
-
   useEffect(() => {
     if (isValidRoomId) {
       fetchChatRoomDetails(roomIdNumber)
-        .then((data) => {
-          setMessages(data.chatMessages);
-        })
-        .catch((error) => {
-          if (error instanceof Error) {
-            console.error('Error fetching chat room details:', error.message);
-          } else {
-            console.error('An unknown error occurred:', error);
-          }
-        });
+        .then((data) => setMessages(data.chatMessages))
+        .catch((error) =>
+          console.error('Failed to fetch chat room details:', error)
+        );
     }
   }, [roomIdNumber, isValidRoomId]);
 
@@ -99,31 +101,31 @@ function ChatRoomContent() {
 
   const handleImageUpload = (file: File) => {
     console.log('Image uploaded:', file);
+    // TODO: Implement image upload functionality
   };
 
   return (
     <div className="relative flex flex-col h-screen bg-zp-light-orange">
       {isValidRoomId && selectedChatRoom && (
         <ChatRoomHeader
-          userName={selectedChatRoom.worker_name}
-          certificated={selectedChatRoom.certificated}
-          area={selectedChatRoom.customer_name}
-          fieldName={selectedChatRoom.field_name}
+          userName={selectedChatRoom.otherUser.name}
+          certificated={selectedChatRoom.otherUser.certificated}
+          area={selectedChatRoom.otherUser.location}
+          fieldName={selectedChatRoom.otherUser.fieldName}
         />
       )}
       <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
         {isValidRoomId ? (
           <>
             <div className="flex-1 overflow-y-auto">
-              {messages &&
-                messages.map((msg, index) => (
-                  <Message key={`${msg.createdAt}-${index}`} message={msg} />
-                ))}
+              {messages.map((msg, index) => (
+                <Message key={`${msg.createdAt}-${index}`} message={msg} />
+              ))}
             </div>
             <TextInputBox
               isMenuVisible={isMenuVisible}
-              onMenuToggle={() => setMenuVisible(!isMenuVisible)}
-              userSerial={1}
+              onMenuToggle={() => setMenuVisible((prev) => !prev)}
+              userSerial={1} // Replace with actual user serial
               onImageUpload={handleImageUpload}
               type="text"
             />

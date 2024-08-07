@@ -19,7 +19,7 @@ export default function Message({ message }: MessageProps) {
   const context = useContext(WebSocketContext);
   console.log('context====>', context);
 
-  const currUserSerial = 2;
+  const currUserSerial = 2; // Update this to use the current user serial from context or props
 
   return (
     <li
@@ -30,7 +30,7 @@ export default function Message({ message }: MessageProps) {
       {message.userSerial !== currUserSerial && (
         <img
           className="w-10 mr-3 profile-img"
-          src="https://i.pravatar.cc/50?img=1"
+          src="https://i.pravatar.cc/50?img=1" // Consider using actual profile images if available
           alt="프로필 이미지"
         />
       )}

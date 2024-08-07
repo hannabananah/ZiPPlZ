@@ -16,6 +16,7 @@ interface ChatRoomHeaderProps {
   certificated: boolean;
   area: string;
   fieldName: string;
+  imageUrl?: string; // Add this if you want to display profile images
 }
 
 export default function ChatRoomHeader({
@@ -23,6 +24,7 @@ export default function ChatRoomHeader({
   certificated,
   area,
   fieldName,
+  imageUrl,
 }: ChatRoomHeaderProps) {
   const navigate = useNavigate();
   const selectedChatRoom = useChatStore((state) => state.selectedChatRoom);
@@ -53,20 +55,20 @@ export default function ChatRoomHeader({
         <IoIosArrowBack size={16} fill="#111" />
       </button>
       <img
-        src=""
+        src={imageUrl || ''} // Default to empty string if no imageUrl
         alt="profile image"
         className="w-12 h-12 rounded-zp-radius-full"
       />
       <div className="flex flex-col flex-1">
         <div className="flex items-center gap-1">
           <span className="font-semibold truncate text-zp-md max-w-28">
-            {userName}이름
+            {userName}
           </span>
           {certificated && <Badge />}
         </div>
         <div className="flex gap-2 text-sm text-zp-gray">
           <span className="truncate max-w-20">{area}</span> |
-          <span>{fieldName}분야</span>
+          <span>{fieldName}</span>
         </div>
       </div>
       <div className="relative flex gap-3">

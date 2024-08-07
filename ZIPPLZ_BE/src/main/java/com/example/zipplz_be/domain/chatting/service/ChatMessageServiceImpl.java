@@ -79,31 +79,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             updateUnReadMessageCount(chatMessageRequestDTO);
         }
 
-        // 파일 저장
-        if (chatMessageRequestDTO.getIsFile()) {
-            fileOptional.ifPresent(file -> saveMessageImage(file, savedMessage.getId()));
-        }
+
     }
 
-    private void saveMessageImage(MultipartFile image, String messageId) {
-
-        if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
-            throw new S3Exception("파일이 비었습니다.");
-        }
-        if (!chatMessageRepository.existsById(messageId)) {
-            throw new ChatMessageNotFoundException("존재하지 않는 채팅 메세지입니다.");
-        }
-        Optional<ChatMessage> message = chatMessageRepository.findById(messageId);
-
-        String url = s3Service.uploadImage(image);
-        File file = fileRepository.findBySaveFile(url);
-
-        MessageFileRelation messageFileRelation = MessageFileRelation.builder()
-                .messageId(messageId)
-                .file(file).build();
-
-        messageFileRelationRepository.save(messageFileRelation);
-    }
 
     // 안읽은 메세지 업데이트
     private void updateUnReadMessageCount(ChatMessageRequestDTO chatMessageRequestDTO) {
