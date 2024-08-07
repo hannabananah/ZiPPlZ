@@ -151,10 +151,7 @@ public class ChatroomServiceImpl implements ChatroomService {
 
         LocalDateTime lastTime = lastMessageOpt.map(ChatMessage::getCreatedAt).orElse(LocalDateTime.now());
 
-        long dayBeforeTime = ChronoUnit.MINUTES.between(lastTime, LocalDateTime.now());
-        String dayBefore = Calculator.time(dayBeforeTime);
-
-        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, otherUserImg, lastTime, dayBefore, unReadMessageCount);
+        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, otherUserImg, lastTime, unReadMessageCount);
         System.out.println(chatroomDTO);
         return chatroomDTO;
     }
