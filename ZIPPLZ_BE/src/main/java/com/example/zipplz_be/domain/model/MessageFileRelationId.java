@@ -10,6 +10,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageFileRelationId {
-    private int messageSerial;
-    private int fileSerial;
+    private String messageId;
+    private int file;
 }
