@@ -1,10 +1,10 @@
-package com.example.zipplz_be.domain.user.controller;
+package com.example.zipplz_be.domain.mypage.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
-import com.example.zipplz_be.domain.user.dto.UpdateCustomerDTO;
-import com.example.zipplz_be.domain.user.dto.UpdateWorkerDTO;
-import com.example.zipplz_be.domain.user.service.MyPageService;
+import com.example.zipplz_be.domain.mypage.dto.UpdateCustomerDTO;
+import com.example.zipplz_be.domain.mypage.dto.UpdateWorkerDTO;
+import com.example.zipplz_be.domain.mypage.service.MyPageService;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

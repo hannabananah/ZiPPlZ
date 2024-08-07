@@ -20,7 +20,7 @@ public class User {
     @Column(name="user_serial")
     private int userSerial;     // 유저 연번
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name="file_serial")
     private File fileSerial;
     private String email;       // 이메일
@@ -44,6 +44,7 @@ public class User {
         this.tel = tel;
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
         this.role = "";
+        this.fileSerial = null;
     }
 
     @Builder
@@ -52,6 +53,7 @@ public class User {
         this.userName = userName;
         this.delYN = 0; // 기본값으로 설정 (또는 필요에 따라 설정)
         this.role = "";
+        this.fileSerial = null;
     }
 
     public void setBirthDate(String birthDate) {
