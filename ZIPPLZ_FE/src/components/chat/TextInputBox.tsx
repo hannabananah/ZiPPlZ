@@ -2,7 +2,7 @@ import { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { FiSend } from 'react-icons/fi';
 
-import { File } from '@/types';
+import type { File } from '@/types';
 import Circle from '@assets/gradient-circle.svg?react';
 import TextArea from '@components/common/TextArea';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
@@ -13,6 +13,8 @@ interface TextInputBoxProps {
   userSerial: number;
   onImageUpload: (file: File) => void;
   type: string;
+  imagePreview?: string;
+  onImagePreviewRemove: () => void;
 }
 
 export default function TextInputBox({
@@ -21,16 +23,15 @@ export default function TextInputBox({
   userSerial,
   onImageUpload,
   type,
+  imagePreview,
+  onImagePreviewRemove,
 }: TextInputBoxProps) {
   const [message, setMessage] = useState('');
   const context = useContext(WebSocketContext);
 
   if (!context) {
-    throw new Error(
-      'TextInputBox는 WebSocketProvider 내에서만 사용해야 합니다.'
-    );
+    throw new Error('TextInputBox must be used within a WebSocketProvider');
   }
-
   const { sendMessage } = context;
 
   const handleChangeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
@@ -44,6 +45,28 @@ export default function TextInputBox({
         setMessage('');
         e.preventDefault();
       }
+    }
+  };
+
+  const handleSendMessage = () => {
+    if (message.trim()) {
+      sendMessage(message, userSerial);
+      setMessage('');
+    }
+  };
+
+  const handleSendImage = () => {
+    if (imagePreview) {
+      fetch(imagePreview)
+        .then((res) => res.blob())
+        .then((blob) => {
+          const file = new File([blob], 'image.png', { type: 'image/png' });
+          sendMessage('', userSerial, file);
+          onImagePreviewRemove();
+        })
+        .catch((error) =>
+          console.error('Error creating file from image preview:', error)
+        );
     }
   };
 
@@ -72,17 +95,18 @@ export default function TextInputBox({
         onKeyDown={handleClickSubmit}
       />
 
-      <button
-        type="button"
-        onClick={() => {
-          if (message.trim()) {
-            sendMessage(message, userSerial);
-            setMessage('');
-          }
-        }}
-      >
+      <button type="button" onClick={handleSendMessage}>
         <FiSend size={20} stroke="#73744A" />
       </button>
+      {imagePreview && (
+        <button
+          type="button"
+          onClick={handleSendImage}
+          className="flex items-center justify-center w-12 h-12 ml-4 text-white rounded-full bg-zp-primary"
+        >
+          <FaPlus size={24} />
+        </button>
+      )}
     </div>
   );
 }

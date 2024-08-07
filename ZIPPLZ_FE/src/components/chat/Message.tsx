@@ -28,9 +28,17 @@ export default function Message({ message }: MessageProps) {
             : 'text-left rounded-ss-zp-radius-none'
         }`}
       >
-        <p className="text-left whitespace-pre-wrap text-zp-xs">
-          {message.chatMessageContent}
-        </p>
+        {message.chatMessageContent.startsWith('data:image/') ? (
+          <img
+            src={message.chatMessageContent}
+            alt="Uploaded"
+            className="max-w-[300px] max-h-[300px] object-cover"
+          />
+        ) : (
+          <p className="text-left whitespace-pre-wrap text-zp-xs">
+            {message.chatMessageContent}
+          </p>
+        )}
         <p
           className={`text-zp-gray text-zp-3xs break-keep ${
             message.userSerial === currUserSerial ? 'text-left' : 'text-right'

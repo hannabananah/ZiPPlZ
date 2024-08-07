@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { CiImageOn } from 'react-icons/ci';
 import { FaFileContract, FaFolderOpen } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
@@ -9,6 +9,7 @@ import Contract from '@components/chat/Contract';
 import Material from '@components/chat/Material';
 import FullModal from '@components/common/FullModal';
 import { useUserStore } from '@stores/userStore';
+import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
 interface MenuItem {
   id: number;
@@ -23,13 +24,36 @@ export default function ToggleChatMenu() {
   const { userType } = useUserStore();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const { sendMessage } = useContext(WebSocketContext)!;
 
   const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleImageUpload = () => {
     imageInputRef.current?.click();
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files[0]) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const imageData = reader.result as string;
+          setImagePreview(imageData);
+          sendImageMessage(imageData);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
+
+  const sendImageMessage = (imageData: string) => {
+    const file = new File([imageData], 'image.png', { type: 'image/png' });
+    sendMessage('', 1, file);
   };
 
   const handleFileUpload = () => {
@@ -37,12 +61,7 @@ export default function ToggleChatMenu() {
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const file = files[0];
-      console.log('Files selected:', files);
-      console.log('file selected:', file);
-    }
+    console.log('File selected:', event.target.files?.[0]);
   };
 
   const handleAfterService = () => {
@@ -151,13 +170,7 @@ export default function ToggleChatMenu() {
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
-        onChange={(e) => {
-          const files = e.target.files;
-          if (files && files[0]) {
-            const file = files[0];
-            console.log('Image selected:', file);
-          }
-        }}
+        onChange={handleImageChange}
       />
       <input
         ref={fileInputRef}

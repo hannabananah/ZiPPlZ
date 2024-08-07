@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import type { ChatMessageData, ChatRoomDetails } from '@/types';
+import type { ChatMessageData, ChatRoomDetails, File } from '@/types';
 import ChatRoomHeader from '@components/chat/ChatRoomHeader';
 import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
@@ -83,6 +83,10 @@ function ChatRoomContent() {
     // TODO: Implement image upload functionality
   };
 
+  const handleImagePreviewRemove = () => {
+    console.log('Image preview removed');
+  };
+
   if (loading) {
     return <p className="py-4 text-center bg-gray-300">Loading...</p>;
   }
@@ -112,6 +116,7 @@ function ChatRoomContent() {
               onMenuToggle={() => setMenuVisible((prev) => !prev)}
               userSerial={2}
               onImageUpload={handleImageUpload}
+              onImagePreviewRemove={handleImagePreviewRemove}
               type="text"
             />
             {isMenuVisible && <ToggleChatMenu />}
