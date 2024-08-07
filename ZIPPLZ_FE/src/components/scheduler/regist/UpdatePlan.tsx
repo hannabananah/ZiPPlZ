@@ -57,15 +57,13 @@ export default function UpdatePlan({ isOpen, setIsOpen, plan }: Props) {
       });
     }
   };
-  useEffect(() => {
-    console.log(plan);
-  }, [isOpen]);
-  useEffect(() => {
-    // setNewName(plan.planName);
-    // setMemo(plan.sharedContents);
-    console.log(newName);
-    console.log(memo);
-  }, [newName, memo]);
+  // useEffect(() => {
+  // }, [isOpen]);
+  // useEffect(() => {
+  //   // setNewName(plan.planName);
+  //   // setMemo(plan.sharedContents);
+  //   console.log(memo);
+  // }, [newName, memo]);
   return (
     <>
       <Modal
