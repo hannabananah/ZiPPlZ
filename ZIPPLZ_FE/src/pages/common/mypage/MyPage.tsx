@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
+import { FaPlusCircle } from 'react-icons/fa';
+import { FaHouseUser } from 'react-icons/fa';
+import { GiMonkey } from 'react-icons/gi';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiChevronRight } from 'react-icons/hi2';
-import { AiOutlinePlus } from 'react-icons/ai';
-import { MdOutlinePhotoCamera } from 'react-icons/md';
-import { TbDog } from 'react-icons/tb';
 import { IoLogoOctocat } from 'react-icons/io';
-import { GiMonkey } from 'react-icons/gi';
-import { SiFoodpanda } from 'react-icons/si';
-import { FaHouseUser } from 'react-icons/fa';
+import { MdOutlinePhotoCamera } from 'react-icons/md';
 import { PiRabbit } from 'react-icons/pi';
 import { PiCow } from 'react-icons/pi';
-import { RiBearSmileLine } from 'react-icons/ri';
 import { PiHorse } from 'react-icons/pi';
+import { RiBearSmileLine } from 'react-icons/ri';
+import { SiFoodpanda } from 'react-icons/si';
+import { TbDog } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 
 interface UserInfo {
@@ -41,8 +41,14 @@ export default function MyPage() {
     nickname: '',
     fullname: '',
   });
-  const [profileImage, setProfileImage] = useState<string | JSX.Element | null>(null);
+  const [profileImage, setProfileImage] = useState<string | JSX.Element | null>(
+    null
+  );
   const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null);
+  const [tempProfileImage, setTempProfileImage] = useState<string | null>(null);
+  const [tempSelectedIcon, setTempSelectedIcon] = useState<JSX.Element | null>(
+    null
+  );
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
@@ -59,12 +65,17 @@ export default function MyPage() {
     navigate('/mypage/mypasswordmodify');
   };
 
-  // 내가 쓴 글 / 스크랩 글 목록 페이지로 이동
-  const handleNavigateToMyBoardAndScrapList = () => {
-    navigate('/mypage/myboardlist');
+  // 내가 쓴 글 목록 페이지로 이동
+  const handleNavigateToMyFindWorkerList = () => {
+    navigate('/mypage/MyFindWorkerList');
   };
 
-  // 관심있는 시공업자 / 찜한 자재 목록 페이지로 이동
+  // 스크랩 글 목록 페이지로 이동
+  const handleNavigateToMyFindWorkerScrapList = () => {
+    navigate('/mypage/MyFindWorkerScrapList');
+  };
+
+  // 관심있는 시공업자 목록 페이지로 이동
   const handleNavigateToWishWorkerList = () => {
     navigate('/mypage/wishworkerlist');
   };
@@ -104,6 +115,8 @@ export default function MyPage() {
 
   // 프로필 이미지 변경 모달 열기
   const handleOpenProfileModal = () => {
+    setTempProfileImage(profileImage as string);
+    setTempSelectedIcon(selectedIcon);
     setShowProfileModal(true);
   };
 
@@ -125,9 +138,8 @@ export default function MyPage() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setProfileImage(reader.result as string);
-        setSelectedIcon(null);
-        handleCloseProfileModal();
+        setTempProfileImage(reader.result as string);
+        setTempSelectedIcon(null);
       };
       reader.readAsDataURL(file);
     }
@@ -135,9 +147,21 @@ export default function MyPage() {
 
   // 아이콘 선택 핸들러
   const handleIconSelect = (icon: JSX.Element) => {
-    setProfileImage(null);
-    setSelectedIcon(icon);
-    handleCloseProfileModal();
+    setTempProfileImage(null);
+    setTempSelectedIcon(icon);
+  };
+
+  // 선택한 프로필 이미지 저장 핸들러
+  const handleSaveProfile = () => {
+    setProfileImage(tempProfileImage);
+    setSelectedIcon(tempSelectedIcon);
+    setShowProfileModal(false);
+  };
+
+  // 선택한 프로필 이미지 지우기 핸들러
+  const handleClearProfile = () => {
+    setTempProfileImage(null);
+    setTempSelectedIcon(null);
   };
 
   return (
@@ -163,32 +187,30 @@ export default function MyPage() {
             <div className="flex flex-col items-center">
               <div className="w-36 h-36 relative">
                 {profileImage ? (
-                  <div
-                    className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center"
-                  >
+                  <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
                     <img
                       src={profileImage}
                       alt="Profile"
-                      className="w-full h-full object-cover rounded-full"
+                      className="w-full h-full object-cover rounded-zp-radius-full"
                     />
                   </div>
                 ) : selectedIcon ? (
-                  <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-gray-200">
+                  <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
                     {React.cloneElement(selectedIcon, { size: 100 })}
                   </div>
                 ) : (
-                  <div className="w-full h-full rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+                  <div className="w-full h-full rounded-zp-radius-full overflow-hidden bg-zp-white flex items-center justify-center">
                     <CgProfile size={144} />
                   </div>
                 )}
                 <div
-                  className="absolute bottom-0 right-0 bg-white rounded-full p-1 cursor-pointer"
+                  className="absolute bottom-0 right-0 bg-zp-white rounded-zp-radius-full p-1 cursor-pointer"
                   onClick={handleOpenProfileModal}
                 >
-                  <AiOutlinePlus size={24} />
+                  <FaPlusCircle size={24} />
                 </div>
               </div>
-              <div className="w-36 h-8 grid place-items-center text-zp-lg">
+              <div className="w-36 h-8 grid place-items-center text-zp-lg font-bold">
                 {userType === 'customer'
                   ? userInfo.nickname
                   : userInfo.fullname}
@@ -222,18 +244,30 @@ export default function MyPage() {
 
           {/* 내가 쓴 글 / 스크랩 글 목록 */}
           <div className="mt-6 flex items-center justify-between w-full ">
-            <div className="text-zp-lg">내가 쓴 글 / 스크랩 글 목록</div>
+            <div className="text-zp-lg">내가 쓴 글 목록</div>
             <div>
               <HiChevronRight
                 className="cursor-pointer"
-                onClick={handleNavigateToMyBoardAndScrapList}
+                onClick={handleNavigateToMyFindWorkerList}
               />
             </div>
           </div>
 
-          {/* 관심있는 시공업자 / 찜한 자재 목록 */}
+          {/* 내가 쓴 글 / 스크랩 글 목록 */}
+          <div className="mt-6 flex items-center justify-between w-full ">
+            <div className="text-zp-lg">스크랩 글 목록</div>
+            <div>
+              <HiChevronRight
+                className="cursor-pointer"
+                onClick={handleNavigateToMyFindWorkerScrapList}
+              />
+            </div>
+          </div>
+
+          {/* 관심있는 시공업자 목록 */}
+          {/* 자재 찜 기능 다른 페이지로 이동 */}
           <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">관심있는 시공업자 / 찜한 자재 목록</div>
+            <div className="text-zp-lg">관심있는 시공업자 목록</div>
             <div>
               <HiChevronRight
                 className="cursor-pointer"
@@ -323,14 +357,34 @@ export default function MyPage() {
       {showProfileModal && (
         <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
           <div className="bg-zp-sub-color rounded-zp-radius-big p-6 w-80">
-            <h2 className="text-zp-2xl font-bold flex justify-center mb-4">
-              프로필 이미지 선택
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <GoArrowLeft
+                className="cursor-pointer"
+                onClick={handleCloseProfileModal}
+                size={24}
+              />
+              <h2 className="text-zp-2xl font-bold">프로필 이미지 선택</h2>
+              <div className="w-6" /> {/* 빈 공간을 위해 추가 */}
+            </div>
             <div className="flex justify-center mb-4">
-              <CgProfile size={72} />
+              {tempProfileImage ? (
+                <div className="w-24 h-24 rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
+                  <img
+                    src={tempProfileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-zp-radius-full"
+                  />
+                </div>
+              ) : tempSelectedIcon ? (
+                <div className="w-24 h-24 rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
+                  {React.cloneElement(tempSelectedIcon, { size: 80 })}
+                </div>
+              ) : (
+                <CgProfile size={96} />
+              )}
             </div>
             <div className="grid grid-cols-5 gap-2">
-              <label className="flex items-center justify-center rounded-full w-12 h-12 cursor-pointer">
+              <label className="bg-zp-white rounded-zp-radius-full flex items-center justify-center rounded-full w-12 h-12 cursor-pointer">
                 <MdOutlinePhotoCamera size={24} />
                 <input
                   type="file"
@@ -342,12 +396,26 @@ export default function MyPage() {
               {icons.map((IconComponent, index) => (
                 <div
                   key={index}
-                  className="w-12 h-12 rounded-full cursor-pointer flex items-center justify-center"
+                  className="w-12 h-12 bg-zp-white rounded-zp-radius-full  cursor-pointer flex items-center justify-center"
                   onClick={() => handleIconSelect(<IconComponent size={24} />)}
                 >
                   <IconComponent size={24} />
                 </div>
               ))}
+            </div>
+            <div className="mt-6 flex justify-center space-x-2">
+              <button
+                className="w-full h-10 bg-zp-main-color rounded-zp-radius-big font-bold"
+                onClick={handleClearProfile}
+              >
+                지우기
+              </button>
+              <button
+                className="w-full h-10 bg-zp-main-color rounded-zp-radius-big font-bold"
+                onClick={handleSaveProfile}
+              >
+                저장
+              </button>
             </div>
           </div>
         </div>

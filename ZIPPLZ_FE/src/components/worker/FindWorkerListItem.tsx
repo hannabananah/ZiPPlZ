@@ -35,7 +35,15 @@ export default function FindWorkerListItem() {
             </div>
             <div className="flex justify-start space-x-2">
               <FaMapMarkerAlt size={14} />
-              <div className="text-zp-2xs">서울 동작구</div>
+              <div className="text-zp-2xs">100</div>
+            </div>
+            <div className="flex justify-start space-x-2">
+              <FaMapMarkerAlt size={14} />
+              <div className="text-zp-2xs">96</div>
+            </div>
+            <div className="flex justify-start space-x-2">
+              <FaMapMarkerAlt size={14} />
+              <div className="text-zp-2xs">5</div>
             </div>
           </div>
         </div>
