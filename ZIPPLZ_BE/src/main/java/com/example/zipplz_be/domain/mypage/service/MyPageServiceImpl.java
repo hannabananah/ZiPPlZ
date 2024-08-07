@@ -1,7 +1,7 @@
-package com.example.zipplz_be.domain.user.service;
+package com.example.zipplz_be.domain.mypage.service;
 
-import com.example.zipplz_be.domain.user.dto.UpdateCustomerDTO;
-import com.example.zipplz_be.domain.user.dto.UpdateWorkerDTO;
+import com.example.zipplz_be.domain.mypage.dto.UpdateCustomerDTO;
+import com.example.zipplz_be.domain.mypage.dto.UpdateWorkerDTO;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
@@ -9,7 +9,6 @@ import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

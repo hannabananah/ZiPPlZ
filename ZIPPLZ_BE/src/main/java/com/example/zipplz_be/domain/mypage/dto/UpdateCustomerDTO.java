@@ -1,4 +1,4 @@
-package com.example.zipplz_be.domain.user.dto;
+package com.example.zipplz_be.domain.mypage.dto;
 
 import lombok.Getter;
 import lombok.Setter;
