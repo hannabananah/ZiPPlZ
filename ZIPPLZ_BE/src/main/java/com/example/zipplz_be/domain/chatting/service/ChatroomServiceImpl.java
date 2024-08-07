@@ -160,6 +160,7 @@ public class ChatroomServiceImpl implements ChatroomService {
                 userSerial == chatroom.getWuser().getUserSerial()? true : false;
         User otherUser =
                 userSerial == chatroom.getWuser().getUserSerial()? chatroom.getCuser() : chatroom.getWuser();
+        String name = otherUser.getUserName();
         String location;
         if (isOtherUserCustomer) {
             Customer customer = customerRepository.findByUserSerial(otherUser);
@@ -177,6 +178,7 @@ public class ChatroomServiceImpl implements ChatroomService {
         }
 
         OtherUserInfoDTO otherUserInfo = OtherUserInfoDTO.builder()
+                .name(name)
                 .location(location)
                 .image(otherUser.getFileSerial()).build();
 
