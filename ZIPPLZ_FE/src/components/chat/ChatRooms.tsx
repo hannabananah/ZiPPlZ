@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 import { IoIosClose, IoIosSearch } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
+import type { ChatRoom } from '@/types';
 import Badge from '@assets/certified-icon.svg?react';
 import Input from '@components/common/Input';
 import ModalComponent from '@components/common/Modal';
-import { ChatRoom, useChatStore } from '@stores/chatStore';
-// <-- 'ChatRoom' 불러오기
+import { useChatStore } from '@stores/chatStore';
 import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
@@ -32,42 +32,32 @@ export default function ChatRooms() {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log('response==========>', response);
         const fetchedChatRooms: ChatRoom[] = response.data.data.map(
-          (room: any) => ({
-            chatroom_serial: parseInt(room.chatroomSerial),
-            message: room.lastMessage,
-            field_name: room.fieldName,
-            worker_name: room.workerName,
-            customer_name: room.customerName,
-            temperature: parseFloat(room.temperature),
-            time: room.createdAt,
-            unread: parseInt(room.unreadCount),
+          (room: ChatRoom) => ({
+            chatroomSerial: room.chatroomSerial,
+            lastMessage: room.lastMessage,
+            fieldName: room.fieldName,
+            workerName: room.workerName,
+            customerName: room.customerName,
+            temperature: room.temperature,
+            createdAt: room.createdAt,
+            unreadCount: room.unreadCount,
             certificated: room.certificated,
-            imageUrl: room.file
-              ? `http://localhost:5000/${room.file.saveFolder}/${room.file.saveFile}`
-              : 'https://i.pravatar.cc/50?img=1',
-            otherUser: {
-              name: room.customerName,
-              location: 'defaultLocation',
-              fieldName: room.fieldName,
-              isCertificated: room.certificated,
-              image: room.file || {
-                fileSerial: 0,
-                saveFolder: '',
-                originalFile: '',
-                saveFile: '',
-                fileName: '',
-              },
-            },
-            chatMessages: [],
-            file: room.file,
+            file: room.file
+              ? {
+                  fileSerial: room.file.fileSerial,
+                  saveFolder: room.file.saveFolder,
+                  originalFile: room.file.originalFile,
+                  saveFile: room.file.saveFile,
+                  fileName: room.file.fileName,
+                }
+              : null,
           })
         );
 
         setChatRooms(fetchedChatRooms);
       } catch (error) {
-        console.error('---------Error fetching chat rooms:', error);
+        console.error('채팅방을 볼러올 수 없습니다.', error);
       }
     };
 
@@ -77,15 +67,15 @@ export default function ChatRooms() {
   const handleRoomClick = (room: ChatRoom) => {
     setSelectedChatRoom(room);
     closeModal('chatRooms');
-    navigate(`/chatrooms/${room.chatroom_serial}`);
+    navigate(`/chatrooms/${room.chatroomSerial}`);
   };
 
   const handleClearInput = () => {
     setSearchText('');
   };
 
-  const handleDeleteChatroom = (roomId: number) => {
-    setSelectedRoomId(roomId);
+  const handleDeleteChatroom = (roomId: string) => {
+    setSelectedRoomId(parseInt(roomId, 10));
     openModal('select');
   };
 
@@ -132,7 +122,7 @@ export default function ChatRooms() {
       <ul className="grid w-full grid-cols-2 px-8 gap-x-5 gap-y-4 max-[460px]:grid-cols-1">
         {chatRooms.map((room) => (
           <li
-            key={room.chatroom_serial}
+            key={room.chatroomSerial}
             className="flex flex-col items-center p-2.5 bg-zp-light-orange rounded-zp-radius-big drop-shadow-zp-normal cursor-pointer"
             onClick={() => handleRoomClick(room)}
           >
@@ -140,7 +130,7 @@ export default function ChatRooms() {
               className="self-end rounded-zp-radius-full"
               onClick={(e) => {
                 e.stopPropagation();
-                handleDeleteChatroom(room.chatroom_serial);
+                handleDeleteChatroom(room.chatroomSerial);
               }}
             >
               <IoIosClose size={20} />
@@ -148,26 +138,30 @@ export default function ChatRooms() {
             <div className="flex items-center justify-center w-full">
               <div className="relative flex justify-center basis-2/5">
                 <img
-                  src={room.imageUrl}
+                  src={
+                    room.file
+                      ? `http://localhost:5000/${room.file.saveFolder}/${room.file.saveFile}`
+                      : 'https://i.pravatar.cc/50?img=1'
+                  }
                   alt="프로필 이미지"
                   className="w-12 profile-img"
                 />
-                {room.unread > 0 && (
+                {room.unreadCount > 0 && (
                   <span className="absolute -translate-x-1/2 right-3 top-0 flex items-center justify-center w-3.5 h-3.5 rounded-zp-radius-full bg-zp-red text-zp-white text-zp-2xs">
-                    {room.unread}
+                    {room.unreadCount}
                   </span>
                 )}
               </div>
               <div className="flex flex-col items-center justify-between flex-grow gap-1 basis-3/5 max-w-36">
                 <div className="flex items-center justify-start w-11/12 gap-1">
                   <span className="font-semibold truncate max-w-24 break-keep text-zp-sm">
-                    {room.customer_name}
+                    {room.customerName}
                   </span>
                   {room.certificated && <Badge />}
                 </div>
                 <div className="flex w-full gap-2 text-zp-light-gray text-zp-3xs">
                   <span className="truncate text-zp-gray break-keep max-w-20">
-                    {room.field_name}
+                    {room.fieldName}
                   </span>
                   |
                   <span className="text-zp-gray break-keep">
@@ -176,10 +170,12 @@ export default function ChatRooms() {
                 </div>
               </div>
             </div>
-            <div className="mt-2 flex w-full  leading-1.5 py-2.5 px-3 border-zp-main-color border bg-zp-white rounded-e-zp-radius-bubble rounded-es-zp-radius-bubble items-center space-x-2 rtl:space-x-reverse justify-between">
-              <p className="truncate text-zp-2xs basis-9.5">{room.message}</p>
+            <div className="mt-2 flex w-full leading-1.5 py-2.5 px-3 border-zp-main-color border bg-zp-white rounded-e-zp-radius-bubble rounded-es-zp-radius-bubble items-center space-x-2 rtl:space-x-reverse justify-between">
+              <p className="truncate text-zp-2xs basis-9.5">
+                {room.lastMessage}
+              </p>
               <span className="self-end break-keep text-zp-3xs text-zp-light-gray">
-                {formatTime(room.time)}
+                {formatTime(room.createdAt)}
               </span>
             </div>
           </li>

@@ -1,12 +1,12 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
+import type { ChatMessageData, ChatRoomDetails } from '@/types';
 import ChatRoomHeader from '@components/chat/ChatRoomHeader';
 import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
 import ToggleChatMenu from '@components/chat/ToggleChatMenu';
 import { useChatStore } from '@stores/chatStore';
-import type { ChatMessage, ChatRoom, ChatRoomData } from '@stores/chatStore';
 import {
   WebSocketContext,
   WebSocketProvider,
@@ -22,16 +22,18 @@ function ChatRoomContent() {
   const isValidRoomId = !isNaN(roomIdNumber);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessageData[]>([]);
+  const [loading, setLoading] = useState(true);
   const { messages: contextMessages } = useContext(WebSocketContext) || {
     messages: [],
   };
+  const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const fetchChatRoomDetails = async (
     chatRoomSerial: number
-  ): Promise<ChatRoomData> => {
+  ): Promise<ChatRoomDetails> => {
     try {
-      const response = await axios.get<{ data: ChatRoomData }>(
+      const response = await axios.get<{ data: ChatRoomDetails }>(
         `${base_url}/chatroom/${chatRoomSerial}`,
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -39,19 +41,9 @@ function ChatRoomContent() {
       );
 
       if (response.status === 200) {
-        console.log('response===========>', response.data.data);
-        console.log(
-          'response====otherUser=======>',
-          response.data.data.otherUser
-        );
-        console.log(
-          'response======chatMessages=====>',
-          response.data.data.chatMessages
-        );
         return response.data.data;
       } else {
-        console.error('Unexpected response status:', response.status);
-        throw new Error('Unexpected response status');
+        throw new Error('예상치 못한 응답입니다.');
       }
     } catch (error) {
       console.error(
@@ -64,29 +56,17 @@ function ChatRoomContent() {
 
   useEffect(() => {
     if (isValidRoomId) {
+      setLoading(true);
       fetchChatRoomDetails(roomIdNumber)
         .then((data) => {
-          const chatRoom: ChatRoom = {
-            chatroom_serial: roomIdNumber,
-            message: '',
-            field_name: data.otherUser.fieldName,
-            worker_name: '',
-            customer_name: data.otherUser.name,
-            temperature: 0,
-            time: '',
-            unread: 0,
-            certificated: data.otherUser.isCertificated,
-            imageUrl: data.otherUser.image.saveFile,
-            otherUser: data.otherUser,
-            chatMessages: data.chatMessages,
-            file: null,
-          };
           setMessages(data.chatMessages);
-          setSelectedChatRoom(chatRoom);
+          setSelectedChatRoom(data);
+          setLoading(false);
         })
-        .catch((error) =>
-          console.error('Failed to fetch chat room details:', error)
-        );
+        .catch((error) => {
+          console.error('채팅방 정보를 불러올 수 없습니다.', error);
+          setLoading(false);
+        });
     }
   }, [roomIdNumber, isValidRoomId]);
 
@@ -94,20 +74,28 @@ function ChatRoomContent() {
     setMessages((prevMessages) => [...prevMessages, ...contextMessages]);
   }, [contextMessages]);
 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   const handleImageUpload = (file: File) => {
-    console.log('Image uploaded:', file);
+    console.log('이미지 업로드:', file);
     // TODO: Implement image upload functionality
   };
+
+  if (loading) {
+    return <p className="py-4 text-center bg-gray-300">Loading...</p>;
+  }
 
   return (
     <div className="relative flex flex-col h-screen bg-zp-light-orange">
       {isValidRoomId && selectedChatRoom && (
         <ChatRoomHeader
-          userName={selectedChatRoom.otherUser.name}
-          certificated={selectedChatRoom.otherUser.isCertificated}
-          area={selectedChatRoom.otherUser.location}
+          name={selectedChatRoom.otherUser.name}
+          certificated={selectedChatRoom.otherUser.certificated}
+          location={selectedChatRoom.otherUser.location}
           fieldName={selectedChatRoom.otherUser.fieldName}
-          imageUrl={selectedChatRoom.otherUser.image.saveFile}
+          imageUrl={selectedChatRoom.otherUser.image?.saveFile || ''}
         />
       )}
       <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
@@ -117,11 +105,12 @@ function ChatRoomContent() {
               {messages.map((msg, index) => (
                 <Message key={`${msg.createdAt}-${index}`} message={msg} />
               ))}
+              <div ref={messagesEndRef} />
             </div>
             <TextInputBox
               isMenuVisible={isMenuVisible}
               onMenuToggle={() => setMenuVisible((prev) => !prev)}
-              userSerial={1}
+              userSerial={2}
               onImageUpload={handleImageUpload}
               type="text"
             />
