@@ -54,8 +54,11 @@ public class Work {
     @Column(name="field_name")
     String fieldName;
 
+    @Column(name= "status")
+    String status;
+
     @Builder
-    public Work(Plan plan, Field field, String fieldName, Timestamp startDate, Timestamp endDate, int workPrice) {
+    public Work(String status, Plan plan, Field field, String fieldName, Timestamp startDate, Timestamp endDate, int workPrice) {
         this.planSerial = plan;
         this.fieldCode = field;
         this.fieldName = fieldName;
@@ -63,13 +66,15 @@ public class Work {
         this.startDate = startDate;
         this.endDate = endDate;
         this.workPrice = workPrice;
+        this.status = status;
     }
 
     @Builder
-    public Work(Plan plan, Field field, String fieldName) {
+    public Work(Plan plan, Field field, String fieldName, String status) {
         this.planSerial = plan;
         this.fieldCode = field;
         this.fieldName = fieldName;
         isCompleted = 0;
+        this.status = status;
     }
 }

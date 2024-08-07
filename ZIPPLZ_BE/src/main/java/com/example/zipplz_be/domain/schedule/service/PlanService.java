@@ -82,6 +82,18 @@ public class PlanService {
     }
 
     @Transactional
+    public void deactivatePlanStatus(Customer customer) {
+        List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+        for(Plan plan: planList) {
+            plan.setIsActive(0);
+
+            planRepository.save(plan);
+        }
+    }
+
+
+    @Transactional
     public void insertPlanService(int userSerial, Map<String, Object> params) {
         Customer customer = findUser(userSerial);
 
@@ -90,6 +102,9 @@ public class PlanService {
         if(planName == null) {
             planName = customer.getNickname() + "의 계획";
         }
+
+        //모든 plan을 deactivate
+        this.deactivatePlanStatus(customer);
 
         Plan plan = Plan.builder()
                 .planName(planName)
@@ -108,6 +123,7 @@ public class PlanService {
         for(Field field : fieldList) {
             if(field.getFieldCode() != 0) {
                 Work work = Work.builder()
+                        .status("draft")
                         .field(field)
                         .fieldName(field.getFieldName())
                         .plan(plan).build();
