@@ -8,7 +8,7 @@ export interface Plan {
 }
 
 export interface Work {
-  fieldName?: string;
+  fieldName: string;
   startDate?: string;
   endDate?: string;
   workPrice?: number;
@@ -95,11 +95,11 @@ export const addWork = async (planSerial: number, data: Work) => {
 export const modifyWork = async (
   planSerial: number,
   workSerial: number,
-  data: Work
+  data: string
 ) => {
   return await axiosInstance.patch(
     END_POINT.WORK_SERIAL(planSerial, workSerial),
-    data,
+    { workContent: data },
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
@@ -110,6 +110,7 @@ export const modifyWork = async (
 
 //빈 공정 삭제
 export const deleteWork = async (planSerial: number, workSerial: number) => {
+  console.log(planSerial, workSerial);
   return await axiosInstance.delete(
     END_POINT.WORK_SERIAL(planSerial, workSerial),
     {
@@ -139,6 +140,20 @@ export const writeReview = async (
     {
       headers: {
         Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
+};
+//공유 이미지 업로드
+export const addImg = async (planSerial: number, imageFile: File) => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  return await axiosInstance.post(
+    END_POINT.PLAN_SERIAL(planSerial) + '/image',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
       },
     }
   );
