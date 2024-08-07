@@ -1,13 +1,11 @@
 package com.example.zipplz_be.domain.user.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Worker {
@@ -34,5 +32,7 @@ public class Worker {
         this.businessNumber = businessNumber;
         this.company = company;
         this.companyAddress = companyAddress;
+        this.hasAsBadge = 0;
+        this.certificatedBadge = 0;
     }
 }
