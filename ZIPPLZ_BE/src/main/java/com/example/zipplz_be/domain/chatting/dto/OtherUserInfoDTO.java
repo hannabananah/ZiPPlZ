@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OtherUserInfoDTO {
+    private String name;
     private String location;
+    private String fieldName;
+    private boolean isCertificated;
     private File image;
 }

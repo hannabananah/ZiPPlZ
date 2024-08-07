@@ -160,15 +160,22 @@ public class ChatroomServiceImpl implements ChatroomService {
                 userSerial == chatroom.getWuser().getUserSerial()? true : false;
         User otherUser =
                 userSerial == chatroom.getWuser().getUserSerial()? chatroom.getCuser() : chatroom.getWuser();
+        String name = otherUser.getUserName();
         String location;
+        String fieldName;
+        boolean isCertificated;
         if (isOtherUserCustomer) {
             Customer customer = customerRepository.findByUserSerial(otherUser);
+            fieldName = "";
+            isCertificated = false;
             if (!planRepository.existsByCustomerSerialAndIsActive(customer, 1)) {
                 location = "";
             } else {
                 location = planRepository.findByCustomerSerialAndIsActive(customer, 1).getAddress();
             }
         } else {
+            fieldName = chatroomRepository.findByChatroomSerial(chatroomSerial).getFieldName();
+            isCertificated = workerRepository.findByUserSerial(otherUser).getCertificatedBadge() == 1? true : false;
             if (!localRepository.existsByUserSerial(otherUser)) {
                 location = "";
             } else {
@@ -177,7 +184,10 @@ public class ChatroomServiceImpl implements ChatroomService {
         }
 
         OtherUserInfoDTO otherUserInfo = OtherUserInfoDTO.builder()
+                .name(name)
                 .location(location)
+                .fieldName(fieldName)
+                .isCertificated(isCertificated)
                 .image(otherUser.getFileSerial()).build();
 
         return ChatroomDetailDTO.builder()
