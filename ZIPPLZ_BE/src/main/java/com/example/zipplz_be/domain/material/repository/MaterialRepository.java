@@ -11,4 +11,6 @@ public interface MaterialRepository extends JpaRepository<Material, Integer> {
     @Query(value = "SELECT * " +
             "FROM Material", nativeQuery = true)
     List<MaterialDTO> getMaterialList();
+
+    Material findByMaterialSerial(int materialSerial);
 }
