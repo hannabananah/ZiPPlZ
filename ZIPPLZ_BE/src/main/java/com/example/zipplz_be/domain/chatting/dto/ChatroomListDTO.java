@@ -27,7 +27,6 @@ public class ChatroomListDTO {
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;
-    private String dayBefore;
     private int unreadCount;
 
     @Override
@@ -40,7 +39,6 @@ public class ChatroomListDTO {
                 ", customerName='" + customerName + '\'' +
                 ", isCertificated=" + isCertificated +
                 ", createdAt=" + createdAt +
-                ", dayBefore='" + dayBefore + '\'' +
                 ", unreadCount=" + unreadCount +
                 '}';
     }

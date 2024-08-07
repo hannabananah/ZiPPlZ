@@ -1,9 +1,6 @@
 package com.example.zipplz_be.domain.chatting.service;
 
-import com.example.zipplz_be.domain.chatting.dto.ChatMessageResponseDTO;
-import com.example.zipplz_be.domain.chatting.dto.ChatroomDetailDTO;
-import com.example.zipplz_be.domain.chatting.dto.ChatroomListDTO;
-import com.example.zipplz_be.domain.chatting.dto.CreateChatroomDTO;
+import com.example.zipplz_be.domain.chatting.dto.*;
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
 import com.example.zipplz_be.domain.chatting.exception.CannotCreateChatroomAloneException;
@@ -152,10 +149,7 @@ public class ChatroomServiceImpl implements ChatroomService {
 
         LocalDateTime lastTime = lastMessageOpt.map(ChatMessage::getCreatedAt).orElse(LocalDateTime.now());
 
-        long dayBeforeTime = ChronoUnit.MINUTES.between(lastTime, LocalDateTime.now());
-        String dayBefore = Calculator.time(dayBeforeTime);
-
-        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, otherUserImg, lastTime, dayBefore, unReadMessageCount);
+        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, otherUserImg, lastTime, unReadMessageCount);
         System.out.println(chatroomDTO);
         return chatroomDTO;
     }
@@ -163,24 +157,32 @@ public class ChatroomServiceImpl implements ChatroomService {
     @Override
     public ChatroomDetailDTO getChatroomDetail(int chatroomSerial, int userSerial) {
         Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
-
-        String workerLocation;
-        if (!localRepository.existsByUserSerial(chatroom.getWuser())) {
-            workerLocation = "";
+        boolean isOtherUserCustomer =
+                userSerial == chatroom.getWuser().getUserSerial()? true : false;
+        User otherUser =
+                userSerial == chatroom.getWuser().getUserSerial()? chatroom.getCuser() : chatroom.getWuser();
+        String location;
+        if (isOtherUserCustomer) {
+            Customer customer = customerRepository.findByUserSerial(otherUser);
+            if (!planRepository.existsByCustomerSerialAndIsActive(customer, 1)) {
+                location = "";
+            } else {
+                location = planRepository.findByCustomerSerialAndIsActive(customer, 1).getAddress();
+            }
         } else {
-            workerLocation = localRepository.findByUserSerial(chatroom.getWuser()).getLocalName();
+            if (!localRepository.existsByUserSerial(otherUser)) {
+                location = "";
+            } else {
+                location = localRepository.findByUserSerial(otherUser).getLocalName();
+            }
         }
 
-        String customerLocation;
-        Customer customer = customerRepository.findByUserSerial(chatroom.getCuser());
-        if (!planRepository.existsByCustomerSerialAndIsActive(customer, 1)) {
-            customerLocation = "";
-        } else {
-            customerLocation = planRepository.findByCustomerSerialAndIsActive(customer, 1).getAddress();
-        }
+        OtherUserInfoDTO otherUserInfo = OtherUserInfoDTO.builder()
+                .location(location)
+                .image(otherUser.getFileSerial()).build();
+
         return ChatroomDetailDTO.builder()
-                        .workerLocation(workerLocation)
-                        .customerLocation(customerLocation)
+                        .otherUser(otherUserInfo)
                         .chatMessages(getPreviousMessage(chatroomSerial, userSerial)).build();
     }
 
