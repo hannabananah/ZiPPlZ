@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react';
 import { FaPlus } from 'react-icons/fa';
+import { FaTrashAlt } from 'react-icons/fa';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import {
+  activePlan,
   deletePlan,
   deleteWork,
   getOnePlan,
@@ -26,19 +28,18 @@ import SharedImg from '@components/scheduler/sharedFile/SharedImg';
 import SharedMemo from '@components/scheduler/sharedFile/SharedMemo';
 import { useModalActions } from '@stores/modalStore';
 import { useScheduleStore } from '@stores/scheduleStore';
+import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
 interface Plan {
   planSerial: number;
   planName: string;
   status: number;
 }
-function numberWithCommas(x: number) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
 export default function Schedule() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const planSerial: number = parseInt(queryParams.get('plan') || '0');
+  console.log(planSerial);
   const navigate = useNavigate();
   const [isOpenRegist, setIsOpenRegist] = useState<boolean>(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState<boolean>(false);
@@ -94,8 +95,15 @@ export default function Schedule() {
   const removePlan = async (planSerial: number) => {
     return await deletePlan(planSerial);
   };
+  const setPlanActive = async () => {
+    return await activePlan(planSerial);
+  };
   useEffect(() => {
-    fetchPlanList();
+    if (planSerial === 0) {
+      fetchPlanList();
+      setSelectedValue('계획을 선택해주세요.');
+      setPlan(null);
+    } else fetchPlan(planSerial);
   }, []);
 
   useEffect(() => {
@@ -124,23 +132,49 @@ export default function Schedule() {
       }
     }
   }, [selectedValue, options, planList, plan]);
+  useEffect(() => {
+    fetchPlan(planSerial);
+  }, [workList]);
   return (
     <>
       <div className="mt-[5rem] flex flex-col w-full items-center bg-zp-light-beige gap-4 sm lg px-6 mb-[5rem]">
-        <div className="w-full flex justify-end">
-          <Button
-            buttonType={plan && plan.isActive === 1 ? 'second' : 'primary'}
-            width={3.5}
-            height={1.5}
-            fontSize="2xs"
-            radius="big"
-            children={plan && plan.isActive === 1 ? '비활성화' : '활성화'}
-            onClick={() => {
-              setIsActive(!isActive);
-            }}
+        <div className="flex justify-end w-full gap-4">
+          <FaPlus
+            className="cursor-pointer"
+            size={16}
+            onClick={() => setIsOpenRegist(true)}
           />
+          {selectedValue !== '계획을 선택해주세요.' &&
+            plan &&
+            plan.isActive === 1 && (
+              <HiOutlinePencilAlt
+                className="cursor-pointer"
+                size={16}
+                onClick={() => {
+                  setIsOpenUpdate(true);
+                }}
+              />
+            )}
+          {selectedValue !== '계획을 선택해주세요.' && plan && (
+            <FaTrashAlt
+              className="cursor-pointer"
+              size={16}
+              onClick={() => {
+                removePlan(plan.planSerial);
+              }}
+            />
+          )}
+
+          <RegistPlan isOpen={isOpenRegist} setIsOpen={setIsOpenRegist} />
+          {plan && plan.isActive === 1 && (
+            <UpdatePlan
+              isOpen={isOpenUpdate}
+              setIsOpen={setIsOpenUpdate}
+              plan={plan}
+            />
+          )}
         </div>
-        <div className="w-full flex items-center gap-4">
+        <div className="flex items-center w-full gap-4">
           <Selectbar
             fontColor="main"
             options={options.map((option) => option.planName)}
@@ -155,51 +189,34 @@ export default function Schedule() {
             hover="sub"
             backgroundColor="white"
           />
-          <FaPlus
-            className="cursor-pointer"
-            size={16}
-            onClick={() => setIsOpenRegist(true)}
+          <Button
+            buttonType={plan && plan.isActive === 1 ? 'second' : 'primary'}
+            width={3.5}
+            height={1.5}
+            fontSize="2xs"
+            radius="big"
+            children={plan && plan.isActive === 1 ? '비활성화' : '활성화'}
+            onClick={() => {
+              if (plan && plan.isActive === 0) setPlanActive();
+            }}
           />
-          {selectedValue !== '계획을 선택해주세요.' &&
-            plan &&
-            plan.isActive ===
-              1(
-                <HiOutlinePencilAlt
-                  className="cursor-pointer"
-                  size={16}
-                  onClick={() => {
-                    setIsOpenUpdate(true);
-                  }}
-                />
-              )}
-
-          <RegistPlan isOpen={isOpenRegist} setIsOpen={setIsOpenRegist} />
-          {plan &&
-            plan.isActive ===
-              1(
-                <UpdatePlan
-                  isOpen={isOpenUpdate}
-                  setIsOpen={setIsOpenUpdate}
-                  plan={plan}
-                />
-              )}
         </div>
-        <div className="w-full bg-zp-white p-4 rounded-zp-radius-big">
+        <div className="w-full p-4 bg-zp-white rounded-zp-radius-big">
           <ScheduleCalendar workList={workList} />
         </div>
         {selectedValue !== '계획을 선택해주세요.' && (
           <>
             <p className="w-full font-bold text-zp-xl ">공유 문서</p>
-            <div className="w-full h-full flex items-stretch justify-between gap-4">
-              <div className="basis-2/3 h-full">
+            <div className="flex items-stretch justify-between w-full h-full gap-4">
+              <div className="h-full basis-2/3">
                 <SharedImg fileList={fileList} planSerial={plan?.planSerial} />
               </div>
-              <div className="basis-1/3 h-full">
+              <div className="h-full basis-1/3">
                 <SharedMemo sharedContents={plan?.sharedContents} />
               </div>
             </div>
             <p className="w-full font-bold text-right text-zp-xl ">
-              총 시공 가격 : {numberWithCommas(totalPrice)}원
+              총 시공 가격 : {formatNumberWithCommas(totalPrice)}원
             </p>
             {workList &&
               workList.map((item, idx) =>

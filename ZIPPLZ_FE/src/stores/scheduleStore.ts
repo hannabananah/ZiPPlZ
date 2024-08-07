@@ -37,6 +37,7 @@ interface Plan {
   planName: string;
   address: string;
   sharedContents: string | null;
+  isActive: number;
 }
 interface Field {
   fieldCode: number;

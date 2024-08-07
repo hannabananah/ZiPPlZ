@@ -64,7 +64,18 @@ export const deletePlan = async (planSerial: number) => {
     },
   });
 };
-
+//계획 활성화
+export const activePlan = async (planSerial: number) => {
+  return await axiosInstance.patch(
+    END_POINT.PLAN_SERIAL(planSerial) + '/activate',
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
+};
 //공정 목록 조회
 export const getWorks = async (
   planSerial: number,
