@@ -5,27 +5,32 @@ import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
 interface ContractProps {
-  closeModal: () => void;
+  closeContractModal: () => void;
 }
 
 interface Field {
   label: string;
   value: string;
+  placeholder: string;
 }
 
 const defaultContractInfo = [
-  { label: '고객 이름', value: '' },
-  { label: '작업 가격', value: '' },
-  { label: '출장 주소', value: '' },
-  { label: '작업 기간', value: '' },
-  { label: '자재', value: '' },
+  { label: '고객 이름', value: '', placeholder: '내용을 입력해주세요.' },
+  { label: '작업 가격', value: '', placeholder: '내용을 입력해주세요.' },
+  { label: '출장 주소', value: '', placeholder: '내용을 입력해주세요.' },
+  { label: '작업 시작일', value: '', placeholder: 'YYYY-MM-DD' },
+  { label: '작업 마감일', value: '', placeholder: 'YYYY-MM-DD' },
+  { label: '자재', value: '', placeholder: '내용을 입력해주세요.' },
 ];
 
-export default function Contract({ closeModal }: ContractProps) {
+export default function Contract({ closeContractModal }: ContractProps) {
   const [fields, setFields] = useState<Field[]>(defaultContractInfo);
 
   const handleAddField = () => {
-    setFields([...fields, { label: '', value: '' }]);
+    setFields([
+      ...fields,
+      { label: '', value: '', placeholder: '내용을 입력해주세요.' },
+    ]);
   };
 
   const handleFieldChange = (
@@ -42,7 +47,7 @@ export default function Contract({ closeModal }: ContractProps) {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     console.log('Form Submitted', fields);
-    closeModal();
+    closeContractModal();
   };
 
   const handleReset = () => {
@@ -64,7 +69,7 @@ export default function Contract({ closeModal }: ContractProps) {
                   <Input
                     type="text"
                     inputType="none"
-                    placeholder="Enter label"
+                    placeholder="키워드 입력"
                     value={field.label}
                     onChange={(e) =>
                       handleFieldChange(index, 'label', e.target.value)
@@ -78,7 +83,7 @@ export default function Contract({ closeModal }: ContractProps) {
                 <Input
                   type="text"
                   inputType="normal"
-                  placeholder="내용을 입력해주세요."
+                  placeholder={field.placeholder}
                   value={field.value}
                   onChange={(e) =>
                     handleFieldChange(index, 'value', e.target.value)
@@ -103,7 +108,7 @@ export default function Contract({ closeModal }: ContractProps) {
             height={2.5}
             fontSize="xl"
             radius="btn"
-            onClick={closeModal}
+            onClick={closeContractModal}
           >
             취소
           </Button>

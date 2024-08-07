@@ -3,55 +3,58 @@ import React, { ReactNode, createContext, useEffect, useState } from 'react';
 import { Client, IMessage } from '@stomp/stompjs';
 
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
-const chat_token = import.meta.env.VITE_APP_CHAT_TOKEN;
+const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
-const WebSocketContext = createContext<{
+interface ChatMessage {
+  type: string;
+  userSerial: number;
+  userName: string;
+  chatMessageContent: string;
+  createdAt: string;
+  isFile: boolean;
+}
+
+interface WebSocketContextType {
   sendMessage: (message: string, userSerial: number) => void;
-  messages: {
-    userSerial: number;
-    userName: string;
-    chatMessageContent: string;
-    createdAt: string;
-    isFile: boolean;
-  }[];
-} | null>(null);
+  messages: ChatMessage[];
+}
+
+const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
-  const [messages, setMessages] = useState<
-    {
-      userSerial: number;
-      userName: string;
-      chatMessageContent: string;
-      createdAt: string;
-      isFile: boolean;
-    }[]
-  >([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
 
   useEffect(() => {
     const stompClient = new Client({
       brokerURL: chat_base_url,
       connectHeaders: {
-        'X-AUTH-TOKEN': chat_token,
+        'X-AUTH-TOKEN': token,
       },
       debug: (msg) => console.log('STOMP debug:', msg),
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
       onConnect: (frame) => {
-        console.log('STOMP connected>_<', frame);
-        stompClient.subscribe('/sub/chat/room/1', (message: IMessage) => {
-          console.log('Subscription received+++++>>>>>', message);
-          try {
-            if (message.body) {
-              let msg = JSON.parse(message.body);
+        console.log('STOMP connected:', frame);
+        stompClient.subscribe(`/sub/chat/room/1`, (message: IMessage) => {
+          console.log('Subscription received:', message);
+          if (message.body) {
+            try {
+              const msg: ChatMessage = JSON.parse(message.body);
               console.log('Parsed message:', msg);
-              setMessages((chats) => [...chats, msg]);
+              setMessages((prevMessages) => [...prevMessages, msg]);
+            } catch (error) {
+              console.error('Error parsing message:', error);
             }
-          } catch (error) {
-            console.error('Error parsing message:', error);
+          } else {
+            console.log('Message body is empty');
           }
         });
+
+        stompClient.publish({
+          destination: '/pub/chat/enter',
+          headers: { 'X-AUTH-TOKEN': token },
+          body: JSON.stringify({ chatroomSerial: 1, userSerial: 1 }),
+        });
+        console.log('-------token----------');
       },
       onDisconnect: () => {
         console.log('STOMP disconnected');
@@ -75,26 +78,28 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
   }, []);
 
-  // TODO 이미지, 파일 첨부
-  // const sendMessage = (message: string, userSerial: number, type: 'text' | 'image' = 'text') => {
+  useEffect(() => {
+    console.log('Received messages:', messages);
+  }, [messages]);
+
   const sendMessage = (msg: string, userSerial: number) => {
-    if (msg.trim()) {
-      if (client && client.connected) {
-        const data = JSON.stringify({
-          chatMessageContent: msg,
-          chatroomSerial: 1,
-          userSerial,
-          // type,
-        });
-        client.publish({
-          destination: '/pub/chat/message',
-          body: data,
-        });
-        console.log('Message sent:', msg);
-        console.log('Data sent:', data);
-      } else {
-        console.error('Client not connected or client is null');
-      }
+    if (msg.trim() && client && client.connected) {
+      const data = JSON.stringify({
+        type: 'TALK',
+        chatMessageContent: msg,
+        chatroomSerial: 1,
+        userSerial,
+        isFile: false,
+      });
+      client.publish({
+        destination: '/pub/chat/message/customer',
+        // headers: { 'X-AUTH-TOKEN': token },
+        body: data,
+      });
+
+      console.log('Message sent:', data);
+    } else {
+      console.error('Client not connected or client is null');
     }
   };
 

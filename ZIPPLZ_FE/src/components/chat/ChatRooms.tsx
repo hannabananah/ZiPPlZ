@@ -8,8 +8,7 @@ import ModalComponent from '@components/common/Modal';
 import { useChatStore } from '@stores/chatStore';
 import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
-
-// import axios from 'axios';
+import axios from 'axios';
 
 const mockChatRooms = [
   {
@@ -77,8 +76,8 @@ interface ChatRoom {
   session_id: string;
 }
 
-// const base_url = import.meta.env.VITE_APP_BASE_URL;
-// const token = import.meta.env.VITE_APP_AUTH_TOKEN;
+const base_url = import.meta.env.VITE_APP_BASE_URL;
+const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 export default function ChatRooms() {
   const navigate = useNavigate();
@@ -93,12 +92,12 @@ export default function ChatRooms() {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        // const response = await axios.get(`${base_url}/chatroom`, {
-        //   headers: {
-        //     Authorization: `Bearer ${token}`,
-        //   },
-        // });
-        const fetchedChatRooms: ChatRoom[] = mockChatRooms.map((room: any) => ({
+        const response = await axios.get(`${base_url}/chatroom`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        const fetchedChatRooms: ChatRoom[] = response.data.map((room: any) => ({
           name: room.name,
           message: room.lastMessage,
           temp: room.temp,
@@ -113,7 +112,7 @@ export default function ChatRooms() {
 
         setChatRooms(fetchedChatRooms);
       } catch (error) {
-        console.error('Error fetching chat rooms:', error);
+        console.error('---------Error fetching chat rooms:', error);
       }
     };
 
@@ -196,10 +195,10 @@ export default function ChatRooms() {
                 <img
                   src={room.imageUrl}
                   alt={room.name}
-                  className="profile-img"
+                  className="w-12 profile-img"
                 />
                 {room.unread > 0 && (
-                  <span className="absolute -translate-x-1/2 right-0 top-0 flex items-center justify-center w-3.5 h-3.5 rounded-zp-radius-full bg-zp-red text-zp-white text-zp-2xs">
+                  <span className="absolute -translate-x-1/2 right-3 top-0 flex items-center justify-center w-3.5 h-3.5 rounded-zp-radius-full bg-zp-red text-zp-white text-zp-2xs">
                     {room.unread}
                   </span>
                 )}
@@ -212,7 +211,7 @@ export default function ChatRooms() {
                   <Badge />
                 </div>
                 <div className="flex w-full gap-2 text-zp-light-gray text-zp-3xs">
-                  <span className="truncate text-zp-gray break-keep">
+                  <span className="truncate text-zp-gray break-keep max-w-20">
                     {room.chatroom_name}
                   </span>{' '}
                   |<span className="text-zp-gray break-keep">{room.temp}</span>
