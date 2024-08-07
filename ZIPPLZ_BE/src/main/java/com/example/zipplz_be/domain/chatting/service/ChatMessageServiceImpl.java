@@ -3,12 +3,20 @@ package com.example.zipplz_be.domain.chatting.service;
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
+import com.example.zipplz_be.domain.chatting.exception.ChatMessageNotFoundException;
 import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
+import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.file.repository.FileRepository;
+import com.example.zipplz_be.domain.model.MessageFileRelation;
 import com.example.zipplz_be.domain.model.entity.Status;
+import com.example.zipplz_be.domain.model.repository.MessageFileRelationRepository;
+import com.example.zipplz_be.domain.model.service.S3Service;
+import com.example.zipplz_be.domain.model.service.S3ServiceImpl;
 import com.example.zipplz_be.domain.schedule.exception.S3Exception;
+import com.example.zipplz_be.domain.schedule.service.PlanService;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -19,6 +27,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +39,9 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final RedisPublisher redisPublisher;
     private final ChannelTopic channelTopic;
     private final RedisRepository redisRepository;
+    private final S3Service s3Service;
+    private final FileRepository fileRepository;
+    private final MessageFileRelationRepository messageFileRelationRepository;
 
     @Override
     public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
@@ -50,7 +62,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                 .isFile(chatMessageRequestDTO.getIsFile())
                 .build();
 
-        chatMessageRepository.save(chatMessage);
+        ChatMessage savedMessage = chatMessageRepository.save(chatMessage);
         chatMessageRequestDTO.setUserSerial(userSerial);
         chatMessageRequestDTO.setUserName(user.getUserName());
 
@@ -68,16 +80,30 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         }
 
         // 파일 저장
-
+        if (chatMessageRequestDTO.getIsFile()) {
+            fileOptional.ifPresent(file -> saveMessageImage(file, savedMessage.getId()));
+        }
     }
 
-//    private void saveMessageImage(MultipartFile image, String messageId) {
-//
-//        if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
-//            throw new S3Exception("파일이 비었습니다.");
-//        }
-//        if (!chatMessageRepository.findById)
-//    }
+    private void saveMessageImage(MultipartFile image, String messageId) {
+
+        if (image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
+            throw new S3Exception("파일이 비었습니다.");
+        }
+        if (!chatMessageRepository.existsById(messageId)) {
+            throw new ChatMessageNotFoundException("존재하지 않는 채팅 메세지입니다.");
+        }
+        Optional<ChatMessage> message = chatMessageRepository.findById(messageId);
+
+        String url = s3Service.uploadImage(image);
+        File file = fileRepository.findBySaveFile(url);
+
+        MessageFileRelation messageFileRelation = MessageFileRelation.builder()
+                .messageId(messageId)
+                .file(file).build();
+
+        messageFileRelationRepository.save(messageFileRelation);
+    }
 
     // 안읽은 메세지 업데이트
     private void updateUnReadMessageCount(ChatMessageRequestDTO chatMessageRequestDTO) {

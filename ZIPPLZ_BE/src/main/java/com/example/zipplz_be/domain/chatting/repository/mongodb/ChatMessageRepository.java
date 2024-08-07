@@ -15,4 +15,6 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     Optional<ChatMessage> findFirstByChatroomSerialOrderByCreatedAtDesc(int chatroomSerial);
 
     Optional<ChatMessage> findById(String id);
+
+    boolean existsById(String id);
 }

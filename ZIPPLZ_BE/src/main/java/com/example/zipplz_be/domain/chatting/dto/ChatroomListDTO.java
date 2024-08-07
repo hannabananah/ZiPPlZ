@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.chatting.dto;
 
+import com.example.zipplz_be.domain.file.entity.File;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +22,8 @@ public class ChatroomListDTO {
     private String customerName;
     private boolean isCertificated;
     private double temperature;
+
+    private File otherUserImg;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime createdAt;

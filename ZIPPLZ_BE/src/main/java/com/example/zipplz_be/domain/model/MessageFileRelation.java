@@ -3,6 +3,7 @@ package com.example.zipplz_be.domain.model;
 import com.example.zipplz_be.domain.file.entity.File;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MessageFileRelation {
     @Id
     @Column(name = "message_id")
