@@ -11,9 +11,10 @@ import java.util.List;
 
 @Repository
 public interface MaterialRepository extends JpaRepository<Material, Integer> {
-//    @Query(value = "SELECT * " +
-//            "FROM Material", nativeQuery = true)
-//    List<MaterialDTO> getMaterialList();
+    @Query(value = "SELECT * " +
+            "FROM Material", nativeQuery = true)
+    List<MaterialDTO> getMaterialList();
+    Material findByMaterialSerial(int materialSerial);
     List<Material> findAll();
     List<Material> findAllByMajorCategory(MajorCategory major);
 }
