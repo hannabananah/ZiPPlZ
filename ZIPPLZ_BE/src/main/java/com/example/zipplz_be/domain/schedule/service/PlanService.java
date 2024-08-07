@@ -132,7 +132,6 @@ public class PlanService {
             }
         }
     }
-
     @Transactional
     public void modifyPlanService(int userSerial, int planSerial, Map<String, Object> params) {
         System.out.println(userSerial);
