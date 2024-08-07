@@ -16,9 +16,11 @@ public class Material {
     private int materialSerial;
     @Column(name = "material_name")
     private String materialName;
-    @Column(name = "field_id")
-    private int fieldId;
     private String description;
     @Column(name = "material_price")
     private int materialPrice;
+    @Column(name = "major_category")
+    private int majorCategory;
+    @Column(name = "middle_category")
+    private int middleCategory;
 }

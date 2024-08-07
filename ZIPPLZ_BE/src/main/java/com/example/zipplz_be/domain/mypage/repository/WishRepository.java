@@ -33,4 +33,9 @@ public interface WishRepository extends JpaRepository<Wish, Integer> {
             "WHERE user_serial= :user_serial and wish_type = :wish_type ) as w " +
             "LEFT JOIN Material m on m.material_serial = w.wish_serial;", nativeQuery = true)
     List<MaterialDTO> getMaterialWishList(@Param("wish_type") int wishType, @Param("user_serial") int userSerial);
+
+    @Query(value = "SELECT count(*) " +
+            "FROM Wish " +
+            "WHERE wish_serial = :wishSerial", nativeQuery = true)
+    int getWishCnt(@Param("wishSerial") int wishSerial);
 }

@@ -3,17 +3,19 @@ package com.example.zipplz_be.domain.material.dto;
 public class MaterialViewDTO {
     int materialSerial;
     String materialName;
-    int fieldId;
     String description;
     int materialPrice;
+    int majorCategory;
+    int middleCategory;
     String img;
 
     public MaterialViewDTO(MaterialDTO mDTO, String img) {
         this.materialSerial = mDTO.getMaterialSerial();
         this.materialName = mDTO.getMaterialName();
-        this.fieldId = mDTO.getFieldId();
         this.description = mDTO.getDescription();
         this.materialPrice = mDTO.getMaterialPrice();
+        this.majorCategory = mDTO.getMajorCategory();
+        this.middleCategory = mDTO.getMiddleCategory();
         this.img = img;
     }
 
@@ -33,14 +35,6 @@ public class MaterialViewDTO {
         this.materialName = materialName;
     }
 
-    public int getFieldId() {
-        return fieldId;
-    }
-
-    public void setFieldId(int fieldId) {
-        this.fieldId = fieldId;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -57,6 +51,22 @@ public class MaterialViewDTO {
         this.materialPrice = materialPrice;
     }
 
+    public int getMajorCategory() {
+        return majorCategory;
+    }
+
+    public void setMajorCategory(int majorCategory) {
+        this.majorCategory = majorCategory;
+    }
+
+    public int getMiddleCategory() {
+        return middleCategory;
+    }
+
+    public void setMiddleCategory(int middleCategory) {
+        this.middleCategory = middleCategory;
+    }
+
     public String getImg() {
         return img;
     }
@@ -70,9 +80,10 @@ public class MaterialViewDTO {
         return "MaterialViewDTO{" +
                 "materialSerial=" + materialSerial +
                 ", materialName='" + materialName + '\'' +
-                ", fieldId=" + fieldId +
                 ", description='" + description + '\'' +
                 ", materialPrice=" + materialPrice +
+                ", majorCategory=" + majorCategory +
+                ", middleCategory=" + middleCategory +
                 ", img='" + img + '\'' +
                 '}';
     }
