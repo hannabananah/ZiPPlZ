@@ -10,6 +10,7 @@ import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
 import com.example.zipplz_be.domain.model.repository.PlanFileRelationRepository;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioWorkListDTO;
+import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
 import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
@@ -31,7 +32,6 @@ import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,6 +40,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
+
+import javax.security.sasl.AuthenticationException;
 
 @Service
 public class PlanService {
@@ -370,6 +372,26 @@ public class PlanService {
         }
 
         return workListDTOList;
-
     }
+
+    @Transactional
+    public void activatePlanService(int userSerial, int planSerial) {
+        User user = userRepository.findByUserSerial(userSerial);
+        Customer customer = customerRepository.findByUserSerial(user);
+
+        Plan curPlan = planRepository.findByPlanSerial(planSerial);
+
+        if(curPlan == null) throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        if(curPlan.getCustomerSerial().getCustomerSerial() != customer.getCustomerSerial()) {
+            throw new UnauthorizedUserException("활성화할 권한이 없습니다.");
+        }
+
+        Plan originalPlan = planRepository.findByCustomerSerialAndIsActive(customer, 1);
+        originalPlan.setIsActive(0);
+        planRepository.save(originalPlan);
+
+        curPlan.setIsActive(1);
+        planRepository.save(curPlan);
+    }
+
 }
