@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface User {
   userSerial: number;
@@ -67,22 +68,39 @@ interface useScheduleStore {
   planList: Plan[] | null;
   workList: Work[] | null;
   fileList: File[] | null;
+  selectedValue: string;
   setPlan: (plan: Plan | null) => void;
   setPlanList: (planList: Plan[] | null) => void;
   setWork: (work: Work | null) => void;
   setWorkList: (workList: Work[] | null) => void;
   setFileList: (fileList: File[] | null) => void;
+  setSelectedValue: (selectedValue: string) => void;
 }
 
-export const useScheduleStore = create<useScheduleStore>((set) => ({
-  plan: null,
-  work: null,
-  planList: [],
-  workList: [],
-  fileList: [],
-  setPlan: (plan) => set({ plan }),
-  setWork: (work) => set({ work }),
-  setPlanList: (planList) => set({ planList }),
-  setWorkList: (workList) => set({ workList }),
-  setFileList: (fileList) => set({ fileList }),
-}));
+export const useScheduleStore = create<useScheduleStore>(
+  persist(
+    (set) => ({
+      plan: null,
+      work: null,
+      planList: [],
+      workList: [],
+      fileList: [],
+      selectedValue: '계획을 선택해주세요.',
+      setPlan: (plan) => set({ plan }),
+      setWork: (work) => set({ work }),
+      setPlanList: (planList) => set({ planList }),
+      setWorkList: (workList) => set({ workList }),
+      setFileList: (fileList) => set({ fileList }),
+      setSelectedValue: (selectedValue) => set({ selectedValue }),
+    }),
+    {
+      name: 'scheduler-info',
+      storage: createJSONStorage(() => localStorage),
+      // partialize: (state) => ({
+      //   plan: state.plan,
+      //   selecetdValue: state.selectedValue,
+      //   fileList: state.fileList,
+      // }),
+    }
+  )
+);
