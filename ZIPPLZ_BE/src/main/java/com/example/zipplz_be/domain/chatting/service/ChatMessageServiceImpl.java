@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Objects;
 
@@ -33,7 +32,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final RedisRepository redisRepository;
 
     @Override
-    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role, MultipartFile file) {
+    public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
         User user = userRepository.findByUserSerial(userSerial);
         if (user == null) {
             throw new UsernameNotFoundException("해당 유저가 존재하지 않습니다.");

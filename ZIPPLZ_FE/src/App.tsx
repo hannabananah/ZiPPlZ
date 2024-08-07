@@ -47,8 +47,11 @@ export default function App() {
         {/* <Route path="workers" element={<Workers />} /> */}
 
         <Route path="mypage" element={<MyPage />} />
-        <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
-        <Route path="chatrooms/:roomId" element={<ChatRoom />} />
+        <Route
+          path="chatrooms/:chatRoomSerial/videoroom"
+          element={<VideoRoom />}
+        />
+        <Route path="chatrooms/:chatRoomSerial" element={<ChatRoom />} />
         <Route path="404" element={<Custom404 />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
         <Route

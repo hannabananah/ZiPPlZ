@@ -10,70 +10,17 @@ import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
-const mockChatRooms = [
-  {
-    chatroom_serial: 1,
-    name: 'hansssssssssnah',
-    chatroom_name: 'John DoeDoeDoeDoeDoDoeDoee',
-    lastMessage: 'Hello! How are you?',
-    createdAt: '2024-08-05 22:00:39',
-    unreadCount: 3,
-    imageUrl: 'https://i.pravatar.cc/50?img=1',
-    temp: '36.5℃',
-  },
-  {
-    chatroom_serial: 2,
-    name: 'hannah2',
-    chatroom_name: 'Jane Smith',
-    lastMessage: 'Are we still on for tomorrow?',
-    createdAt: '2024-08-05 23:00:39',
-    unreadCount: 0,
-    imageUrl: 'https://i.pravatar.cc/50?img=2',
-    temp: '80℃',
-  },
-  {
-    chatroom_serial: 3,
-    name: 'hannah3',
-    chatroom_name: 'Alice Johnson',
-    lastMessage: 'Great job on the project!',
-    createdAt: '2024-08-05 11:00:39',
-    unreadCount: 1,
-    imageUrl: 'https://i.pravatar.cc/50?img=3',
-    temp: '165℃',
-  },
-  {
-    chatroom_serial: 4,
-    name: 'hannah4',
-    chatroom_name: 'Bob Brown',
-    lastMessage: 'Can we reschssssssssssedule our meeting?',
-    createdAt: '2024-08-05 11:00:39',
-    unreadCount: 5,
-    imageUrl: 'https://i.pravatar.cc/50?img=4',
-    temp: '6.5℃',
-  },
-  {
-    chatroom_serial: 5,
-    name: 'hannah5',
-    chatroom_name: 'Charlie Green',
-    lastMessage: 'See you soon!',
-    createdAt: '2024-08-05 11:00:39',
-    unreadCount: 2,
-    imageUrl: 'https://i.pravatar.cc/50?img=5',
-    temp: '15℃',
-  },
-];
-
 interface ChatRoom {
   chatroom_serial: number;
-  name: string;
-  chatroom_name: string;
   message: string;
+  field_name: string;
+  worker_name: string;
+  customer_name: string;
+  temperature: number;
   time: string;
   unread: number;
+  certificated: boolean;
   imageUrl: string;
-  temp: string;
-  user_serial: number;
-  session_id: string;
 }
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
@@ -97,18 +44,30 @@ export default function ChatRooms() {
             Authorization: `Bearer ${token}`,
           },
         });
-        const fetchedChatRooms: ChatRoom[] = response.data.map((room: any) => ({
-          name: room.name,
-          message: room.lastMessage,
-          temp: room.temp,
-          unread: room.unreadCount,
-          imageUrl: 'https://i.pravatar.cc/50?img=1',
-          chatroom_serial: parseInt(room.chatroom_serial),
-          chatroom_name: room.chatroom_name,
-          time: room.createdAt,
-          user_serial: 1,
-          session_id: 'monkey',
-        }));
+        console.log('response==========>', response);
+        const fetchedChatRooms: ChatRoom[] = response.data.data.map(
+          (room: any) => ({
+            chatroom_serial: parseInt(room.chatroomSerial),
+            message: room.lastMessage,
+            field_name: room.fieldName,
+            worker_name: room.workerName,
+            customer_name: room.customerName,
+            temperature: parseInt(room.temperature),
+            time: room.createdAt,
+            unread: parseInt(room.unreadCount),
+            certificated: room.certificated,
+            imageUrl: 'https://i.pravatar.cc/50?img=1',
+            worker_location: room.workerLocation,
+            customer_location: room.customerLocation,
+            file: {
+              file_serial: parseInt(room.fileSerial),
+              save_folder: room.saveFolder,
+              original_file: room.originalFile,
+              save_file: room.saveFile,
+              file_name: room.fileName,
+            },
+          })
+        );
 
         setChatRooms(fetchedChatRooms);
       } catch (error) {
@@ -194,7 +153,7 @@ export default function ChatRooms() {
               <div className="relative flex justify-center basis-2/5">
                 <img
                   src={room.imageUrl}
-                  alt={room.name}
+                  alt="프로필 이미지"
                   className="w-12 profile-img"
                 />
                 {room.unread > 0 && (
@@ -206,15 +165,18 @@ export default function ChatRooms() {
               <div className="flex flex-col items-center justify-between flex-grow gap-1 basis-3/5 max-w-36">
                 <div className="flex items-center justify-start w-11/12 gap-1">
                   <span className="font-semibold truncate max-w-24 break-keep text-zp-sm">
-                    {room.name}
+                    {room.customer_name}
                   </span>
-                  <Badge />
+                  {room.certificated && <Badge />}
                 </div>
                 <div className="flex w-full gap-2 text-zp-light-gray text-zp-3xs">
                   <span className="truncate text-zp-gray break-keep max-w-20">
-                    {room.chatroom_name}
-                  </span>{' '}
-                  |<span className="text-zp-gray break-keep">{room.temp}</span>
+                    {room.field_name}
+                  </span>
+                  |
+                  <span className="text-zp-gray break-keep">
+                    {room.temperature}&deg;C
+                  </span>
                 </div>
               </div>
             </div>

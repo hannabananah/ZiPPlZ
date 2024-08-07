@@ -29,8 +29,8 @@ public class Material {
     private String description;
     @Column(name = "material_price")
     private int materialPrice;
-    @Column(name = "major_category")
-    private int majorCategory;
-    @Column(name = "middle_category")
-    private int middleCategory;
+    // @Column(name = "major_category")
+    // private int majorCategory;
+    // @Column(name = "middle_category")
+    // private int middleCategory;
 }
