@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
 import QuestionPostListItem from '@/components/community/QuestionPostListItem';
-import WorkerInfoListItem from '@/components/worker/WorkerInfoListItem';
 import Input from '@components/common/Input';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
@@ -78,7 +77,7 @@ export default function MyQuestionPostScrapList() {
   const [isSelecting, setIsSelecting] = useState(false);
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+  const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
 
   const handleSortSelect = (sortOption: string) => {
     console.log(`Selected sort option: ${sortOption}`);
@@ -101,23 +100,24 @@ export default function MyQuestionPostScrapList() {
 
   const toggleAllSelected = () => {
     if (isAllSelected) {
-      setSelectedWorkers([]);
+      setSelectedPosts([]);
     } else {
-      setSelectedWorkers(list.map((worker) => worker.user_serial));
+      setSelectedPosts(list.map((worker) => worker.user_serial));
     }
     setIsAllSelected(!isAllSelected);
   };
 
-  const handleWorkerSelect = (user_serial: number) => {
-    if (selectedWorkers.includes(user_serial)) {
-      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+  const handlePostSelect = (user_serial: number) => {
+    if (selectedPosts.includes(user_serial)) {
+      setSelectedPosts(selectedPosts.filter((id) => id !== user_serial));
     } else {
-      setSelectedWorkers([...selectedWorkers, user_serial]);
+      setSelectedPosts([...selectedPosts, user_serial]);
     }
   };
+
   const toggleSelecting = () => {
     if (isSelecting) {
-      setSelectedWorkers([]);
+      setSelectedPosts([]);
     }
     setIsSelecting(!isSelecting);
     setIsAllSelected(false);
@@ -125,10 +125,6 @@ export default function MyQuestionPostScrapList() {
 
   const handleDeleteConfirmation = () => {
     setIsModalOpen(true);
-  };
-
-  const handleWorkerClick = (user_serial: number) => {
-    navigate(`/workers/${user_serial}/portfolio`);
   };
 
   return (
@@ -242,13 +238,13 @@ export default function MyQuestionPostScrapList() {
             <button
               className="rounded-zp-radius-big p-2 px-3 bg-zp-light-gray flex items-center space-x-2"
               onClick={
-                isSelecting && selectedWorkers.length > 0
+                isSelecting && selectedPosts.length > 0
                   ? handleDeleteConfirmation
                   : toggleSelecting
               }
             >
               {isSelecting ? (
-                selectedWorkers.length === 0 ? (
+                selectedPosts.length === 0 ? (
                   <span>선택 취소</span>
                 ) : (
                   <>
@@ -265,9 +261,42 @@ export default function MyQuestionPostScrapList() {
         {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* FindWorkerListitem 컴포넌트 */}
+        {/* QuestionPostListItem 컴포넌트 */}
         <div className="w-full mt-2 grid grid-cols-1 gap-4">
-          <QuestionPostListItem />
+          {list.map((worker) => (
+            <div
+              key={worker.user_serial}
+              className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
+                selectedPosts.includes(worker.user_serial)
+                  ? 'bg-zp-light-gray'
+                  : ''
+              }`}
+            >
+              {isSelecting && (
+                <div
+                  className="absolute top-2 right-2 z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handlePostSelect(worker.user_serial);
+                  }}
+                >
+                  {selectedPosts.includes(worker.user_serial) ? (
+                    <FaRegCircleCheck />
+                  ) : (
+                    <FaRegCircle />
+                  )}
+                </div>
+              )}
+              <div
+                className={`w-full h-full ${
+                  isSelecting ? 'pointer-events-none' : ''
+                }`}
+                onClick={() => handlePostSelect(worker.user_serial)}
+              >
+                <QuestionPostListItem />
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -289,7 +318,7 @@ export default function MyQuestionPostScrapList() {
               <button
                 className="w-full font-bold px-4 py-2 bg-zp-sub-color rounded-zp-radius-big"
                 onClick={() => {
-                  setSelectedWorkers([]);
+                  setSelectedPosts([]);
                   setIsSelecting(false);
                   setIsModalOpen(false);
                 }}

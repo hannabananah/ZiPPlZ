@@ -47,7 +47,6 @@ const list: HotWorker[] = [
 export default function WishWorkerList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
   const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [isSelecting, setIsSelecting] = useState(false);
   const [isAllSelected, setIsAllSelected] = useState(false);
@@ -61,10 +60,6 @@ export default function WishWorkerList() {
 
   const handleGoBack = () => {
     navigate('/mypage');
-  };
-
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleModalCancel = () => {
@@ -216,7 +211,7 @@ export default function WishWorkerList() {
             <div
               key={index}
               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
-                selectedWorkers.includes(index) ? 'bg-zp-light-gray' : ''
+                selectedWorkers.includes(index) ? '' : ''
               }`}
               onClick={() => handleWorkerSelect(index)}
             >

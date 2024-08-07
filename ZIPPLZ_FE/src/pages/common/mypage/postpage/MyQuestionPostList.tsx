@@ -295,7 +295,7 @@ export default function MyQuestionPostList() {
                 }`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                <QuestionPostListItem worker={worker} />
+                <QuestionPostListItem />
               </div>
             </div>
           ))}

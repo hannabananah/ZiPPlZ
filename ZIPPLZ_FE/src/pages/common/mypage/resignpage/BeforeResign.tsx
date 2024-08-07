@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoAlertCircleOutline } from 'react-icons/io5';
-import { PiWarningCircleBold } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 
 export default function BeforeResign() {
@@ -72,7 +71,8 @@ export default function BeforeResign() {
           <div className="bg-white p-6 rounded-lg shadow-lg text-center">
             <h2 className="text-zp-3xl font-bold mb-4">탈퇴 완료</h2>
             <p className="mt-12 text-zp-sm font-bold">
-              ZIP-PlZ를 이용해주시고 사랑해주셔서 감사합니다.<br/>
+              ZIP-PlZ를 이용해주시고 사랑해주셔서 감사합니다.
+              <br />
               더욱더 노력하고 발전하는 ZIP-PlZ가 되겠습니다.
             </p>
             <button

@@ -57,9 +57,9 @@ export default function HousePostListItem({ worker }: Props) {
   const navigate = useNavigate();
 
   // 배열을 ", "로 구분된 문자열로 변환하는 함수
-  const formatLocations = (locations: string[] | undefined) => {
-    return locations?.join(', ') ?? '';
-  };
+  // const formatLocations = (locations: string[] | undefined) => {
+  //   return locations?.join(', ') ?? '';
+  // };
 
   return (
     <div

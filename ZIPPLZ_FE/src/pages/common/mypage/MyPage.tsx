@@ -189,7 +189,11 @@ export default function MyPage() {
                 {profileImage ? (
                   <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
                     <img
-                      src={profileImage}
+                      src={
+                        typeof profileImage === 'string'
+                          ? profileImage
+                          : undefined
+                      }
                       alt="Profile"
                       className="w-full h-full object-cover rounded-zp-radius-full"
                     />
@@ -242,39 +246,41 @@ export default function MyPage() {
             </div>
           </div>
 
-          {/* 내가 쓴 글 / 스크랩 글 목록 */}
-          <div className="mt-6 flex items-center justify-between w-full ">
-            <div className="text-zp-lg">내가 쓴 글 목록</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToMyFindWorkerList}
-              />
-            </div>
-          </div>
+          {userType === 'customer' && (
+            <>
+              {/* 내가 쓴 글 / 스크랩 글 목록 */}
+              <div className="mt-6 flex items-center justify-between w-full ">
+                <div className="text-zp-lg">내가 쓴 글 목록</div>
+                <div>
+                  <HiChevronRight
+                    className="cursor-pointer"
+                    onClick={handleNavigateToMyFindWorkerList}
+                  />
+                </div>
+              </div>
 
-          {/* 내가 쓴 글 / 스크랩 글 목록 */}
-          <div className="mt-6 flex items-center justify-between w-full ">
-            <div className="text-zp-lg">스크랩 글 목록</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToMyFindWorkerScrapList}
-              />
-            </div>
-          </div>
+              <div className="mt-6 flex items-center justify-between w-full ">
+                <div className="text-zp-lg">스크랩 글 목록</div>
+                <div>
+                  <HiChevronRight
+                    className="cursor-pointer"
+                    onClick={handleNavigateToMyFindWorkerScrapList}
+                  />
+                </div>
+              </div>
 
-          {/* 관심있는 시공업자 목록 */}
-          {/* 자재 찜 기능 다른 페이지로 이동 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">관심있는 시공업자 목록</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToWishWorkerList}
-              />
-            </div>
-          </div>
+              {/* 관심있는 시공업자 목록 */}
+              <div className="mt-6 flex items-center justify-between w-full">
+                <div className="text-zp-lg">관심있는 시공업자 목록</div>
+                <div>
+                  <HiChevronRight
+                    className="cursor-pointer"
+                    onClick={handleNavigateToWishWorkerList}
+                  />
+                </div>
+              </div>
+            </>
+          )}
 
           <hr className="mt-6 w-full border-zp-light-gray" />
 
@@ -370,7 +376,11 @@ export default function MyPage() {
               {tempProfileImage ? (
                 <div className="w-24 h-24 rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
                   <img
-                    src={tempProfileImage}
+                    src={
+                      typeof tempProfileImage === 'string'
+                        ? tempProfileImage
+                        : undefined
+                    }
                     alt="Profile"
                     className="w-full h-full object-cover rounded-zp-radius-full"
                   />

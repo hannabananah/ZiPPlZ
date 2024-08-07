@@ -294,7 +294,7 @@ export default function MyFindWorkerList() {
                 className={`w-full h-full ${isSelecting ? 'pointer-events-none' : ''}`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                <FindWorkerListItem worker={worker} />
+                <FindWorkerListItem />
               </div>
             </div>
           ))}

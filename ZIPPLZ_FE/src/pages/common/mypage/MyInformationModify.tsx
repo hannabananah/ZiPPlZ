@@ -44,7 +44,7 @@ export default function MyInformationModify() {
   };
 
   // Daum Postcode Complete Handler
-  const handleComplete = (data) => {
+  const handleComplete = (data: any) => {
     let fullAddress = data.address;
     let extraAddress = '';
 

@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
 import HousePostListItem from '@/components/community/HousePostListItem';
-import WorkerInfoListItem from '@/components/worker/WorkerInfoListItem';
 import Input from '@components/common/Input';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 

@@ -297,7 +297,7 @@ export default function MyFindWorkerList() {
                 }`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                <FindWorkerListItem worker={worker} />
+                <FindWorkerListItem />
               </div>
             </div>
           ))}
