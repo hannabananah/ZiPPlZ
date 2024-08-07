@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class MaterialMiddleCategory {
+public class MiddleCategory {
     @Id
     @Column(name = "major_code")
     private int majorCode;
@@ -19,5 +19,5 @@ public class MaterialMiddleCategory {
 
     @ManyToOne
     @JoinColumn(name="major_code")
-    private MaterialMajorCategory major;
+    private MajorCategory major;
 }

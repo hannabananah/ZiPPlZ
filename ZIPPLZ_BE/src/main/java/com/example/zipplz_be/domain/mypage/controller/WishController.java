@@ -71,27 +71,27 @@ public class WishController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    @PostMapping("/materiallist")
-    public ResponseEntity<ResponseDTO<List<MaterialViewDTO>>> getMaterialWishList(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
-        ResponseDTO<List<MaterialViewDTO>> responseDTO;
-        HttpStatus status = HttpStatus.ACCEPTED;
-
-        try {
-            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            int user_serial = customUserDetails.getUserSerial();
-            int wish_type = 2;
-            List<MaterialViewDTO> materials = wishService.getMaterialWishList(wish_type, user_serial);
-            if (materials == null) {
-                status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
-            } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", materials);
-            }
-        } catch (Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        return new ResponseEntity<>(responseDTO, status);
-    }
+//    @PostMapping("/materiallist")
+//    public ResponseEntity<ResponseDTO<List<MaterialViewDTO>>> getMaterialWishList(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
+//        ResponseDTO<List<MaterialViewDTO>> responseDTO;
+//        HttpStatus status = HttpStatus.ACCEPTED;
+//
+//        try {
+//            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+//            int user_serial = customUserDetails.getUserSerial();
+//            int wish_type = 2;
+//            List<MaterialViewDTO> materials = wishService.getMaterialWishList(wish_type, user_serial);
+//            if (materials == null) {
+//                status = HttpStatus.NOT_FOUND;
+//                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+//            } else {
+//                status = HttpStatus.OK;
+//                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", materials);
+//            }
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
 }

@@ -10,6 +10,7 @@ import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Controller
@@ -25,18 +26,18 @@ public class ChatMessageController {
     @MessageMapping("/chat/enter")
     public void enter(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor) {
         System.out.println("!!!!!!!!!! entered !!!!!!!!!!!!!!!");
-        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
-//        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial()); // 테스트용 (테스트는 헤더 인식 못함)
+//        chatMessageService.enter(getUserSerial(headerAccessor), chatMessageRequest.getChatroomSerial());
+        chatMessageService.enter(chatMessageRequest.getUserSerial(), chatMessageRequest.getChatroomSerial()); // 테스트용 (테스트는 헤더 인식 못함)
     }
 
     /*
      websocket "/pub/chat/message"로 들어오는 메시징을 처리한다.
      */
-    @MessageMapping("/chat/message")
-    public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor, @PathVariable String role) {
+    @MessageMapping("/chat/message/{role}")
+    public void message(ChatMessageRequestDTO chatMessageRequest, SimpMessageHeaderAccessor headerAccessor, @PathVariable String role, MultipartFile file) {
         System.out.println("!!!!!!!!! sendMessage !!!!!!!!!!!!!!");
-        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor), getRole(headerAccessor));
-//        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial(), role); // 테스트용 (테스트는 헤더 인식 못함)
+//        chatMessageService.sendMessage(chatMessageRequest, getUserSerial(headerAccessor), getRole(headerAccessor));
+        chatMessageService.sendMessage(chatMessageRequest, chatMessageRequest.getUserSerial(), role, file); // 테스트용 (테스트는 헤더 인식 못함)
     }
 
     public int getUserSerial(SimpMessageHeaderAccessor headerAccessor) {

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class MaterialMajorCategory {
+public class MajorCategory {
     @Id
     @Column(name = "major_code")
     private int majorCode;
