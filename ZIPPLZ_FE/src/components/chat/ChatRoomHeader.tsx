@@ -16,7 +16,7 @@ interface ChatRoomHeaderProps {
   certificated: boolean;
   area: string;
   fieldName: string;
-  imageUrl?: string; // Add this if you want to display profile images
+  imageUrl?: string;
 }
 
 export default function ChatRoomHeader({
@@ -45,7 +45,11 @@ export default function ChatRoomHeader({
     closeModal('mini');
   };
 
-  if (!selectedChatRoom) {
+  if (
+    !selectedChatRoom ||
+    !selectedChatRoom.otherUser ||
+    !selectedChatRoom.otherUser.image
+  ) {
     return null;
   }
 
@@ -55,7 +59,7 @@ export default function ChatRoomHeader({
         <IoIosArrowBack size={16} fill="#111" />
       </button>
       <img
-        src={imageUrl || ''} // Default to empty string if no imageUrl
+        src={imageUrl || 'path/to/placeholder-image.png'}
         alt="profile image"
         className="w-12 h-12 rounded-zp-radius-full"
       />

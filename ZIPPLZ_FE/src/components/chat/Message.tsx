@@ -1,7 +1,7 @@
-import { useContext } from 'react';
-
+// import { useContext } from 'react';
 import { formatTime } from '@utils/formatDateWithTime';
-import { WebSocketContext } from '@utils/socket/WebSocketProvider';
+
+// import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
 interface ChatMessage {
   userSerial: number;
@@ -16,26 +16,26 @@ interface MessageProps {
 }
 
 export default function Message({ message }: MessageProps) {
-  const context = useContext(WebSocketContext);
-  console.log('context====>', context);
+  // const context = useContext(WebSocketContext);
+  // console.log('context====>', context);
 
-  const currUserSerial = 2; // Update this to use the current user serial from context or props
+  const currUserSerial = 2;
 
   return (
     <li
-      className={`flex items-start p-2 ${
+      className={`flex items-start px-4 py-2 ${
         message.userSerial === currUserSerial ? 'justify-end' : 'justify-start'
       }`}
     >
       {message.userSerial !== currUserSerial && (
         <img
-          className="w-10 mr-3 profile-img"
-          src="https://i.pravatar.cc/50?img=1" // Consider using actual profile images if available
+          className="w-8 mr-2 border border-zp-light-gray profile-img"
+          src="https://i.pravatar.cc/50?img=1"
           alt="프로필 이미지"
         />
       )}
       <div
-        className={`p-4 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 ${
+        className={`px-3 py-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 ${
           message.userSerial === currUserSerial
             ? 'text-right rounded-se-zp-radius-none'
             : 'text-left rounded-ss-zp-radius-none'
@@ -54,7 +54,7 @@ export default function Message({ message }: MessageProps) {
       </div>
       {message.userSerial === currUserSerial && (
         <img
-          className="w-10 ml-3 border border-zp-light-gray profile-img"
+          className="w-8 ml-2 border border-zp-light-gray profile-img"
           src="https://i.pravatar.cc/50?img=1"
           alt="프로필 이미지"
         />

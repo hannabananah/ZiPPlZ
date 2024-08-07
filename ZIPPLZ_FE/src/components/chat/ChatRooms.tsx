@@ -5,23 +5,11 @@ import { useNavigate } from 'react-router-dom';
 import Badge from '@assets/certified-icon.svg?react';
 import Input from '@components/common/Input';
 import ModalComponent from '@components/common/Modal';
-import { useChatStore } from '@stores/chatStore';
+import { ChatRoom, useChatStore } from '@stores/chatStore';
+// <-- 'ChatRoom' 불러오기
 import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
-
-interface ChatRoom {
-  chatroom_serial: number;
-  message: string;
-  field_name: string;
-  worker_name: string;
-  customer_name: string;
-  temperature: number;
-  time: string;
-  unread: number;
-  certificated: boolean;
-  imageUrl: string;
-}
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
 const token = import.meta.env.VITE_APP_AUTH_TOKEN;
@@ -52,11 +40,28 @@ export default function ChatRooms() {
             field_name: room.fieldName,
             worker_name: room.workerName,
             customer_name: room.customerName,
-            temperature: parseInt(room.temperature),
+            temperature: parseFloat(room.temperature),
             time: room.createdAt,
             unread: parseInt(room.unreadCount),
             certificated: room.certificated,
-            imageUrl: 'https://i.pravatar.cc/50?img=1',
+            imageUrl: room.file
+              ? `http://localhost:5000/${room.file.saveFolder}/${room.file.saveFile}`
+              : 'https://i.pravatar.cc/50?img=1',
+            otherUser: {
+              name: room.customerName,
+              location: 'defaultLocation',
+              fieldName: room.fieldName,
+              isCertificated: room.certificated,
+              image: room.file || {
+                fileSerial: 0,
+                saveFolder: '',
+                originalFile: '',
+                saveFile: '',
+                fileName: '',
+              },
+            },
+            chatMessages: [],
+            file: room.file,
           })
         );
 

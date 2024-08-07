@@ -35,17 +35,13 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       onConnect: (frame) => {
         console.log('STOMP connected:', frame);
         stompClient.subscribe(`/sub/chat/room/1`, (message: IMessage) => {
-          console.log('Subscription received:', message);
           if (message.body) {
             try {
               const msg: ChatMessage = JSON.parse(message.body);
-              console.log('Parsed message:', msg);
               setMessages((prevMessages) => [...prevMessages, msg]);
             } catch (error) {
               console.error('Error parsing message:', error);
             }
-          } else {
-            console.log('Message body is empty');
           }
         });
 
@@ -54,7 +50,6 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           headers: { 'X-AUTH-TOKEN': token },
           body: JSON.stringify({ chatroomSerial: 1, userSerial: 1 }),
         });
-        console.log('-------token----------');
       },
       onDisconnect: () => {
         console.log('STOMP disconnected');
@@ -78,12 +73,8 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log('Received messages:', messages);
-  }, [messages]);
-
   const sendMessage = (msg: string, userSerial: number) => {
-    if (msg.trim() && client && client.connected) {
+    if (msg.trim() && client?.connected) {
       const data = JSON.stringify({
         type: 'TALK',
         chatMessageContent: msg,
@@ -93,13 +84,10 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       });
       client.publish({
         destination: '/pub/chat/message/customer',
-        // headers: { 'X-AUTH-TOKEN': token },
         body: data,
       });
-
-      console.log('Message sent:', data);
     } else {
-      console.error('Client not connected or client is null');
+      console.error('Client not connected or message is empty');
     }
   };
 

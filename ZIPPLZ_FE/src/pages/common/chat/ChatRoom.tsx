@@ -6,43 +6,12 @@ import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
 import ToggleChatMenu from '@components/chat/ToggleChatMenu';
 import { useChatStore } from '@stores/chatStore';
+import type { ChatMessage, ChatRoom, ChatRoomData } from '@stores/chatStore';
 import {
   WebSocketContext,
   WebSocketProvider,
 } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
-
-interface ChatMessage {
-  userSerial: number;
-  userName: string;
-  chatMessageContent: string;
-  createdAt: string;
-  isFile: boolean;
-}
-
-interface OtherUser {
-  name: string;
-  location: string;
-  fieldName: string;
-  certificated: boolean;
-  image: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
-
-interface ChatRoomData {
-  otherUser: OtherUser;
-  chatMessages: ChatMessage[];
-}
-
-interface ChatRoom {
-  otherUser: OtherUser;
-  chatMessages: ChatMessage[];
-}
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
 const token = import.meta.env.VITE_APP_AUTH_TOKEN;
@@ -52,15 +21,15 @@ function ChatRoomContent() {
   const roomIdNumber = chatRoomSerial ? parseInt(chatRoomSerial, 10) : NaN;
   const isValidRoomId = !isNaN(roomIdNumber);
   const [isMenuVisible, setMenuVisible] = useState(false);
+  const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const { messages: contextMessages } = useContext(WebSocketContext) || {
     messages: [],
   };
-  const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
 
   const fetchChatRoomDetails = async (
     chatRoomSerial: number
-  ): Promise<ChatRoom> => {
+  ): Promise<ChatRoomData> => {
     try {
       const response = await axios.get<{ data: ChatRoomData }>(
         `${base_url}/chatroom/${chatRoomSerial}`,
@@ -70,9 +39,16 @@ function ChatRoomContent() {
       );
 
       if (response.status === 200) {
-        const chatRoomData = response.data.data;
-        setSelectedChatRoom(chatRoomData);
-        return chatRoomData;
+        console.log('response===========>', response.data.data);
+        console.log(
+          'response====otherUser=======>',
+          response.data.data.otherUser
+        );
+        console.log(
+          'response======chatMessages=====>',
+          response.data.data.chatMessages
+        );
+        return response.data.data;
       } else {
         console.error('Unexpected response status:', response.status);
         throw new Error('Unexpected response status');
@@ -85,10 +61,29 @@ function ChatRoomContent() {
       throw error;
     }
   };
+
   useEffect(() => {
     if (isValidRoomId) {
       fetchChatRoomDetails(roomIdNumber)
-        .then((data) => setMessages(data.chatMessages))
+        .then((data) => {
+          const chatRoom: ChatRoom = {
+            chatroom_serial: roomIdNumber,
+            message: '',
+            field_name: data.otherUser.fieldName,
+            worker_name: '',
+            customer_name: data.otherUser.name,
+            temperature: 0,
+            time: '',
+            unread: 0,
+            certificated: data.otherUser.isCertificated,
+            imageUrl: data.otherUser.image.saveFile,
+            otherUser: data.otherUser,
+            chatMessages: data.chatMessages,
+            file: null,
+          };
+          setMessages(data.chatMessages);
+          setSelectedChatRoom(chatRoom);
+        })
         .catch((error) =>
           console.error('Failed to fetch chat room details:', error)
         );
@@ -109,9 +104,10 @@ function ChatRoomContent() {
       {isValidRoomId && selectedChatRoom && (
         <ChatRoomHeader
           userName={selectedChatRoom.otherUser.name}
-          certificated={selectedChatRoom.otherUser.certificated}
+          certificated={selectedChatRoom.otherUser.isCertificated}
           area={selectedChatRoom.otherUser.location}
           fieldName={selectedChatRoom.otherUser.fieldName}
+          imageUrl={selectedChatRoom.otherUser.image.saveFile}
         />
       )}
       <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
@@ -125,7 +121,7 @@ function ChatRoomContent() {
             <TextInputBox
               isMenuVisible={isMenuVisible}
               onMenuToggle={() => setMenuVisible((prev) => !prev)}
-              userSerial={1} // Replace with actual user serial
+              userSerial={1}
               onImageUpload={handleImageUpload}
               type="text"
             />
