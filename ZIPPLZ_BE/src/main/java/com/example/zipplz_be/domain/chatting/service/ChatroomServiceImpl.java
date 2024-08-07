@@ -11,8 +11,10 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
+import com.example.zipplz_be.domain.model.repository.MessageFileRelationRepository;
 import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
 import com.example.zipplz_be.domain.portfolio.service.CustomerReviewService;
@@ -30,6 +32,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -64,6 +67,7 @@ public class ChatroomServiceImpl implements ChatroomService {
     private final FieldRepository fieldRepository;
     private final CustomerReviewRepository customerReviewRepository;
     private final CustomerReviewService customerReviewService;
+    private final MessageFileRelationRepository messageFileRelationRepository;
 
     @Override
     public int createChatroom(int userSerial, CreateChatroomDTO createChatroomDTO) {
@@ -158,10 +162,18 @@ public class ChatroomServiceImpl implements ChatroomService {
         if (!isUserInChatroom) throw new ChatroomForbiddenException("잘못된 접근입니다.");
 
         System.out.println(chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial));
-        return chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial)
-                .stream()
-                .map(ChatMessageResponseDTO::new)
-                .collect(Collectors.toList());
+        List<ChatMessage> messages = chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial);
+        List<ChatMessageResponseDTO> previousMessages = new ArrayList<>();
+        for (ChatMessage message : messages) {
+            if (message.isFile()) {
+                File file = messageFileRelationRepository.findByMessageId(message.getId()).getFile();
+                previousMessages.add(new ChatMessageResponseDTO(message, file));
+            } else {
+                previousMessages.add(new ChatMessageResponseDTO(message));
+            }
+        }
+
+        return previousMessages;
     }
 
     @Override
