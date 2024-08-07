@@ -7,7 +7,7 @@ const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
 const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 interface WebSocketContextType {
-  sendMessage: (message: string, userSerial: number) => void;
+  sendMessage: (message: string, userSerial: number, file?: File) => void;
   messages: ChatMessageData[];
 }
 
@@ -30,7 +30,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           if (message.body) {
             try {
               const msg: ChatMessageData = JSON.parse(message.body);
-              setMessages(() => [msg]);
+              setMessages((prevMessages) => [...prevMessages, msg]);
             } catch (error) {
               console.error('Error parsing message:', error);
             }
@@ -65,21 +65,49 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     };
   }, []);
 
-  const sendMessage = (msg: string, userSerial: number) => {
-    if (msg.trim() && client?.connected) {
-      const data = JSON.stringify({
-        type: 'TALK',
-        chatMessageContent: msg,
+  const sendMessage = (msg: string, userSerial: number, file?: File) => {
+    if (client?.connected) {
+      const messagePayload = {
         chatroomSerial: 1,
         userSerial,
-        isFile: false,
-      });
-      client.publish({
-        destination: '/pub/chat/message/customer',
-        body: data,
-      });
+        chatMessageContent: msg,
+        isFile: !!file,
+      };
+
+      if (file) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const fileData = reader.result as string;
+          const data = JSON.stringify({
+            ...messagePayload,
+            type: 'FILE',
+            fileData,
+            fileName: file.name,
+            fileType: file.type,
+          });
+
+          client.publish({
+            destination: '/pub/chat/message/customer',
+            body: data,
+          });
+        };
+        reader.readAsDataURL(file);
+      } else {
+        if (msg.trim()) {
+          const data = JSON.stringify({
+            ...messagePayload,
+            type: 'TALK',
+            chatMessageContent: msg,
+          });
+
+          client.publish({
+            destination: '/pub/chat/message/customer',
+            body: data,
+          });
+        }
+      }
     } else {
-      console.error('클라이언트와 연결되지 않았거나 메시자 비어 있습니다.');
+      console.error('Client not connected or message is empty.');
     }
   };
 
