@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.chatting.service;
 
 import com.example.zipplz_be.domain.chatting.dto.ContractRequestDTO;
+import com.example.zipplz_be.domain.chatting.entity.AfterService;
 import com.example.zipplz_be.domain.chatting.exception.ContractNotFoundException;
 import com.example.zipplz_be.domain.model.MaterialWorkRelationId;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
@@ -20,6 +21,7 @@ import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserExceptio
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
+import com.example.zipplz_be.domain.schedule.exception.WorkException;
 import com.example.zipplz_be.domain.schedule.exception.WorkerNotFoundException;
 import com.example.zipplz_be.domain.schedule.repository.PlanRepository;
 import com.example.zipplz_be.domain.schedule.repository.WorkRepository;
@@ -31,6 +33,8 @@ import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
@@ -39,6 +43,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ContractService {
@@ -83,7 +88,7 @@ public class ContractService {
 
         Plan plan = planRepository.findByCustomerSerialAndIsActive(customer, 1);
 
-        String fieldName = (String) params.get("fieldName");
+        String fieldName = chatroom.getFieldName();
         Field field = fieldRepository.findByFieldName(fieldName);
 
         //plan과 분야, awaiting으로 존재하는지 확인
@@ -91,6 +96,12 @@ public class ContractService {
 
         if(!works.isEmpty()) {
             throw new DuplicateContractException("요청된 계약서 초안이 존재합니다.");
+        }
+
+        List<Work> confirmWorkList = workRepository.findByPlanSerialAndFieldNameAndStatus(plan, fieldName, "confirmed");
+
+        if(!confirmWorkList.isEmpty()) {
+            throw new DuplicateContractException("임시 확정된 계약서가 존재합니다. 수정 요청을 해주세요!");
         }
 
         Timestamp endDate = convertStringToTimestamp((String) params.get("endDate"));
@@ -144,8 +155,8 @@ public class ContractService {
         ContractRequestDTO contractRequestDTO = ContractRequestDTO.builder()
                 .requestSerial(request.getRequestSerial())
                 .requestDate(convertTimestamp(request.getRequestDate()))
-                .senderSerial(request.getSender().getUserSerial())
-                .receiverSerial(request.getReceiver().getUserSerial())
+                .senderName(request.getSender().getUserName())
+                .receiverName(request.getReceiver().getUserName())
                 .requestComment(request.getRequestComment())
                 .requestStatus(request.getRequestStatus())
                 .requestType(request.getRequestType())
@@ -218,45 +229,74 @@ public class ContractService {
             throw new DuplicateContractException("이미 처리된 요청사항입니다.");
         }
 
-        //요청 상태 바꾸기.(accepted)
+        //1. 요청 상태 바꾸기.(accepted)
         request.setRequestStatus("accepted");
         requestRepository.save(request);
 
-        //기존 공종(confirmed 혹은 draft)에 awaiting 공종 뒤집어씌우고, confirmed로 바꾸기.
         Work originalWork = workRepository.findByWorkSerial(request.getWorkSerial().getWorkSerial());
+        List<MaterialWorkRelation> materialOriginalList = materialWorkRelationRepository.findByWorkSerial(originalWork);
 
         List<Work> awaitingWork = workRepository.findByPlanSerialAndFieldNameAndStatus(originalWork.getPlanSerial(), originalWork.getFieldName(), "awaiting");
 
-        if(awaitingWork.size() != 1) {
-            throw new DuplicateContractException("복수의 수정 요청이 존재합니다.");
+        if(request.getRequestType().equals("delete")) {
+            if(!awaitingWork.isEmpty()) {
+                throw new DuplicateContractException("이전 요청을 먼저 처리해주세요.");
+            }
+
+            //요청이 응답되기 전에 다른 요청이 또 가면 안 됨
+
+            //지금까지 해당 work_serial에 맞는 log들 다 날리기
+            List<Request> requestList = requestRepository.findByWorkSerial(originalWork);
+
+            for(Request request1 : requestList) {
+                requestRepository.delete(request1);
+            }
+
+            for(MaterialWorkRelation materialWorkRelation: materialOriginalList) {
+                materialWorkRelationRepository.delete(materialWorkRelation);
+            }
+
+            originalWork.setStatus("draft");
+            originalWork.setIsCompleted(0);
+            originalWork.setWorkPrice(0);
+            originalWork.setEndDate(null);
+            originalWork.setStartDate(null);
+            originalWork.setWorkerSerial(null);
+            originalWork.setWorkContent(null);
+        }
+        else {
+            if(awaitingWork.size() != 1) {
+                throw new DuplicateContractException("복수의 수정 요청이 존재하거나 요청 사항이 존재하지 않습니다.");
+            }
+
+            //기존 공종(confirmed 혹은 draft)에 awaiting 공종 뒤집어씌우고, confirmed로 바꾸기.
+            originalWork.setStatus("confirmed");
+            BeanUtils.copyProperties(awaitingWork.get(0), originalWork, "workSerial", "status", "workContent");
+
+            //자재 처리하기
+            List<MaterialWorkRelation> materialWorkRelationList = materialWorkRelationRepository.findByWorkSerial(awaitingWork.get(0));
+
+            //기존꺼 지우기
+            for(MaterialWorkRelation materialWorkRelation: materialOriginalList) {
+                materialWorkRelationRepository.delete(materialWorkRelation);
+            }
+
+            //새롭게 덮기
+            for(MaterialWorkRelation materialWorkRelation: materialWorkRelationList) {
+                MaterialWorkRelation newMaterial = MaterialWorkRelation.builder()
+                        .workSerial(originalWork)
+                        .materialSerial(materialWorkRelation.getMaterialSerial())
+                        .build();
+
+                materialWorkRelationRepository.save(newMaterial);
+                materialWorkRelationRepository.delete(materialWorkRelation);
+            }
+
+            //awaiting 공종은 삭제하기.
+            workRepository.delete(awaitingWork.get(0));
         }
 
-        List<MaterialWorkRelation> materialOriginalList = materialWorkRelationRepository.findByWorkSerial(originalWork);
-
-        originalWork.setStatus("confirmed");
-        BeanUtils.copyProperties(awaitingWork.get(0), originalWork, "workSerial", "status");
-
-        //자재 처리하기
-        List<MaterialWorkRelation> materialWorkRelationList = materialWorkRelationRepository.findByWorkSerial(awaitingWork.get(0));
-
-        //기존꺼 지우기
-        for(MaterialWorkRelation materialWorkRelation: materialOriginalList) {
-            materialWorkRelationRepository.delete(materialWorkRelation);
-        }
-
-        //새롭게 덮기
-        for(MaterialWorkRelation materialWorkRelation: materialWorkRelationList) {
-            MaterialWorkRelation newMaterial = MaterialWorkRelation.builder()
-                    .workSerial(originalWork)
-                    .materialSerial(materialWorkRelation.getMaterialSerial())
-                    .build();
-
-            materialWorkRelationRepository.save(newMaterial);
-            materialWorkRelationRepository.delete(materialWorkRelation);
-        }
-
-        //awaiting 공종은 삭제하기.
-        workRepository.delete(awaitingWork.get(0));
+        workRepository.save(originalWork);
     }
 
     @Transactional
@@ -274,18 +314,24 @@ public class ContractService {
         request.setRequestStatus("rejected");
         requestRepository.save(request);
 
-        Work originalWork = workRepository.findByWorkSerial(request.getWorkSerial().getWorkSerial());
-        List<Work> awaitingWork = workRepository.findByPlanSerialAndFieldNameAndStatus(originalWork.getPlanSerial(), originalWork.getFieldName(), "awaiting");
+        if(!request.getRequestType().equals("delete")) {
+            Work originalWork = workRepository.findByWorkSerial(request.getWorkSerial().getWorkSerial());
+            List<Work> awaitingWork = workRepository.findByPlanSerialAndFieldNameAndStatus(originalWork.getPlanSerial(), originalWork.getFieldName(), "awaiting");
 
-        //자재 처리하기
-        List<MaterialWorkRelation> materialWorkRelationList = materialWorkRelationRepository.findByWorkSerial(awaitingWork.get(0));
+            if(awaitingWork.size() != 1) {
+                throw new DuplicateContractException("한 계약에 복수의 요청이 존재하거나, 요청이 존재하지 않습니다.");
+            }
 
-        for(MaterialWorkRelation materialWorkRelation: materialWorkRelationList) {
-            materialWorkRelationRepository.delete(materialWorkRelation);
+            //자재 처리하기
+            List<MaterialWorkRelation> materialWorkRelationList = materialWorkRelationRepository.findByWorkSerial(awaitingWork.get(0));
+
+            for(MaterialWorkRelation materialWorkRelation: materialWorkRelationList) {
+                materialWorkRelationRepository.delete(materialWorkRelation);
+            }
+
+            //awaiting 공종은 삭제하기.
+            workRepository.delete(awaitingWork.get(0));
         }
-
-        //awaiting 공종은 삭제하기.
-        workRepository.delete(awaitingWork.get(0));
     }
 
     @Transactional
@@ -319,12 +365,16 @@ public class ContractService {
         List<Work> works = workRepository.findByPlanSerialAndFieldNameAndStatus(plan, fieldName, "awaiting");
 
         if(!works.isEmpty()) {
-            throw new DuplicateContractException("요청된 계약서 초안이 존재합니다.");
+            throw new DuplicateContractException("이전 요청을 먼저 처리해주세요.");
         }
 
         //자재 리스트
         List<Integer> materialList  = (List<Integer>) params.get("materialList");
         List<Work> originalWork = workRepository.findByPlanSerialAndFieldNameAndStatus(plan, fieldName, "confirmed");
+
+        if(originalWork.size() != 1) {
+            throw new DuplicateContractException("confirmed 상태인 요청이 하나가 아닙니다.");
+        }
 
         //awaiting 공종 삽입
         Work work = Work.builder()
@@ -337,12 +387,7 @@ public class ContractService {
                 .plan(plan)
                 .build();
         work.setWorkerSerial(worker);
-
         workRepository.save(work);
-
-        System.out.println("complete work");
-
-        System.out.println(materialList.size());
 
         //자재 리스트를 자재-공종 관계 테이블에 삽입(공종은 지금 넣을걸로)
         for(int i: materialList) {
@@ -354,9 +399,7 @@ public class ContractService {
                     .build();
 
             materialWorkRelationRepository.save(materialWorkRelation);
-            System.out.println("comp material!!!!");
         }
-        System.out.println("complete material");
 
         Timestamp curDate = new Timestamp(System.currentTimeMillis());
 
@@ -371,13 +414,111 @@ public class ContractService {
                 .build();
 
         requestRepository.save(request);
-        System.out.println("complete request");
 
         ContractRequestDTO contractRequestDTO = ContractRequestDTO.builder()
                 .requestSerial(request.getRequestSerial())
                 .requestDate(convertTimestamp(request.getRequestDate()))
-                .senderSerial(request.getSender().getUserSerial())
-                .receiverSerial(request.getReceiver().getUserSerial())
+                .senderName(request.getSender().getUserName())
+                .receiverName(request.getReceiver().getUserName())
+                .requestComment(request.getRequestComment())
+                .requestStatus(request.getRequestStatus())
+                .requestType(request.getRequestType())
+                .build();
+
+        return contractRequestDTO;
+    }
+
+    @Transactional
+    public List<ContractRequestDTO> getContractLogService(int userSerial, int chatroomSerial, Map<String, Object> params) {
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
+        User user = userRepository.findByUserSerial(userSerial);
+
+        if((chatroom.getCuser().getUserSerial() != user.getUserSerial()) && (chatroom.getWuser().getUserSerial() != user.getUserSerial())) {
+            throw new UnauthorizedUserException("조회할 권한이 없습니다.");
+        }
+
+        Customer customer = customerRepository.findByUserSerial(chatroom.getCuser());
+        Plan plan = planRepository.findByCustomerSerialAndIsActive(customer, 1);
+        List<Work> work = workRepository.findByPlanSerialAndFieldNameAndStatus(plan, chatroom.getFieldName(), "confirmed");
+
+        if(work.size() != 1) {
+            throw new DuplicateContractException("confirmed 상태인 요청이 하나가 아닙니다.");
+        }
+
+        Pageable pageable = PageRequest.of(Integer.parseInt((String) params.get("pgno")), Integer.parseInt((String) params.get("spp")));
+        Page<Request> asPage = requestRepository.findByWorkSerialAndRequestStatusOrderByRequestDateDesc(work.get(0), "accepted", pageable);
+
+        List<ContractRequestDTO> contractRequestDTOList = new ArrayList<>();
+
+        for(Request request: asPage.getContent()) {
+            ContractRequestDTO contractRequestDTO = ContractRequestDTO.builder()
+                    .requestType(request.getRequestType())
+                    .requestStatus(request.getRequestStatus())
+                    .senderName(request.getSender().getUserName())
+                    .receiverName(request.getReceiver().getUserName())
+                    .requestComment(request.getRequestComment())
+                    .requestDate(convertTimestamp(request.getRequestDate()))
+                    .requestSerial(request.getRequestSerial())
+                    .build();
+
+            contractRequestDTOList.add(contractRequestDTO);
+
+        }
+
+        return contractRequestDTOList;
+    }
+
+    @Transactional
+    public ContractRequestDTO deleteContractRequestService(int userSerial, int chatroomSerial, Map<String, Object> params) {
+        User user = userRepository.findByUserSerial(userSerial);
+        User sender, receiver;
+
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
+        Customer customer = customerRepository.findByUserSerial(chatroom.getCuser());
+
+        Plan plan = planRepository.findByCustomerSerialAndIsActive(customer, 1);
+
+        if(chatroom.getCuser().getUserSerial() == user.getUserSerial()) {
+            sender = chatroom.getCuser();
+            receiver = chatroom.getWuser();
+        } else if(chatroom.getWuser().getUserSerial() == user.getUserSerial()) {
+            sender = chatroom.getWuser();
+            receiver = chatroom.getCuser();
+        } else {
+            throw new UnauthorizedUserException("파기 요청 권한이 없습니다.");
+        }
+
+        List<Work> originalWork = workRepository.findByPlanSerialAndFieldNameAndStatus(plan, chatroom.getFieldName(), "confirmed");
+
+        if(originalWork.size() != 1) {
+            throw new DuplicateContractException("confirmed 상태인 요청이 하나가 아닙니다.");
+        }
+
+        List<Work> awaitingWork = workRepository.findByPlanSerialAndFieldNameAndStatus(originalWork.get(0).getPlanSerial(), originalWork.get(0).getFieldName(), "awaiting");
+
+        if(!awaitingWork.isEmpty()) {
+            throw new DuplicateContractException("이전 요청을 먼저 처리해주세요.");
+        }
+
+        Timestamp curDate = new Timestamp(System.currentTimeMillis());
+
+        Request request = Request.builder()
+                .requestComment((String) params.get("requestComment"))
+                .workSerial(originalWork.get(0))
+                .receiver(receiver)
+                .sender(sender)
+                .requestDate(curDate)
+                .requestStatus("pending")
+                .requestType("delete")
+                .build();
+
+        requestRepository.save(request);
+
+        ContractRequestDTO contractRequestDTO = ContractRequestDTO.builder()
+                .requestSerial(request.getRequestSerial())
+                .requestDate(convertTimestamp(request.getRequestDate()))
+                .senderName(request.getSender().getUserName())
+                .receiverName(request.getReceiver().getUserName())
                 .requestComment(request.getRequestComment())
                 .requestStatus(request.getRequestStatus())
                 .requestType(request.getRequestType())
@@ -397,5 +538,6 @@ public class ContractService {
         LocalDateTime localDateTime = LocalDateTime.parse(dateString + "T00:00:00");
         return Timestamp.valueOf(localDateTime);
     }
+
 
 }

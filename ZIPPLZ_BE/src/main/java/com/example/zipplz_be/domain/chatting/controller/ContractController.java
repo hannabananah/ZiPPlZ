@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
@@ -145,6 +146,12 @@ public class ContractController {
 
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 요청 완료!", contractRequestDTO);
+        } catch (DuplicateContractException e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
@@ -153,7 +160,63 @@ public class ContractController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    //계약서 처리 내역 조회
+    //계약서 처리 내역 조회(최신순)
+    @GetMapping("/{chatroomSerial}/logs")
+    public ResponseEntity<?> getContractLog(Authentication authentication, @PathVariable int chatroomSerial, @RequestParam Map<String, Object> params) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
+        try {
+            List<ContractRequestDTO> requestList = contractService.getContractLogService(portfolioService.getUserSerial(authentication), chatroomSerial, params);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", requestList);
+        } catch (DuplicateContractException e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //계약 파기 요청
+    @PostMapping("/{chatroomSerial}/terminate")
+    public ResponseEntity<?> deleteContractRequest(Authentication authentication, @PathVariable int chatroomSerial, @RequestBody Map<String, Object> params) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            ContractRequestDTO contractRequestDTO = contractService.deleteContractRequestService(portfolioService.getUserSerial(authentication), chatroomSerial, params);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "파기 요청 완료!", contractRequestDTO);
+        } catch (DuplicateContractException e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+
+
+
+
+
+
+
+        //work 조회할 때 다시 처리해야 함!!
 
 }

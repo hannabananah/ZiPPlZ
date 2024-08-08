@@ -11,8 +11,8 @@ public class ContractRequestDTO {
     int requestSerial;
     String requestDate;
     String requestType;
-    int senderSerial;
-    int receiverSerial;
+    String senderName;
+    String receiverName;
     String requestStatus;
     String requestComment;
 }
