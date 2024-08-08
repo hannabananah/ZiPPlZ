@@ -1,7 +1,7 @@
-package com.example.zipplz_be.domain.user.service;
+package com.example.zipplz_be.domain.mypage.service;
 
-import com.example.zipplz_be.domain.user.dto.UpdateCustomerDTO;
-import com.example.zipplz_be.domain.user.dto.UpdateWorkerDTO;
+import com.example.zipplz_be.domain.mypage.dto.UpdateCustomerDTO;
+import com.example.zipplz_be.domain.mypage.dto.UpdateWorkerDTO;
 
 public interface MyPageService {
     boolean updateCustomer(UpdateCustomerDTO updateCustomerDTO);

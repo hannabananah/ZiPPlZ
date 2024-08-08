@@ -1,90 +1,25 @@
 package com.example.zipplz_be.domain.material.dto;
 
+import com.example.zipplz_be.domain.file.entity.File;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class MaterialViewDTO {
-    int materialSerial;
-    String materialName;
-    String description;
-    int materialPrice;
-    int majorCategory;
-    int middleCategory;
-    String img;
+    private String materialName;
+    private String majorCategory;
+    private String description;
+    private int materialPrice;
+    private File img;
 
-    public MaterialViewDTO(MaterialDTO mDTO, String img) {
-        this.materialSerial = mDTO.getMaterialSerial();
-        this.materialName = mDTO.getMaterialName();
-        this.description = mDTO.getDescription();
-        this.materialPrice = mDTO.getMaterialPrice();
-        this.majorCategory = mDTO.getMajorCategory();
-        this.middleCategory = mDTO.getMiddleCategory();
-        this.img = img;
-    }
-
-    public int getMaterialSerial() {
-        return materialSerial;
-    }
-
-    public void setMaterialSerial(int materialSerial) {
-        this.materialSerial = materialSerial;
-    }
-
-    public String getMaterialName() {
-        return materialName;
-    }
-
-    public void setMaterialName(String materialName) {
+    @Builder
+    public MaterialViewDTO(String materialName, String majorCategory, String description, int materialPrice, File img) {
         this.materialName = materialName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getMaterialPrice() {
-        return materialPrice;
-    }
-
-    public void setMaterialPrice(int materialPrice) {
-        this.materialPrice = materialPrice;
-    }
-
-    public int getMajorCategory() {
-        return majorCategory;
-    }
-
-    public void setMajorCategory(int majorCategory) {
         this.majorCategory = majorCategory;
-    }
-
-    public int getMiddleCategory() {
-        return middleCategory;
-    }
-
-    public void setMiddleCategory(int middleCategory) {
-        this.middleCategory = middleCategory;
-    }
-
-    public String getImg() {
-        return img;
-    }
-
-    public void setImg(String img) {
+        this.description = description;
+        this.materialPrice = materialPrice;
         this.img = img;
-    }
-
-    @Override
-    public String toString() {
-        return "MaterialViewDTO{" +
-                "materialSerial=" + materialSerial +
-                ", materialName='" + materialName + '\'' +
-                ", description='" + description + '\'' +
-                ", materialPrice=" + materialPrice +
-                ", majorCategory=" + majorCategory +
-                ", middleCategory=" + middleCategory +
-                ", img='" + img + '\'' +
-                '}';
     }
 }
