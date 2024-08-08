@@ -30,7 +30,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           if (message.body) {
             try {
               const msg: ChatMessageData = JSON.parse(message.body);
-              setMessages((prevMessages) => [...prevMessages, msg]);
+              setMessages(() => [msg]);
             } catch (error) {
               console.error('Error parsing message:', error);
             }
