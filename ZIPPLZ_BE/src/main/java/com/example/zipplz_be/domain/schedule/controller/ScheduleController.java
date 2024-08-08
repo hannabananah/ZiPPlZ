@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.schedule.controller;
 
 import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
 import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
@@ -376,20 +377,23 @@ public class ScheduleController {
         try {
             planService.activatePlanService(portfolioService.getUserSerial(authentication), planSerial);
 
-            status= HttpStatus.CREATED;
+            status= HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "계획 활성화 성공!");
+        } catch (PlanNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch(Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
 
         return new ResponseEntity<>(responseDTO, status);
-
     }
 
-
-
-        //영상 다운로드
+    //영상 다운로드
     //평면도 가져오기
     //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
     //이미지 삭제하기
