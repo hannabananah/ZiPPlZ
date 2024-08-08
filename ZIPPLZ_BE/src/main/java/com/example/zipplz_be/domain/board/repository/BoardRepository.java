@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.board.repository;
 
 import com.example.zipplz_be.domain.board.dto.BoardJoinDTO;
+import com.example.zipplz_be.domain.board.dto.WorkerTagDTO;
 import com.example.zipplz_be.domain.board.entity.Board;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,27 +26,30 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
                  @Param("boardDate") LocalDateTime boardDate,
                  @Param("hit") int hit);
 
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Board " +
+            "SET title = :title, board_content = :boardContent, board_date = :boardDate " +
+            "WHERE board_serial = :boardSerial", nativeQuery = true)
+    int modifyBoard(@Param("boardSerial") int boardSerial,
+                    @Param("title") String title,
+                    @Param("boardContent") String boardContent,
+                    @Param("boardDate") LocalDateTime boardDate);
+
     @Query(value = "SELECT b.*, cus.nickname " +
             "FROM ( SELECT * " +
             "FROM Board " +
             "WHERE board_type = :boardType ) b " +
             "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial", nativeQuery = true)
-    List<BoardJoinDTO> getQuestions(@Param("boardType") int boardType);
+    List<BoardJoinDTO> getBoards(@Param("boardType") int boardType);
 
     @Query(value = "SELECT b.*, cus.nickname " +
             "FROM ( SELECT * " +
             "FROM Board " +
             "WHERE board_serial = :boardSerial ) b " +
             "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial", nativeQuery = true)
-    BoardJoinDTO getQuestion(@Param("boardSerial") int boardSerial);
+    BoardJoinDTO getBoard(@Param("boardSerial") int boardSerial);
 
-    @Modifying
-    @Transactional
-    @Query(value = "UPDATE Board " +
-            "SET title = :title, board_content = :boardContent, board_date = :boardDate " +
-            "WHERE board_serial = :boardSerial", nativeQuery = true)
-    int modifyQuestion(@Param("boardSerial") int boardSerial,
-                       @Param("title") String title,
-                       @Param("boardContent") String boardContent,
-                       @Param("boardDate") LocalDateTime boardDate);
+//    @Query(value = " ", nativeQuery = true)
+//    List<WorkerTagDTO> getWorkerTags(@Param("boardSerial") int boardSerial);
 }

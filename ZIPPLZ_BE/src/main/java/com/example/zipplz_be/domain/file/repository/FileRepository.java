@@ -1,10 +1,9 @@
 package com.example.zipplz_be.domain.file.repository;
 
-import com.example.zipplz_be.domain.board.dto.QuestionFileDTO;
+import com.example.zipplz_be.domain.board.dto.BoardFileDTO;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.material.dto.MaterialFileDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioFileDTO;
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioUserDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -31,7 +30,7 @@ public interface FileRepository extends JpaRepository<File, Integer> {
             "FROM BoardFileRelation bfr " +
             "WHERE board_serial = :boardSerial ) bf " +
             "LEFT JOIN File f on f.file_serial = bf.file_serial", nativeQuery = true)
-    List<QuestionFileDTO> getQuestionImg(@Param("boardSerial") int boardSerial);
+    List<BoardFileDTO> getBoardImg(@Param("boardSerial") int boardSerial);
 
     File findByFileSerial(int fileSerial);
     File findBySaveFile(String saveFile);

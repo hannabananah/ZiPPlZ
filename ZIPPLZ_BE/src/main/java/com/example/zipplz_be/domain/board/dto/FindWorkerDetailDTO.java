@@ -2,12 +2,12 @@ package com.example.zipplz_be.domain.board.dto;
 
 import java.util.*;
 
-public class QuestionDetailDTO {
+public class FindWorkerDetailDTO {
     BoardJoinDTO board;
     List<BoardFileDTO> board_images;
     List<CommentViewDTO> comments;
 
-    public QuestionDetailDTO(BoardJoinDTO board, List<BoardFileDTO> board_images, List<CommentViewDTO> comments) {
+    public FindWorkerDetailDTO(BoardJoinDTO board, List<BoardFileDTO> board_images, List<CommentViewDTO> comments) {
         this.board = board;
         this.board_images = board_images;
         this.comments = comments;
@@ -39,7 +39,7 @@ public class QuestionDetailDTO {
 
     @Override
     public String toString() {
-        return "QuestionDetailDTO{" +
+        return "FindWorkerDetailDTO{" +
                 "board=" + board +
                 ", board_images=" + board_images +
                 ", comments=" + comments +

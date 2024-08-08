@@ -1,6 +1,6 @@
 package com.example.zipplz_be.domain.board.dto;
 
-public interface QuestionFileDTO {
+public interface BoardFileDTO {
     int getBoardSerial();
     Integer getFileSerial();
     String getSaveFolder();
