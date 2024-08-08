@@ -2,43 +2,37 @@ import { useState } from 'react';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
-import HousePostListItem from '@/components/community/HousePostListItem';
 
 import Button from '@/components/common/Button';
+import HousePostListItem from '@/components/community/HousePostListItem';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
-interface WorkerInfo {
-  name: string;
-  birth_date: string;
-  temp: number;
-  certificated_badge: number;
-  field_name: string;
-  career: number;
-  img: string;
-}
-
-const dummyWorkers: WorkerInfo[] = [
+const HousePosts = [
   {
-    name: '이가은',
-    birth_date: '1999',
-    temp: 36.5,
-    certificated_badge: 1,
-    field_name: '전기',
-    career: 3,
-    img: '/path/to/image1.jpg'
+    post_serial: 1,
+    post_image: 'https://via.placeholder.com/150',
+    title: '우리집을 소개합니다',
+    profile_image: 'https://via.placeholder.com/50',
+    nickname: '닉네임1',
+    upload_date: new Date('2024-07-18'),
+    view_cnt: 100,
+    bookmark_cnt: 96,
+    comment_cnt: 5,
   },
   {
-    name: '김철수',
-    birth_date: '1990',
-    temp: 37.0,
-    certificated_badge: 0,
-    field_name: '목공',
-    career: 5,
-    img: '/path/to/image2.jpg'
-  }
+    post_serial: 2,
+    post_image: 'https://via.placeholder.com/150',
+    title: '멋진 집들이',
+    profile_image: 'https://via.placeholder.com/50',
+    nickname: '닉네임2',
+    upload_date: new Date('2024-07-17'),
+    view_cnt: 200,
+    bookmark_cnt: 120,
+    comment_cnt: 15,
+  },
   // 추가 더미 데이터
 ];
 
@@ -50,7 +44,7 @@ export default function HousePost() {
   const navigate = useNavigate();
 
   const handleWritePost = () => {
-    navigate('/HousePostDetail'); // FindWorkerDetail 페이지로 이동
+    navigate('/HousePostDetailCreate'); // FindWorkerDetail 페이지로 이동
   };
 
   const toggleDropdown = () => {
@@ -157,9 +151,9 @@ export default function HousePost() {
             />
           </div>
 
-          <div className="mt-6 grid grid-cols-3 gap-3">
-            {dummyWorkers.map((worker, index) => (
-              <HousePostListItem key={index} worker={worker} />
+          <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
+            {HousePosts.map((post) => (
+              <HousePostListItem key={post.post_serial} {...post} />
             ))}
           </div>
         </div>

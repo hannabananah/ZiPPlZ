@@ -84,17 +84,16 @@ export default function QuestionPostDetailCreate() {
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
         <div className="w-full">
           {/* 나가기 버튼, 구인 글쓰기 text */}
-          <div className="flex items-center justify-between w-full">
+          <div className="mt-12 flex items-center justify-between w-full">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
               />
             </div>
-            <div className="text-zp-xl font-bold text-center flex-1">
-              구인 글쓰기
+            <div className="relative right-4 text-zp-xl font-bold text-center flex-1">
+              질문하기
             </div>
-            <div className="w-8"></div> {/* 여백 추가, 필요에 따라 조정 */}
           </div>
 
           {/* 게시판 가이드 */}
@@ -176,63 +175,8 @@ export default function QuestionPostDetailCreate() {
                 />
               </div>
               {errors.title && (
-                <div className="text-red-500 text-xs mt-1">{errors.title}</div>
-              )}
-            </div>
-          </div>
-
-          {/* 현장 주소 input */}
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
-              <div className="mb-2">현장 주소</div>
-              <div className="pl-2 relative mt-2 bg-zp-white border rounded-zp-radius-btn">
-                <Input
-                  type="text"
-                  placeholder="현장 주소"
-                  inputType="textArea"
-                  width="100%"
-                  height={2.375}
-                  className="border border-zp-sub-color rounded-zp-radius-btn p-[10px] pr-[40px]"
-                  fontSize="xs"
-                  radius="btn"
-                  value={address}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setAddress(e.target.value)
-                  }
-                />
-                <CiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2" />
-              </div>
-              {errors.address && (
-                <div className="text-red-500 text-xs mt-1">
-                  {errors.address}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* 상세 주소 input */}
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
-              <div className="mb-2">상세 주소</div>
-              <div className="bg-zp-white border rounded-zp-radius-btn pl-2">
-                <Input
-                  type="text"
-                  placeholder="상세 주소"
-                  inputType="textArea"
-                  width="100%"
-                  height={2.375}
-                  className=""
-                  fontSize="xs"
-                  radius="btn"
-                  value={addressDetail}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setAddressDetail(e.target.value)
-                  }
-                />
-              </div>
-              {errors.addressDetail && (
-                <div className="text-red-500 text-xs mt-1">
-                  {errors.addressDetail}
+                <div className="text-zp-red text-zp-xs mt-1">
+                  {errors.title}
                 </div>
               )}
             </div>
@@ -241,11 +185,11 @@ export default function QuestionPostDetailCreate() {
           {/* 작업 내용 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
-              <div className="mb-2">작업내용</div>
+              <div className="mb-2">질문</div>
               <div className="bg-zp-white border rounded-zp-radius-btn  pl-2">
                 <Input
                   type="text"
-                  placeholder="시공을 요청하는 작업에 대해 작성해주세요."
+                  placeholder="질문 작성"
                   inputType="textArea"
                   width="100%"
                   height={2.375}
@@ -259,7 +203,7 @@ export default function QuestionPostDetailCreate() {
                 />
               </div>
               {errors.workDetail && (
-                <div className="text-red-500 text-xs mt-1">
+                <div className="text-zp-red text-zp-xs mt-1">
                   {errors.workDetail}
                 </div>
               )}
