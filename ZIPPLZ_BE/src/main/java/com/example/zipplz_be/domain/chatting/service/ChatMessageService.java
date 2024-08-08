@@ -9,7 +9,7 @@ import java.util.Optional;
 @Service
 public interface ChatMessageService {
 
-    void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role, Optional<MultipartFile> file);
+    void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role);
 
     void enter(int userSerial, int chatroomSerial);
 }
