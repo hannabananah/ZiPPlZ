@@ -35,8 +35,8 @@
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.26.0",
     "react-spinners": "^0.14.1",
-    "swiper": "^11.1.7",
     "remark-gfm": "^4.0.0",
+    "swiper": "^11.1.9",
     "zustand": "^4.5.4"
   },
   "devDependencies": {
