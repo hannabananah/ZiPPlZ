@@ -11,4 +11,12 @@ public class MajorCategory {
     private int majorCode;
     @Column(name = "major_name")
     private String majorName;
+
+    @Override
+    public String toString() {
+        return "MajorCategory{" +
+                "majorCode=" + majorCode +
+                ", majorName='" + majorName + '\'' +
+                '}';
+    }
 }
