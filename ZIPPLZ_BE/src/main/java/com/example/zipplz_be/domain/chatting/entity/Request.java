@@ -3,15 +3,15 @@ package com.example.zipplz_be.domain.chatting.entity;
 import com.example.zipplz_be.domain.schedule.entity.Work;
 import com.example.zipplz_be.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Request {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
