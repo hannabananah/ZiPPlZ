@@ -6,6 +6,7 @@ import com.example.zipplz_be.domain.material.dto.MaterialDTO;
 import com.example.zipplz_be.domain.material.dto.MaterialFileDTO;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
 import com.example.zipplz_be.domain.material.entity.Material;
+import com.example.zipplz_be.domain.material.exception.MaterialNotFoundException;
 import com.example.zipplz_be.domain.material.repository.MaterialRepository;
 import com.example.zipplz_be.domain.model.MaterialFileRelation;
 import com.example.zipplz_be.domain.model.UserFileRelation;
@@ -15,12 +16,16 @@ import com.example.zipplz_be.domain.model.repository.MaterialFileRelationReposit
 import com.example.zipplz_be.domain.model.repository.UserFileRelationRepository;
 import com.example.zipplz_be.domain.model.service.S3Service;
 import com.example.zipplz_be.domain.model.service.S3ServiceImpl;
+import com.example.zipplz_be.domain.mypage.entity.Wish;
+import com.example.zipplz_be.domain.mypage.repository.WishRepository;
 import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
@@ -37,6 +42,7 @@ public class MaterialServiceImpl implements MaterialService {
     private final S3Service s3Service;
     private final UserRepository userRepository;
     private final UserFileRelationRepository userFileRelationRepository;
+    private final WishRepository wishRepository;
 
 //    @Override
 //    public List<MaterialViewDTO> getMaterialList() {
@@ -57,24 +63,56 @@ public class MaterialServiceImpl implements MaterialService {
     @Override
     public List<MaterialViewDTO> getMaterialList(String category) {
 
-        MajorCategory majorCategory = majorCategoryRepository.findByMajorName(category);
-        List<Material> materials = category==null? materialRepository.findAll() : materialRepository.findAllByMajorCategory(majorCategory);
-        List<MaterialFileRelation> materialFileList = materials.stream()
-                .map(material -> materialFileRelationRepository.findFirstByMaterialSerial(material))
-                .collect((Collectors.toList()));
+        String majorName = category.equals("wall") ? "벽면재" : "바닥재";
+        MajorCategory majorCategory = majorCategoryRepository.findByMajorName(majorName);
+        List<Material> materials = (!category.isEmpty()) ? materialRepository.findAllByMajorCategory(majorCategory) : materialRepository.findAll();
 
-        return materialFileList.stream()
-                .map(relation ->
-                        MaterialViewDTO.builder()
-                                .materialName(relation.getMaterialSerial().getMaterialName())
-                                .majorCategory(relation.getMaterialSerial().getMajorCategory().getMajorName())
-                                .description(relation.getMaterialSerial().getDescription())
-                                .materialPrice(relation.getMaterialSerial().getMaterialPrice())
-                                .img(relation.getFileSerial())
-                                .build()
-                        )
-                .collect((Collectors.toList()));
+        return createMaterialViewDTOList(materials, Collections.emptyList());
     }
+
+    @Override
+    public List<MaterialViewDTO> getMaterialListAuthenticated(String category, int userSerial) {
+        System.out.println("unlogined User!!!!!!!!!!!!!!!!!!!11");
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<Integer> wishSerialList = wishRepository.findByUserSerialAndWishType(user, 4).stream()
+                .map(Wish::getWishSerial)
+                .collect(Collectors.toList());
+
+        return getMaterialListWithWish(category, wishSerialList);
+    }
+
+    private List<MaterialViewDTO> getMaterialListWithWish(String category, List<Integer> wishSerialList) {
+
+        String majorName = category.equals("wall") ? "벽면재" : "바닥재";
+        MajorCategory majorCategory = majorCategoryRepository.findByMajorName(majorName);
+        List<Material> materials = (!category.isEmpty()) ? materialRepository.findAllByMajorCategory(majorCategory) : materialRepository.findAll();
+
+        return createMaterialViewDTOList(materials, wishSerialList);
+    }
+
+    private List<MaterialViewDTO> createMaterialViewDTOList(List<Material> materials, List<Integer> wishSerialList) {
+        return materials.stream()
+                .map(material -> {
+                    MaterialFileRelation relation = materialFileRelationRepository.findFirstByMaterialSerial(material);
+                    boolean isInWishList = wishSerialList.contains(material.getMaterialSerial());
+
+                    return MaterialViewDTO.builder()
+                            .materialName(material.getMaterialName())
+                            .majorCategory(material.getMajorCategory().getMajorName())
+                            .description(material.getDescription())
+                            .materialPrice(material.getMaterialPrice())
+                            .img((relation != null) ? relation.getFileSerial() : null)
+                            .isWished(isInWishList)
+                            .build();
+                })
+                .sorted(Comparator.comparing(MaterialViewDTO::isWished).reversed())
+                .collect(Collectors.toList());
+    }
+
 
     @Override
     public void saveConvertedImage(MultipartFile image, int userSerial) {
@@ -97,5 +135,52 @@ public class MaterialServiceImpl implements MaterialService {
                 .build();
 
         userFileRelationRepository.save(userFileRelation);
+    }
+
+    @Override
+    public List<File> getConvertedImages(int userSerial) {
+
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+        if (!userFileRelationRepository.existsByUser(user)) {
+            return null;
+        }
+
+        return userFileRelationRepository.findAllByUser(user).stream()
+                .map(UserFileRelation::getFile)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public void setMaterialOnWish(int userSerial, int materialSerial) {
+
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        Wish wish = Wish.builder()
+                .userSerial(user)
+                .wishType(4)
+                .wishSerial(materialSerial).build();
+        wishRepository.save(wish);
+    }
+
+    @Override
+    @Transactional
+    public void unsetMaterialOnWish(int userSerial, int materialSerial) {
+
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        if (wishRepository.existsByUserSerialAndWishTypeAndWishSerial(user, 4, materialSerial)) {
+            wishRepository.deleteByUserSerialAndWishTypeAndWishSerial(user, 4, materialSerial);
+        } else {
+            throw new MaterialNotFoundException("존재하지 않는 자재입니다.");
+        }
     }
 }

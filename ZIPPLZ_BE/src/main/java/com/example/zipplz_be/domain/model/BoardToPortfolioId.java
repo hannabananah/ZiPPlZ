@@ -13,21 +13,20 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class BoardToWorkerId implements Serializable {
+public class BoardToPortfolioId implements Serializable {
     private int boardSerial;
-    private int workerSerial;
+    private int portfolioSerial;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        BoardToWorkerId that = (BoardToWorkerId) o;
-        return boardSerial == that.boardSerial && workerSerial == that.workerSerial;
+        BoardToPortfolioId that = (BoardToPortfolioId) o;
+        return boardSerial == that.boardSerial && portfolioSerial == that.portfolioSerial;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(boardSerial, workerSerial);
+        return Objects.hash(boardSerial, portfolioSerial);
     }
 }
-
