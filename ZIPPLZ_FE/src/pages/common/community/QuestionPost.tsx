@@ -2,44 +2,27 @@ import { useState } from 'react';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
-import QuestionPostListItem from '@/components/community/QuestionPostListItem';
-
 
 import Button from '@/components/common/Button';
+import QuestionPostListItem from '@/components/community/QuestionPostListItem';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
-interface WorkerInfo {
-  name: string;
-  birth_date: string;
-  temp: number;
-  certificated_badge: number;
-  field_name: string;
-  career: number;
-  img: string;
-}
-
-const dummyWorkers: WorkerInfo[] = [
+const dummyQuestionPosts = [
   {
-    name: '이가은',
-    birth_date: '1999',
-    temp: 36.5,
-    certificated_badge: 1,
-    field_name: '전기',
-    career: 3,
-    img: '/path/to/image1.jpg'
+    post_serial: 1,
+    title: '벽지가 뜯어졌는데 복구 가능할까요...',
+    content: '도와주세요',
+    profile_image: null,
+    nickname: '조명조랭이떡',
+    calendar_image: null,
+    upload_date: new Date('2024-07-19'),
+    view_cnt: 100,
+    bookmark_cnt: 96,
+    comment_cnt: 5,
   },
-  {
-    name: '김철수',
-    birth_date: '1990',
-    temp: 37.0,
-    certificated_badge: 0,
-    field_name: '목공',
-    career: 5,
-    img: '/path/to/image2.jpg'
-  }
   // 추가 더미 데이터
 ];
 
@@ -51,7 +34,7 @@ export default function QuestionPost() {
   const navigate = useNavigate();
 
   const handleWritePost = () => {
-    navigate('/HousePostDetail'); // FindWorkerDetail 페이지로 이동
+    navigate('/QuestionPostDetailCreate'); // FindWorkerDetail 페이지로 이동
   };
 
   const toggleDropdown = () => {
@@ -98,13 +81,13 @@ export default function QuestionPost() {
               <div className="absolute top-full border border-zp-light-gray rounded-zp-radius-btn font-bold hover:bg-zp-light-beige ">
                 <button
                   onClick={() => handleNavigate('/HousePost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
                 >
                   집들이
                 </button>
                 <button
                   onClick={() => handleNavigate('/QuestionPost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
                 >
                   질문글
                 </button>
@@ -159,7 +142,9 @@ export default function QuestionPost() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-3">
-              <QuestionPostListItem />
+            {dummyQuestionPosts.map((post) => (
+              <QuestionPostListItem key={post.post_serial} {...post} />
+            ))}
           </div>
         </div>
       </div>

@@ -1,9 +1,8 @@
 import { ChangeEvent, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { CiCirclePlus, CiSearch } from 'react-icons/ci';
-import { CiCircleCheck } from 'react-icons/ci';
-import { FaRegCircle } from 'react-icons/fa';
-import { FaCamera } from 'react-icons/fa';
+import { FaCamera, FaRegCircle } from 'react-icons/fa';
+import { FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
@@ -16,14 +15,9 @@ import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 import 'swiper/css';
 import 'swiper/css/navigation';
-// Import Swiper styles for navigation
-import 'swiper/css/navigation';
-import { Swiper, SwiperSlide } from 'swiper/react';
 
-// 이미지 상태의 타입 정의
 type Image = string;
 
-// 더미 데이터 생성
 const workers: WorkerInfo[] = [
   {
     user_serial: 1,
@@ -103,16 +97,18 @@ export default function HousePostDetailCreate() {
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
+  const [selectedWorkers, setSelectedWorkers] = useState<WorkerInfo[]>([]);
+  const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
+    []
+  );
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
   const maxImages = 10;
 
-  // 스케줄 더미 데이터
   const schedules = ['스케줄1', '스케줄2', '스케줄3'];
 
-  // 이미지 업로드 핸들러
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     const readerPromises = files.map((file) => {
@@ -131,12 +127,10 @@ export default function HousePostDetailCreate() {
     });
   };
 
-  // 이미지 삭제 핸들러
   const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // 확인 버튼 핸들러
   const handleConfirm = () => {
     const newErrors: { [key: string]: string } = {};
 
@@ -144,7 +138,8 @@ export default function HousePostDetailCreate() {
     if (!address) newErrors.address = '현장 주소가 입력되지 않았습니다';
     if (!addressDetail)
       newErrors.addressDetail = '상세 주소가 입력되지 않았습니다';
-    if (!workDetail) newErrors.workDetail = '작업내용이 입력되지 않았습니다';
+    if (!schedule) newErrors.schedule = '스케줄이 선택되지 않았습니다';
+    if (!workDetail) newErrors.workDetail = '내용이 입력되지 않았습니다';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
@@ -164,12 +159,10 @@ export default function HousePostDetailCreate() {
     });
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/FindWorkerList');
   };
 
-  // Daum Postcode Complete Handler
   const handleComplete = (data: any) => {
     let fullAddress = data.address;
     let extraAddress = '';
@@ -193,14 +186,25 @@ export default function HousePostDetailCreate() {
     setIsDropdownOpen(false);
   };
 
+  const handleWorkerSelect = (worker: WorkerInfo) => {
+    setTempSelectedWorkers((prevSelected) =>
+      prevSelected.includes(worker)
+        ? prevSelected.filter((w) => w !== worker)
+        : [...prevSelected, worker]
+    );
+  };
+
+  const handleWorkerModalConfirm = () => {
+    setSelectedWorkers(tempSelectedWorkers);
+    setIsWorkerModalOpen(false);
+  };
+
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6">
         <div className="w-full">
-          {/* 나가기 버튼, 구인 글쓰기 text */}
           <div className="mt-12 flex items-center justify-between w-full">
             <div className="flex items-center">
-              {/* 나가기 버튼 */}
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
@@ -211,7 +215,6 @@ export default function HousePostDetailCreate() {
             </div>
           </div>
 
-          {/* 게시판 가이드 */}
           <div className="mt-6 font-bold flex items-center justify-start">
             <div className="text-left">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
@@ -222,7 +225,6 @@ export default function HousePostDetailCreate() {
             </div>
           </div>
 
-          {/* 사진 첨부 버튼 */}
           <div className="flex items-start mt-6 space-x-4">
             <div className="w-1/6">
               <div className="relative">
@@ -245,7 +247,6 @@ export default function HousePostDetailCreate() {
                 />
               </div>
             </div>
-            {/* 사진 미리보기 */}
             <div className="flex-1 flex overflow-x-auto space-x-4">
               {images.map((image, index) => (
                 <div
@@ -269,7 +270,6 @@ export default function HousePostDetailCreate() {
             </div>
           </div>
 
-          {/* 제목 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">제목</div>
@@ -297,7 +297,6 @@ export default function HousePostDetailCreate() {
             </div>
           </div>
 
-          {/* 현장 주소 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">현장 주소</div>
@@ -330,7 +329,6 @@ export default function HousePostDetailCreate() {
             </div>
           </div>
 
-          {/* 상세 주소 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">상세 주소</div>
@@ -358,7 +356,6 @@ export default function HousePostDetailCreate() {
             </div>
           </div>
 
-          {/* 스케줄 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center relative">
             <div className="text-left w-full">
               <div className="mb-2">스케줄</div>
@@ -405,15 +402,14 @@ export default function HousePostDetailCreate() {
                   ))}
                 </div>
               )}
-              {errors.workDetail && (
+              {errors.schedule && (
                 <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.workDetail}
+                  {errors.schedule}
                 </div>
               )}
             </div>
           </div>
 
-          {/* 자랑해주세요 내용 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">자랑해주세요</div>
@@ -441,14 +437,12 @@ export default function HousePostDetailCreate() {
             </div>
           </div>
 
-          {/* 함께한 시공업자들 내용 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="">함께한 시공업자들</div>
               <div className="text-zp-xs text-zp-light-gray">
                 + 버튼을 클릭하여 함께한 시공업자들을 추가해주세요
               </div>
-
               <div className="py-24 flex justify-center">
                 <CiCirclePlus
                   style={{ color: 'gray' }}
@@ -457,7 +451,15 @@ export default function HousePostDetailCreate() {
                   className="cursor-pointer"
                 />
               </div>
-
+              {selectedWorkers.length > 0 && (
+                <div className="mt-2 grid grid-cols-2 gap-4">
+                  {selectedWorkers.map((worker) => (
+                    <div key={worker.user_serial}>
+                      <WorkerInfoListItem worker={worker} />
+                    </div>
+                  ))}
+                </div>
+              )}
               {errors.workDetail && (
                 <div className="text-zp-red text-zp-xs mt-1">
                   {errors.workDetail}
@@ -480,7 +482,6 @@ export default function HousePostDetailCreate() {
         </div>
       </div>
 
-      {/* Daum Postcode Modal */}
       {isPostcodeOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
           <div className="bg-zp-white p-4 rounded-zp-radius-big">
@@ -496,7 +497,7 @@ export default function HousePostDetailCreate() {
       )}
 
       {isWorkerModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
+        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50 overflow-y-auto">
           <div className="bg-zp-white p-6 rounded-zp-radius-big w-3/4">
             <div className="flex justify-between items-center mb-4">
               <h2 className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold">
@@ -512,7 +513,7 @@ export default function HousePostDetailCreate() {
               <Input
                 type="text"
                 placeholder="시공업자의 이름을 입력해주세요"
-                inputType="text"
+                inputType="textArea"
                 width="14rem"
                 height={2.375}
                 className="mb-4 pr-10"
@@ -523,21 +524,22 @@ export default function HousePostDetailCreate() {
               <HiMagnifyingGlass className="absolute right-2 top-1/2 transform -translate-y-1/2" />
             </div>
 
-            {/* 시공업자 정보 좌우로 넘겨보기 */}
-            <div className="mt-2">
-              <Swiper
-                spaceBetween={10}
-                slidesPerView={2} // 한 화면에 3개의 슬라이드를 보여줍니다
-                navigation
-              >
-                {workers.map((worker) => (
-                  <SwiperSlide key={worker.user_serial}>
-                    <div className="w-30">
-                      <WorkerInfoListItem worker={worker} />
-                    </div>
-                  </SwiperSlide>
-                ))}
-              </Swiper>
+            <div className="mt-2 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+              {workers.map((worker) => (
+                <div key={worker.user_serial} className="relative">
+                  <WorkerInfoListItem worker={worker} />
+                  <div
+                    className="absolute top-2 right-2 cursor-pointer"
+                    onClick={() => handleWorkerSelect(worker)}
+                  >
+                    {tempSelectedWorkers.includes(worker) ? (
+                      <FaRegCircleCheck size={24} className="text-green-500" />
+                    ) : (
+                      <FaRegCircle size={24} className="text-gray-500" />
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
 
             <div className="mt-6 flex justify-center space-x-2">
@@ -560,6 +562,7 @@ export default function HousePostDetailCreate() {
                   height={2}
                   fontSize="2xs"
                   radius="full"
+                  onClick={handleWorkerModalConfirm}
                 />
               </div>
             </div>
