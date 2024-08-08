@@ -44,20 +44,20 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       {/* <ScheduleCalendar /> */}
-      <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
-        <div className="basis-7/12">
-          <p className="font-extrabold text-zp-xl">Today</p>
-          {/* <div className="w-full h-[4rem]"> */}
-          <TodaySchedule />
-          {/* </div> */}
+      {loginUser?.role !== '' && (
+        <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
+          <div className="basis-7/12">
+            <p className="font-extrabold text-zp-xl">Today</p>
+            <TodaySchedule role={loginUser?.role || ''} />
+          </div>
+          <div className="basis-5/12">
+            <p className="font-extrabold text-zp-xl">Image Change</p>
+            {/* <div className="w-full h-[4rem]"> */}
+            <ImageChangeTab onClick={handleClickImageChange} />
+            {/* </div> */}
+          </div>
         </div>
-        <div className="basis-5/12">
-          <p className="font-extrabold text-zp-xl">Image Change</p>
-          {/* <div className="w-full h-[4rem]"> */}
-          <ImageChangeTab onClick={handleClickImageChange} />
-          {/* </div> */}
-        </div>
-      </div>
+      )}
       <div className="w-full">
         <p className="font-extrabold text-zp-xl">찾으시는 시공이 있으신가요?</p>
         <p className="font-bold text-zp-2xs text-zp-gray">

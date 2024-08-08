@@ -22,7 +22,7 @@ export default function MaterialList({ type }: Props) {
     }
   }, [items]);
 
-  const fetchItems = async (page: number) => {
+  const fetchItems = async () => {
     if (type === '바닥') {
       const response = await fetch(
         'http://localhost:5000/materials?category=floor'
