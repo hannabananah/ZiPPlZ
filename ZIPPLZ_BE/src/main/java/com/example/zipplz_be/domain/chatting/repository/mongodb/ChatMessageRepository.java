@@ -10,7 +10,11 @@ import java.util.Optional;
 @Repository
 public interface ChatMessageRepository extends MongoRepository<ChatMessage, String> {
 
-    List<ChatMessage> findAllByChatroomSerialOrderByCreatedAtDesc(int chatroomSerial);
+    List<ChatMessage> findAllByChatroomSerial(int chatroomSerial);
 
     Optional<ChatMessage> findFirstByChatroomSerialOrderByCreatedAtDesc(int chatroomSerial);
+
+    Optional<ChatMessage> findById(String id);
+
+    boolean existsById(String id);
 }

@@ -70,7 +70,7 @@ public class SecurityConfig {
         http.addFilterAt(new JWTFilter(jwtUtil), LoginFilter.class)
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
-//        // CORS 설정
+        // CORS 설정
 //        http.cors(cors -> cors.configurationSource(request -> {
 //            CorsConfiguration configuration = new CorsConfiguration();
 //            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
