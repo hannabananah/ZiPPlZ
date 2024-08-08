@@ -50,8 +50,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 2-2. 이미 회원가입 한 유저라면,
         String role = customOAuth2User.getRole();
         String token = jwtUtil.createJwt(email, userSerial, role);
-
-        response.addHeader("Authorization", "Bearer " + token);
-        response.sendRedirect("http://localhost:5173/");
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        response.addCookie(cookie); // 예시로 쿠키 사용
+        response.sendRedirect("http://localhost:5173/success");
     }
 }
