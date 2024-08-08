@@ -6,7 +6,7 @@ const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
 const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 interface ChatMessageData {
-  type: string;
+  type: 'TALK' | 'IMAGE' | 'FILE';
   chatroomSerial: number;
   userSerial: number;
   chatMessageContent: string;
@@ -38,6 +38,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           if (message.body) {
             try {
               const msg: ChatMessageData = JSON.parse(message.body);
+              console.log('msg.type=======>', msg.type);
               setMessages(() => [msg]);
             } catch (error) {
               console.error('Error parsing message:', error);
@@ -76,16 +77,20 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const sendMessage = (msg: string, userSerial: number, file?: File) => {
     if (client?.connected) {
       if (file) {
+        console.log('Sending file:', file);
+
         const reader = new FileReader();
         reader.onloadend = () => {
           const fileData = reader.result as string;
           const base64String = fileData.split(',')[1];
+          const fileType = file.type.startsWith('image/') ? 'IMAGE' : 'FILE';
+
           const messagePayload = {
+            type: fileType,
             chatroomSerial: 1,
             chatMessageContent: base64String,
             userSerial,
             isFile: true,
-            type: 'IMAGE',
             originalFileName: file.name,
           };
 
@@ -95,14 +100,15 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
             body: JSON.stringify(messagePayload),
           });
         };
+
         reader.readAsDataURL(file);
       } else {
         const messagePayload = {
+          type: 'TALK',
           chatroomSerial: 1,
           userSerial,
           chatMessageContent: msg,
           isFile: false,
-          type: 'TALK',
         };
 
         client.publish({

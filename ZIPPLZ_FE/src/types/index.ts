@@ -14,18 +14,8 @@ export interface ChatMessageData {
   } | null;
 }
 
-// 상세 응답 메시지
+// 파일(type이 IMAGE 혹은 FILE 일 경우) 관련 데이터
 export interface File {
-  fileSerial: number;
-  saveFolder: string;
-  originalFile: string;
-  saveFile: string;
-  fileName: string;
-}
-
-// 상세 응답 메시지
-
-export interface Image {
   fileSerial: number;
   saveFolder: string;
   originalFile: string;
@@ -39,7 +29,13 @@ export interface OtherUser {
   location: string;
   fieldName: string;
   certificated: boolean;
-  image: Image | null;
+  image: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  } | null;
 }
 
 // 채팅방 목록 조회
@@ -58,8 +54,33 @@ export interface ChatRoom {
 
 // 채팅방 상세보기
 export interface ChatRoomDetails {
-  otherUser: OtherUser;
-  chatMessages: ChatMessageData[];
+  otherUser: {
+    name: string;
+    location: string;
+    fieldName: string;
+    certificated: boolean;
+    image: {
+      fileSerial: number;
+      saveFolder: string;
+      originalFile: string;
+      saveFile: string;
+      fileName: string;
+    } | null;
+  };
+  chatMessages: {
+    userSerial: number;
+    userName: string;
+    chatMessageContent: string;
+    createdAt: string;
+    fileType: 'IMAGE' | 'TALK' | 'FILE';
+    file: {
+      fileSerial: number;
+      saveFolder: string;
+      originalFile: string;
+      saveFile: string;
+      fileName: string;
+    } | null;
+  }[];
 }
 
 // 메시지 전송

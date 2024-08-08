@@ -20,12 +20,10 @@ interface MenuItem {
 }
 
 interface ToggleChatMenuProps {
-  imageSrc?: string; // Updated prop name
   setImagePreview: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 export default function ToggleChatMenu({
-  imageSrc, // Updated prop name
   setImagePreview,
 }: ToggleChatMenuProps) {
   const { userType } = useUserStore();

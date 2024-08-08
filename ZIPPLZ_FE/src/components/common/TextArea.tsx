@@ -74,8 +74,6 @@ export default function TextArea({
       name={name}
       onChange={onChange}
       onKeyDown={handleKeyDown}
-    >
-      {children}
-    </textarea>
+    />
   );
 }

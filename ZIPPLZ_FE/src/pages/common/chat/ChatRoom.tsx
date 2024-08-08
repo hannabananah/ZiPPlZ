@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import type { ChatMessageData, ChatRoomDetails, File } from '@/types';
+import type { ChatMessageData, ChatRoomDetails } from '@/types';
 import ChatRoomHeader from '@components/chat/ChatRoomHeader';
 import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
@@ -24,7 +24,6 @@ function ChatRoomContent() {
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [imagepreview, setImagePreview] = useState<string | null>(null);
 
   const { messages: contextMessages } = useContext(WebSocketContext) || {
     messages: [],
@@ -45,6 +44,10 @@ function ChatRoomContent() {
       );
 
       if (response.status === 200) {
+        response.data.data.chatMessages.map((msg) => {
+          console.log('msg.file?.saveFile', msg.file?.saveFile);
+        });
+
         return response.data.data;
       } else {
         throw new Error('예상치 못한 응답입니다.');
@@ -84,6 +87,7 @@ function ChatRoomContent() {
 
   const handleImagePreviewRemove = () => {
     console.log('Image preview removed');
+    setImageSrc(undefined);
   };
 
   if (loading) {
@@ -115,15 +119,10 @@ function ChatRoomContent() {
               onMenuToggle={() => setMenuVisible((prev) => !prev)}
               userSerial={2}
               onImagePreviewRemove={handleImagePreviewRemove}
-              type="TALK" // Use a valid type
+              type="TALK"
               imageSrc={imageSrc}
             />
-            {isMenuVisible && (
-              <ToggleChatMenu
-                imageSrc={imageSrc}
-                setImagePreview={setImageSrc}
-              />
-            )}
+            {isMenuVisible && <ToggleChatMenu setImagePreview={setImageSrc} />}
           </>
         ) : (
           <p className="py-4 text-center bg-gray-300">Invalid room ID</p>

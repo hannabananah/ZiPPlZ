@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import type { ChatMessageData } from '@/types';
 import { formatTime } from '@utils/formatDateWithTime';
 
@@ -6,8 +8,19 @@ interface MessageProps {
 }
 
 export default function Message({ message }: MessageProps) {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const currUserSerial = 2;
   const imageSrc = `data:image/png;base64,${message.chatMessageContent}`;
+
+  const handleImageLoad = () => {
+    setLoading(false);
+  };
+
+  const handleImageError = () => {
+    setError(true);
+    setLoading(false);
+  };
 
   console.log('fileType', message.fileType);
   console.log('file', message.file);
@@ -33,11 +46,19 @@ export default function Message({ message }: MessageProps) {
         }`}
       >
         {message.fileType === 'IMAGE' ? (
-          <img
-            src={imageSrc}
-            alt={message.file?.fileName}
-            className="max-w-[300px] max-h-[300px] object-cover"
-          />
+          <>
+            {loading && <p>Loading image...</p>}
+            {error && <p>Image failed to load.</p>}
+            <img
+              src={message.file?.saveFile}
+              // src={imageSrc}
+              alt={message.file?.fileName}
+              className="max-w-[260px] max-h-[300px] object-cover"
+              onLoad={handleImageLoad}
+              onError={handleImageError}
+              style={{ display: loading ? 'none' : 'block' }}
+            />
+          </>
         ) : (
           <p className="text-left whitespace-pre-wrap text-zp-xs">
             {message.chatMessageContent}

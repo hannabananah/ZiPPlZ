@@ -1,6 +1,13 @@
-import { ChangeEvent, KeyboardEvent, useContext, useState } from 'react';
+import {
+  ChangeEvent,
+  KeyboardEvent,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { FaPlus } from 'react-icons/fa';
 import { FiSend } from 'react-icons/fi';
+import { IoIosClose } from 'react-icons/io';
 
 import Circle from '@assets/gradient-circle.svg?react';
 import TextArea from '@components/common/TextArea';
@@ -16,6 +23,7 @@ interface TextInputBoxProps {
   type: TextInputBoxType;
   imageSrc?: string;
 }
+
 export default function TextInputBox({
   isMenuVisible,
   onMenuToggle,
@@ -31,6 +39,12 @@ export default function TextInputBox({
   }
   const { sendMessage } = context;
 
+  useEffect(() => {
+    if (imageSrc) {
+      onMenuToggle();
+    }
+  }, [imageSrc]);
+
   const handleChangeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
   };
@@ -44,12 +58,25 @@ export default function TextInputBox({
 
   const handleSendMessage = async () => {
     if (message.trim() || imageSrc) {
-      // Check for imageSrc
       if (imageSrc) {
         try {
+          const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
+          const match = imageSrc.match(base64Regex);
+
+          let fileName = 'image';
+          let fileExtension = 'png';
+
+          if (match) {
+            fileExtension = match[1];
+            fileName = `image_${Date.now()}.${fileExtension}`;
+          }
+
           const response = await fetch(imageSrc);
           const blob = await response.blob();
-          const file = new File([blob], 'image.png', { type: 'image/png' });
+          const file = new File([blob], fileName, {
+            type: `image/${fileExtension}`,
+          });
+
           sendMessage('', userSerial, file);
           onImagePreviewRemove();
         } catch (error) {
@@ -85,19 +112,18 @@ export default function TextInputBox({
         value={message}
         onChange={handleChangeText}
         onKeyDown={handleKeyDown}
-      >
-        {imageSrc && (
-          <div className="absolute z-50 w-20 p-2 bg-white border border-gray-300 rounded shadow top-1/2 left-1/2 bg-zp-red">
-            <img src={imageSrc} alt="Preview" className="w-full h-auto" />
-            <button
-              onClick={onImagePreviewRemove}
-              className="absolute top-0 right-0 p-1 text-white bg-black bg-opacity-50 rounded"
-            >
-              ×
-            </button>
-          </div>
-        )}
-      </TextArea>
+      />
+      {imageSrc && (
+        <div className="absolute bg-white border rounded w-18 max-w-24 right-20 bottom-14 border-zp-light-gray z-4">
+          <img src={imageSrc} alt="Preview" className="w-full h-auto" />
+          <button
+            onClick={onImagePreviewRemove}
+            className="absolute top-0 right-0"
+          >
+            <IoIosClose size={20} />
+          </button>
+        </div>
+      )}
       <button onClick={handleSendMessage} className="p-2 cursor-pointer">
         <FiSend size={22} />
       </button>
