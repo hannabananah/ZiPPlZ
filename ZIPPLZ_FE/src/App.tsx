@@ -22,7 +22,7 @@ import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
 //
 // 워커 찾기
-import FindWorkerDetail : '@pages/common/workerinfo/FindWorkerDetail';
+import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
 import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
 import FindWorkerList from '@pages/common/workerinfo/FindWorkerList';
 import WorkerInfoDateDetail from '@pages/common/workerinfo/WorkerInfoDateDetail';
@@ -31,6 +31,7 @@ import WorkerInfoLocationDetail from '@pages/common/workerinfo/WorkerInfoLocatio
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
 
+import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
 import SignUp from './pages/common/signup/SignUp';
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
+        <Route path="image-change/:userSerial" element={<ImageChangePage />} />
         <Route path="404" element={<Custom404 />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
         <Route path="findworker/write" element={<FindWorkerDetailCreate />} />

@@ -1,8 +1,11 @@
 // import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
+import { useNavigate } from 'react-router-dom';
+
 import FieldListItem from '@components/home/FieldListItem';
+import ImageChangeTab from '@components/home/ImageChangeTab';
 import TodaySchedule from '@components/home/TodaySchedule';
-import WeekSchedule from '@components/home/WeekSchedule';
 import WorkerCard from '@components/home/WorkerCard';
+import { useLoginUserStore } from '@stores/loginUserStore';
 
 const fields: string[] = [
   '전체',
@@ -34,6 +37,10 @@ const list: HotWorker[] = [
   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
 ];
 export default function Home() {
+  const navigate = useNavigate();
+  const { loginUser } = useLoginUserStore();
+  const handleClickImageChange = () =>
+    navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       {/* <ScheduleCalendar /> */}
@@ -45,9 +52,9 @@ export default function Home() {
           {/* </div> */}
         </div>
         <div className="basis-5/12">
-          <p className="font-extrabold text-zp-xl">This week</p>
+          <p className="font-extrabold text-zp-xl">Image Change</p>
           {/* <div className="w-full h-[4rem]"> */}
-          <WeekSchedule />
+          <ImageChangeTab onClick={handleClickImageChange} />
           {/* </div> */}
         </div>
       </div>
