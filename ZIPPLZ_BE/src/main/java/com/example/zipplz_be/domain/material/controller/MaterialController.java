@@ -124,14 +124,31 @@ public class MaterialController {
 
     // 자재 찜하기
     @PostMapping("/wish/{materialSerial}")
-    public ResponseEntity<ResponseDTO> setMaterialOnWish(Authentication authentication, @RequestParam String materialSerial) {
+    public ResponseEntity<ResponseDTO> setMaterialOnWish(Authentication authentication, @PathVariable int materialSerial) {
         ResponseDTO<List<MaterialViewDTO>> responseDTO;
         HttpStatus status;
 
         try {
-            int userSerial = getUserSerial(authentication);
+            materialService.setMaterialOnWish(this.getUserSerial(authentication), materialSerial);
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "자재 찜 설정 성공");
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 자재 찜하기
+    @DeleteMapping("/unwish/{materialSerial}")
+    public ResponseEntity<ResponseDTO> unsetMaterialOnWish(Authentication authentication, @PathVariable int materialSerial) {
+        ResponseDTO<List<MaterialViewDTO>> responseDTO;
+        HttpStatus status;
+
+        try {
+            materialService.unsetMaterialOnWish(this.getUserSerial(authentication), materialSerial);
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "자재 찜 해제 성공");
         } catch(Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());

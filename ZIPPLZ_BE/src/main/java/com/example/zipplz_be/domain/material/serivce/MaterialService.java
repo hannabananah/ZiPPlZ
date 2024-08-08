@@ -19,4 +19,6 @@ public interface MaterialService {
     List<File> getConvertedImages(int userSerial);
 
     void setMaterialOnWish(int userSerial, int materialSerial);
+
+    void unsetMaterialOnWish(int userSerial, int materialSerial);
 }

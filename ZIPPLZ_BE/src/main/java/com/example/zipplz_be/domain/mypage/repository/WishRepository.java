@@ -38,4 +38,6 @@ public interface WishRepository extends JpaRepository<Wish, Integer> {
     List<Wish> findByUserSerialAndWishType(User user, int wishType);
 
     boolean existsByUserSerialAndWishTypeAndWishSerial(User user, int wishType, int wishSerial);
+
+    void deleteByUserSerialAndWishTypeAndWishSerial(User user, int wishType, int wishSerial);
 }

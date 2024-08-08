@@ -6,6 +6,7 @@ import com.example.zipplz_be.domain.material.dto.MaterialDTO;
 import com.example.zipplz_be.domain.material.dto.MaterialFileDTO;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
 import com.example.zipplz_be.domain.material.entity.Material;
+import com.example.zipplz_be.domain.material.exception.MaterialNotFoundException;
 import com.example.zipplz_be.domain.material.repository.MaterialRepository;
 import com.example.zipplz_be.domain.model.MaterialFileRelation;
 import com.example.zipplz_be.domain.model.UserFileRelation;
@@ -21,6 +22,7 @@ import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -164,5 +166,21 @@ public class MaterialServiceImpl implements MaterialService {
                 .wishType(4)
                 .wishSerial(materialSerial).build();
         wishRepository.save(wish);
+    }
+
+    @Override
+    @Transactional
+    public void unsetMaterialOnWish(int userSerial, int materialSerial) {
+
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("존재하지 않는 유저입니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        if (wishRepository.existsByUserSerialAndWishTypeAndWishSerial(user, 4, materialSerial)) {
+            wishRepository.deleteByUserSerialAndWishTypeAndWishSerial(user, 4, materialSerial);
+        } else {
+            throw new MaterialNotFoundException("존재하지 않는 자재입니다.");
+        }
     }
 }
