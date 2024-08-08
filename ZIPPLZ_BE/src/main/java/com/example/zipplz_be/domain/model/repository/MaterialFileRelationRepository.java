@@ -10,5 +10,6 @@ import java.util.List;
 
 @Repository
 public interface MaterialFileRelationRepository extends JpaRepository<MaterialFileRelation, MaterialFileRelationId> {
-    MaterialFileRelation findFirstByMaterialSerial(Material materialSerial);
+    MaterialFileRelation findFirstByMaterialSerial(Material material);
+    boolean existsByMaterialSerial(Material material);
 }

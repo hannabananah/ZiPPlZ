@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.material.serivce;
 
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -11,5 +12,11 @@ public interface MaterialService {
 
     List<MaterialViewDTO> getMaterialList(String category);
 
+    List<MaterialViewDTO> getMaterialListAuthenticated(String category, int userSerial);
+
     void saveConvertedImage(MultipartFile image, int userSerial);
+
+    List<File> getConvertedImages(int userSerial);
+
+    void setMaterialOnWish(int userSerial, int materialSerial);
 }
