@@ -10,12 +10,10 @@ import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
 import com.example.zipplz_be.domain.file.entity.File;
-import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
 import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.model.repository.MessageFileRelationRepository;
-import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
 import com.example.zipplz_be.domain.portfolio.service.CustomerReviewService;
 import com.example.zipplz_be.domain.schedule.repository.PlanRepository;
@@ -25,7 +23,6 @@ import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
-import com.example.zipplz_be.global.util.Calculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -33,11 +30,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -67,10 +60,8 @@ public class ChatroomServiceImpl implements ChatroomService {
     );
     private final PortfolioRepository portfolioRepository;
     private final FieldRepository fieldRepository;
-    private final CustomerReviewRepository customerReviewRepository;
     private final CustomerReviewService customerReviewService;
     private final MessageFileRelationRepository messageFileRelationRepository;
-    private final FileRepository fileRepository;
     private final LocalRepository localRepository;
     private final PlanRepository planRepository;
 
@@ -208,16 +199,11 @@ public class ChatroomServiceImpl implements ChatroomService {
 
         if (!isUserInChatroom) throw new ChatroomForbiddenException("잘못된 접근입니다.");
 
-        System.out.println(chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial));
-        List<ChatMessage> messages = chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial);
+        List<ChatMessage> messages = chatMessageRepository.findAllByChatroomSerial(chatroomSerial);
+        Collections.sort(messages);
         List<ChatMessageResponseDTO> previousMessages = new ArrayList<>();
         for (ChatMessage message : messages) {
-            if (message.isFile()) {
-                File file = messageFileRelationRepository.findByMessageId(message.getId()).getFile();
-                previousMessages.add(new ChatMessageResponseDTO(message, file));
-            } else {
-                previousMessages.add(new ChatMessageResponseDTO(message));
-            }
+            previousMessages.add(new ChatMessageResponseDTO(message));
         }
 
         return previousMessages;
