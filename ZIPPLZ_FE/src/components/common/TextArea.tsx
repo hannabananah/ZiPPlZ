@@ -5,11 +5,12 @@ interface Props {
   placeholder: string;
   width?: number | string;
   height?: number | string;
-  fontSize: string;
+  fontSize: 'md' | 'sm' | 'xs' | '2xs';
   value?: string;
   name?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  children?: React.ReactNode;
 }
 
 const fontSizeClasses: Record<Props['fontSize'], string> = {
@@ -20,20 +21,19 @@ const fontSizeClasses: Record<Props['fontSize'], string> = {
 };
 
 export default function TextArea({
-  className,
+  className = '',
   placeholder,
-  width,
-  height,
+  width = 'auto',
+  height = 'auto',
   fontSize,
   value,
   name,
   onChange,
   onKeyDown,
+  children,
 }: Props) {
-  const baseStyle: string = `flex justify-center items-center rounded-zp-radius-big ${fontSizeClasses[fontSize]} bg-zp-transparent resize-none p-4 bg-zp-white border border-zp-light-gray outline-none caret-zp-main-color placeholder-zp-main-color`;
+  const baseStyle = `flex justify-center items-center rounded-zp-radius-big ${fontSizeClasses[fontSize]} bg-zp-transparent resize-none p-4 bg-zp-white border border-zp-light-gray outline-none caret-zp-main-color placeholder-zp-main-color`;
 
-  const widthClass = width === 'full' ? 'w-full' : '';
-  const heightClass = height === 'full' ? 'h-full' : '';
   const widthStyle = typeof width === 'number' ? `${width}rem` : width;
   const heightStyle = typeof height === 'number' ? `${height}rem` : height;
 
@@ -41,14 +41,14 @@ export default function TextArea({
     if (e.key === 'Enter' && e.shiftKey) {
       e.preventDefault();
       const target = e.target as HTMLTextAreaElement;
-      const start = target.selectionStart;
-      const end = target.selectionEnd;
+      const { selectionStart, selectionEnd, value } = target;
 
-      if (start !== null && end !== null) {
-        const value = target.value;
-
-        target.value = value.substring(0, start) + '\n' + value.substring(end);
-        target.setSelectionRange(start + 1, start + 1);
+      if (selectionStart !== null && selectionEnd !== null) {
+        target.value =
+          value.substring(0, selectionStart) +
+          '\n' +
+          value.substring(selectionEnd);
+        target.setSelectionRange(selectionStart + 1, selectionStart + 1);
 
         if (onChange) {
           onChange({
@@ -65,7 +65,7 @@ export default function TextArea({
   return (
     <textarea
       placeholder={placeholder}
-      className={`${baseStyle} ${widthClass} ${heightClass} ${className}`}
+      className={`${baseStyle} ${className}`}
       style={{
         width: width === 'full' ? '100%' : widthStyle,
         height: height === 'full' ? '100%' : heightStyle,
@@ -74,6 +74,8 @@ export default function TextArea({
       name={name}
       onChange={onChange}
       onKeyDown={handleKeyDown}
-    />
+    >
+      {children}
+    </textarea>
   );
 }

@@ -7,7 +7,11 @@ interface MessageProps {
 
 export default function Message({ message }: MessageProps) {
   const currUserSerial = 2;
+  const imageSrc = `data:image/png;base64,${message.chatMessageContent}`;
 
+  console.log('fileType', message.fileType);
+  console.log('file', message.file);
+  console.log('serial', message.file?.fileSerial);
   return (
     <li
       className={`flex items-start px-4 py-2 ${
@@ -28,10 +32,10 @@ export default function Message({ message }: MessageProps) {
             : 'text-left rounded-ss-zp-radius-none'
         }`}
       >
-        {message.chatMessageContent.startsWith('data:image/') ? (
+        {message.fileType === 'IMAGE' ? (
           <img
-            src={message.chatMessageContent}
-            alt="Uploaded"
+            src={imageSrc}
+            alt={message.file?.fileName}
             className="max-w-[300px] max-h-[300px] object-cover"
           />
         ) : (

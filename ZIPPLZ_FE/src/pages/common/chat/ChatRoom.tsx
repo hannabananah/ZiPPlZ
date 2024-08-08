@@ -24,9 +24,13 @@ function ChatRoomContent() {
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [imagepreview, setImagePreview] = useState<string | null>(null);
+
   const { messages: contextMessages } = useContext(WebSocketContext) || {
     messages: [],
   };
+  const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
 
   const fetchChatRoomDetails = async (
@@ -78,11 +82,6 @@ function ChatRoomContent() {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  const handleImageUpload = (file: File) => {
-    console.log('이미지 업로드:', file);
-    // TODO: Implement image upload functionality
-  };
-
   const handleImagePreviewRemove = () => {
     console.log('Image preview removed');
   };
@@ -115,11 +114,16 @@ function ChatRoomContent() {
               isMenuVisible={isMenuVisible}
               onMenuToggle={() => setMenuVisible((prev) => !prev)}
               userSerial={2}
-              onImageUpload={handleImageUpload}
               onImagePreviewRemove={handleImagePreviewRemove}
-              type="text"
+              type="TALK" // Use a valid type
+              imageSrc={imageSrc}
             />
-            {isMenuVisible && <ToggleChatMenu />}
+            {isMenuVisible && (
+              <ToggleChatMenu
+                imageSrc={imageSrc}
+                setImagePreview={setImageSrc}
+              />
+            )}
           </>
         ) : (
           <p className="py-4 text-center bg-gray-300">Invalid room ID</p>

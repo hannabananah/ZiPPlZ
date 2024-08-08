@@ -1,13 +1,21 @@
 import { ReactNode, createContext, useEffect, useState } from 'react';
 
-import type { ChatMessageData } from '@/types';
 import { Client, IMessage } from '@stomp/stompjs';
 
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
 const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
+interface ChatMessageData {
+  type: string;
+  chatroomSerial: number;
+  userSerial: number;
+  chatMessageContent: string;
+  isFile: boolean;
+  originalFileName?: string;
+}
+
 interface WebSocketContextType {
-  sendMessage: (message: string, userSerial: number, file?: File) => void;
+  sendMessage: (msg: string, userSerial: number, file?: File) => void;
   messages: ChatMessageData[];
 }
 
@@ -26,7 +34,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       debug: (msg) => console.log('STOMP debug:', msg),
       onConnect: (frame) => {
         console.log('STOMP connected:', frame);
-        stompClient.subscribe(`/sub/chat/room/1`, (message: IMessage) => {
+        stompClient.subscribe('/sub/chat/room/1', (message: IMessage) => {
           if (message.body) {
             try {
               const msg: ChatMessageData = JSON.parse(message.body);
@@ -44,16 +52,16 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
         });
       },
       onDisconnect: () => {
-        console.log('STOMP 연결이 끊어졌습니다.');
+        console.log('STOMP connection disconnected.');
       },
       onStompError: (frame) => {
-        console.error('STOMP 에러가 납니다.', frame);
+        console.error('STOMP error:', frame);
       },
       onWebSocketClose: (frame) => {
-        console.error('WebSocket이 닫혔습니다.', frame);
+        console.error('WebSocket closed:', frame);
       },
       onWebSocketError: (frame) => {
-        console.error('WebSocket에서 에러가 납니다.', frame);
+        console.error('WebSocket error:', frame);
       },
     });
 
@@ -67,44 +75,41 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
   const sendMessage = (msg: string, userSerial: number, file?: File) => {
     if (client?.connected) {
-      const messagePayload = {
-        chatroomSerial: 1,
-        userSerial,
-        chatMessageContent: msg,
-        isFile: !!file,
-      };
-
       if (file) {
         const reader = new FileReader();
         reader.onloadend = () => {
           const fileData = reader.result as string;
-          const data = JSON.stringify({
-            ...messagePayload,
-            type: 'FILE',
-            fileData,
-            fileName: file.name,
-            fileType: file.type,
-          });
+          const base64String = fileData.split(',')[1];
+          const messagePayload = {
+            chatroomSerial: 1,
+            chatMessageContent: base64String,
+            userSerial,
+            isFile: true,
+            type: 'IMAGE',
+            originalFileName: file.name,
+          };
 
           client.publish({
-            destination: '/pub/chat/message/customer',
-            body: data,
+            destination: '/pub/chat/message',
+            headers: { 'X-AUTH-TOKEN': token },
+            body: JSON.stringify(messagePayload),
           });
         };
         reader.readAsDataURL(file);
       } else {
-        if (msg.trim()) {
-          const data = JSON.stringify({
-            ...messagePayload,
-            type: 'TALK',
-            chatMessageContent: msg,
-          });
+        const messagePayload = {
+          chatroomSerial: 1,
+          userSerial,
+          chatMessageContent: msg,
+          isFile: false,
+          type: 'TALK',
+        };
 
-          client.publish({
-            destination: '/pub/chat/message/customer',
-            body: data,
-          });
-        }
+        client.publish({
+          destination: '/pub/chat/message',
+          headers: { 'X-AUTH-TOKEN': token },
+          body: JSON.stringify(messagePayload),
+        });
       }
     } else {
       console.error('Client not connected or message is empty.');
