@@ -92,3 +92,20 @@ export interface SendMessageReq {
   isFile: boolean;
   originalFileName: string;
 }
+
+// 자재 전체목록 조회
+export interface Material {
+  materialSerial: number;
+  materialName: string;
+  majorCategory: number;
+  description: string;
+  materialPrice: number;
+  img: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+  wished: boolean;
+}
