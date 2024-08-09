@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
@@ -114,6 +115,55 @@ public class MyPageController {
 
         return new ResponseEntity<>(responseDTO, status);
     }
+
+    @PostMapping("/profile-img")
+    public ResponseEntity<ResponseDTO> setProfileImg(Authentication authentication, @RequestPart MultipartFile image) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            myPageService.setProfileImg(this.getUserSerial(authentication), image);
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "프로필 이미지 변경 성공");
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    @DeleteMapping("/profile-img")
+    public ResponseEntity<ResponseDTO> deleteProfileImg(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            myPageService.deleteProfileImg(this.getUserSerial(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "프로필 이미지 삭제 성공");
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 시공자 활동지역 조회
+    public ResponseEntity<ResponseDTO> getWorkerLocations(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            myPageService.getWorkerLocations(this.getUserSerial(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "시공자 활동지역 조회 성공");
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
 
     public int getUserSerial(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();

@@ -46,17 +46,18 @@ public class ChatroomServiceImpl implements ChatroomService {
     private final WorkerRepository workerRepository;
 
     private static final Map<String, Integer> CONSTRUCTION_FIELDS = Map.ofEntries(
-            Map.entry("기타", 0),
-            Map.entry("철거", 1),
-            Map.entry("설비", 2),
-            Map.entry("샷시", 3),
-            Map.entry("목공", 4),
-            Map.entry("전기", 5),
-            Map.entry("욕실", 6),
-            Map.entry("타일", 7),
-            Map.entry("마루", 8),
-            Map.entry("도배", 9),
-            Map.entry("가구", 10)
+            Map.entry("기타", 0), Map.entry("철거", 1), Map.entry("설비", 2),
+            Map.entry("샷시", 3), Map.entry("목공", 4), Map.entry("전기", 5),
+            Map.entry("욕실", 6), Map.entry("타일", 7), Map.entry("마루", 8),
+            Map.entry("도배", 9), Map.entry("가구", 10)
+    );
+    private static final Map<Integer, String> SIDO_NAMES = Map.ofEntries(
+            Map.entry(1, "서울"), Map.entry(2, "인천"), Map.entry(3, "대전"),
+            Map.entry(4, "대구"), Map.entry(5, "광주"), Map.entry(6, "부산"),
+            Map.entry(7, "울산"), Map.entry(8, "세종특별자치시"), Map.entry(31, "경기도"),
+            Map.entry(32, "강원도"), Map.entry(33, "충청북도"), Map.entry(34, "충정남도"),
+            Map.entry(35, "경상북도"), Map.entry(36, "경상남도"), Map.entry(37, "전라북도"),
+            Map.entry(38, "전라남도"), Map.entry(39, "제주도")
     );
     private final PortfolioRepository portfolioRepository;
     private final FieldRepository fieldRepository;
@@ -157,7 +158,7 @@ public class ChatroomServiceImpl implements ChatroomService {
         boolean isCertificated;
         if (isOtherUserCustomer) {
             Customer customer = customerRepository.findByUserSerial(otherUser);
-            fieldName = "";
+            fieldName = chatroomRepository.findByChatroomSerial(chatroomSerial).getFieldName();
             isCertificated = false;
             if (!planRepository.existsByCustomerSerialAndIsActive(customer, 1)) {
                 location = "";
@@ -170,7 +171,8 @@ public class ChatroomServiceImpl implements ChatroomService {
             if (!localRepository.existsByUserSerial(otherUser)) {
                 location = "";
             } else {
-                location = localRepository.findByUserSerial(otherUser).getLocalName();
+                int sido = localRepository.findFirstByUserSerial(otherUser).getSidoCode();
+                location = SIDO_NAMES.get(sido);
             }
         }
 

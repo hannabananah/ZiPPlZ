@@ -37,4 +37,7 @@ public interface FileRepository extends JpaRepository<File, Integer> {
     File findByFileSerial(int fileSerial);
     File findBySaveFile(String saveFile);
 
+    void deleteFileByFileSerial(int fileSerial);
+    boolean existsByFileSerial(int fileSerial);
+
 }
