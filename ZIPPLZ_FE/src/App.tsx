@@ -42,6 +42,7 @@ import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
 import SignUp from './pages/common/signup/SignUp';
+import Workers from './pages/common/workerinfo/Workers';
 
 export default function App() {
   return (
@@ -68,7 +69,7 @@ export default function App() {
         />
         <Route path="findworkers" element={<FindWorkerList />} />
         <Route path="findworkers/:id" element={<FindWorkerDetail />} />
-        <Route path="workers" element={<WorkerInfoList />} />
+        <Route path="workers" element={<Workers />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
         <Route path="housepost" element={<HousePost />} />
         <Route path="housepostdetail" element={<HousePostDetail />} />

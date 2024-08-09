@@ -19,7 +19,7 @@ export default function BottomTab() {
       role: ['customer', 'worker', ''],
     },
     {
-      path: '/workers',
+      path: '/workers?type=전체',
       activeIcon: <ActiveWorker />,
       inactiveIcon: <InactiveWorker />,
       label: '시공자 정보',
