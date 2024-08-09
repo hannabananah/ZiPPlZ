@@ -43,7 +43,6 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="schedule" element={<Schedule />} />
         <Route path="community" element={<Community />} />
-        {/* <Route path="workers" element={<Workers />} /> */}
 
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
