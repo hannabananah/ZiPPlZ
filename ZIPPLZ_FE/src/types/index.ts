@@ -90,7 +90,7 @@ export interface SendMessageReq {
   userSerial: number;
   chatMessageContent: string;
   isFile: boolean;
-  originalFileName: string;
+  originalFileName?: string;
 }
 
 // 자재 전체목록 조회
