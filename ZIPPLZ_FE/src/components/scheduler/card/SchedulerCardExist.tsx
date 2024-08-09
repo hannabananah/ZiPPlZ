@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaPencilAlt, FaRegTrashAlt } from 'react-icons/fa';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
@@ -9,10 +9,17 @@ import Button from '@components/common/Button';
 interface Props {
   schedule: any;
   idx: number;
+  planSerial?: number;
+  updateContent: (serial: number, content: string) => void;
 }
-export default function SchedulerCardExist({ schedule, idx }: Props) {
+export default function SchedulerCardExist({
+  schedule,
+  idx,
+  updateContent,
+}: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [newContent, setNewContent] = useState<string>(schedule.workContent);
   const cardHeight: string = isOpen ? '18rem' : '4rem';
   const handleClickChevron = function () {
     setIsOpen(!isOpen);
@@ -85,17 +92,19 @@ export default function SchedulerCardExist({ schedule, idx }: Props) {
                 <p className="text-zp-2xs font-bold">
                   기간 : {schedule.startDate} ~ {schedule.endDate}
                 </p>
-                {/* <p className="text-zp-2xs font-bold">
-                  사용 자재 : {schedule.스케줄?.사용한자재}
-                </p> */}
                 <p className="text-zp-2xs font-bold">
                   시공 비용 : {schedule.workPrice}
                 </p>
                 <p className="text-zp-2xs font-bold">메모</p>
                 {isUpdate ? (
-                  <div className=" w-[70%] h-[3.5rem] border border-zp-light-gray rounded-zp-radius-big text-zp-2xs">
-                    인풋 너어야 함
-                  </div>
+                  <textarea
+                    className=" w-[70%] h-[3.5rem] border p-4 border-zp-light-gray rounded-zp-radius-big text-zp-2xs"
+                    value={newContent}
+                    onChange={(e: React.ChangeEvent) => {
+                      setNewContent((e.target as HTMLInputElement).value);
+                    }}
+                    placeholder="작업 메모사항을 적어주세요."
+                  />
                 ) : (
                   <div className="max-w-[19rem] h-[3.5rem] border border-zp-light-gray rounded-zp-radius-big text-zp-2xs p-1">
                     {schedule.workContent}
@@ -110,18 +119,13 @@ export default function SchedulerCardExist({ schedule, idx }: Props) {
                       height={1.5}
                       radius="big"
                       fontSize="2xs"
-                      onClick={() => setIsUpdate(!isUpdate)}
+                      onClick={() => {
+                        setIsUpdate(!isUpdate);
+                        updateContent(schedule.workSerial, newContent);
+                      }}
                     />
                   ) : (
                     <>
-                      <Button
-                        children="프로필"
-                        buttonType="normal"
-                        width={4}
-                        height={1.5}
-                        radius="big"
-                        fontSize="2xs"
-                      />
                       <Button
                         children="문의하기"
                         buttonType="normal"
@@ -138,6 +142,16 @@ export default function SchedulerCardExist({ schedule, idx }: Props) {
                         radius="big"
                         fontSize="2xs"
                       />
+                      {schedule.isCompleted === 1 && (
+                        <Button
+                          children="평가하기"
+                          buttonType="normal"
+                          width={4}
+                          height={1.5}
+                          radius="big"
+                          fontSize="2xs"
+                        />
+                      )}
                     </>
                   )}
                 </div>

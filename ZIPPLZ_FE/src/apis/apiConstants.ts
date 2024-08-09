@@ -17,6 +17,7 @@ export const END_POINT = {
   WORK: (planSerial: number) => `schedule/plans/${planSerial}/works`,
   WORK_SERIAL: (planSerial: number, workSerial: number) =>
     `schedule/plans/${planSerial}/works/${workSerial}`,
+  WORKS_USERS: 'schedule/users/works',
   PORTFOLIO: 'workerlist/portfolios',
 } as const;
 

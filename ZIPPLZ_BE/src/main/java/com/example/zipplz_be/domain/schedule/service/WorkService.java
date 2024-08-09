@@ -183,6 +183,11 @@ public class WorkService {
         Plan plan = planRepository.findByPlanSerial(planSerial);
         Work work = workRepository.findByWorkSerial(workSerial);
 
+        CustomerReview cr = customerReviewRepository.findByWorkSerial(work);
+        if(cr != null) {
+            throw new WorkException("이미 리뷰가 작성된 공종입니다.");
+        }
+
         checkPlanWorkException(customer, plan, work);
 
         //포트폴리오 찾기
@@ -191,6 +196,7 @@ public class WorkService {
 
         //리뷰 작성
         CustomerReview customerReview = CustomerReview.builder()
+                .workSerial(work)
                 .customer(customer)
                 .customerReviewContent((String)params.get("reviewContent"))
                 .customerReviewDate(curDate)
@@ -203,9 +209,22 @@ public class WorkService {
 
         customerReviewRepository.save(customerReview);
 
+        //해당 리뷰의 평균을 내서, 그 평균만큼 온도를 올리거나 내린다.
+        int professionalStar = customerReview.getProfessionalStar();
+        int attitudeStar = customerReview.getAttitudeStar();
+        int qualityStart = customerReview.getQualityStar();
+        int communicationStar = customerReview.getCommunicationStar();
+
+        double averageStar = (double)(professionalStar + attitudeStar + qualityStart + communicationStar) /4;
+        averageStar -= 2.5;
+        averageStar *= 0.1;
+
+        //2.5에서의 거리 * 0.1만큼 온도를 올리거나 내린다.
+        portfolio.setTemperature(portfolio.getTemperature() + averageStar);
+        portfolioRepository.save(portfolio);
+
         return customerReview;
     }
-
 
     public void checkPlanWorkException(Customer customer, Plan plan, Work work) {
         if(plan == null) throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");

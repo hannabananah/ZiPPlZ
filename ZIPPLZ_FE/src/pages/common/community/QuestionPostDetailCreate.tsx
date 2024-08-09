@@ -1,5 +1,5 @@
 import { ChangeEvent, useState } from 'react';
-import { CiSearch } from 'react-icons/ci';
+// import { CiSearch } from 'react-icons/ci';
 import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
@@ -14,8 +14,8 @@ type Image = string;
 export default function QuestionPostDetailCreate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [addressDetail, setAddressDetail] = useState<string>('');
+  const [address] = useState<string>('');
+  const [addressDetail] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});

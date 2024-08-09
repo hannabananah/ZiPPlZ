@@ -14,7 +14,7 @@ interface HousePost {
 }
 
 export default function HousePostListItem({
-  post_serial,
+  // post_serial,
   post_image,
   title,
   profile_image,
