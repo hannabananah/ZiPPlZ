@@ -23,7 +23,12 @@ export const postContract = async (
   try {
     const response = await axiosInstance.post(
       END_POINT.CONTRACT + `/draft/${chatroomSerial}`,
-      requestData
+      requestData,
+      {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      }
     );
     return response.data;
   } catch (error) {

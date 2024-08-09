@@ -7,11 +7,13 @@ import { ContractRequestData } from '@apis/worker/ContractApi';
 import { getMaterials } from '@apis/worker/MaterialApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import DateInput from '@components/signup/DateInput';
 import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
 
 interface ContractProps {
   closeContractModal: () => void;
   chatRoomSerial: number;
+  name: string;
 }
 
 interface Field {
@@ -19,44 +21,63 @@ interface Field {
   value: string;
   placeholder: string;
   type: 'input' | 'select';
+  editable: boolean;
 }
-
-const defaultContractInfo: Field[] = [
-  {
-    label: '고객 이름',
-    value: '',
-    placeholder: '내용을 입력해주세요.',
-    type: 'input',
-  },
-  {
-    label: '작업 가격',
-    value: '',
-    placeholder: '내용을 입력해주세요.',
-    type: 'input',
-  },
-  {
-    label: '출장 주소',
-    value: '',
-    placeholder: '내용을 입력해주세요.',
-    type: 'input',
-  },
-  { label: '작업 시작일', value: '', placeholder: 'YYYY-MM-DD', type: 'input' },
-  { label: '작업 마감일', value: '', placeholder: 'YYYY-MM-DD', type: 'input' },
-  {
-    label: '자재',
-    value: '',
-    placeholder: '내용을 입력해주세요.',
-    type: 'select',
-  },
-];
 
 export default function Contract({
   closeContractModal,
   chatRoomSerial,
+  name,
 }: ContractProps) {
+  const defaultContractInfo: Field[] = [
+    {
+      label: '고객 이름',
+      value: name,
+      placeholder: '내용을 입력해주세요.',
+      type: 'input',
+      editable: false,
+    },
+    {
+      label: '작업 가격',
+      value: '',
+      placeholder: '내용을 입력해주세요.',
+      type: 'input',
+      editable: true,
+    },
+    {
+      label: '출장 주소',
+      value: '',
+      placeholder: '내용을 입력해주세요.',
+      type: 'input',
+      editable: true,
+    },
+    {
+      label: '작업 시작일',
+      value: '',
+      placeholder: 'YYYY/MM/DD',
+      type: 'input',
+      editable: true,
+    },
+    {
+      label: '작업 마감일',
+      value: '',
+      placeholder: 'YYYY/MM/DD',
+      type: 'input',
+      editable: true,
+    },
+    {
+      label: '자재',
+      value: '',
+      placeholder: '내용을 입력해주세요.',
+      type: 'select',
+      editable: true,
+    },
+  ];
   const [fields, setFields] = useState<Field[]>(defaultContractInfo);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([]);
+  const [startDate, setStartDate] = useState<string>('');
+  const [endDate, setEndDate] = useState<string>('');
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -74,10 +95,8 @@ export default function Contract({
   const handlePostContract = async () => {
     const requestData: ContractRequestData = {
       requestComment: '계약서 초안 작성해서 보냅니다.',
-      startDate:
-        fields.find((field) => field.label === '작업 시작일')?.value || '',
-      endDate:
-        fields.find((field) => field.label === '작업 마감일')?.value || '',
+      startDate,
+      endDate,
       workPrice:
         Number(fields.find((field) => field.label === '작업 가격')?.value) || 0,
       materialList: selectedMaterials.map(
@@ -124,6 +143,8 @@ export default function Contract({
   const handleReset = () => {
     setFields(defaultContractInfo);
     setSelectedMaterials([]);
+    setStartDate('');
+    setEndDate('');
   };
 
   return (
@@ -135,24 +156,36 @@ export default function Contract({
       >
         <div className="flex flex-col justify-start">
           {fields.map((field, index) => (
-            <div key={index} className="flex mb-2 gap-x-3">
-              <label className="w-24 font-medium break-keep text-zp-xs">
+            <div key={index} className="flex items-center mb-2 gap-x-3">
+              <label className="w-24 break-keep text-zp-xs">
                 {field.label}
               </label>
               {field.type === 'input' ? (
-                <Input
-                  type="text"
-                  inputType="normal"
-                  placeholder={field.placeholder}
-                  value={field.value}
-                  onChange={(e) =>
-                    handleFieldChange(index, 'value', e.target.value)
-                  }
-                  fontSize="sm"
-                  radius="btn"
-                  height={2}
-                  width="full"
-                />
+                field.label === '작업 시작일' ||
+                field.label === '작업 마감일' ? (
+                  <DateInput
+                    value={field.value}
+                    onChange={(date) => handleFieldChange(index, 'value', date)}
+                    placeholder={field.placeholder}
+                    inputType="normal"
+                    radius="btn"
+                  />
+                ) : (
+                  <Input
+                    type="text"
+                    inputType="normal"
+                    placeholder={field.placeholder}
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(index, 'value', e.target.value)
+                    }
+                    fontSize="sm"
+                    radius="btn"
+                    height={2}
+                    width="full"
+                    editable={!field.editable}
+                  />
+                )
               ) : (
                 <Select
                   isMulti
@@ -174,6 +207,7 @@ export default function Contract({
             </div>
           ))}
         </div>
+
         <div className="flex gap-2 pb-8">
           <Button
             type="button"
