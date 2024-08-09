@@ -67,7 +67,7 @@ export default function App() {
         <Route path="workers" element={<WorkerInfoList />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
         <Route path="housepost" element={<HousePost />} />
-        <Route path="housepostdetail" element={<HousePostDetail />} />
+        <Route path="housepost/:id" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
         <Route path="questionpostdetail" element={<QuestionPostDetail />} />
         <Route

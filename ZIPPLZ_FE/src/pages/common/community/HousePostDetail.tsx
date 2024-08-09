@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
 // import { FaRegComment } from 'react-icons/fa';
@@ -10,6 +11,7 @@ import { IoBookmarkOutline } from 'react-icons/io5';
 import { IoBookmark } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -32,10 +34,16 @@ const list: HotWorker[] = [
 ];
 
 export default function HousePostDetail() {
+  const { id } = useParams<{ id: string }>(); // id를 받아옵니다.
   const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
+  useEffect(() => {
+    // id를 사용해 데이터를 가져오는 로직을 구현
+    console.log('게시물 ID:', id);
+    // fetch or use a store to get the post data by ID
+  }, [id]);
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate(-1);
