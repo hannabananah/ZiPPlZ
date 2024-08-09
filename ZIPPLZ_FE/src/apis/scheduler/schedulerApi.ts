@@ -169,3 +169,11 @@ export const addImg = async (planSerial: number, imageFile: File) => {
     }
   );
 };
+//유저별 공종 목록 조회
+export const getWorksByUser = async () => {
+  return await axiosInstance.get(END_POINT.WORKS_USERS, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+};

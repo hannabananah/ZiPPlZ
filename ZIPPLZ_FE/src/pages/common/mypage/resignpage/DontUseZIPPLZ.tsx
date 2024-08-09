@@ -21,13 +21,13 @@ export default function DontUseZIPPLZ() {
   return (
     <>
       <div className="flex flex-col min-h-screen p-6 bg-gray-100">
-        <div className="w-full max-w-3xl flex-grow">
+        <div className="w-full flex-grow">
           {/* 뒤로가기 버튼 */}
           <div className="flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
               onClick={handleGoBack}
-              style={{ width: '27px', height: '20px' }} // 아이콘 크기 조정
+              size={20} // 아이콘 크기 조정
             />
           </div>
 

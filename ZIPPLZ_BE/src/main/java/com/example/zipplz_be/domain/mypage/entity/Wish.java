@@ -9,6 +9,7 @@ import lombok.*;
 @IdClass(WishId.class)
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Wish {

@@ -13,49 +13,52 @@ export default function MyPage() {
 
   // 내 정보 수정하기 페이지로 이동
   const handleNavigateToMyInformationModify = () => {
-    navigate('/MyInformationModify'); // '/version' 경로로 이동
+    navigate('/mypage/myinformationmodify'); // '/version' 경로로 이동
   };
 
   // 비밀번호 변경 페이지로 이동
   const handleNavigateToMyPasswordModify = () => {
-    navigate('/MyPasswordModify'); // '/version' 경로로 이동
+    navigate('/mypage/mypasswordmodify'); // '/version' 경로로 이동
   };
 
   // 내가 쓴 글 / 스크랩 글 목록 페이지로 이동
   const handleNavigateToMyBoardAndScrapList = () => {
-    navigate('/MyBoardAndScrapList'); // '/version' 경로로 이동
+    navigate('/mypage/myboardlist'); // '/version' 경로로 이동
   };
 
   // 관심있는 시공업자 / 찜한 자재 목록 페이지로 이동
+  const handleNavigateToWishWorkerList = () => {
+    navigate('/mypage/wishworkerlist'); // '/version' 경로로 이동
+  };
 
   // 이용약관 / 개인정보처리방침 페이지로 이동
   const handleNavigateToPolicy = () => {
-    navigate('/Policy'); // '/version' 경로로 이동
+    navigate('/mypage/policy'); // '/version' 경로로 이동
   };
 
   // 버전 페이지로 이동
   const handleNavigateToVersion = () => {
-    navigate('/version'); // '/version' 경로로 이동
+    navigate('/mypage/version'); // '/version' 경로로 이동
   };
 
   // 로그아웃 페이지로 이동(로그아웃 구현 후 적용 예정)
 
   // 탈퇴하기 페이지로 이동
   const handleNavigateToResign = () => {
-    navigate('/Resign'); // '/version' 경로로 이동
+    navigate('/mypage/resign'); // '/version' 경로로 이동
   };
 
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-        <div className="w-full max-w-3xl">
+        <div className="w-full">
           {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
           <div className="flex items-center justify-between w-full relative">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
-                style={{ width: '27px', height: '20px' }} // 아이콘 크기 조정
+                size={20} // 아이콘 크기 조정
               />
             </div>
             <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">
@@ -116,7 +119,7 @@ export default function MyPage() {
             <div>
               <HiChevronRight
                 className="cursor-pointer"
-                onClick={handleNavigateToVersion}
+                onClick={handleNavigateToWishWorkerList}
               />
             </div>
           </div>

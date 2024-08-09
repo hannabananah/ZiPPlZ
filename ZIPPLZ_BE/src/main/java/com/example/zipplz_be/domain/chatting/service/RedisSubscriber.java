@@ -4,6 +4,7 @@ import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
 import com.example.zipplz_be.domain.chatting.dto.ChatMessageResponseDTO;
 import com.example.zipplz_be.domain.chatting.dto.UnreadMessageCount;
 import com.example.zipplz_be.domain.chatting.exception.ChatMessageNotFoundException;
+import com.example.zipplz_be.domain.model.entity.MessageType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -37,7 +38,7 @@ public class RedisSubscriber implements MessageListener {
 
            // getType이 TALK, UNREAD_MESSAGE_COUNT_ALARM 일 경우
            if (roomMessage.getType() != null) {
-               if (roomMessage.getType().equals(ChatMessageRequestDTO.MessageType.UNREAD_MESSAGE_COUNT_ALARM)) {
+               if (roomMessage.getType() == MessageType.UNREAD_MESSAGE_COUNT_ALARM) {
                    // 안읽은 메세지일 경우
                    UnreadMessageCount messageCount = new UnreadMessageCount(roomMessage);
                    int otherUserSerial = roomMessage.getOtherUserSerial();

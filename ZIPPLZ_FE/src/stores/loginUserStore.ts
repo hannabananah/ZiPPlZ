@@ -4,7 +4,7 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 interface LoginUser {
   userSerial: number;
   email: string;
-  role: string;
+  role: 'customer' | 'worker' | '';
 }
 
 interface useLoginUserStore {
@@ -16,7 +16,7 @@ interface useLoginUserStore {
 export const useLoginUserStore = create<useLoginUserStore>()(
   persist(
     (set) => ({
-      loginUser: null,
+      loginUser: { userSerial: 0, email: '', role: '' },
       isLogin: false,
       setLoginUser: (loginUser) => set({ loginUser }),
       setIsLogin: (isLogin) => set({ isLogin }),

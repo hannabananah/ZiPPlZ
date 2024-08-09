@@ -1,11 +1,9 @@
 package com.example.zipplz_be.domain.portfolio.entity;
 
+import com.example.zipplz_be.domain.schedule.entity.Work;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.sql.Date;
 import java.sql.Time;
@@ -13,6 +11,7 @@ import java.sql.Timestamp;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CustomerReview {
@@ -43,10 +42,14 @@ public class CustomerReview {
     @Column(name = "review_comment")
     private String reviewComment;
 
+    @OneToOne
+    @JoinColumn(name= "work_serial")
+    private Work workSerial;
 
     @Builder
-    public CustomerReview(Customer customer, Portfolio portfolio, String customerReviewContent, Timestamp customerReviewDate,
+    public CustomerReview(Work workSerial, Customer customer, Portfolio portfolio, String customerReviewContent, Timestamp customerReviewDate,
                           int communicationStar, int attitudeStar,int qualityStar,  int professionalStar, int isVisible ) {
+        this.workSerial = workSerial;
         this.customerSerial = customer;
         this.portfolioSerial = portfolio;
         this.customerReviewContent = customerReviewContent;

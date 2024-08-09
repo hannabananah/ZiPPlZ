@@ -3,6 +3,7 @@ package com.example.zipplz_be.domain.mypage.repository;
 import com.example.zipplz_be.domain.material.dto.MaterialDTO;
 import com.example.zipplz_be.domain.mypage.entity.Wish;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
+import com.example.zipplz_be.domain.user.entity.User;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -33,4 +34,10 @@ public interface WishRepository extends JpaRepository<Wish, Integer> {
             "WHERE user_serial= :user_serial and wish_type = :wish_type ) as w " +
             "LEFT JOIN Material m on m.material_serial = w.wish_serial;", nativeQuery = true)
     List<MaterialDTO> getMaterialWishList(@Param("wish_type") int wishType, @Param("user_serial") int userSerial);
+
+    List<Wish> findByUserSerialAndWishType(User user, int wishType);
+
+    boolean existsByUserSerialAndWishTypeAndWishSerial(User user, int wishType, int wishSerial);
+
+    void deleteByUserSerialAndWishTypeAndWishSerial(User user, int wishType, int wishSerial);
 }
