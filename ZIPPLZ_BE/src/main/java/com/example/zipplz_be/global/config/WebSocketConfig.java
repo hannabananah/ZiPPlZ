@@ -7,6 +7,7 @@ import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketTransportRegistration;
 
 // WebSocketMessageBrokerConfigurer를 상속받아 STOMP로 메시지 처리 방법을 구성
 @Configuration
@@ -21,6 +22,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/ws")     // ex. ws://localhost:5000/ws
                 .setAllowedOrigins("*");
+    }
+
+    // 파일 최대 크기 설정
+    @Override
+    public void configureWebSocketTransport(WebSocketTransportRegistration registration) {
+        registration.setMessageSizeLimit(10485760);  // 10 MB
     }
 
     // 메세지를 중간에서 라우팅할 때 사용하는 메세지 브로커를 구성

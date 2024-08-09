@@ -19,18 +19,30 @@ public class Material {
     @Column(name = "material_name")
     private String materialName;
 
+
     @ManyToOne
-    @JoinColumn(name = "major_category", referencedColumnName = "major_code")
+    @JoinColumn(name = "major_category", referencedColumnName = "major_code", insertable = false, updatable = false)
     private MajorCategory majorCategory;
     @ManyToOne
-    @JoinColumn(name = "middle_category", referencedColumnName = "middle_code")
+    @JoinColumns({
+            @JoinColumn(referencedColumnName = "major_code", insertable = false, updatable = false),
+            @JoinColumn(referencedColumnName = "middle_code", insertable = false, updatable = false)
+    })
     private MiddleCategory middleCategory;
 
     private String description;
     @Column(name = "material_price")
     private int materialPrice;
-    // @Column(name = "major_category")
-    // private int majorCategory;
-    // @Column(name = "middle_category")
-    // private int middleCategory;
+
+    @Override
+    public String toString() {
+        return "Material{" +
+                "materialSerial=" + materialSerial +
+                ", materialName='" + materialName + '\'' +
+                ", majorCategory=" + majorCategory +
+                ", middleCategory=" + middleCategory +
+                ", description='" + description + '\'' +
+                ", materialPrice=" + materialPrice +
+                '}';
+    }
 }

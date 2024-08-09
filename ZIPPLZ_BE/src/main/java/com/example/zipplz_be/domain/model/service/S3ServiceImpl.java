@@ -144,7 +144,7 @@ public class S3ServiceImpl implements S3Service {
         }
 
         String extention = filename.substring(lastDotIndex + 1).toLowerCase();
-        List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
+        List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif", "pdf", "txt", "doc", "docx", "hwp", "svg", "wbep");
 
         if (!allowedExtentionList.contains(extention)) {
             throw new S3Exception("유효하지 않은 파일 형식입니다.");
