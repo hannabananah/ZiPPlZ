@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { FaRegComment } from 'react-icons/fa';
-import { FaChevronDown } from 'react-icons/fa';
+// import { FaRegComment } from 'react-icons/fa';
+// import { FaChevronDown } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
-import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
+import { IoMdArrowDropdown } from 'react-icons/io';
+// , IoMdArrowDropup
 import { IoBookmarkOutline } from 'react-icons/io5';
 import { IoBookmark } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';

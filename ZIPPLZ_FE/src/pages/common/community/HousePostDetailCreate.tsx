@@ -372,7 +372,6 @@ export default function HousePostDetailCreate() {
                     radius="btn"
                     value={schedule}
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    readOnly
                   />
                   {isDropdownOpen ? (
                     <IoMdArrowDropup
