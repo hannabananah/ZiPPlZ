@@ -101,6 +101,7 @@ public class MaterialServiceImpl implements MaterialService {
                     boolean isInWishList = wishSerialList.contains(material.getMaterialSerial());
 
                     return MaterialViewDTO.builder()
+                            .materialSerial(material.getMaterialSerial())
                             .materialName(material.getMaterialName())
                             .majorCategory(material.getMajorCategory().getMajorName())
                             .description(material.getDescription())

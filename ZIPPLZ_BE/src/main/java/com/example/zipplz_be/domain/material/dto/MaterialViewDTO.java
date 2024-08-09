@@ -9,6 +9,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class MaterialViewDTO implements Comparable<MaterialViewDTO> {
+    private int materialSerial;
     private String materialName;
     private String majorCategory;
     private String description;
