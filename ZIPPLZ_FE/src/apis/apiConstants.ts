@@ -19,7 +19,8 @@ export const END_POINT = {
     `schedule/plans/${planSerial}/works/${workSerial}`,
   WORKS_USERS: 'schedule/users/works',
   PORTFOLIO: 'workerlist/portfolios',
-  MATERIAL: 'material/list',
+  MATERIAL: 'materials?category=',
+  CONTRACT: 'contract',
 } as const;
 
 export const HTTP_STATUS_CODE = {
