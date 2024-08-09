@@ -23,6 +23,7 @@ interface Props {
   name?: string;
   maxLength?: number;
   min?: number;
+  editable?: boolean;
 }
 
 const fontSizeClasses: Record<Props['fontSize'], string> = {
@@ -59,8 +60,9 @@ export default function Input({
   name,
   maxLength,
   min,
+  editable,
 }: Props) {
-  const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} bg-zp-transparent  `;
+  const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} bg-zp-transparent hover:border-zp-main-color`;
 
   let typeStyle = '';
   switch (inputType) {
@@ -108,6 +110,7 @@ export default function Input({
       name={name}
       maxLength={maxLength}
       min={min}
+      disabled={editable}
     />
   );
 }
