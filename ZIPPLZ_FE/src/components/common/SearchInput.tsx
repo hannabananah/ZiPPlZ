@@ -42,7 +42,7 @@ export default function SearchInput({
         value={value}
         onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
-        className="w-full py-2 pl-8 pr-4 border-b text-zp-gray placeholder-zp-light-gray focus:outline-none border-b-zp-main-color"
+        className="w-full py-2 pl-8 pr-4 border-b text-zp-gray placeholder-zp-light-gray focus:outline-none border-b-zp-main-color placeholder:text-zp-xs"
         onKeyDown={handleSearch}
       />
       <button className="absolute right-2 top-2.5" onClick={handleReset}>
