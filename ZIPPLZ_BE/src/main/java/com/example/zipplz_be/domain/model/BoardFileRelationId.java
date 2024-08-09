@@ -1,5 +1,7 @@
 package com.example.zipplz_be.domain.model;
 
+import jakarta.persistence.Entity;
+import jakarta.persistence.IdClass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,18 +14,18 @@ import java.util.Objects;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MaterialFileRelationId implements Serializable {
-    private int materialSerial;
+public class BoardFileRelationId implements Serializable {
+    private int boardSerial;
     private int fileSerial;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MaterialFileRelationId that = (MaterialFileRelationId) o;
-        return materialSerial == that.materialSerial && fileSerial == that.fileSerial;
+        BoardFileRelationId that = (BoardFileRelationId) o;
+        return boardSerial == that.boardSerial && fileSerial == that.fileSerial;
     }
 
     @Override
-    public int hashCode() { return Objects.hash(materialSerial, fileSerial); }
+    public int hashCode() { return Objects.hash(boardSerial, fileSerial); }
 }

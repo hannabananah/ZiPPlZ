@@ -6,5 +6,5 @@ public interface PortfolioFileDTO {
     String getSaveFolder();
     String getOriginalFile();
     String getSaveFile();
-    Integer getUserSerial();
+    String getFileName();
 }
