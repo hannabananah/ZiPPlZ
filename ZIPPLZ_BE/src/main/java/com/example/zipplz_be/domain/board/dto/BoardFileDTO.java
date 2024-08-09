@@ -1,7 +1,7 @@
-package com.example.zipplz_be.domain.material.dto;
+package com.example.zipplz_be.domain.board.dto;
 
-public interface MaterialFileDTO {
-    int getMaterialSerial();
+public interface BoardFileDTO {
+    int getBoardSerial();
     Integer getFileSerial();
     String getSaveFolder();
     String getOriginalFile();
