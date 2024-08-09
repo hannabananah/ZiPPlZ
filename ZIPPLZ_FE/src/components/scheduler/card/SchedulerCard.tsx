@@ -3,21 +3,25 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { FiPlusCircle } from 'react-icons/fi';
 
-import { deleteWork } from '@apis/scheduler/schedulerApi';
-
 interface Props {
   schedule: any;
   idx: number;
+  onClickTrash: () => void;
 }
-export default function SchedulerCard({ schedule, idx }: Props) {
+export default function SchedulerCard({ schedule, idx, onClickTrash }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const cardHeight: string = isOpen ? '7rem' : '4rem';
   const handleClickChevron = function () {
+    console.log(schedule.workSerial);
     setIsOpen(!isOpen);
   };
-  const handleClickTrash = async (planSerial: number, workSerial: number) => {
-    return await deleteWork(planSerial, workSerial);
+
+  const handleClickTrash = () => {
+    if (onClickTrash) {
+      onClickTrash();
+    }
   };
+
   return (
     <>
       <div
@@ -31,12 +35,7 @@ export default function SchedulerCard({ schedule, idx }: Props) {
               <FaRegTrashAlt
                 size={16}
                 className="cursor-pointer"
-                onClick={() =>
-                  handleClickTrash(
-                    schedule.planSerial.planSerial,
-                    schedule.workSerial
-                  )
-                }
+                onClick={() => handleClickTrash()}
               />
             )}
           </div>

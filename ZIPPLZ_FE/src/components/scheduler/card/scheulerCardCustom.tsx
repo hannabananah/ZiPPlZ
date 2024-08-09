@@ -2,9 +2,12 @@ import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 
+import { formatDateWithTime } from './../../../utils/formatDateWithTime';
+
 interface Props {
   schedule: any;
   idx: number;
+  planSerial?: number;
 }
 export default function SchedulerCardCustom({ schedule, idx }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -20,8 +23,8 @@ export default function SchedulerCardCustom({ schedule, idx }: Props) {
       >
         <div className="absolute top-5 flex justify-between items-center w-full px-6 ">
           <div className="flex items-center gap-1 text-zp-xl font-bold">
-            {idx} {schedule.fieldCode.fieldName}
-            {schedule.isCompleted && (
+            {idx} {schedule.fieldName}
+            {schedule.isCompleted > 0 && (
               <IoMdCheckmarkCircleOutline size={16} color="#34C759" />
             )}
           </div>
@@ -47,7 +50,9 @@ export default function SchedulerCardCustom({ schedule, idx }: Props) {
             <hr className="w-full border-zp-light-gray" />
             <p className="text-zp-2xs font-bold">
               {' '}
-              기간 : {schedule.startDate} ~ {schedule.endDate}
+              기간 : {
+                formatDateWithTime(schedule.startDate).split(' ')[0]
+              } ~ {formatDateWithTime(schedule.endDate).split(' ')[0]}
             </p>
             <p className="text-zp-2xs font-bold">
               {' '}
