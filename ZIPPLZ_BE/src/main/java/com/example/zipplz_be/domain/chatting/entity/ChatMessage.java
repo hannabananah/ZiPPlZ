@@ -43,17 +43,6 @@ public class ChatMessage extends BaseTimeEntity implements Comparable<ChatMessag
 
     @Builder
     public ChatMessage(int chatroomSerial, int userSerial, String userName, String chatMessageContent, MessageType fileType, File file) {
-//        MessageType currMsgType;
-//        if (fileType.equals(MessageType.IMAGE.toString())) {
-//            currMsgType = MessageType.IMAGE;
-//        } else if (fileType.equals(MessageType.FILE.toString())) {
-//            currMsgType = MessageType.FILE;
-//        } else if (fileType.equals(MessageType.TALK.toString())) {
-//            currMsgType = MessageType.TALK;
-//        } else {
-//            currMsgType = MessageType.UNREAD_MESSAGE_COUNT_ALARM;
-//        }
-
         this.chatroomSerial = chatroomSerial;
         this.userSerial = userSerial;
         this.userName = userName;

@@ -2,7 +2,6 @@ package com.example.zipplz_be.domain.model;
 
 import com.example.zipplz_be.domain.board.entity.Board;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
-import com.example.zipplz_be.domain.user.entity.Worker;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

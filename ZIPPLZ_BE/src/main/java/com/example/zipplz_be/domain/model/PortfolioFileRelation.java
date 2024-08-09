@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PortfolioFIleRelation {
+public class PortfolioFileRelation {
     @Id
     @ManyToOne
     @JoinColumn(name="portfolio_serial")

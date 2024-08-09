@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.schedule.service;
 
+import com.amazonaws.SdkClientException;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -394,4 +395,32 @@ public class PlanService {
         planRepository.save(curPlan);
     }
 
+
+
+    //fileSerial 받았으니까 일단 이 객체를 관계 테이블에서 삭제하고, 해당 file 또한 s3에서 삭제하고 지운다!
+    @Transactional
+    public void deleteImageService(int userSerial, int planSerial, int fileSerial) throws IOException {
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        File file = fileRepository.findByFileSerial(fileSerial);
+
+        if(userSerial != plan.getCustomerSerial().getUserSerial().getUserSerial()) {
+            throw new UnauthorizedUserException("삭제할 권한이 없습니다.");
+        }
+
+        PlanFileRelation planFileRelation = planFileRelationRepository.findByPlanSerialAndFileSerial(plan, file);
+        planFileRelationRepository.delete(planFileRelation);
+        
+        //파일을 S3에서 삭제
+        deleteS3(file.getFileName());
+
+        fileRepository.delete(file);
+    }
+
+    public void deleteS3(String fileName) throws IOException{
+        try {
+            amazonS3.deleteObject(bucketName, fileName);
+        } catch(SdkClientException e) {
+            throw new IOException("Error Deleting file in S3", e);
+        }
+    }
 }

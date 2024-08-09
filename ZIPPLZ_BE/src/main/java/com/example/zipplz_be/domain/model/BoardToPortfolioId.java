@@ -30,4 +30,3 @@ public class BoardToPortfolioId implements Serializable {
         return Objects.hash(boardSerial, portfolioSerial);
     }
 }
-
