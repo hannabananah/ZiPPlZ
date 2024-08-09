@@ -51,14 +51,13 @@ export default function App() {
         {/* 스케줄 & 계약서 */}
         <Route path="schedule" element={<Schedule />} />
         <Route path="contract/:workserial" element={<Contract />} />
-
         <Route path="community" element={<Community />} />
-
         <Route path="mypage" element={<MyPage />} />
-        <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
-        <Route path="chatrooms/:roomId" element={<ChatRoom />} />
-        <Route path="404" element={<Custom404 />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
+        <Route
+          path="chatrooms/:chatRoomSerial/videoroom"
+          element={<VideoRoom />}
+        />
+        ​<Route path="chatrooms/:chatRoomSerial" element={<ChatRoom />} />
         <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
         <Route path="workerinfodatedetail" element={<WorkerInfoDateDetail />} />
         <Route
@@ -81,7 +80,6 @@ export default function App() {
           path="questionpostdetailcreate"
           element={<QuestionPostDetailCreate />}
         />
-
         {/* 마이페이지 */}
         <Route path="mypage/myboardlist" element={<MyBoardList />} />
         <Route path="mypage/myscraplist" element={<MyScrapList />} />
