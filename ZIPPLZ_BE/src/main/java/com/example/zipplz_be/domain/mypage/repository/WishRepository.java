@@ -40,4 +40,9 @@ public interface WishRepository extends JpaRepository<Wish, Integer> {
     boolean existsByUserSerialAndWishTypeAndWishSerial(User user, int wishType, int wishSerial);
 
     void deleteByUserSerialAndWishTypeAndWishSerial(User user, int wishType, int wishSerial);
+
+    @Query(value = "SELECT count(*) " +
+            "FROM Wish " +
+            "WHERE wish_serial = :wishSerial", nativeQuery = true)
+    int getWishCnt(@Param("wishSerial") int wishSerial);
 }
