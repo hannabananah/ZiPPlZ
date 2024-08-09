@@ -1,40 +1,15 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import HousePostListItem from '@/components/community/HousePostListItem';
+import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
+import HousePostListItem from '@components/community/HousePostListItem';
+import { useHousePostStore } from '@stores/housePostStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
-
-const HousePosts = [
-  {
-    post_serial: 1,
-    post_image: 'https://via.placeholder.com/150',
-    title: '우리집을 소개합니다',
-    profile_image: 'https://via.placeholder.com/50',
-    nickname: '닉네임1',
-    upload_date: new Date('2024-07-18'),
-    view_cnt: 100,
-    bookmark_cnt: 96,
-    comment_cnt: 5,
-  },
-  {
-    post_serial: 2,
-    post_image: 'https://via.placeholder.com/150',
-    title: '멋진 집들이',
-    profile_image: 'https://via.placeholder.com/50',
-    nickname: '닉네임2',
-    upload_date: new Date('2024-07-17'),
-    view_cnt: 200,
-    bookmark_cnt: 120,
-    comment_cnt: 15,
-  },
-  // 추가 더미 데이터
-];
 
 export default function HousePost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -42,9 +17,14 @@ export default function HousePost() {
   const [inputValue, setInputValue] = useState<string>('');
 
   const navigate = useNavigate();
+  const { housePosts, fetchHousePosts } = useHousePostStore();
+
+  useEffect(() => {
+    fetchHousePosts(); // 컴포넌트가 마운트될 때 API에서 데이터 가져오기
+  }, [fetchHousePosts]);
 
   const handleWritePost = () => {
-    navigate('/HousePostDetailCreate'); // FindWorkerDetail 페이지로 이동
+    navigate('/HousePostDetailCreate');
   };
 
   const toggleDropdown = () => {
@@ -152,8 +132,19 @@ export default function HousePost() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {HousePosts.map((post) => (
-              <HousePostListItem key={post.post_serial} {...post} />
+            {housePosts.map((post) => (
+              <HousePostListItem
+                key={post.board_serial}
+                post_serial={post.board_serial}
+                post_image={post.img}
+                title={post.title}
+                profile_image={post.img || 'https://via.placeholder.com/50'} // 기본 이미지 사용
+                nickname={post.nickname}
+                upload_date={new Date(post.board_date)}
+                view_cnt={post.hit}
+                bookmark_cnt={post.wish_cnt}
+                comment_cnt={post.comment_cnt}
+              />
             ))}
           </div>
         </div>

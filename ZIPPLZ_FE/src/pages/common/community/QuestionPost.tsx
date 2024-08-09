@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
@@ -7,24 +7,9 @@ import Button from '@/components/common/Button';
 import QuestionPostListItem from '@/components/community/QuestionPostListItem';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
+import { useQuestionPostStore } from '@stores/QuestionPostStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
-
-const dummyQuestionPosts = [
-  {
-    post_serial: 1,
-    title: '벽지가 뜯어졌는데 복구 가능할까요...',
-    content: '도와주세요',
-    profile_image: null,
-    nickname: '조명조랭이떡',
-    calendar_image: null,
-    upload_date: new Date('2024-07-19'),
-    view_cnt: 100,
-    bookmark_cnt: 96,
-    comment_cnt: 5,
-  },
-  // 추가 더미 데이터
-];
 
 export default function QuestionPost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
@@ -32,9 +17,14 @@ export default function QuestionPost() {
   const [inputValue, setInputValue] = useState<string>('');
 
   const navigate = useNavigate();
+  const { questionPosts, fetchQuestionPosts } = useQuestionPostStore();
+
+  useEffect(() => {
+    fetchQuestionPosts(); // 컴포넌트가 마운트될 때 API에서 데이터 가져오기
+  }, [fetchQuestionPosts]);
 
   const handleWritePost = () => {
-    navigate('/QuestionPostDetailCreate'); // FindWorkerDetail 페이지로 이동
+    navigate('/QuestionPostDetailCreate');
   };
 
   const toggleDropdown = () => {
@@ -142,8 +132,20 @@ export default function QuestionPost() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-3">
-            {dummyQuestionPosts.map((post) => (
-              <QuestionPostListItem key={post.post_serial} {...post} />
+            {questionPosts.map((post) => (
+              <QuestionPostListItem
+                key={post.board_serial}
+                post_serial={post.board_serial}
+                title={post.title}
+                content={post.board_content}
+                profile_image={null} // profile_image가 없으므로 null로 설정
+                nickname={post.nickname}
+                calendar_image={null} // calendar_image가 없으므로 null로 설정
+                upload_date={new Date(post.board_date)}
+                view_cnt={post.hit}
+                bookmark_cnt={post.wish_cnt}
+                comment_cnt={post.comment_cnt}
+              />
             ))}
           </div>
         </div>

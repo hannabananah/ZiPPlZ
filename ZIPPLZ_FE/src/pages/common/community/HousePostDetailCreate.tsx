@@ -13,83 +13,16 @@ import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
+import { useHousePostStore } from '@stores/housePostStore';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-type Image = string;
-
-const workers: WorkerInfo[] = [
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자1',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자2',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자3',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자4',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자5',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  // 다른 worker 정보 추가
-];
+// Zustand 스토어 import
 
 export default function HousePostDetailCreate() {
+  type Image = string;
+
   const [images, setImages] = useState<Image[]>([]);
-  const [title, setTitle] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [addressDetail, setAddressDetail] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
@@ -109,29 +42,18 @@ export default function HousePostDetailCreate() {
 
   const schedules = ['스케줄1', '스케줄2', '스케줄3'];
 
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    const readerPromises = files.map((file) => {
-      const reader = new FileReader();
-      return new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-    });
+  const { title, setTitle, boardContent, setBoardContent, createPost } =
+    useHousePostStore();
 
-    Promise.all(readerPromises).then((results) => {
-      setImages((prevImages) => [
-        ...prevImages,
-        ...results.slice(0, maxImages - prevImages.length),
-      ]);
-    });
+  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
+    // 이미지 업로드 함수
   };
 
   const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!title) newErrors.title = '제목이 입력되지 않았습니다';
@@ -146,17 +68,18 @@ export default function HousePostDetailCreate() {
       return;
     }
 
-    navigate('/FindWorkerList', {
-      state: {
-        newPost: {
-          title,
-          address,
-          addressDetail,
-          workDetail,
-          schedule,
-        },
-      },
-    });
+    setBoardContent(workDetail); // 상태에 workDetail 저장
+
+    const token =
+      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNlbGluZUBnbWFpbC5jb20iLCJ1c2VyU2VyaWFsIjoxLCJyb2xlIjoiIiwiaWF0IjoxNzIzMTc0NTg1LCJleHAiOjE3MjM3NzQ1ODV9.JHxrlhK0osCVUE8aTap5LWdT6RAaHjtmiDxPwJK57V0'; // 실제 사용 시 올바른 토큰 값으로 변경
+    const { code, message } = await createPost(token);
+
+    if (code === 200) {
+      alert('자랑글이 성공적으로 등록되었습니다.');
+      navigate('/FindWorkerList');
+    } else {
+      alert(`자랑글 등록에 실패했습니다: ${message}`);
+    }
   };
 
   const handleGoBack = () => {
@@ -371,6 +294,9 @@ export default function HousePostDetailCreate() {
                     fontSize="xs"
                     radius="btn"
                     value={schedule}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setSchedule(e.target.value)
+                    }
                     onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   />
                   {isDropdownOpen ? (
@@ -518,7 +444,8 @@ export default function HousePostDetailCreate() {
                 className="mb-4 pr-10"
                 fontSize="xs"
                 radius="btn"
-                // 검색 기능 추가 필요
+                // 여기에 onChange 핸들러 추가
+                onChange={() => {}}
               />
               <HiMagnifyingGlass className="absolute right-2 top-1/2 transform -translate-y-1/2" />
             </div>
