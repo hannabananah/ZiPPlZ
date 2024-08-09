@@ -31,6 +31,7 @@ import WorkerInfoLocationDetail from '@pages/common/workerinfo/WorkerInfoLocatio
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
 
+import Contract from './pages/common/Contract';
 import HousePost from './pages/common/community/HousePost';
 import HousePostDetail from './pages/common/community/HousePostDetail';
 import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
@@ -47,7 +48,10 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
+        {/* 스케줄 & 계약서 */}
         <Route path="schedule" element={<Schedule />} />
+        <Route path="contract/:workserial" element={<Contract />} />
+
         <Route path="community" element={<Community />} />
 
         <Route path="mypage" element={<MyPage />} />
@@ -95,6 +99,8 @@ export default function App() {
         <Route path="mypage/dontusezipplz" element={<DontUseZIPPLZ />} />
         <Route path="mypage/wishworkerlist" element={<WishWorkerList />} />
       </Route>
+
+      {/* 로그인 회원가입 */}
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
       <Route path="/member/login" element={<Login />} />
       <Route path="/member/find" element={<FindIdPw />} />
