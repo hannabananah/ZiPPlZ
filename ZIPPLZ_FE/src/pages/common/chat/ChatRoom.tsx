@@ -7,6 +7,7 @@ import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
 import ToggleChatMenu from '@components/chat/ToggleChatMenu';
 import { useChatStore } from '@stores/chatStore';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import {
   WebSocketContext,
   WebSocketProvider,
@@ -14,11 +15,12 @@ import {
 import axios from 'axios';
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
-const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 function ChatRoomContent() {
   const { chatRoomSerial } = useParams<{ chatRoomSerial?: string }>();
+
   const roomIdNumber = chatRoomSerial ? parseInt(chatRoomSerial, 10) : NaN;
+
   const isValidRoomId = !isNaN(roomIdNumber);
   const [isMenuVisible, setMenuVisible] = useState(false);
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
@@ -31,6 +33,8 @@ function ChatRoomContent() {
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const { loginUser } = useLoginUserStore();
+  const userSerial: number | undefined = loginUser?.userSerial;
 
   const fetchChatRoomDetails = async (
     chatRoomSerial: number
@@ -39,7 +43,7 @@ function ChatRoomContent() {
       const response = await axios.get<{ data: ChatRoomDetails }>(
         `${base_url}/chatroom/${chatRoomSerial}`,
         {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
 
@@ -76,13 +80,10 @@ function ChatRoomContent() {
         });
     }
   }, [roomIdNumber, isValidRoomId]);
+  useEffect(() => {}, [contextMessages]);
 
   useEffect(() => {
-    setMessages((prevMessages) => [...prevMessages, ...contextMessages]);
-  }, [contextMessages]);
-
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
   }, [messages]);
 
   const handleImagePreviewRemove = () => {
@@ -93,7 +94,7 @@ function ChatRoomContent() {
   if (loading) {
     return <p className="py-4 text-center bg-gray-300">Loading...</p>;
   }
-
+  console.log('selectedChatRoom', selectedChatRoom);
   return (
     <div className="relative flex flex-col h-screen bg-zp-light-orange">
       {isValidRoomId && selectedChatRoom && (
@@ -117,12 +118,18 @@ function ChatRoomContent() {
             <TextInputBox
               isMenuVisible={isMenuVisible}
               onMenuToggle={() => setMenuVisible((prev) => !prev)}
-              userSerial={2}
+              userSerial={userSerial as number}
               onImagePreviewRemove={handleImagePreviewRemove}
               type="TALK"
               imageSrc={imageSrc}
             />
-            {isMenuVisible && <ToggleChatMenu setImagePreview={setImageSrc} />}
+            {isMenuVisible && (
+              <ToggleChatMenu
+                name={selectedChatRoom?.otherUser.name}
+                setImagePreview={setImageSrc}
+                chatRoomSerial={roomIdNumber}
+              />
+            )}
           </>
         ) : (
           <p className="py-4 text-center bg-gray-300">Invalid room ID</p>
