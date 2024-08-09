@@ -1,47 +1,42 @@
 import { useState } from 'react';
 
+import { addWork } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import { ConstructionData } from '@pages/user/Schedule';
 
 interface Props {
-  scheduleList: ConstructionData[];
-  setScheduleList: (
-    updateFn: (prev: ConstructionData[]) => ConstructionData[]
-  ) => void;
   newPrivateSchedule: string;
   closeModal: () => void;
+  planSerial?: number;
 }
 export default function PrivateScheduleModal({
-  scheduleList,
-  setScheduleList,
   newPrivateSchedule,
   closeModal,
+  planSerial,
 }: Props) {
   const [start, setStart] = useState<string>('');
   const [end, setEnd] = useState<string>('');
   const [cost, setCost] = useState<number>(0);
-  const [material, setMaterial] = useState<string>('');
-  const handleRegister = () => {
-    const newSchedule = {
-      id: scheduleList.length + 1,
-      시공분야: newPrivateSchedule,
-      스케줄: {
-        시공자이름: '사용자',
-        시공기간: `${start} ~ ${end}`,
-        사용한자재: material,
-        특이사항: '',
-        업체명: '싸피',
-        가격: cost,
-      },
-    };
-    setScheduleList((prev: ConstructionData[]) => [...prev, newSchedule]);
-    closeModal();
+  const handleRegister = async (
+    fieldName: string,
+    startDate: string,
+    endDate: string,
+    workPrice: number
+  ) => {
+    if (planSerial) {
+      await addWork(planSerial, {
+        fieldName: fieldName,
+        startDate: startDate,
+        endDate: endDate,
+        workPrice: workPrice,
+      });
+      closeModal();
+    }
   };
   return (
     <>
       <div className="absolute top-[0.8rem] left-[1rem] text-zp-xl font-bold flex items-center">
-        {scheduleList.length + 1}. {newPrivateSchedule}
+        {newPrivateSchedule}
       </div>
       <hr className="absolute top-[3rem] w-full border border-zp-sub-color" />
       <div className="w-full flex flex-col mt-[4rem] overflow-auto gap-4">
@@ -91,22 +86,6 @@ export default function PrivateScheduleModal({
             }
           />
         </div>
-        <div className="flex gap-4 items-center">
-          <p className="text-zp-xs font-bold">사용자재</p>
-          <Input
-            type="text"
-            inputType="normal"
-            fontSize="xs"
-            height={1.5}
-            width={6}
-            radius="btn"
-            placeholder="사용자재"
-            value={material}
-            onChange={(e: React.ChangeEvent) =>
-              setMaterial((e.target as HTMLInputElement).value)
-            }
-          />
-        </div>
         <div className="flex gap-4 justify-center items-center">
           <Button
             buttonType="second"
@@ -115,7 +94,7 @@ export default function PrivateScheduleModal({
             height={1.5}
             width={5}
             radius="btn"
-            onClick={handleRegister}
+            onClick={() => handleRegister(newPrivateSchedule, start, end, cost)}
           />
           <Button
             buttonType="second"

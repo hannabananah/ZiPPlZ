@@ -1,172 +1,279 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { FaPlus } from 'react-icons/fa';
+import { FaTrashAlt } from 'react-icons/fa';
+import { HiOutlinePencilAlt } from 'react-icons/hi';
+import { useLocation, useNavigate } from 'react-router-dom';
 
+import {
+  activePlan,
+  deletePlan,
+  deleteWork,
+  getOnePlan,
+  getPlans,
+  getPrice,
+  getWorks,
+  modifyWork,
+} from '@apis/scheduler/schedulerApi';
+import Button from '@components/common/Button';
+import ModalComponent from '@components/common/Modal';
 import Selectbar from '@components/common/Selectbar';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import SchedulerCard from '@components/scheduler/card/SchedulerCard';
 import SchedulerCardExist from '@components/scheduler/card/SchedulerCardExist';
+import SchedulerCardCustom from '@components/scheduler/card/scheulerCardCustom';
+import RegistPlan from '@components/scheduler/regist/RegistPlan';
 import ScheduleRegist from '@components/scheduler/regist/ScheduleRegist';
+import UpdatePlan from '@components/scheduler/regist/UpdatePlan';
 import SharedImg from '@components/scheduler/sharedFile/SharedImg';
 import SharedMemo from '@components/scheduler/sharedFile/SharedMemo';
+import { useModalActions } from '@stores/modalStore';
+import { useScheduleStore } from '@stores/scheduleStore';
+import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
-interface ConstructionSchedule {
-  시공자이름: string;
-  시공기간: string; // yyyy-mm-dd ~ yyyy-mm-dd
-  사용한자재: string;
-  특이사항: string;
-  업체명: string;
-  가격: number;
+interface Plan {
+  planSerial: number;
+  planName: string;
+  status: number;
 }
-
-export interface ConstructionData {
-  id: number;
-  시공분야: string;
-  스케줄: ConstructionSchedule | null;
-}
-
-const dummyData: ConstructionData[] = [
-  {
-    id: 1,
-    시공분야: '철거',
-    스케줄: {
-      시공자이름: '홍길동',
-      시공기간: '2024-07-01 ~ 2024-07-03',
-      사용한자재: '철거 장비',
-      특이사항: '사전 준비 필요',
-      업체명: '철거 전문 업체',
-      가격: 10000,
-    },
-  },
-  {
-    id: 2,
-    시공분야: '설비',
-    스케줄: {
-      시공자이름: '김설비',
-      시공기간: '2024-07-04 ~ 2024-07-06',
-      사용한자재: '배관 자재',
-      특이사항: '전기와 협업 필요',
-      업체명: '설비 전문가',
-      가격: 10000,
-    },
-  },
-  {
-    id: 3,
-    시공분야: '샷시',
-    스케줄: {
-      시공자이름: '이샷시',
-      시공기간: '2024-07-07 ~ 2024-07-08',
-      사용한자재: '알루미늄 샷시',
-      특이사항: '정확한 치수 필요',
-      업체명: '샷시 마스터',
-      가격: 10000,
-    },
-  },
-  {
-    id: 4,
-    시공분야: '목공',
-    스케줄: {
-      시공자이름: '박목수',
-      시공기간: '2024-07-09 ~ 2024-07-11',
-      사용한자재: '목재',
-      특이사항: '정밀 작업 필요',
-      업체명: '목공 전문업체',
-      가격: 10000,
-    },
-  },
-  {
-    id: 5,
-    시공분야: '전기',
-    스케줄: {
-      시공자이름: '최전기',
-      시공기간: '2024-07-12 ~ 2024-07-13',
-      사용한자재: '전기 배선',
-      특이사항: '안전 우선',
-      업체명: '전기 전문가',
-      가격: 10000,
-    },
-  },
-  {
-    id: 6,
-    시공분야: '욕실',
-    스케줄: {
-      시공자이름: '김욕실',
-      시공기간: '2024-07-14 ~ 2024-07-16',
-      사용한자재: '욕실 타일, 욕조',
-      특이사항: '방수 필수',
-      업체명: '욕실 전문업체',
-      가격: 10000,
-    },
-  },
-  { id: 7, 시공분야: '타일', 스케줄: null },
-  {
-    id: 8,
-    시공분야: '마루',
-    스케줄: {
-      시공자이름: '박마루',
-      시공기간: '2024-07-19 ~ 2024-07-20',
-      사용한자재: '원목 마루',
-      특이사항: '표면 처리 필요',
-      업체명: '마루 시공 전문',
-      가격: 10000,
-    },
-  },
-  { id: 9, 시공분야: '도배', 스케줄: null },
-  {
-    id: 10,
-    시공분야: '가구',
-    스케줄: {
-      시공자이름: '홍가구',
-      시공기간: '2024-07-23 ~ 2024-07-24',
-      사용한자재: '맞춤형 가구',
-      특이사항: '현장 설치 필요',
-      업체명: '가구 제작사',
-      가격: 10000,
-    },
-  },
-];
-function numberWithCommas(x: number) {
-  return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-}
-
 export default function Schedule() {
-  const options: string[] = ['집1', '집2', '집3'];
-  const [selectedValue, setSelectedValue] = useState<string>(options[0]);
-  const [scheduleList, setScheduleList] =
-    useState<ConstructionData[]>(dummyData);
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const param: string | null = queryParams.get('plan');
+  const planSerial: number | null = param ? parseInt(param) : null;
+  const navigate = useNavigate();
+  const [isOpenRegist, setIsOpenRegist] = useState<boolean>(false);
+  const [isOpenUpdate, setIsOpenUpdate] = useState<boolean>(false);
+  const {
+    planList,
+    setPlanList,
+    workList,
+    setWorkList,
+    plan,
+    setPlan,
+    fileList,
+    setFileList,
+    selectedValue,
+    setSelectedValue,
+  } = useScheduleStore();
+  const { openModal, closeModal } = useModalActions();
+  const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [options, setOptions] = useState<Plan[]>([]);
+  const [selectedWorkSerial, setSelectedWorkSerial] = useState<number>(0);
+  const handleConfirmDelete = async (
+    planSerial: number,
+    workSerial: number
+  ) => {
+    await deleteWork(planSerial, workSerial);
+    setSelectedWorkSerial(0);
+    fetchWorkList(planSerial);
+    closeModal('select');
+  };
+
+  const fetchPlanList = async () => {
+    const response = await getPlans();
+    setPlanList(response.data.data);
+  };
+
+  const fetchWorkList = async (planSerial: number) => {
+    const response = await getWorks(planSerial, 0, 20);
+    setWorkList(response.data.data);
+  };
+
+  const fetchPlan = async (planSerial: number) => {
+    const response = await getOnePlan(planSerial);
+    setPlan(response.data.data.plan);
+    setFileList(response.data.data.fileList);
+  };
+
+  const getTotalPrice = async (planSerial: number) => {
+    const response = await getPrice(planSerial);
+    setTotalPrice(response.data.data);
+  };
+  const updateWork = async (workSerial: number, workContent: string) => {
+    if (planSerial)
+      return await modifyWork(planSerial, workSerial, workContent);
+  };
+  const removePlan = async (planSerial: number) => {
+    return await deletePlan(planSerial);
+  };
+  const setPlanActive = async () => {
+    if (planSerial) return await activePlan(planSerial);
+  };
+  useEffect(() => {
+    const savedValue = localStorage.getItem('selectedValue');
+    if (savedValue && planSerial) {
+      setSelectedValue(savedValue);
+    } else {
+      setSelectedValue('계획을 선택해주세요.');
+    }
+  }, []);
+  useEffect(() => {
+    fetchPlanList();
+  }, []);
+
+  useEffect(() => {
+    if (planList) {
+      const newOptions: Plan[] = planList.map((plan) => ({
+        planSerial: plan.planSerial,
+        planName: plan.planName,
+        status: plan.isActive,
+      }));
+      setOptions(newOptions);
+    }
+  }, [planList]);
+
+  useEffect(() => {
+    if (options.length > 0 && selectedValue !== '계획을 선택해주세요.') {
+      const selectedPlan = options.find(
+        (option) => option.planName === selectedValue
+      );
+      if (selectedPlan) {
+        const planSerial: number = selectedPlan.planSerial;
+        if (plan?.planSerial !== planSerial) {
+          navigate(`/schedule?plan=${planSerial}`);
+          fetchPlan(planSerial);
+          fetchWorkList(planSerial);
+          getTotalPrice(planSerial);
+        }
+      }
+    }
+  }, [selectedValue, options, planList, plan]);
+  useEffect(() => {
+    if (planSerial) fetchPlan(planSerial);
+  }, [workList]);
   return (
-    <div className="flex flex-col w-full max-w-screen-md items-center bg-zp-light-beige gap-4 sm lg px-4">
-      <Selectbar
-        fontColor="main"
-        options={options}
-        selectedValue={selectedValue}
-        setSelectedValue={setSelectedValue}
-        width="full"
-        height={2}
-        fontSize="lg"
-        radius="btn"
-        border="main"
-        hover="sub"
-        backgroundColor="white"
-      />
-      <ScheduleCalendar />
-      <p className="w-full font-bold text-zp-xl ">공유 문서</p>
-      <div className="flex items-center justify-between gap-4">
-        <SharedImg />
-        <SharedMemo />
+    <>
+      <div className="mt-[5rem] flex flex-col w-full items-center bg-zp-light-beige gap-4 sm lg px-6 mb-[5rem]">
+        <div className="flex justify-end w-full gap-4">
+          <FaPlus
+            className="cursor-pointer"
+            size={16}
+            onClick={() => setIsOpenRegist(true)}
+          />
+          {selectedValue !== '계획을 선택해주세요.' &&
+            plan &&
+            plan.isActive === 1 && (
+              <HiOutlinePencilAlt
+                className="cursor-pointer"
+                size={16}
+                onClick={() => {
+                  setIsOpenUpdate(true);
+                }}
+              />
+            )}
+          {selectedValue !== '계획을 선택해주세요.' && plan && (
+            <FaTrashAlt
+              className="cursor-pointer"
+              size={16}
+              onClick={() => {
+                removePlan(plan.planSerial);
+              }}
+            />
+          )}
+
+          <RegistPlan
+            isOpen={isOpenRegist}
+            setIsOpen={setIsOpenRegist}
+            fetchPlanList={fetchPlanList}
+          />
+          {plan && plan.isActive === 1 && (
+            <UpdatePlan
+              isOpen={isOpenUpdate}
+              setIsOpen={setIsOpenUpdate}
+              plan={plan}
+              fetchPlan={fetchPlan}
+            />
+          )}
+        </div>
+        <div className="flex items-center w-full gap-4">
+          <Selectbar
+            fontColor="main"
+            options={options.map((option) => option.planName)}
+            status={options.map((option) => option.status)}
+            selectedValue={selectedValue}
+            setSelectedValue={setSelectedValue}
+            width="full"
+            height={2}
+            fontSize="lg"
+            radius="btn"
+            border="main"
+            hover="sub"
+            backgroundColor="white"
+          />
+          {plan && selectedValue !== '계획을 선택해주세요.' && (
+            <Button
+              buttonType={plan && plan.isActive === 1 ? 'second' : 'primary'}
+              width={3.5}
+              height={1.5}
+              fontSize="2xs"
+              radius="big"
+              children={plan && plan.isActive === 1 ? '비활성화' : '활성화'}
+              onClick={() => {
+                if (plan && plan.isActive === 0) setPlanActive();
+              }}
+            />
+          )}
+        </div>
+        <div className="w-full p-4 bg-zp-white rounded-zp-radius-big">
+          <ScheduleCalendar workList={workList} />
+        </div>
+        {selectedValue !== '계획을 선택해주세요.' && (
+          <>
+            <p className="w-full font-bold text-zp-xl ">공유 문서</p>
+            <div className="flex items-stretch justify-between w-full h-full gap-4">
+              <div className="h-full basis-2/3">
+                <SharedImg fileList={fileList} planSerial={plan?.planSerial} />
+              </div>
+              <div className="h-full basis-1/3">
+                <SharedMemo sharedContents={plan?.sharedContents} />
+              </div>
+            </div>
+            <p className="w-full font-bold text-right text-zp-xl ">
+              총 시공 가격 : {formatNumberWithCommas(totalPrice)}원
+            </p>
+            {workList &&
+              workList.map((item, idx) =>
+                item.workerSerial ? (
+                  <SchedulerCardExist
+                    key={item.workSerial}
+                    schedule={item}
+                    idx={idx + 1}
+                    planSerial={plan?.planSerial}
+                    updateContent={updateWork}
+                  />
+                ) : item.fieldCode.fieldCode === 0 ? (
+                  <SchedulerCardCustom
+                    key={item.workSerial}
+                    schedule={item}
+                    idx={idx + 1}
+                    planSerial={plan?.planSerial}
+                  />
+                ) : (
+                  <SchedulerCard
+                    key={item.workSerial}
+                    schedule={item}
+                    idx={idx + 1}
+                    onClickTrash={() => {
+                      openModal('select');
+                      setSelectedWorkSerial(item.workSerial);
+                    }}
+                  />
+                )
+              )}
+            {plan && plan.isActive === 1 && (
+              <ScheduleRegist planSerial={plan?.planSerial} />
+            )}
+          </>
+        )}
       </div>
-      <p className="w-full font-bold text-right text-zp-xl ">
-        총 시공 가격 : {numberWithCommas(1000000)}원
-      </p>
-      {scheduleList.map((item, idx) =>
-        item.스케줄 ? (
-          <SchedulerCardExist key={idx} schedule={item} />
-        ) : (
-          <SchedulerCard key={idx} schedule={item} />
-        )
-      )}
-      <ScheduleRegist
-        scheduleList={scheduleList}
-        setScheduleList={setScheduleList}
+      <ModalComponent
+        type="select"
+        title="공종 삭제"
+        message="해당 공종을 삭제하시겠습니까?"
+        onConfirm={() => {
+          if (plan) handleConfirmDelete(plan.planSerial, selectedWorkSerial);
+        }}
       />
-    </div>
+    </>
   );
 }

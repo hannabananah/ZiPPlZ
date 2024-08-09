@@ -4,10 +4,10 @@ import { LuMinimize2 } from 'react-icons/lu';
 import ReactModal from 'react-modal';
 import Modal from 'react-modal';
 
+import { addWork } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
-import { ConstructionData } from '@pages/user/Schedule';
 
 import PrivateScheduleModal from './PrivateScheduleModal';
 
@@ -24,10 +24,7 @@ const options: string[] = [
   '가구',
 ];
 interface Props {
-  scheduleList: ConstructionData[];
-  setScheduleList: (
-    updateFn: (prev: ConstructionData[]) => ConstructionData[]
-  ) => void;
+  planSerial?: number;
 }
 const customModalStyles: ReactModal.Styles = {
   overlay: {
@@ -55,10 +52,8 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-export default function ScheduleRegist({
-  scheduleList,
-  setScheduleList,
-}: Props) {
+export default function ScheduleRegist({ planSerial }: Props) {
+  //   const { fieldList, setFieldList } = useScheduleStore();
   const [isRegist, setIsRegist] = useState<boolean>(false);
   const [isNormalScehdule, setIsNormalSchedule] = useState<boolean>(false);
   const [isPrivateSchedule, setIsPrivateSchedule] = useState<boolean>(false);
@@ -88,19 +83,16 @@ export default function ScheduleRegist({
     setIsPrivateSchedule(false);
     setIsRegist(false);
   };
+  const registMainWork = async (fieldName: string) => {
+    if (planSerial) return await addWork(planSerial, { fieldName: fieldName });
+  };
   useEffect(() => {
     if (selectedValue !== '시공을 선택해주세요.') {
-      setScheduleList((prev: ConstructionData[]) => [
-        ...prev,
-        { id: prev.length + 1, 시공분야: selectedValue, 스케줄: null },
-      ]);
+      registMainWork(selectedValue);
     }
     setIsRegist(false);
     setIsNormalSchedule(false);
   }, [selectedValue]);
-  useEffect(() => {
-    console.log(newPrivateSchedule);
-  }, [newPrivateSchedule]);
   return (
     <>
       {!isRegist ? (
@@ -163,10 +155,9 @@ export default function ScheduleRegist({
           onClick={closeModal}
         />
         <PrivateScheduleModal
-          scheduleList={scheduleList}
-          setScheduleList={setScheduleList}
           newPrivateSchedule={newPrivateSchedule}
           closeModal={closeModal}
+          planSerial={planSerial}
         />
       </Modal>
     </>

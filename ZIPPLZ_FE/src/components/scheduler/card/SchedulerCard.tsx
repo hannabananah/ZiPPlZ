@@ -1,19 +1,27 @@
 import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaRegTrashAlt } from 'react-icons/fa';
 import { FiPlusCircle } from 'react-icons/fi';
-import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
-
-import { ConstructionData } from '@pages/user/Schedule';
 
 interface Props {
-  schedule: ConstructionData;
+  schedule: any;
+  idx: number;
+  onClickTrash: () => void;
 }
-export default function SchedulerCard({ schedule }: Props) {
+export default function SchedulerCard({ schedule, idx, onClickTrash }: Props) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const cardHeight: string = isOpen ? '7rem' : '4rem';
   const handleClickChevron = function () {
+    console.log(schedule.workSerial);
     setIsOpen(!isOpen);
   };
+
+  const handleClickTrash = () => {
+    if (onClickTrash) {
+      onClickTrash();
+    }
+  };
+
   return (
     <>
       <div
@@ -22,8 +30,14 @@ export default function SchedulerCard({ schedule }: Props) {
       >
         <div className="absolute top-5 flex justify-between items-center w-full px-6 ">
           <div className="flex items-center gap-1 text-zp-xl font-bold">
-            {schedule.id} {schedule.시공분야}
-            <IoMdCheckmarkCircleOutline size={16} color="#34C759" />
+            {idx} {schedule.fieldName}
+            {isOpen && (
+              <FaRegTrashAlt
+                size={16}
+                className="cursor-pointer"
+                onClick={() => handleClickTrash()}
+              />
+            )}
           </div>
           <div>
             {isOpen ? (

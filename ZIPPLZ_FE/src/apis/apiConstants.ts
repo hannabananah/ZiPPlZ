@@ -10,6 +10,14 @@ export const END_POINT = {
   DEFAULT: 'default',
   SIDO: 'default/sido',
   GUGUN: (sidocode: number) => `default/sido/${sidocode}`,
+
+  //스케줄러
+  PLAN: 'schedule/plans',
+  PLAN_SERIAL: (planSerial: number) => `schedule/plans/${planSerial}`,
+  WORK: (planSerial: number) => `schedule/plans/${planSerial}/works`,
+  WORK_SERIAL: (planSerial: number, workSerial: number) =>
+    `schedule/plans/${planSerial}/works/${workSerial}`,
+  WORKS_USERS: 'schedule/users/works',
   PORTFOLIO: 'workerlist/portfolios',
   MATERIAL: 'material/list',
 } as const;
