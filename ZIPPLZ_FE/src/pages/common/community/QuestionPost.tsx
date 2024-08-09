@@ -132,21 +132,27 @@ export default function QuestionPost() {
           </div>
 
           <div className="mt-6 grid grid-cols-1 gap-3">
-            {questionPosts.map((post) => (
-              <QuestionPostListItem
-                key={post.board_serial}
-                post_serial={post.board_serial}
-                title={post.title}
-                content={post.board_content}
-                profile_image={null} // profile_image가 없으므로 null로 설정
-                nickname={post.nickname}
-                calendar_image={null} // calendar_image가 없으므로 null로 설정
-                upload_date={new Date(post.board_date)}
-                view_cnt={post.hit}
-                bookmark_cnt={post.wish_cnt}
-                comment_cnt={post.comment_cnt}
-              />
-            ))}
+            {questionPosts && questionPosts.length > 0 ? (
+              questionPosts.map((post) => (
+                <QuestionPostListItem
+                  key={post.board_serial}
+                  post_serial={post.board_serial}
+                  title={post.title}
+                  content={post.board_content}
+                  profile_image={null} // profile_image가 없으므로 null로 설정
+                  nickname={post.nickname}
+                  calendar_image={null} // calendar_image가 없으므로 null로 설정
+                  upload_date={new Date(post.board_date)}
+                  view_cnt={post.hit}
+                  bookmark_cnt={post.wish_cnt}
+                  comment_cnt={post.comment_cnt}
+                />
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-zp-gray">
+                게시물이 없습니다.
+              </div>
+            )}
           </div>
         </div>
       </div>

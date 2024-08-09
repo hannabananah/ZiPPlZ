@@ -126,13 +126,13 @@ export default function WorkerInfoList() {
             <div className="absolute z-50 w-64 mt-2 border border-gray-200 rounded-lg shadow-lg top-full bg-zp-white">
               <button
                 onClick={() => handleNavigate('/WorkerInfoList')}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
               >
                 전문 시공자 둘러보기
               </button>
               <button
                 onClick={() => handleNavigate('/FindWorkerList')}
-                className="block w-full px-4 py-2 text-left hover:bg-gray-100"
+                className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
               >
                 전문 시공자 구하기
               </button>
@@ -141,7 +141,7 @@ export default function WorkerInfoList() {
         </div>
 
         {/* 공종 선택 버튼 리스트 임시로 만듦 */}
-        <div className="flex justify-center">
+        <div className="flex justify-center mt-2">
           <div>공종 선택 버튼 리스트</div>
         </div>
 

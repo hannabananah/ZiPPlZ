@@ -36,9 +36,9 @@ export default function QuestionPostListItem({
       className="w-full rounded-zp-radius-big h-32 shadow-lg flex items-center"
       onClick={() => navigate(`/QuestionPostDetail`)}
     >
-      <div className="p-2 flex items-center space-x-4">
-        {/* 첫 번째 요소 */}
-        <div className="flex flex-col border-r px-6 basis-3/5">
+      <div className="p-2 flex items-center space-x-4 w-full">
+        {/* 제목 + 내용 */}
+        <div className="h-20 flex flex-col border-r px-6 basis-3/5">
           <div className="text-zp-xs font-bold text-left">{title}</div>
           <div className="line-clamp-2 text-zp-2xs text-zp-gray text-left">
             {content}
@@ -52,7 +52,7 @@ export default function QuestionPostListItem({
               <img
                 src={profile_image}
                 alt="Profile"
-                className="h-4 w-4 rounded-full"
+                className="h-4 w-4 rounded-zp-radius-full"
               />
             ) : (
               <CgProfile size={14} />
@@ -64,7 +64,7 @@ export default function QuestionPostListItem({
               <img
                 src={calendar_image}
                 alt="Calendar"
-                className="h-4 w-4 rounded-full"
+                className="h-4 w-4 rounded-zp-radius-full"
               />
             ) : (
               <FaRegCalendarAlt size={14} />

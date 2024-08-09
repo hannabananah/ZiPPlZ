@@ -71,13 +71,13 @@ export default function HousePost() {
               <div className="absolute top-full border border-zp-light-gray rounded-zp-radius-btn font-bold hover:bg-zp-light-beige ">
                 <button
                   onClick={() => handleNavigate('/HousePost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
                 >
                   집들이
                 </button>
                 <button
                   onClick={() => handleNavigate('/QuestionPost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
                 >
                   질문글
                 </button>
@@ -132,20 +132,26 @@ export default function HousePost() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {housePosts.map((post) => (
-              <HousePostListItem
-                key={post.board_serial}
-                post_serial={post.board_serial}
-                post_image={post.img}
-                title={post.title}
-                profile_image={post.img || 'https://via.placeholder.com/50'} // 기본 이미지 사용
-                nickname={post.nickname}
-                upload_date={new Date(post.board_date)}
-                view_cnt={post.hit}
-                bookmark_cnt={post.wish_cnt}
-                comment_cnt={post.comment_cnt}
-              />
-            ))}
+            {housePosts && housePosts.length > 0 ? (
+              housePosts.map((post) => (
+                <HousePostListItem
+                  key={post.board_serial}
+                  post_serial={post.board_serial}
+                  post_image={post.img}
+                  title={post.title}
+                  profile_image={post.img || 'https://via.placeholder.com/50'} // 기본 이미지 사용
+                  nickname={post.nickname}
+                  upload_date={new Date(post.board_date)}
+                  view_cnt={post.hit}
+                  bookmark_cnt={post.wish_cnt}
+                  comment_cnt={post.comment_cnt}
+                />
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-zp-gray">
+                게시물이 없습니다.
+              </div>
+            )}
           </div>
         </div>
       </div>
