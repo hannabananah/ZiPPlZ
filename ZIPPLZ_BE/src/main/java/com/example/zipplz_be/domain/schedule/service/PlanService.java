@@ -14,6 +14,7 @@ import com.example.zipplz_be.domain.portfolio.dto.PortfolioWorkListDTO;
 import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
+import com.example.zipplz_be.domain.schedule.dto.TodayWorkListDTO;
 import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
@@ -41,8 +42,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
-
-import javax.security.sasl.AuthenticationException;
 
 @Service
 public class PlanService {
@@ -333,8 +332,6 @@ public class PlanService {
         }
 
         if(user.getRole().equals("worker")) {
-            System.out.println("Worker!!");
-
             Worker worker = workerRepository.findByUserSerial(user);
 
             List<PortfolioWorkListDTO> portfolioWorkListDTOList = portfolioService.getWorkerScheduleService(worker.getWorkerSerial());
@@ -349,7 +346,6 @@ public class PlanService {
                 workListDTOList.add(workListDTO);
             }
         }else {
-            System.out.println("Customer!!");
             //계획에서 해당 고객의 계획 빼오고, 그 계획의 공종들 전부 가져와야함
             Customer customer = customerRepository.findByUserSerial(user);
             List<Plan> planList = planRepository.findBycustomerSerial(customer);
@@ -373,6 +369,65 @@ public class PlanService {
         }
 
         return workListDTOList;
+    }
+
+    @Transactional
+    public List<TodayWorkListDTO> getWorkingWorkService(int userSerial) {
+        User user = userRepository.findByUserSerial(userSerial);
+        List<TodayWorkListDTO> todayWorkListDTOList = new ArrayList<>();
+
+        if(user.getRole().equals("")) {
+            throw new UserNotFoundException("유저의 역할이 비어 있습니다.");
+        }
+
+        if(user.getRole().equals("worker")) {
+            Worker worker = workerRepository.findByUserSerial(user);
+            List<Work> workList = workRepository.getTodayWork(worker.getWorkerSerial());
+
+            for(Work work : workList) {
+                Customer customer = work.getPlanSerial().getCustomerSerial();
+
+                TodayWorkListDTO workListDTO = TodayWorkListDTO.builder()
+                        .workSerial(work.getWorkSerial())
+                        .startDate(portfolioService.convertTimestamp(work.getStartDate()))
+                        .endDate(portfolioService.convertTimestamp(work.getEndDate()))
+                        .field(work.getFieldName())
+                        .address(work.getPlanSerial().getAddress())
+                        .worker(worker)
+                        .customer(customer)
+                        .workerProfile(worker.getUserSerial().getFileSerial())
+                        .customerProfile(customer.getUserSerial().getFileSerial())
+                        .build();
+
+                todayWorkListDTOList.add(workListDTO);
+            }
+        } else {
+            //계획에서 해당 고객의 계획 빼오고, 그 계획의 공종들 전부 가져와야함
+            Customer customer = customerRepository.findByUserSerial(user);
+            List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+            for(Plan plan: planList) {
+                List<Work> workList = workRepository.getTodayWorkByPlan(plan.getPlanSerial());
+
+                for(Work work : workList) {
+                    TodayWorkListDTO workListDTO = TodayWorkListDTO.builder()
+                            .workSerial(work.getWorkSerial())
+                            .endDate(portfolioService.convertTimestamp(work.getEndDate()))
+                            .startDate(portfolioService.convertTimestamp(work.getStartDate()))
+                            .field(work.getFieldName())
+                            .address(plan.getAddress())
+                            .worker(work.getWorkerSerial())
+                            .customer(customer)
+                            .workerProfile(work.getWorkerSerial().getUserSerial().getFileSerial())
+                            .customerProfile(customer.getUserSerial().getFileSerial())
+                            .build();
+
+                    todayWorkListDTOList.add(workListDTO);
+                }
+            }
+        }
+
+        return todayWorkListDTOList;
     }
 
     @Transactional
@@ -423,4 +478,5 @@ public class PlanService {
             throw new IOException("Error Deleting file in S3", e);
         }
     }
+
 }
