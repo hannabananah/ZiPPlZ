@@ -22,7 +22,7 @@ import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
 //
 // 워커 찾기
-import FindWorkerDetail : '@pages/common/workerinfo/FindWorkerDetail';
+import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
 import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
 import FindWorkerList from '@pages/common/workerinfo/FindWorkerList';
 import WorkerInfoDateDetail from '@pages/common/workerinfo/WorkerInfoDateDetail';
@@ -31,6 +31,12 @@ import WorkerInfoLocationDetail from '@pages/common/workerinfo/WorkerInfoLocatio
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
 
+import HousePost from './pages/common/community/HousePost';
+import HousePostDetail from './pages/common/community/HousePostDetail';
+import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
+import QuestionPost from './pages/common/community/QuestionPost';
+import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
+import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
 import SignUp from './pages/common/signup/SignUp';
@@ -59,6 +65,18 @@ export default function App() {
         <Route path="findworkers/:id" element={<FindWorkerDetail />} />
         <Route path="workers" element={<WorkerInfoList />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
+        <Route path="housepost" element={<HousePost />} />
+        <Route path="housepostdetail" element={<HousePostDetail />} />
+        <Route path="questionpost" element={<QuestionPost />} />
+        <Route path="questionpostdetail" element={<QuestionPostDetail />} />
+        <Route
+          path="housepostdetailcreate"
+          element={<HousePostDetailCreate />}
+        />
+        <Route
+          path="questionpostdetailcreate"
+          element={<QuestionPostDetailCreate />}
+        />
 
         {/* 마이페이지 */}
         <Route path="mypage/myboardlist" element={<MyBoardList />} />

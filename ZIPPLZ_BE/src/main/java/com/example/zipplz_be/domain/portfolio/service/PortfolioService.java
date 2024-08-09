@@ -3,13 +3,17 @@ package com.example.zipplz_be.domain.portfolio.service;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
+import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.entity.Local;
 import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.model.repository.PlanFileRelationRepository;
 import com.example.zipplz_be.domain.portfolio.dto.*;
+import com.example.zipplz_be.domain.portfolio.entity.CustomerReview;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
+import com.example.zipplz_be.domain.portfolio.exception.CustomerReviewException;
 import com.example.zipplz_be.domain.portfolio.exception.PortfolioNotFoundException;
 import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
+import com.example.zipplz_be.domain.portfolio.repository.CustomerReviewRepository;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
@@ -31,11 +35,16 @@ import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.OptionalDouble;
+
 import com.example.zipplz_be.domain.user.entity.Worker;
 
 
 @Service
 public class PortfolioService {
+    private final CustomerReviewService customerReviewService;
+
     private final PortfolioRepository portfolioRepository;
     private final WorkerRepository workerRepository;
     private final UserRepository userRepository;
@@ -45,8 +54,11 @@ public class PortfolioService {
     private final PlanRepository planRepository;
     private final CustomerRepository customerRepository;
     private final PlanFileRelationRepository planFileRelationRepository;
+    private final CustomerReviewRepository customerReviewRepository;
 
-    PortfolioService(PlanFileRelationRepository planFileRelationRepository,CustomerRepository customerRepository,PlanRepository planRepository,WorkRepository workRepository, LocalRepository localRepository, FileRepository fileRepository,UserRepository userRepository, PortfolioRepository portfolioRepository, WorkerRepository workerRepository) {
+    PortfolioService(CustomerReviewRepository customerReviewRepository, CustomerReviewService customerReviewService, PlanFileRelationRepository planFileRelationRepository,CustomerRepository customerRepository,PlanRepository planRepository,WorkRepository workRepository, LocalRepository localRepository, FileRepository fileRepository,UserRepository userRepository, PortfolioRepository portfolioRepository, WorkerRepository workerRepository) {
+        this.customerReviewRepository = customerReviewRepository;
+        this.customerReviewService = customerReviewService;
         this.planFileRelationRepository = planFileRelationRepository;
         this.customerRepository = customerRepository;
         this.planRepository = planRepository;
@@ -58,6 +70,16 @@ public class PortfolioService {
         this.workerRepository = workerRepository;
     }
 
+    public Portfolio createPortfolio(Worker worker, Field field) {
+
+        Portfolio portfolio = Portfolio.builder()
+                .worker(worker)
+                .field(field).build();
+        Portfolio savedPortfolio = portfolioRepository.save(portfolio);
+
+        return savedPortfolio;
+    }
+
     @Transactional
     public List<PortfolioListDTO> getPortfolioListService(int userSerial) {
         User user = userRepository.findByUserSerial(userSerial);
@@ -67,7 +89,7 @@ public class PortfolioService {
             throw new UserNotFoundException("해당 유저 연번은 유효하지 않습니다.");
         }
 
-        List<Portfolio> portfolioList = portfolioRepository.findByUserSerial(worker);
+        List<Portfolio> portfolioList = portfolioRepository.findByWorker(worker);
         List<PortfolioListDTO> portfolioListDTOList = new ArrayList<>();
 
         for(Portfolio portfolio: portfolioList) {
@@ -91,9 +113,7 @@ public class PortfolioService {
             throw new PortfolioNotFoundException("해당 포트폴리오는 존재하지 않습니다.");
         }
 
-        System.out.println(portfolio.toString());
-
-        Worker worker = portfolio.getUserSerial();
+        Worker worker = portfolio.getWorker();
         PortfolioWorkerDTO portfolioWorkerDTO = PortfolioWorkerDTO.builder()
                 .workerSerial(worker.getWorkerSerial())
                 .businessNumber(worker.getBusinessNumber())
@@ -204,6 +224,126 @@ public class PortfolioService {
         return portfolioWorkDetailDTO;
     }
 
+    @Transactional
+    public PortfolioReviewDTO getPortfolioReviewService(int portfolioSerial) {
+        Portfolio portfolio = portfolioRepository.findByPortfolioSerial(portfolioSerial);
+
+        //포트폴리오 연번 유효성 검사
+        if(portfolio == null) {
+            throw new PortfolioNotFoundException("해당 포트폴리오는 존재하지 않습니다.");
+        }
+
+        User user = userRepository.findByUserSerial(portfolio.getWorker().getUserSerial().getUserSerial());
+
+        // 포트폴리오 시리얼로 모든 리뷰 가져오기
+        List<CustomerReview> reviews = customerReviewRepository.findAllByPortfolioSerial(portfolio);
+
+        // communicationStar 평균 계산
+        OptionalDouble averageCommunicationStar = getAverageCommunicationStar(reviews);
+
+        // attitudeStar 평균 계산
+        OptionalDouble averageAttitudeStar = getAverageAttitudeStar(reviews);
+
+        // qualityStar 평균 계산
+        OptionalDouble averageQualityStar = getAverageQualityStar(reviews);
+
+        // professionalStar 평균 계산
+        OptionalDouble averageProfessionalStar = getAverageProfessionalStar(reviews);
+
+        double temperature = portfolio.getTemperature();
+
+        List<CustomerReviewDTO> reviewDTOS = new ArrayList<>();
+        for(CustomerReview customerReview: reviews) {
+            int professionalStar = customerReview.getProfessionalStar();
+            int attitudeStar = customerReview.getAttitudeStar();
+            int qualityStart = customerReview.getQualityStar();
+            int communicationStar = customerReview.getCommunicationStar();
+
+            double averageStar = (double)(professionalStar + attitudeStar + qualityStart + communicationStar) /4;
+
+            Customer customer =  customerReview.getCustomerSerial();
+
+            CustomerReviewDTO customerReviewDTO = CustomerReviewDTO.builder()
+                    .customerReviewSerial(customerReview.getCustomerReviewSerial())
+                    .customerNickname(customer.getNickname())
+                    .customerReviewContent(customerReview.getCustomerReviewContent())
+                    .customerReviewDate(convertTimestamp(customerReview.getCustomerReviewDate()))
+                    .isVisible(customerReview.getIsVisible())
+                    .reviewComment(customerReview.getReviewComment())
+                    .averageStar(averageStar)
+                    .build();
+
+            reviewDTOS.add(customerReviewDTO);
+        }
+
+        PortfolioReviewDTO portfolioReviewDTO = PortfolioReviewDTO.builder()
+                .workerTemperature(temperature)
+                .workerName(user.getUserName())
+                .averageCommunicationStar(averageCommunicationStar.isPresent() ? averageCommunicationStar.getAsDouble() : 0.0)
+                .averageAttitudeStar(averageAttitudeStar.isPresent() ? averageAttitudeStar.getAsDouble() : 0.0)
+                .averageProfessionalStar(averageProfessionalStar.isPresent() ? averageProfessionalStar.getAsDouble() : 0.0)
+                .averageQualityStar(averageQualityStar.isPresent() ? averageQualityStar.getAsDouble() : 0.0)
+                .reviewList(reviewDTOS)
+                .build();
+
+        return portfolioReviewDTO;
+    }
+
+    @Transactional
+    public void insertReviewCommentService(int userSerial, int customerReviewSerial, Map<String, Object> params) {
+        CustomerReview customerReview = customerReviewRepository.findByCustomerReviewSerial(customerReviewSerial);
+
+        //리뷰 연번 유효성 검사
+        if(customerReview == null) {
+            throw new CustomerReviewException("해당 리뷰는 존재하지 않습니다.");
+        }
+        if(customerReview.getReviewComment() != null) {
+            throw new CustomerReviewException("이미 사장님 댓글을 작성했습니다.");
+        }
+
+        Portfolio portfolio = portfolioRepository.findByPortfolioSerial(customerReview.getPortfolioSerial().getPortfolioSerial());
+
+        if(portfolio.getWorker().getUserSerial().getUserSerial() != userSerial) {
+            throw new UnauthorizedUserException("댓글을 달 권한이 없습니다.");
+        }
+
+        customerReview.setReviewComment((String) params.get("reviewComment"));
+
+        customerReviewRepository.save(customerReview);
+    }
+
+    private OptionalDouble getAverageProfessionalStar(List<CustomerReview> reviews) {
+        OptionalDouble averageProfessionalStart = reviews.stream()
+                .mapToInt(CustomerReview::getProfessionalStar)
+                .average();
+
+        return averageProfessionalStart;
+    }
+
+    private OptionalDouble getAverageQualityStar(List<CustomerReview> reviews) {
+        OptionalDouble averageQualityStar = reviews.stream()
+                .mapToInt(CustomerReview::getQualityStar)
+                .average();
+
+        return averageQualityStar;
+    }
+
+    public OptionalDouble getAverageCommunicationStar(List<CustomerReview> reviews) {
+        OptionalDouble averageCommunicationStar = reviews.stream()
+                .mapToInt(CustomerReview::getCommunicationStar)
+                .average();
+
+        return averageCommunicationStar;
+    }
+
+    public OptionalDouble getAverageAttitudeStar(List<CustomerReview> reviews) {
+        OptionalDouble averageAttitudeStar = reviews.stream()
+                .mapToInt(CustomerReview::getAttitudeStar)
+                .average();
+
+        return averageAttitudeStar;
+    }
+
 
     //timestamp -> String
     public String convertTimestamp(Timestamp timestamp) {
@@ -217,5 +357,47 @@ public class PortfolioService {
     public int getUserSerial(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         return customUserDetails.getUserSerial();
+    }
+
+    @Transactional
+    public void modifyPortfolioService(int userSerial, int portfolioSerial, Map<String, Object> params) {
+        Portfolio portfolio = portfolioRepository.findByPortfolioSerial(portfolioSerial);
+
+        if(portfolio == null) {
+            throw new PortfolioNotFoundException("유효하지 않은 포트폴리오 연번입니다.");
+        }
+        Worker worker = portfolio.getWorker();
+
+        if(worker.getUserSerial().getUserSerial() != userSerial) {
+            throw new UnauthorizedUserException("수정 권한이 없습니다.");
+        }
+
+        portfolio.setPublicRelation((String) params.get("publicRelation"));
+        portfolio.setAsPeriod((Integer) params.get("asPeriod"));
+        portfolio.setCareer((Integer) params.get("career"));
+
+        worker.setCompany((String) params.get("company"));
+        worker.setCompanyAddress((String) params.get("companyAddress"));
+        worker.setBusinessNumber((String) params.get("businessNumber"));
+
+        portfolioRepository.save(portfolio);
+        workerRepository.save(worker);
+    }
+
+    @Transactional
+    public void deletePortfolioService(int userSerial, int portfolioSerial) {
+        Portfolio portfolio = portfolioRepository.findByPortfolioSerial(portfolioSerial);
+
+        if(portfolio == null) {
+            throw new PortfolioNotFoundException("유효하지 않은 포트폴리오 연번입니다.");
+        }
+
+        Worker worker = portfolio.getWorker();
+
+        if(worker.getUserSerial().getUserSerial() != userSerial) {
+            throw new UnauthorizedUserException("삭제 권한이 없습니다.");
+        }
+
+        portfolioRepository.delete(portfolio);
     }
 }
