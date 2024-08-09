@@ -11,7 +11,7 @@ export default function ResignComplete() {
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen p-6 bg-gray-100">
+      <div className="flex justify-center items-center min-h-screen p-6 bg-zp-gray">
         <div className="text-center">
           {/* 체크 아이콘 */}
           <div className="flex justify-center items-center mb-6">

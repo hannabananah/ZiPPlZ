@@ -75,13 +75,13 @@ export default function MyScrapList() {
             <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
               <button
                 onClick={() => handleNavigate('/mypage/myscraplist')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
               >
                 스크랩 글 목록
               </button>
               <button
                 onClick={() => handleNavigate('/mypage/MyFindWorkerScrapList')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
               >
                 내가 쓴 글 목록
               </button>

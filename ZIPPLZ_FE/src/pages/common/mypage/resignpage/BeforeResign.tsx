@@ -27,7 +27,7 @@ export default function BeforeResign() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen p-6 bg-gray-100">
+      <div className="flex flex-col min-h-screen p-6 bg-zp-gray">
         <div className="w-full max-w-3xl flex-grow">
           {/* 뒤로가기 버튼 */}
           <div className="flex items-center">

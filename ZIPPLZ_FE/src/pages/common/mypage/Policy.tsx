@@ -166,7 +166,7 @@ export default function Policy() {
 본 약관은 2024년 08월 02일부터 적용한다.`;
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+    <div className="flex justify-center items-start min-h-screen p-6 bg-zp-gray">
       <div className="w-full">
         {/* 뒤로가기 버튼 + "개인정보처리방침" 글자 */}
         <div className="h-12 flex items-center justify-between w-full relative">

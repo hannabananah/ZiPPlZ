@@ -166,7 +166,7 @@ export default function MyPage() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+      <div className="flex justify-center items-start min-h-screen p-6 bg-zp-gray">
         <div className="w-full">
           {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
           <div className="flex items-center justify-between w-full relative">

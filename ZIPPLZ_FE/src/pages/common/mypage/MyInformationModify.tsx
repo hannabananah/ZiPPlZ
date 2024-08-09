@@ -64,7 +64,7 @@ export default function MyInformationModify() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+      <div className="flex justify-center items-start min-h-screen p-6 bg-zp-gray">
         <div className="w-full">
           {/* 뒤로가기 버튼 + "내 정보 수정하기" 글자 */}
           <div className="mt-12 h-12 flex items-center justify-between w-full relative">
