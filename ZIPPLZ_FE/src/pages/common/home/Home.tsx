@@ -24,20 +24,47 @@ const fields: string[] = [
   '가구',
   '기타',
 ];
-export interface HotWorker {
-  name: string;
-  region: string;
-  field: string;
-  temp: string;
-}
-const list: HotWorker[] = [
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
+
+const hotWorkerList = [
+  {
+    portfolio_serial: 1,
+    worker: 1,
+    user_name: 'celine5',
+    birth_date: 99,
+    temperature: 36.5,
+    field_id: 1,
+    field_name: '철거',
+    career: 3.0,
+    certificated_badge: 1,
+    locations: ['서울 강남구', '서울 강서구'],
+    img: 'save_file_path1',
+  },
+  {
+    portfolio_serial: 2,
+    worker: 1,
+    user_name: 'celine5',
+    birth_date: 99,
+    temperature: 36.5,
+    field_id: 2,
+    field_name: '설비',
+    career: 30.0,
+    certificated_badge: 1,
+    locations: ['서울 강남구', '서울 강서구'],
+    img: 'save_file_path2',
+  },
+  {
+    portfolio_serial: 3,
+    worker: 2,
+    user_name: 'celine6',
+    birth_date: 99,
+    temperature: 36.5,
+    field_id: 3,
+    field_name: '샷시',
+    career: 20.0,
+    certificated_badge: 0,
+    locations: ['인천 강화군', '인천 남동구'],
+    img: null,
+  },
 ];
 interface Work {
   starDate: string;
@@ -116,21 +143,11 @@ export default function Home() {
       </div>
       <p className="font-extrabold text-zp-xl">HOT한 시공업자</p>
       <div className="flex w-full overflow-x-auto">
-        {/* <div className="flex w-full space-x-4"> */}
         <div className="flex justify-between w-full h-[8rem] ">
-          <WorkerCard worker={list[0]} />
-
-          <WorkerCard worker={list[1]} />
-
-          <WorkerCard worker={list[2]} />
-
-          <WorkerCard worker={list[3]} />
-
-          <WorkerCard worker={list[3]} />
-
-          <WorkerCard worker={list[3]} />
+          {hotWorkerList.map((worker) => (
+            <WorkerCard worker={worker} />
+          ))}
         </div>
-        {/* </div> */}
       </div>
     </div>
   );
