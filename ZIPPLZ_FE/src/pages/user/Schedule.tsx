@@ -38,8 +38,8 @@ interface Plan {
 export default function Schedule() {
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
-  const planSerial: number = parseInt(queryParams.get('plan') || '0');
-  console.log(planSerial);
+  const param: string | null = queryParams.get('plan');
+  const planSerial: number | null = param ? parseInt(param) : null;
   const navigate = useNavigate();
   const [isOpenRegist, setIsOpenRegist] = useState<boolean>(false);
   const [isOpenUpdate, setIsOpenUpdate] = useState<boolean>(false);
@@ -90,20 +90,25 @@ export default function Schedule() {
     setTotalPrice(response.data.data);
   };
   const updateWork = async (workSerial: number, workContent: string) => {
-    return await modifyWork(planSerial, workSerial, workContent);
+    if (planSerial)
+      return await modifyWork(planSerial, workSerial, workContent);
   };
   const removePlan = async (planSerial: number) => {
     return await deletePlan(planSerial);
   };
   const setPlanActive = async () => {
-    return await activePlan(planSerial);
+    if (planSerial) return await activePlan(planSerial);
   };
   useEffect(() => {
-    if (planSerial === 0) {
-      fetchPlanList();
+    const savedValue = localStorage.getItem('selectedValue');
+    if (savedValue && planSerial) {
+      setSelectedValue(savedValue);
+    } else {
       setSelectedValue('계획을 선택해주세요.');
-      setPlan(null);
-    } else fetchPlan(planSerial);
+    }
+  }, []);
+  useEffect(() => {
+    fetchPlanList();
   }, []);
 
   useEffect(() => {
@@ -116,6 +121,7 @@ export default function Schedule() {
       setOptions(newOptions);
     }
   }, [planList]);
+
   useEffect(() => {
     if (options.length > 0 && selectedValue !== '계획을 선택해주세요.') {
       const selectedPlan = options.find(
@@ -133,7 +139,7 @@ export default function Schedule() {
     }
   }, [selectedValue, options, planList, plan]);
   useEffect(() => {
-    fetchPlan(planSerial);
+    if (planSerial) fetchPlan(planSerial);
   }, [workList]);
   return (
     <>
@@ -165,12 +171,17 @@ export default function Schedule() {
             />
           )}
 
-          <RegistPlan isOpen={isOpenRegist} setIsOpen={setIsOpenRegist} />
+          <RegistPlan
+            isOpen={isOpenRegist}
+            setIsOpen={setIsOpenRegist}
+            fetchPlanList={fetchPlanList}
+          />
           {plan && plan.isActive === 1 && (
             <UpdatePlan
               isOpen={isOpenUpdate}
               setIsOpen={setIsOpenUpdate}
               plan={plan}
+              fetchPlan={fetchPlan}
             />
           )}
         </div>
@@ -189,17 +200,19 @@ export default function Schedule() {
             hover="sub"
             backgroundColor="white"
           />
-          <Button
-            buttonType={plan && plan.isActive === 1 ? 'second' : 'primary'}
-            width={3.5}
-            height={1.5}
-            fontSize="2xs"
-            radius="big"
-            children={plan && plan.isActive === 1 ? '비활성화' : '활성화'}
-            onClick={() => {
-              if (plan && plan.isActive === 0) setPlanActive();
-            }}
-          />
+          {plan && selectedValue !== '계획을 선택해주세요.' && (
+            <Button
+              buttonType={plan && plan.isActive === 1 ? 'second' : 'primary'}
+              width={3.5}
+              height={1.5}
+              fontSize="2xs"
+              radius="big"
+              children={plan && plan.isActive === 1 ? '비활성화' : '활성화'}
+              onClick={() => {
+                if (plan && plan.isActive === 0) setPlanActive();
+              }}
+            />
+          )}
         </div>
         <div className="w-full p-4 bg-zp-white rounded-zp-radius-big">
           <ScheduleCalendar workList={workList} />

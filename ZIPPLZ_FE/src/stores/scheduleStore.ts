@@ -78,7 +78,7 @@ interface useScheduleStore {
   setSelectedValue: (selectedValue: string) => void;
 }
 
-export const useScheduleStore = create<useScheduleStore>(
+export const useScheduleStore = create(
   persist(
     (set) => ({
       plan: null,
@@ -86,22 +86,22 @@ export const useScheduleStore = create<useScheduleStore>(
       planList: [],
       workList: [],
       fileList: [],
-      selectedValue: '계획을 선택해주세요.',
-      setPlan: (plan) => set({ plan }),
-      setWork: (work) => set({ work }),
-      setPlanList: (planList) => set({ planList }),
-      setWorkList: (workList) => set({ workList }),
-      setFileList: (fileList) => set({ fileList }),
-      setSelectedValue: (selectedValue) => set({ selectedValue }),
+      selectedValue: '',
+      setPlan: (plan: Plan | null) => set({ plan }),
+      setWork: (work: Work | null) => set({ work }),
+      setPlanList: (planList: Plan[] | null) => set({ planList }),
+      setWorkList: (workList: Work[] | null) => set({ workList }),
+      setFileList: (fileList: File[] | null) => set({ fileList }),
+      setSelectedValue: (selectedValue: string) => set({ selectedValue }),
     }),
     {
       name: 'scheduler-info',
       storage: createJSONStorage(() => localStorage),
-      // partialize: (state) => ({
-      //   plan: state.plan,
-      //   selecetdValue: state.selectedValue,
-      //   fileList: state.fileList,
-      // }),
+      partialize: (state: useScheduleStore) => ({
+        planList: state.planList,
+        selecetdValue: state.selectedValue,
+        fileList: state.fileList,
+      }),
     }
   )
 );
