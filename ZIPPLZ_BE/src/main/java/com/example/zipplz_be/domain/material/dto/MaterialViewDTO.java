@@ -11,7 +11,7 @@ import lombok.Setter;
 public class MaterialViewDTO implements Comparable<MaterialViewDTO> {
     private int materialSerial;
     private String materialName;
-    private String majorCategory;
+    private int majorCategory;
     private String description;
     private int materialPrice;
     private File img;
