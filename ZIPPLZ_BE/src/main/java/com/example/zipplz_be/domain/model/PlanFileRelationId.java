@@ -21,7 +21,7 @@ public class PlanFileRelationId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         PlanFileRelationId that = (PlanFileRelationId) o;
-        return planSerial == that.planSerial && fileSerial == that.planSerial;
+        return planSerial == that.planSerial && fileSerial == that.fileSerial;
     }
 
     @Override
