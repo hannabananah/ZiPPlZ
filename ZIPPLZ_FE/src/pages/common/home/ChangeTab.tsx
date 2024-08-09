@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useContext, useEffect, useState } from 'react';
+import { ChangeEvent, useContext, useEffect, useState } from 'react';
 import { CiCirclePlus } from 'react-icons/ci';
 
 import Button from '@/components/common/Button';
@@ -38,7 +38,6 @@ export default function ChangeTab() {
   const [modelScale, setModelScale] = useState<modelScaleProps | null>(null);
   const [isMainImgUpload, setIsMainImgUpload] = useState<boolean>(false);
   const [isFileUploaded, setIsFileUploaded] = useState<boolean>(false); // Control file input visibility
-
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(
     null
   );
@@ -292,7 +291,7 @@ export default function ChangeTab() {
       }
       console.log('Editing API response 완료 !!!');
       const data = await response.json();
-      const maskUrl = `data:image/png;base64,${data.mask}`;
+      // const maskUrl = `data:image/png;base64,${data.mask}`;
 
       if (data && data.editing.images && data.editing.images.length > 0) {
         setEditingImage(data.editing.images[0].image);
@@ -438,6 +437,7 @@ export default function ChangeTab() {
                   height="full"
                   radius="big"
                   fontSize="lg"
+                  onClick={editingImageAPI}
                 />
                 <Button
                   buttonType="second"
@@ -464,12 +464,19 @@ export default function ChangeTab() {
               fontSize="lg"
               hover="light-gray"
             />
-            <label form="dropzone-file2">
-              <div className="w-full h-[1.5rem] flex justify-center items-center bg-zp-sub-color rounded-zp-radius-btn cursor-pointer">
-                <CiCirclePlus size={16} />
-                <input id="dropzone-file2" type="file" className="hidden" />
-              </div>
-            </label>
+            {isFileUploaded && (
+              <label form="dropzone-file2">
+                <div className="w-full h-[1.5rem] flex justify-center items-center bg-zp-sub-color rounded-zp-radius-btn cursor-pointer">
+                  <CiCirclePlus size={16} />
+                  <input
+                    id="dropzone-file2"
+                    type="file"
+                    className="hidden"
+                    onChange={handleMaterialImgEditing}
+                  />
+                </div>
+              </label>
+            )}
             <div
               className="flex w-full h-full overflow-auto border-t border-b aspect-square rounded-b-zp-radius-big border-b-zp-main-color border-t-zp-main-color"
               style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
