@@ -71,16 +71,17 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         // CORS 설정
-//        http.cors(cors -> cors.configurationSource(request -> {
-//            CorsConfiguration configuration = new CorsConfiguration();
-//            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-//            configuration.setAllowedMethods(Collections.singletonList("*"));
-//            configuration.setAllowCredentials(true);
-//            configuration.setAllowedHeaders(Collections.singletonList("*"));
-//            configuration.setMaxAge(3600L);
-//            configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
-//            return configuration;
-//        }));
+        http.cors(cors -> cors.configurationSource(request -> {
+                    CorsConfiguration configuration = new CorsConfiguration();
+                    configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+                    configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    configuration.setAllowCredentials(true);
+                    configuration.setAllowedHeaders(Collections.singletonList("*"));
+                    configuration.setMaxAge(3600L);
+                    configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
+                    return configuration;
+                }))
+                .authorizeHttpRequests(auth -> auth.anyRequest().authenticated());
 
         return http.build();
     }
