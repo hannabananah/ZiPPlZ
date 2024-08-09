@@ -31,6 +31,12 @@ import WorkerInfoLocationDetail from '@pages/common/workerinfo/WorkerInfoLocatio
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
 
+import HousePost from './pages/common/community/HousePost';
+import HousePostDetail from './pages/common/community/HousePostDetail';
+import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
+import QuestionPost from './pages/common/community/QuestionPost';
+import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
+import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
 import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
@@ -60,6 +66,18 @@ export default function App() {
         <Route path="findworkers/:id" element={<FindWorkerDetail />} />
         <Route path="workers" element={<WorkerInfoList />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
+        <Route path="housepost" element={<HousePost />} />
+        <Route path="housepostdetail" element={<HousePostDetail />} />
+        <Route path="questionpost" element={<QuestionPost />} />
+        <Route path="questionpostdetail" element={<QuestionPostDetail />} />
+        <Route
+          path="housepostdetailcreate"
+          element={<HousePostDetailCreate />}
+        />
+        <Route
+          path="questionpostdetailcreate"
+          element={<QuestionPostDetailCreate />}
+        />
 
         {/* 마이페이지 */}
         <Route path="mypage/myboardlist" element={<MyBoardList />} />

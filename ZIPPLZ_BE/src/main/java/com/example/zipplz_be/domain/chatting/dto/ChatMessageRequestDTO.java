@@ -1,5 +1,7 @@
 package com.example.zipplz_be.domain.chatting.dto;
 
+import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.model.entity.MessageType;
 import lombok.*;
 
 @Getter
@@ -9,12 +11,6 @@ import lombok.*;
 @NoArgsConstructor
 public class ChatMessageRequestDTO {
 
-    // 메세지 타입 : 채팅
-    public enum MessageType {
-        TALK,
-        UNREAD_MESSAGE_COUNT_ALARM
-    }
-
     private int chatroomSerial; // 방 번호
     private String chatMessageContent; // 메세지
     private int userSerial; // 발신자
@@ -23,6 +19,8 @@ public class ChatMessageRequestDTO {
     private MessageType type;
     private int count; // 안읽은 메세지 개수
     private Boolean isFile;
+    private String originalFileName; // 파일 전송 시
+    private File file;
 
     // 안읽은 메세지 처리를 위한 생성자
     public ChatMessageRequestDTO(ChatMessageRequestDTO chatMessageRequestDTO, int count) {

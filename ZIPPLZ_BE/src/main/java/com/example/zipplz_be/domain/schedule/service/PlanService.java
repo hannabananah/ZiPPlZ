@@ -1,9 +1,25 @@
 package com.example.zipplz_be.domain.schedule.service;
 
+import com.amazonaws.SdkClientException;
+import com.example.zipplz_be.domain.file.entity.File;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.util.IOUtils;
+import com.example.zipplz_be.domain.file.repository.FileRepository;
+import com.example.zipplz_be.domain.model.PlanFileRelation;
+import com.example.zipplz_be.domain.model.repository.PlanFileRelationRepository;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioWorkListDTO;
+import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
+import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
+import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
+import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
 import com.example.zipplz_be.domain.schedule.exception.CustomerNotFoundException;
 import com.example.zipplz_be.domain.schedule.exception.PlanNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.schedule.exception.WorkException;
 import com.example.zipplz_be.domain.schedule.repository.PlanRepository;
 import com.example.zipplz_be.domain.schedule.repository.WorkRepository;
@@ -11,24 +27,49 @@ import com.example.zipplz_be.domain.model.entity.Field;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
+import com.example.zipplz_be.domain.user.entity.Worker;
+import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
+import com.example.zipplz_be.domain.user.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.List;
-import java.util.Map;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
+import org.springframework.beans.factory.annotation.Value;
+
+import javax.security.sasl.AuthenticationException;
 
 @Service
 public class PlanService {
+    private final AmazonS3 amazonS3;
+
+    @Value("${cloud.aws.s3.bucketName}")
+    private String bucketName;
+
     private final PlanRepository planRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
     private final FieldRepository fieldRepository;
     private final WorkRepository workRepository;
+    private final FileRepository fileRepository;
+    private final PlanFileRelationRepository planFileRelationRepository;
+    private final WorkerRepository workerRepository;
 
+    private final PortfolioService portfolioService;
+//    private final WorkService workService;
 
-    PlanService(WorkRepository workRepository, PlanRepository planRepository, CustomerRepository customerRepository, UserRepository userRepository,FieldRepository fieldRepository) {
+    PlanService(PortfolioService portfolioService, WorkerRepository workerRepository, PlanFileRelationRepository planFileRelationRepository , FileRepository fileRepository,AmazonS3 amazonS3, WorkRepository workRepository, PlanRepository planRepository, CustomerRepository customerRepository, UserRepository userRepository,FieldRepository fieldRepository) {
+        //this.workService = workService;
+        this.portfolioService = portfolioService;
+        this.workerRepository = workerRepository;
+        this.planFileRelationRepository = planFileRelationRepository;
+        this.fileRepository = fileRepository;
+        this.amazonS3 = amazonS3;
         this.workRepository = workRepository;
         this.planRepository = planRepository;
         this.customerRepository= customerRepository;
@@ -44,6 +85,18 @@ public class PlanService {
     }
 
     @Transactional
+    public void deactivatePlanStatus(Customer customer) {
+        List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+        for(Plan plan: planList) {
+            plan.setIsActive(0);
+
+            planRepository.save(plan);
+        }
+    }
+
+
+    @Transactional
     public void insertPlanService(int userSerial, Map<String, Object> params) {
         Customer customer = findUser(userSerial);
 
@@ -52,6 +105,9 @@ public class PlanService {
         if(planName == null) {
             planName = customer.getNickname() + "의 계획";
         }
+
+        //모든 plan을 deactivate
+        this.deactivatePlanStatus(customer);
 
         Plan plan = Plan.builder()
                 .planName(planName)
@@ -70,6 +126,7 @@ public class PlanService {
         for(Field field : fieldList) {
             if(field.getFieldCode() != 0) {
                 Work work = Work.builder()
+                        .status("draft")
                         .field(field)
                         .fieldName(field.getFieldName())
                         .plan(plan).build();
@@ -78,7 +135,6 @@ public class PlanService {
             }
         }
     }
-
     @Transactional
     public void modifyPlanService(int userSerial, int planSerial, Map<String, Object> params) {
         System.out.println(userSerial);
@@ -141,12 +197,11 @@ public class PlanService {
     }
 
     @Transactional
-    public Plan getPlanDetailService(int userSerial, int planSerial) {
+    public PlanDetailDTO getPlanDetailService(int userSerial, int planSerial) {
         Plan plan = planRepository.findByPlanSerial(planSerial);
 
         User user = userRepository.findByUserSerial(userSerial);
         Customer customer = customerRepository.findByUserSerial(user);
-
         if(plan == null) {
             throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
         }
@@ -154,6 +209,218 @@ public class PlanService {
             throw new CustomerNotFoundException("현재 유저는 고객이 아니거나 유효하지 않은 유저입니다.");
         }
 
-        return plan;
+        List<PlanFileRelation> planFileRelationList = planFileRelationRepository.findByPlanSerial(plan);
+
+        List<File> fileList = new ArrayList<>();
+
+        for(PlanFileRelation planFileRelation : planFileRelationList) {
+            fileList.add(planFileRelation.getFileSerial());
+        }
+
+        PlanDetailDTO planDetailDTO = PlanDetailDTO.builder()
+                .plan(plan)
+                .fileList(fileList)
+                .build();
+
+        return planDetailDTO;
+    }
+
+    //이미지 업로드 시리즈
+    @Transactional
+    public File uploadImageService(MultipartFile image, int planSerial) {
+        if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
+            throw new S3Exception("파일이 비었습니다.");
+        }
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+
+        if(plan == null) {
+            throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        }
+
+        String url = this.uploadImage(image);
+        File file = fileRepository.findBySaveFile(url);
+
+        PlanFileRelation planFileRelation = PlanFileRelation.builder()
+                .fileSerial(file)
+                .planSerial(plan)
+                .build();
+
+        planFileRelationRepository.save(planFileRelation);
+        return file;
+    }
+
+    private String uploadImage(MultipartFile image) {
+        this.validateImageFileExtension(image.getOriginalFilename());
+
+        try {
+            return this.uploadToS3(image);
+        }catch(IOException e) {
+            throw new S3Exception("이미지 업로드 중 에러 발생했습니다.");
+        }
+
+    }
+
+    private String uploadToS3(MultipartFile image) throws IOException {
+        String originalFilename = image.getOriginalFilename();
+
+        String extention = originalFilename.substring(originalFilename.lastIndexOf("."));
+
+        //파일명
+        String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename;
+
+        InputStream is = image.getInputStream();
+        byte[] bytes = IOUtils.toByteArray(is);
+
+        ObjectMetadata metadata = new ObjectMetadata(); //metadata 생성
+        metadata.setContentType("image/" + extention);
+        metadata.setContentLength(bytes.length);
+
+        //S3에 요청할 때 사용할 byteInputStream 생성
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        String url = "";
+
+        try {
+            //S3로 putObject 할 때 사용할 요청 객체
+            //생성자 : bucket 이름, 파일 명, byteInputStream, metadata
+            PutObjectRequest putObjectRequest =
+                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead);
+
+            //실제로 S3에 이미지 데이터를 넣는 부분
+            amazonS3.putObject(putObjectRequest);
+
+            url = amazonS3.getUrl(bucketName, s3FileName).toString();
+
+            //file 객체 하나 만들어서 repository로 db에 추가
+            File file = new File();
+            file.setSaveFile(url);
+            file.setFileName(s3FileName);
+            file.setOriginalFile(image.getOriginalFilename());
+
+            fileRepository.save(file);
+        } catch (Exception e){
+            throw new S3Exception("Put Object 도중에 에러 발생");
+        }finally {
+            byteArrayInputStream.close();
+            is.close();
+        }
+
+        return url;
+    }
+
+    private void validateImageFileExtension(String filename) {
+        int lastDotIndex = filename.lastIndexOf(".");
+        if (lastDotIndex == -1) {
+            throw new S3Exception("파일 형식이 존재하지 않습니다.");
+        }
+
+        String extention = filename.substring(lastDotIndex + 1).toLowerCase();
+        List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
+
+        if (!allowedExtentionList.contains(extention)) {
+            throw new S3Exception("유효하지 않은 파일 형식입니다.");
+        }
+
+    }
+
+    @Transactional
+    public List<WorkListDTO> getUsersWorkListService(int userSerial) {
+        User user = userRepository.findByUserSerial(userSerial);
+        List<WorkListDTO> workListDTOList = new ArrayList<>();
+
+        if(user.getRole().equals("")) {
+            throw new UserNotFoundException("유저의 역할이 비어 있습니다.");
+        }
+
+        if(user.getRole().equals("worker")) {
+            System.out.println("Worker!!");
+
+            Worker worker = workerRepository.findByUserSerial(user);
+
+            List<PortfolioWorkListDTO> portfolioWorkListDTOList = portfolioService.getWorkerScheduleService(worker.getWorkerSerial());
+
+            for(PortfolioWorkListDTO portfolioWorkListDTO: portfolioWorkListDTOList) {
+                WorkListDTO workListDTO = WorkListDTO.builder()
+                        .startDate(portfolioWorkListDTO.getStartDate())
+                        .endDate(portfolioWorkListDTO.getEndDate())
+                        .field(portfolioWorkListDTO.getFieldName())
+                        .build();
+
+                workListDTOList.add(workListDTO);
+            }
+        }else {
+            System.out.println("Customer!!");
+            //계획에서 해당 고객의 계획 빼오고, 그 계획의 공종들 전부 가져와야함
+            Customer customer = customerRepository.findByUserSerial(user);
+            List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+            //계획 목록에 따른 workList 가져오기
+            for(Plan plan: planList) {
+                //DTO에 담아서 리스트에 추가하기
+                //해당 계획의 work들 가져옴
+                List<Work> workList = workRepository.findByPlanSerial(plan);
+
+                for(Work work : workList) {
+                    WorkListDTO workListDTO = WorkListDTO.builder()
+                            .endDate(portfolioService.convertTimestamp(work.getEndDate()))
+                            .startDate(portfolioService.convertTimestamp(work.getStartDate()))
+                            .field(work.getFieldName())
+                            .build();
+
+                    workListDTOList.add(workListDTO);
+                }
+            }
+        }
+
+        return workListDTOList;
+    }
+
+    @Transactional
+    public void activatePlanService(int userSerial, int planSerial) {
+        User user = userRepository.findByUserSerial(userSerial);
+        Customer customer = customerRepository.findByUserSerial(user);
+
+        Plan curPlan = planRepository.findByPlanSerial(planSerial);
+
+        if(curPlan == null) throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        if(curPlan.getCustomerSerial().getCustomerSerial() != customer.getCustomerSerial()) {
+            throw new UnauthorizedUserException("활성화할 권한이 없습니다.");
+        }
+
+        Plan originalPlan = planRepository.findByCustomerSerialAndIsActive(customer, 1);
+        originalPlan.setIsActive(0);
+        planRepository.save(originalPlan);
+
+        curPlan.setIsActive(1);
+        planRepository.save(curPlan);
+    }
+
+
+
+    //fileSerial 받았으니까 일단 이 객체를 관계 테이블에서 삭제하고, 해당 file 또한 s3에서 삭제하고 지운다!
+    @Transactional
+    public void deleteImageService(int userSerial, int planSerial, int fileSerial) throws IOException {
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        File file = fileRepository.findByFileSerial(fileSerial);
+
+        if(userSerial != plan.getCustomerSerial().getUserSerial().getUserSerial()) {
+            throw new UnauthorizedUserException("삭제할 권한이 없습니다.");
+        }
+
+        PlanFileRelation planFileRelation = planFileRelationRepository.findByPlanSerialAndFileSerial(plan, file);
+        planFileRelationRepository.delete(planFileRelation);
+        
+        //파일을 S3에서 삭제
+        deleteS3(file.getFileName());
+
+        fileRepository.delete(file);
+    }
+
+    public void deleteS3(String fileName) throws IOException{
+        try {
+            amazonS3.deleteObject(bucketName, fileName);
+        } catch(SdkClientException e) {
+            throw new IOException("Error Deleting file in S3", e);
+        }
     }
 }

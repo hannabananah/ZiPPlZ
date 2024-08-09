@@ -1,15 +1,19 @@
 package com.example.zipplz_be.domain.portfolio.entity;
 
+import com.example.zipplz_be.domain.model.BoardToPortfolio;
+import com.example.zipplz_be.domain.model.PortfolioFileRelation;
 import com.example.zipplz_be.domain.model.entity.Field;
-import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Portfolio {
@@ -18,11 +22,14 @@ public class Portfolio {
     @Column(name = "portfolio_serial")
     private int portfolioSerial;
     @ManyToOne
-    @JoinColumn(name = "user_serial", referencedColumnName = "user_serial")
-    private Worker userSerial;
+    @JoinColumn(name = "worker", referencedColumnName = "worker_serial")
+    private Worker worker;
     @Column(name = "public_relation")
     private String publicRelation;
     private double career;
+
+    @Column(name = "temperature")
+    private double temperature;
 
     @ManyToOne
     @JoinColumn(name = "field_id")
@@ -32,16 +39,41 @@ public class Portfolio {
     @Column(name = "work_count")
     public int workCount;
 
+    @OneToMany(mappedBy = "portfolioSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<CustomerReview> customerReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "portfolioSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<PortfolioFileRelation> PortfolioFileRelations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "portfolioSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<BoardToPortfolio> BoardToPortfolios = new ArrayList<>();
+
+
     @Override
     public String toString() {
         return "Portfolio{" +
                 "portfolioSerial=" + portfolioSerial +
-                ", userSerial=" + userSerial +
+                ", worker=" + worker +
                 ", publicRelation='" + publicRelation + '\'' +
                 ", career=" + career +
                 ", fieldId=" + fieldId +
                 ", asPeriod=" + asPeriod +
                 ", workCount=" + workCount +
+                ", temperature="+ temperature +
                 '}';
+    }
+
+    @Builder
+    public Portfolio(Worker worker, Field field) {
+        this.worker = worker;
+        this.fieldId = field;
+        this.publicRelation = "";
+        this.career = 0L;
+        this.asPeriod = 0;
+        this.workCount = 0;
+        this.temperature = 36.5;
     }
 }

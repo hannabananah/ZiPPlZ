@@ -1,24 +1,24 @@
 package com.example.zipplz_be.domain.model;
 
 import com.example.zipplz_be.domain.file.entity.File;
-import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
-@IdClass(PortfolioFileRelationId.class)
+@IdClass(MessageFileRelationId.class)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PortfolioFIleRelation {
+@Builder
+public class MessageFileRelation {
+    @Id
+    @Column(name = "message_id")
+    private String messageId;
     @Id
     @ManyToOne
-    @JoinColumn(name="portfolio_serial")
-    private Portfolio portfolioSerial;
-    @Id
-    @ManyToOne
-    @JoinColumn(name="file_serial")
-    private File fileSerial;
+    @JoinColumn(name = "file")
+    private File file;
 }

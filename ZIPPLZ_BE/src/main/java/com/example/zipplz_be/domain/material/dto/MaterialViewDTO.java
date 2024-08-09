@@ -1,79 +1,23 @@
 package com.example.zipplz_be.domain.material.dto;
 
-public class MaterialViewDTO {
-    int materialSerial;
-    String materialName;
-    int fieldId;
-    String description;
-    int materialPrice;
-    String img;
+import com.example.zipplz_be.domain.file.entity.File;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.Setter;
 
-    public MaterialViewDTO(MaterialDTO mDTO, String img) {
-        this.materialSerial = mDTO.getMaterialSerial();
-        this.materialName = mDTO.getMaterialName();
-        this.fieldId = mDTO.getFieldId();
-        this.description = mDTO.getDescription();
-        this.materialPrice = mDTO.getMaterialPrice();
-        this.img = img;
-    }
-
-    public int getMaterialSerial() {
-        return materialSerial;
-    }
-
-    public void setMaterialSerial(int materialSerial) {
-        this.materialSerial = materialSerial;
-    }
-
-    public String getMaterialName() {
-        return materialName;
-    }
-
-    public void setMaterialName(String materialName) {
-        this.materialName = materialName;
-    }
-
-    public int getFieldId() {
-        return fieldId;
-    }
-
-    public void setFieldId(int fieldId) {
-        this.fieldId = fieldId;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getMaterialPrice() {
-        return materialPrice;
-    }
-
-    public void setMaterialPrice(int materialPrice) {
-        this.materialPrice = materialPrice;
-    }
-
-    public String getImg() {
-        return img;
-    }
-
-    public void setImg(String img) {
-        this.img = img;
-    }
+@Getter
+@Setter
+@Builder
+public class MaterialViewDTO implements Comparable<MaterialViewDTO> {
+    private String materialName;
+    private String majorCategory;
+    private String description;
+    private int materialPrice;
+    private File img;
+    private boolean isWished;
 
     @Override
-    public String toString() {
-        return "MaterialViewDTO{" +
-                "materialSerial=" + materialSerial +
-                ", materialName='" + materialName + '\'' +
-                ", fieldId=" + fieldId +
-                ", description='" + description + '\'' +
-                ", materialPrice=" + materialPrice +
-                ", img='" + img + '\'' +
-                '}';
+    public int compareTo(MaterialViewDTO o) {
+        return Boolean.compare(o.isWished, this.isWished);
     }
 }
