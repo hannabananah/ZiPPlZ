@@ -37,6 +37,7 @@ import HousePostDetailCreate from './pages/common/community/HousePostDetailCreat
 import QuestionPost from './pages/common/community/QuestionPost';
 import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
 import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
+import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
 import SignUp from './pages/common/signup/SignUp';
@@ -48,11 +49,11 @@ export default function App() {
         <Route index element={<Home />} />
         <Route path="schedule" element={<Schedule />} />
         <Route path="community" element={<Community />} />
-        {/* <Route path="workers" element={<Workers />} /> */}
 
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
+        <Route path="image-change/:userSerial" element={<ImageChangePage />} />
         <Route path="404" element={<Custom404 />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
         <Route path="findworker/write" element={<FindWorkerDetailCreate />} />

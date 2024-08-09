@@ -6,6 +6,11 @@ import FullCalendar from '@fullcalendar/react';
 
 import './Calendar.css';
 
+interface Work {
+  starDate: string;
+  endDate: string;
+  fiield: string;
+}
 // 더미 데이터 타입 정의
 interface Event {
   title: string;
@@ -13,7 +18,7 @@ interface Event {
   end: Date;
 }
 interface Props {
-  workList: any;
+  workList: any | Work[];
 }
 const getRandomColor = (): string => {
   const letters = '0123456789ABCDEF';
@@ -27,22 +32,23 @@ const ScheduleCalendar = function ({ workList }: Props) {
   const navigate = useNavigate();
   const [eventList, setEventList] = useState<Event[]>([]);
   useEffect(() => {
-    const newEventList: Event[] = workList
-      .filter((work: any) => work !== null && work !== undefined)
-      .map((work: any) => ({
-        title: work.fieldCode.fieldName,
-        start: new Date(work.startDate),
-        end: new Date(work.endDate),
-      }));
-    setEventList(newEventList);
+    if (Array.isArray(workList)) {
+      const isWorkArray = workList.every(
+        (item) => 'startDate' in item && 'endDate' in item && 'field' in item
+      );
+
+      const newEventList: Event[] = workList
+        .filter((work: any) => work !== null && work !== undefined)
+        .map((work: any) => ({
+          title: isWorkArray ? work.field : work.fieldCode.fieldName,
+          start: new Date(work.startDate),
+          end: new Date(work.endDate),
+        }));
+      setEventList(newEventList);
+    }
   }, [workList]);
   return (
     <div className="relative w-full">
-      <div
-        className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-zp-yellow bg-opacity-0 z-1000 cursor-pointer w-[7rem] h-[2rem]"
-        onClick={() => navigate('/schedule')}
-      ></div>
-
       <FullCalendar
         plugins={[dayGridPlugin]}
         timeZone="UTC"

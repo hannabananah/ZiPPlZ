@@ -6,63 +6,59 @@ import ActiveCommunity from '@assets/active-community-icon.svg?react';
 import ActiveWorker from '@assets/active-worker-icon.svg?react';
 import InactiveCommunity from '@assets/inactive-community-icon.svg?react';
 import InactiveWorker from '@assets/inactive-worker-icon.svg?react';
-import { useUserStore } from '@stores/userStore';
-
-const tabItems = [
-  {
-    path: '/',
-    icon: <FaHome size={30} />,
-    label: '홈',
-    role: ['user', 'worker'],
-  },
-  {
-    path: '/workers',
-    activeIcon: <ActiveWorker />,
-    inactiveIcon: <InactiveWorker />,
-    label: '시공자 정보',
-    role: ['user', 'worker'],
-  },
-  {
-    path: '/schedule',
-    icon: <FaRegCalendarCheck size={30} />,
-    label: '시공일정',
-    role: 'user',
-  },
-  {
-    path: '/portfolio',
-    icon: <TiBusinessCard size={30} />,
-    label: '포트폴리오',
-    role: 'worker',
-  },
-  {
-    path: '/community',
-    activeIcon: <ActiveCommunity />,
-    inactiveIcon: <InactiveCommunity />,
-    label: '커뮤니티',
-    role: ['user', 'worker'],
-  },
-  {
-    path: '/mypage',
-    icon: <FaUser size={30} />,
-    label: '마이페이지',
-    role: ['user', 'worker'],
-  },
-];
+import { useLoginUserStore } from '@stores/loginUserStore';
 
 export default function BottomTab() {
   const location = useLocation();
-  const { userType } = useUserStore();
-
+  const { loginUser } = useLoginUserStore();
+  const tabItems = [
+    {
+      path: '/',
+      icon: <FaHome size={30} />,
+      label: '홈',
+      role: ['customer', 'worker', ''],
+    },
+    {
+      path: '/workers',
+      activeIcon: <ActiveWorker />,
+      inactiveIcon: <InactiveWorker />,
+      label: '시공자 정보',
+      role: ['customer', 'worker', ''],
+    },
+    {
+      path: loginUser?.role !== '' ? '/schedule' : '/member/login',
+      icon: <FaRegCalendarCheck size={30} />,
+      label: '시공일정',
+      role: ['customer', ''],
+    },
+    {
+      path: '/portfolio',
+      icon: <TiBusinessCard size={30} />,
+      label: '포트폴리오',
+      role: ['worker'],
+    },
+    {
+      path: '/community',
+      activeIcon: <ActiveCommunity />,
+      inactiveIcon: <InactiveCommunity />,
+      label: '커뮤니티',
+      role: ['customer', 'worker', ''],
+    },
+    {
+      path: '/mypage',
+      icon: <FaUser size={30} />,
+      label: '마이페이지',
+      role: ['customer', 'worker', ''],
+    },
+  ];
   return (
     <div className="fixed bottom-0 w-full max-w-[600px] bg-zp-white">
       <div className="flex items-center justify-around h-16">
         {tabItems
-          .filter(
-            (item) =>
-              item.role === 'both' ||
-              (Array.isArray(item.role)
-                ? item.role.includes(userType)
-                : item.role === userType)
+          .filter((item) =>
+            Array.isArray(item.role)
+              ? item.role.includes(loginUser?.role || '')
+              : item.role === loginUser?.role
           )
           .map((item, index) => (
             <NavLink
