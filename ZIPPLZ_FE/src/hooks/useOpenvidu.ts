@@ -11,7 +11,6 @@ import {
 } from 'openvidu-browser';
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
-const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 export default function useOpenVidu() {
   const [session, setSession] = useState<OVSession | ''>('');
@@ -66,7 +65,7 @@ export default function useOpenVidu() {
           { sessionId },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
               'Content-Type': 'application/json',
             },
           }
@@ -95,7 +94,7 @@ export default function useOpenVidu() {
           { recordingId },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
               'Content-Type': 'application/json',
             },
           }
@@ -161,7 +160,7 @@ export default function useOpenVidu() {
           data,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
               'Content-Type': 'application/json',
             },
           }
@@ -188,7 +187,7 @@ export default function useOpenVidu() {
           data,
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
               'Content-Type': 'application/json',
             },
           }

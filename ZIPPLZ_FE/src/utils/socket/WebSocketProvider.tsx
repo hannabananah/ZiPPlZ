@@ -1,9 +1,9 @@
 import { ReactNode, createContext, useEffect, useState } from 'react';
 
 import { Client, IMessage } from '@stomp/stompjs';
+import { useLoginUserStore } from '@stores/loginUserStore';
 
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
-const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 interface ChatMessageData {
   type: 'TALK' | 'IMAGE' | 'FILE';
@@ -18,18 +18,26 @@ interface WebSocketContextType {
   sendMessage: (msg: string, userSerial: number, file?: File) => void;
   messages: ChatMessageData[];
 }
-
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
 
+  const { loginUser } = useLoginUserStore();
+  const userSerial: number | undefined = loginUser?.userSerial;
+
   useEffect(() => {
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) {
+      console.error('Token not found in localStorage.');
+      return;
+    }
+
     const stompClient = new Client({
       brokerURL: chat_base_url,
       connectHeaders: {
-        'X-AUTH-TOKEN': token,
+        'X-AUTH-TOKEN': storedToken,
       },
       debug: (msg) => console.log('STOMP debug:', msg),
       onConnect: (frame) => {
@@ -48,8 +56,11 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
         stompClient.publish({
           destination: '/pub/chat/enter',
-          headers: { 'X-AUTH-TOKEN': token },
-          body: JSON.stringify({ chatroomSerial: 1, userSerial: 1 }),
+          headers: { 'X-AUTH-TOKEN': storedToken },
+          body: JSON.stringify({
+            chatroomSerial: 1,
+            userSerial: { userSerial },
+          }),
         });
       },
       onDisconnect: () => {
@@ -75,6 +86,11 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   const sendMessage = (msg: string, userSerial: number, file?: File) => {
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) {
+      console.error('Token not found in localStorage.');
+      return;
+    }
     if (client?.connected) {
       if (file) {
         console.log('Sending file:', file);
@@ -96,7 +112,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
           client.publish({
             destination: '/pub/chat/message',
-            headers: { 'X-AUTH-TOKEN': token },
+            headers: { 'X-AUTH-TOKEN': storedToken },
             body: JSON.stringify(messagePayload),
           });
         };
@@ -113,7 +129,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
 
         client.publish({
           destination: '/pub/chat/message',
-          headers: { 'X-AUTH-TOKEN': token },
+          headers: { 'X-AUTH-TOKEN': storedToken },
           body: JSON.stringify(messagePayload),
         });
       }

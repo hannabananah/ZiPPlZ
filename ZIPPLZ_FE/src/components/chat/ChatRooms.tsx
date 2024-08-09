@@ -7,13 +7,11 @@ import Badge from '@assets/certified-icon.svg?react';
 import NothingIcon from '@assets/nothing-icon.svg?react';
 import ModalComponent from '@components/common/Modal';
 import SearchInput from '@components/common/SearchInput';
-import { useChatStore } from '@stores/chatStore';
 import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
-const token = import.meta.env.VITE_APP_AUTH_TOKEN;
 
 export default function ChatRooms() {
   const navigate = useNavigate();
@@ -22,16 +20,14 @@ export default function ChatRooms() {
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const { openModal, closeModal } = useModalActions();
-  const setSelectedChatRoom = useChatStore(
-    (state) => state.setSelectedChatRoom
-  );
+  console.log('token======>', `${localStorage.getItem('token')}`);
 
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
         const response = await axios.get(`${base_url}/chatroom`, {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         });
         const fetchedChatRooms: ChatRoom[] = response.data.data.map(
@@ -77,7 +73,6 @@ export default function ChatRooms() {
   }, [searchText, chatRooms]);
 
   const handleRoomClick = (room: ChatRoom) => {
-    setSelectedChatRoom(room);
     closeModal('chatRooms');
     navigate(`/chatrooms/${room.chatroomSerial}`);
   };
@@ -95,7 +90,7 @@ export default function ChatRooms() {
           {},
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
             },
           }
         );
