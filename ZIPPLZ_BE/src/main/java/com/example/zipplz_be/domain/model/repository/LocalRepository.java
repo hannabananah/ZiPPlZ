@@ -31,4 +31,6 @@ public interface LocalRepository extends JpaRepository<Local, Integer> {
     boolean existsByUserSerial(User user);
 
     void deleteByUserSerial(User user);
+
+    List<Local> findAllByUserSerial(User user);
 }

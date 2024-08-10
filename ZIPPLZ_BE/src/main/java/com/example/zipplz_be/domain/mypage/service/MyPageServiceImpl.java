@@ -1,22 +1,27 @@
 package com.example.zipplz_be.domain.mypage.service;
 
-import com.amazonaws.SdkClientException;
-import com.amazonaws.services.s3.AmazonS3;
+import com.example.zipplz_be.domain.board.dto.FindWorkerListDTO;
+import com.example.zipplz_be.domain.board.dto.QuestionListDTO;
+import com.example.zipplz_be.domain.board.dto.ShowBoardListDTO;
+import com.example.zipplz_be.domain.board.service.BoardService;
+import com.example.zipplz_be.domain.board.service.WorkerListService;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.entity.Local;
+import com.example.zipplz_be.domain.model.exception.LocalNotFoundException;
 import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.model.service.S3Service;
-import com.example.zipplz_be.domain.model.service.S3ServiceImpl;
 import com.example.zipplz_be.domain.mypage.dto.LocalResponseDTO;
 import com.example.zipplz_be.domain.mypage.dto.MyPageResponseDTO;
 import com.example.zipplz_be.domain.mypage.dto.UpdateCustomerDTO;
 import com.example.zipplz_be.domain.mypage.dto.UpdateWorkerDTO;
+import com.example.zipplz_be.domain.mypage.entity.Wish;
+import com.example.zipplz_be.domain.mypage.repository.WishRepository;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.dto.WorkerLocationDTO;
 import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
-import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -43,7 +48,9 @@ public class MyPageServiceImpl implements MyPageService {
     private final LocalRepository localRepository;
     private final FileRepository fileRepository;
     private final S3Service s3Service;
-    private final AmazonS3 amazonS3;
+    private final WishRepository wishRepository;
+    private final WorkerListService workerListService;
+    private final BoardService boardService;
 
     @Override
     public MyPageResponseDTO getMyPage(int userSerial, String role) {
@@ -177,12 +184,72 @@ public class MyPageServiceImpl implements MyPageService {
         }
         User user = userRepository.findByUserSerial(userSerial);
 
-        if (!workerRepository.existsByUserSerial(user)) {
-            throw new UserNotFoundException("해당 시공자가 존재하지 않습니다.");
+        if (!localRepository.existsByUserSerial(user)) {
+            throw new LocalNotFoundException("시공자의 활동지역이 존재하지 않습니다");
         }
 
-        localRepository.findAllBy
+        return localRepository.findAllByUserSerial(user).stream()
+                .map(local -> LocalResponseDTO.builder()
+                        .sidoCode(local.getSidoCode())
+                        .gugunCode(local.getGugunCode())
+                        .localName(local.getLocalName()).build())
+                .collect(Collectors.toList());
+    }
 
-        return List.of();
+    @Override
+    public List<PortfolioViewDTO> getWishWorkers(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<Wish> wishList = wishRepository.findAllByUserSerialAndWishType(user, 5); // 포트폴리오는 wishType == 5
+        List<Integer> portfolioWishList = wishList.stream()
+                .map(Wish::getWishSerial)
+                .collect(Collectors.toList());
+
+        List<PortfolioViewDTO> portfolioList = workerListService.getWorkLists();
+        return portfolioList.stream()
+                .filter(portfolio -> portfolioWishList.contains(portfolio.getPortfolio_serial()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuestionListDTO> getMyQuestions(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<QuestionListDTO> questionList = boardService.getQuestions(1);
+        return questionList.stream()
+                .filter(question -> question.getUser_serial() == user.getUserSerial())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ShowBoardListDTO> getMyShowBoards(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<ShowBoardListDTO> showBoardList = boardService.getShowBoards(2);
+        return showBoardList.stream()
+                .filter(showBoard -> showBoard.getUser_serial() == user.getUserSerial())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FindWorkerListDTO> getMyFindWorkers(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<FindWorkerListDTO> findWorkerList = boardService.getFindWorkers(3);
+        return findWorkerList.stream()
+                .filter(findWorker -> findWorker.getUser_serial() == user.getUserSerial())
+                .collect(Collectors.toList());
     }
 }

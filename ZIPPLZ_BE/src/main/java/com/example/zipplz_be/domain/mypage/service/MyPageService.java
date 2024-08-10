@@ -1,9 +1,13 @@
 package com.example.zipplz_be.domain.mypage.service;
 
+import com.example.zipplz_be.domain.board.dto.FindWorkerListDTO;
+import com.example.zipplz_be.domain.board.dto.QuestionListDTO;
+import com.example.zipplz_be.domain.board.dto.ShowBoardListDTO;
 import com.example.zipplz_be.domain.mypage.dto.LocalResponseDTO;
 import com.example.zipplz_be.domain.mypage.dto.MyPageResponseDTO;
 import com.example.zipplz_be.domain.mypage.dto.UpdateCustomerDTO;
 import com.example.zipplz_be.domain.mypage.dto.UpdateWorkerDTO;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -24,4 +28,12 @@ public interface MyPageService {
     void deleteProfileImg(int userSerial) throws IOException;
 
     List<LocalResponseDTO> getWorkerLocations(int userSerial);
+
+    List<PortfolioViewDTO> getWishWorkers(int userSerial);
+
+    List<QuestionListDTO> getMyQuestions(int userSerial);
+
+    List<ShowBoardListDTO> getMyShowBoards(int userSerial);
+
+    List<FindWorkerListDTO> getMyFindWorkers(int userSerial);
 }
