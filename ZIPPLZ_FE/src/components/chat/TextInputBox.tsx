@@ -32,7 +32,6 @@ export default function TextInputBox({
   userSerial,
   imageSrc,
   onImagePreviewRemove,
-  fileData,
   fileSrc,
 }: TextInputBoxProps) {
   const context = useContext(WebSocketContext);
@@ -44,17 +43,13 @@ export default function TextInputBox({
   const { sendMessage } = context;
   const [message, setMessage] = useState('');
 
-  useEffect(() => {
-    if (imageSrc || fileData) {
-      onMenuToggle();
-    }
-  }, [imageSrc, fileData]);
+  console.log('fileSrc', fileSrc);
 
   useEffect(() => {
-    if (fileSrc || fileData) {
+    if (imageSrc || fileSrc) {
       onMenuToggle();
     }
-  }, [fileSrc, fileData]);
+  }, [imageSrc, fileSrc]);
 
   const handleChangeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -68,8 +63,9 @@ export default function TextInputBox({
   };
 
   const handleSendMessage = async () => {
-    if (message.trim() || imageSrc) {
+    if (message.trim() || imageSrc || fileSrc) {
       if (imageSrc) {
+        console.log('여긴 어떻게', imageSrc);
         try {
           const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
           const match = imageSrc.match(base64Regex);
@@ -92,22 +88,47 @@ export default function TextInputBox({
           console.error('Error creating file from image preview:', error);
         }
       } else if (fileSrc) {
-        const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
-        const match = fileSrc.match(base64Regex);
-        let fileName = 'image';
-        let fileExtension = 'png';
+        console.log('왜 안찍혀', fileSrc);
 
-        if (match) {
-          fileExtension = match[1];
-          fileName = `image_${Date.now()}.${fileExtension}`;
+        function getExtensionFromMimeType(mimeType) {
+          const mimeTypes = {
+            'text/plain': 'txt',
+            'image/jpeg': 'jpg',
+            'image/png': 'png',
+          };
+
+          return mimeTypes[mimeType] || 'bin';
         }
-        const response = await fetch(fileSrc);
-        const blob = await response.blob();
-        const file = new File([blob], fileName, {
-          type: `image/${fileExtension}`,
-        });
-        console.log('file', file);
-        sendMessage(fileSrc, userSerial, file, 'FILE');
+
+        try {
+          const base64Regex = /^data:(.*);base64,/;
+          const match = fileSrc.match(base64Regex);
+          let fileName = 'file';
+          let mimeType = 'application/octet-stream';
+          let fileExtension = 'txt';
+
+          if (match) {
+            mimeType = match[1];
+            fileExtension = getExtensionFromMimeType(mimeType);
+            fileName = `file_${Date.now()}.${fileExtension}`;
+          }
+
+          const base64Content = fileSrc.split(',')[1];
+
+          const byteCharacters = atob(base64Content);
+          const byteNumbers = new Array(byteCharacters.length);
+          for (let i = 0; i < byteCharacters.length; i++) {
+            byteNumbers[i] = byteCharacters.charCodeAt(i);
+          }
+          const byteArray = new Uint8Array(byteNumbers);
+          const blob = new Blob([byteArray], { type: mimeType });
+
+          const file = new File([blob], fileName, { type: mimeType });
+
+          sendMessage(fileSrc, userSerial, file, 'FILE');
+        } catch (error) {
+          console.error('Error creating file from fileSrc URL:', error);
+        }
       } else {
         sendMessage(message, userSerial);
         setMessage('');
@@ -148,20 +169,6 @@ export default function TextInputBox({
           >
             <IoIosClose size={20} />
           </button>
-        </div>
-      )}
-      {fileData && (
-        <div className="absolute bg-white border rounded w-18 max-w-24 right-20 bottom-14 border-zp-light-gray z-4">
-          <div className="p-2">
-            <p className="text-sm">{fileData.name}</p>
-            <a
-              href={fileData.url}
-              download={fileData.name}
-              className="text-blue-600"
-            >
-              Download
-            </a>
-          </div>
         </div>
       )}
       <button onClick={handleSendMessage} className="p-2 cursor-pointer">

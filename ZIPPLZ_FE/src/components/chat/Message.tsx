@@ -1,17 +1,15 @@
-import { useEffect, useState } from 'react';
-
 import type { ChatMessageData } from '@/types';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import { formatTime } from '@utils/formatDateWithTime';
 
 interface MessageProps {
   userSerial: number;
-  chatMessageContent?: string; // Optional if data may not always be present
+  chatMessageContent?: string;
   createdAt: string;
-  fileName?: string; // Optional
-  originalFile?: string; // Optional
-  fileType?: string; // Optional
-  saveFile?: string; // Optional
+  fileName?: string;
+  originalFile?: string;
+  fileType?: string;
+  saveFile?: string;
 }
 
 export default function Message({
@@ -22,13 +20,18 @@ export default function Message({
   fileType,
   saveFile,
 }: MessageProps) {
-  const formattedImgUrl = `data:image/jpeg;base64,${chatMessageContent}`;
+  let formattedImgUrl = '';
+  if (fileType === 'IMAGE') {
+    formattedImgUrl = `data:image/jpeg;base64,${chatMessageContent}`;
+  } else if (fileType === 'FILE' && chatMessageContent) {
+    formattedImgUrl = `data:text/plain;base64,${chatMessageContent}`;
+  }
+
   const isImage = fileType === 'IMAGE';
   const isFile = fileType === 'FILE' || fileType === 'IMAGE';
   const { loginUser } = useLoginUserStore();
   const currUserSerial = loginUser?.userSerial;
   console.log('saveFile', saveFile);
-
   return (
     <li
       className={`flex items-start px-4 py-2 ${
@@ -51,26 +54,23 @@ export default function Message({
       >
         {isImage ? (
           <>
-            {/* {loading && <p>Loading image...</p>} */}
             {formattedImgUrl && (
               <img
                 src={formattedImgUrl}
                 alt="Message Image"
                 className="max-w-[260px] max-h-[300px] object-cover"
-                // onLoad={handleImageLoad}
-                // style={{ display: loading ? 'none' : 'block' }}
               />
             )}
           </>
         ) : isFile ? (
           <a
-            href={saveFile}
-            download={fileName}
+            href={formattedImgUrl}
+            download={formattedImgUrl}
             className="text-blue-500 underline"
             target="_blank"
             rel="noopener noreferrer"
           >
-            {fileName || 'Download file'}
+            {formattedImgUrl}
           </a>
         ) : (
           <p className="text-left whitespace-pre-wrap text-zp-xs">

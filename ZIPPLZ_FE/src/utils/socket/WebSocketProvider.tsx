@@ -113,7 +113,6 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     msg: string,
     userSerial: number,
     file?: File,
-    // originalFileName: string,
     type: 'TALK' | 'IMAGE' | 'FILE' = 'TALK'
   ) => {
     const storedToken = localStorage.getItem('token');
@@ -126,12 +125,22 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       type,
       chatroomSerial,
       userSerial,
-      // chatMessageContent: type === 'TALK' ? msg : file ? '' : msg,
       chatMessageContent: msg,
       isFile: type === 'IMAGE' || type === 'FILE',
       originalFileName: file?.name,
-      // originalFileName,
     };
+
+    function arrayBufferToBase64(buffer: ArrayBuffer): string {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+
+      return btoa(binary);
+    }
 
     if (type === 'IMAGE' && file) {
       const reader = new FileReader();
@@ -149,16 +158,18 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     } else if (type === 'FILE' && file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        const base64String = reader.result as string;
-        const base64Data = base64String.split(',')[1];
-        messagePayload.chatMessageContent = base64Data;
+        console.log('File here', file);
+        const arrayBuffer = reader.result as ArrayBuffer;
+        const base64String = arrayBufferToBase64(arrayBuffer);
+        messagePayload.chatMessageContent = base64String;
+
         client?.publish({
           destination: '/pub/chat/message',
           headers: { 'X-AUTH-TOKEN': storedToken },
           body: JSON.stringify(messagePayload),
         });
       };
-      reader.readAsText(file);
+      reader.readAsArrayBuffer(file as Blob);
     } else {
       client?.publish({
         destination: '/pub/chat/message',
