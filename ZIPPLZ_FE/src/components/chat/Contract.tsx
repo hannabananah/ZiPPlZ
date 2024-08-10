@@ -104,7 +104,7 @@ export default function Contract({
       ),
     };
 
-    if (chatRoorSerial === undefined) {
+    if (chatroomSerial === undefined) {
       console.error('Invalid chatroomSerial');
       return;
     }

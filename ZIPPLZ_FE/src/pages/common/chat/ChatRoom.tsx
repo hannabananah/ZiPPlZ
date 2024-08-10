@@ -18,13 +18,11 @@ const base_url = import.meta.env.VITE_APP_BASE_URL;
 
 function ChatRoomContent() {
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
-
   const roomIdNumber = chatroomSerial ? parseInt(chatroomSerial, 10) : NaN;
   const isValidRoomId = !isNaN(roomIdNumber);
 
   const [isMenuVisible, setMenuVisible] = useState(false);
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
-  const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [loading, setLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
 
@@ -32,9 +30,7 @@ function ChatRoomContent() {
   const { loginUser } = useLoginUserStore();
   const userSerial = loginUser?.userSerial;
 
-  // const { messages: contextMessages } = useContext(WebSocketContext) || {
-  //   messages: [],
-  // };
+  const { messages } = useContext(WebSocketContext) || { messages: [] };
 
   const fetchChatRoomDetails = async (
     chatroomSerial: number
@@ -66,7 +62,6 @@ function ChatRoomContent() {
       setLoading(true);
       fetchChatRoomDetails(roomIdNumber)
         .then((data) => {
-          setMessages(data.chatMessages);
           setSelectedChatRoom(data);
           setLoading(false);
         })
@@ -82,7 +77,6 @@ function ChatRoomContent() {
   }, [messages]);
 
   const handleImagePreviewRemove = () => {
-    console.log('Image preview removed');
     setImageSrc(undefined);
   };
 
@@ -106,7 +100,7 @@ function ChatRoomContent() {
           <>
             <div className="flex-1 overflow-y-auto">
               {messages.map((msg, index) => (
-                <Message key={`${msg.createdAt}-${index}`} message={msg} />
+                <Message key={`${msg.chatroomSerial}-${index}`} message={msg} />
               ))}
               <div ref={messagesEndRef} />
             </div>

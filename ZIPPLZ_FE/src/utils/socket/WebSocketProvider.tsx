@@ -3,8 +3,10 @@ import { useParams } from 'react-router-dom';
 
 import { Client, IMessage } from '@stomp/stompjs';
 import { useLoginUserStore } from '@stores/loginUserStore';
+import axios from 'axios';
 
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
+const base_url = import.meta.env.VITE_APP_BASE_URL;
 
 interface ChatMessageData {
   chatroomSerial: number;
@@ -30,6 +32,24 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const userSerial: number | undefined = loginUser?.userSerial;
 
   useEffect(() => {
+    const fetchInitialMessages = async () => {
+      if (!chatroomSerial) return;
+      try {
+        const response = await axios.get<{
+          data: { chatMessages: ChatMessageData[] };
+        }>(`${base_url}/chatroom/${chatroomSerial}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        if (response.status === 200) {
+          setMessages(response.data.data.chatMessages);
+        }
+      } catch (error) {
+        console.error('Error fetching initial messages:', error);
+      }
+    };
+
+    fetchInitialMessages();
+
     const storedToken = localStorage.getItem('token');
     if (!storedToken) {
       console.error('Token not found in localStorage.');
@@ -94,23 +114,20 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       return;
     }
 
-    const send = () => {
-      const messagePayload = {
-        type: 'TALK',
-        chatroomSerial,
-        userSerial,
-        chatMessageContent: msg,
-        isFile: false,
-      };
-
-      client?.publish({
-        destination: '/pub/chat/message',
-        headers: { 'X-AUTH-TOKEN': storedToken },
-        body: JSON.stringify(messagePayload),
-      });
+    const messagePayload = {
+      type: 'TALK',
+      chatroomSerial,
+      userSerial,
+      chatMessageContent: msg,
+      isFile: !!file,
+      originalFileName: file?.name,
     };
 
-    if (client?.connected) send();
+    client?.publish({
+      destination: '/pub/chat/message',
+      headers: { 'X-AUTH-TOKEN': storedToken },
+      body: JSON.stringify(messagePayload),
+    });
   };
 
   return (

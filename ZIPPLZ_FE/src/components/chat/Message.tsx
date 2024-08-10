@@ -11,20 +11,16 @@ interface MessageProps {
 export default function Message({ message }: MessageProps) {
   const [loading, setLoading] = useState(true);
 
-  // 파일 URL 생성
-  // const imageSrc = `data:image/png;base64,${message.chatMessageContent}`;
-  // console.log('message.chatMessageContent', message.chatMessageContent);
-  const fileUrl = message.file?.saveFile;
-  console.log('saveFile', message.file?.saveFile);
-  const fileName = message.file?.fileName;
+  // Extract the necessary data from the message object
+  const fileUrl = message.file?.saveFile || '';
+  const fileName = message.file?.fileName || '';
   const fileType = message.fileType;
   const isImage = fileType === 'IMAGE';
   const isFile = fileType === 'FILE';
 
   const { loginUser } = useLoginUserStore();
-  const currUserSerial: number | undefined = loginUser?.userSerial;
+  const currUserSerial = loginUser?.userSerial;
 
-  // 이미지 로드 핸들러
   const handleImageLoad = () => {
     setLoading(false);
   };
@@ -52,27 +48,19 @@ export default function Message({ message }: MessageProps) {
         {isImage ? (
           <>
             {loading && <p>Loading image...</p>}
-            {/*   <img
-              src={fileUrl}
-              // src={imageSrc}
-              alt={fileName}
-              className="max-w-[260px] max-h-[300px] object-cover"
-              onLoad={handleImageLoad}
-              style={{ display: loading ? 'none' : 'block' }}
-            /> */}
-
             {fileUrl && (
               <img
                 src={fileUrl}
                 alt="Message Image"
                 className="max-w-[260px] max-h-[300px] object-cover"
+                onLoad={handleImageLoad}
+                style={{ display: loading ? 'none' : 'block' }}
               />
             )}
           </>
         ) : isFile ? (
           <a
             href={fileUrl}
-            // href={imageSrc}
             download={fileName}
             className="text-blue-500 underline"
             target="_blank"
