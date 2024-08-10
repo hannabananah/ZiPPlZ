@@ -1,18 +1,20 @@
 package com.example.zipplz_be.domain.board.dto;
 
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
+
 import java.util.List;
 
 public class ShowBoardDetailDTO {
     BoardJoinDTO board;
     List<BoardFileDTO> board_images;
-//    List<WorkerTagDTO> workerTagDTOS;
+    List<PortfolioJoinDTO> tags;
     List<CommentViewDTO> comments;
 
-//    public ShowBoardDetailDTO(BoardJoinDTO board, List<BoardFileDTO> board_images, List<WorkerTagDTO> workerTagDTOS, List<CommentViewDTO> comments) {
-    public ShowBoardDetailDTO(BoardJoinDTO board, List<BoardFileDTO> board_images, List<CommentViewDTO> comments) {
+    public ShowBoardDetailDTO(BoardJoinDTO board, List<BoardFileDTO> board_images, List<PortfolioJoinDTO> tags, List<CommentViewDTO> comments) {
         this.board = board;
         this.board_images = board_images;
-//        this.workerTagDTOS = workerTagDTOS;
+        this.tags = tags;
         this.comments = comments;
     }
 
@@ -32,13 +34,13 @@ public class ShowBoardDetailDTO {
         this.board_images = board_images;
     }
 
-//    public List<WorkerTagDTO> getWorkerTagDTOS() {
-//        return workerTagDTOS;
-//    }
-//
-//    public void setWorkerTagDTOS(List<WorkerTagDTO> workerTagDTOS) {
-//        this.workerTagDTOS = workerTagDTOS;
-//    }
+    public List<PortfolioJoinDTO> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<PortfolioJoinDTO> tags) {
+        this.tags = tags;
+    }
 
     public List<CommentViewDTO> getComments() {
         return comments;
@@ -53,7 +55,7 @@ public class ShowBoardDetailDTO {
         return "ShowBoardDetailDTO{" +
                 "board=" + board +
                 ", board_images=" + board_images +
-//                ", workerTagDTOS=" + workerTagDTOS +
+                ", tags=" + tags +
                 ", comments=" + comments +
                 '}';
     }
