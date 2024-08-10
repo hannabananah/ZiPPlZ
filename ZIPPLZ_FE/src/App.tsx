@@ -54,10 +54,10 @@ export default function App() {
         <Route path="community" element={<Community />} />
         <Route path="mypage" element={<MyPage />} />
         <Route
-          path="chatrooms/:chatRoomSerial/videoroom"
+          path="chatrooms/:chatroomSerial/videoroom"
           element={<VideoRoom />}
         />
-        ​<Route path="chatrooms/:chatRoomSerial" element={<ChatRoom />} />
+        ​<Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
         <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
         <Route path="workerinfodatedetail" element={<WorkerInfoDateDetail />} />
         <Route

@@ -1,4 +1,5 @@
 import { ReactNode, createContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
 import { Client, IMessage } from '@stomp/stompjs';
 import { useLoginUserStore } from '@stores/loginUserStore';
@@ -6,11 +7,11 @@ import { useLoginUserStore } from '@stores/loginUserStore';
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
 
 interface ChatMessageData {
-  type: 'TALK' | 'IMAGE' | 'FILE';
   chatroomSerial: number;
-  userSerial: number;
   chatMessageContent: string;
+  userSerial: number;
   isFile: boolean;
+  type: 'TALK' | 'IMAGE' | 'FILE';
   originalFileName?: string;
 }
 
@@ -18,12 +19,13 @@ interface WebSocketContextType {
   sendMessage: (msg: string, userSerial: number, file?: File) => void;
   messages: ChatMessageData[];
 }
+
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
-
+  const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
   const { loginUser } = useLoginUserStore();
   const userSerial: number | undefined = loginUser?.userSerial;
 
@@ -42,26 +44,26 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       debug: (msg) => console.log('STOMP debug:', msg),
       onConnect: (frame) => {
         console.log('STOMP connected:', frame);
-        stompClient.subscribe('/sub/chat/room/1', (message: IMessage) => {
-          if (message.body) {
-            try {
-              const msg: ChatMessageData = JSON.parse(message.body);
-              console.log('msg.type=======>', msg.type);
-              setMessages(() => [msg]);
-            } catch (error) {
-              console.error('Error parsing message:', error);
+        stompClient.subscribe(
+          `/sub/chat/room/${chatroomSerial}`,
+          (message: IMessage) => {
+            if (message.body) {
+              try {
+                const msg: ChatMessageData = JSON.parse(message.body);
+                setMessages((prevMessages) => [...prevMessages, msg]);
+              } catch (error) {
+                console.error('Error parsing message:', error);
+              }
             }
           }
-        });
+        );
 
         stompClient.publish({
           destination: '/pub/chat/enter',
           headers: { 'X-AUTH-TOKEN': storedToken },
-          body: JSON.stringify({
-            chatroomSerial: 1,
-            userSerial: { userSerial },
-          }),
+          body: JSON.stringify({ chatroomSerial }),
         });
+        console.log('Entered chat room!');
       },
       onDisconnect: () => {
         console.log('STOMP connection disconnected.');
@@ -83,7 +85,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     return () => {
       stompClient.deactivate();
     };
-  }, []);
+  }, [chatroomSerial]);
 
   const sendMessage = (msg: string, userSerial: number, file?: File) => {
     const storedToken = localStorage.getItem('token');
@@ -91,51 +93,24 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       console.error('Token not found in localStorage.');
       return;
     }
-    if (client?.connected) {
-      if (file) {
-        console.log('Sending file:', file);
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          const fileData = reader.result as string;
-          const base64String = fileData.split(',')[1];
-          const fileType = file.type.startsWith('image/') ? 'IMAGE' : 'FILE';
+    const send = () => {
+      const messagePayload = {
+        type: 'TALK',
+        chatroomSerial,
+        userSerial,
+        chatMessageContent: msg,
+        isFile: false,
+      };
 
-          const messagePayload = {
-            type: fileType,
-            chatroomSerial: 1,
-            chatMessageContent: base64String,
-            userSerial,
-            isFile: true,
-            originalFileName: file.name,
-          };
+      client?.publish({
+        destination: '/pub/chat/message',
+        headers: { 'X-AUTH-TOKEN': storedToken },
+        body: JSON.stringify(messagePayload),
+      });
+    };
 
-          client.publish({
-            destination: '/pub/chat/message',
-            headers: { 'X-AUTH-TOKEN': storedToken },
-            body: JSON.stringify(messagePayload),
-          });
-        };
-
-        reader.readAsDataURL(file);
-      } else {
-        const messagePayload = {
-          type: 'TALK',
-          chatroomSerial: 1,
-          userSerial,
-          chatMessageContent: msg,
-          isFile: false,
-        };
-
-        client.publish({
-          destination: '/pub/chat/message',
-          headers: { 'X-AUTH-TOKEN': storedToken },
-          body: JSON.stringify(messagePayload),
-        });
-      }
-    } else {
-      console.error('Client not connected or message is empty.');
-    }
+    if (client?.connected) send();
   };
 
   return (

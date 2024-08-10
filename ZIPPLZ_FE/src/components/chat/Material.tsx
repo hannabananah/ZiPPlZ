@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import {
-  Material as MaterialType,
-  getMaterials,
-} from '@apis/worker/MaterialApi';
+import type { Material } from '@/types';
+import { getMaterials } from '@apis/worker/MaterialApi';
 import NothingIcon from '@assets/nothing-icon.svg?react';
 import MaterialItem from '@components/chat/MaterialItem';
 import Button from '@components/common/Button';
@@ -26,7 +24,7 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   const [perPage, setPerPage] = useState(4);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [materials, setMaterials] = useState<MaterialType[]>([]);
+  const [materials, setMaterials] = useState<Material[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -58,7 +56,7 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
       if (window.innerWidth < 380) {
         setPerPage(5);
       } else {
-        setPerPage(7);
+        setPerPage(6);
       }
     };
 
@@ -106,6 +104,7 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   if (error) {
     return <div className="text-center text-zp-red">{error}</div>;
   }
+
   return (
     <div className="flex flex-col justify-between w-full h-full p-4 bg-zp-white">
       <div className="flex flex-col gap-3">

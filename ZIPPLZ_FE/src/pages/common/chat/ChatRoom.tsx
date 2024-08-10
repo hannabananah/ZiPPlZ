@@ -17,44 +17,40 @@ import axios from 'axios';
 const base_url = import.meta.env.VITE_APP_BASE_URL;
 
 function ChatRoomContent() {
-  const { chatRoomSerial } = useParams<{ chatRoomSerial?: string }>();
+  const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
 
-  const roomIdNumber = chatRoomSerial ? parseInt(chatRoomSerial, 10) : NaN;
-
+  const roomIdNumber = chatroomSerial ? parseInt(chatroomSerial, 10) : NaN;
   const isValidRoomId = !isNaN(roomIdNumber);
+
   const [isMenuVisible, setMenuVisible] = useState(false);
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { messages: contextMessages } = useContext(WebSocketContext) || {
-    messages: [],
-  };
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { loginUser } = useLoginUserStore();
-  const userSerial: number | undefined = loginUser?.userSerial;
+  const userSerial = loginUser?.userSerial;
+
+  // const { messages: contextMessages } = useContext(WebSocketContext) || {
+  //   messages: [],
+  // };
 
   const fetchChatRoomDetails = async (
-    chatRoomSerial: number
+    chatroomSerial: number
   ): Promise<ChatRoomDetails> => {
     try {
       const response = await axios.get<{ data: ChatRoomDetails }>(
-        `${base_url}/chatroom/${chatRoomSerial}`,
+        `${base_url}/chatroom/${chatroomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
 
       if (response.status === 200) {
-        response.data.data.chatMessages.map((msg) => {
-          console.log('msg.file?.saveFile', msg.file?.saveFile);
-        });
-
         return response.data.data;
       } else {
-        throw new Error('예상치 못한 응답입니다.');
+        throw new Error('Unexpected response');
       }
     } catch (error) {
       console.error(
@@ -75,15 +71,14 @@ function ChatRoomContent() {
           setLoading(false);
         })
         .catch((error) => {
-          console.error('채팅방 정보를 불러올 수 없습니다.', error);
+          console.error('Unable to load chat room details', error);
           setLoading(false);
         });
     }
-  }, [roomIdNumber, isValidRoomId]);
-  useEffect(() => {}, [contextMessages]);
+  }, [roomIdNumber, isValidRoomId, setSelectedChatRoom]);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'instant' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   const handleImagePreviewRemove = () => {
@@ -94,7 +89,7 @@ function ChatRoomContent() {
   if (loading) {
     return <p className="py-4 text-center bg-gray-300">Loading...</p>;
   }
-  console.log('selectedChatRoom', selectedChatRoom);
+
   return (
     <div className="relative flex flex-col h-screen bg-zp-light-orange">
       {isValidRoomId && selectedChatRoom && (
@@ -127,7 +122,7 @@ function ChatRoomContent() {
               <ToggleChatMenu
                 name={selectedChatRoom?.otherUser.name}
                 setImagePreview={setImageSrc}
-                chatRoomSerial={roomIdNumber}
+                chatroomSerial={roomIdNumber}
               />
             )}
           </>

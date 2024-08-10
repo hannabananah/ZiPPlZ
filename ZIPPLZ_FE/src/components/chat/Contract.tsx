@@ -12,7 +12,7 @@ import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
 
 interface ContractProps {
   closeContractModal: () => void;
-  chatRoomSerial: number;
+  chatroomSerial: number;
   name: string;
 }
 
@@ -26,7 +26,7 @@ interface Field {
 
 export default function Contract({
   closeContractModal,
-  chatRoomSerial,
+  chatroomSerial,
   name,
 }: ContractProps) {
   const defaultContractInfo: Field[] = [
@@ -104,13 +104,13 @@ export default function Contract({
       ),
     };
 
-    if (chatRoomSerial === undefined) {
+    if (chatRoorSerial === undefined) {
       console.error('Invalid chatroomSerial');
       return;
     }
 
     try {
-      const response = await postContract(chatRoomSerial, requestData);
+      const response = await postContract(chatroomSerial, requestData);
       console.log('계약서 초안 작성 성공:', response.data);
       closeContractModal();
     } catch (error) {

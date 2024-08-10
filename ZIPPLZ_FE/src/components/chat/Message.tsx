@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import type { ChatMessageData } from '@/types';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import { formatTime } from '@utils/formatDateWithTime';
 
 interface MessageProps {
@@ -9,22 +10,25 @@ interface MessageProps {
 
 export default function Message({ message }: MessageProps) {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
-  const currUserSerial = 2;
-  const imageSrc = `data:image/png;base64,${message.chatMessageContent}`;
 
+  // 파일 URL 생성
+  // const imageSrc = `data:image/png;base64,${message.chatMessageContent}`;
+  // console.log('message.chatMessageContent', message.chatMessageContent);
+  const fileUrl = message.file?.saveFile;
+  console.log('saveFile', message.file?.saveFile);
+  const fileName = message.file?.fileName;
+  const fileType = message.fileType;
+  const isImage = fileType === 'IMAGE';
+  const isFile = fileType === 'FILE';
+
+  const { loginUser } = useLoginUserStore();
+  const currUserSerial: number | undefined = loginUser?.userSerial;
+
+  // 이미지 로드 핸들러
   const handleImageLoad = () => {
     setLoading(false);
   };
 
-  const handleImageError = () => {
-    setError(true);
-    setLoading(false);
-  };
-
-  console.log('fileType', message.fileType);
-  console.log('file', message.file);
-  console.log('serial', message.file?.fileSerial);
   return (
     <li
       className={`flex items-start px-4 py-2 ${
@@ -45,20 +49,37 @@ export default function Message({ message }: MessageProps) {
             : 'text-left rounded-ss-zp-radius-none'
         }`}
       >
-        {message.fileType === 'IMAGE' ? (
+        {isImage ? (
           <>
             {loading && <p>Loading image...</p>}
-            {error && <p>Image failed to load.</p>}
-            <img
-              src={message.file?.saveFile}
+            {/*   <img
+              src={fileUrl}
               // src={imageSrc}
-              alt={message.file?.fileName}
+              alt={fileName}
               className="max-w-[260px] max-h-[300px] object-cover"
               onLoad={handleImageLoad}
-              onError={handleImageError}
               style={{ display: loading ? 'none' : 'block' }}
-            />
+            /> */}
+
+            {fileUrl && (
+              <img
+                src={fileUrl}
+                alt="Message Image"
+                className="max-w-[260px] max-h-[300px] object-cover"
+              />
+            )}
           </>
+        ) : isFile ? (
+          <a
+            href={fileUrl}
+            // href={imageSrc}
+            download={fileName}
+            className="text-blue-500 underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {fileName || 'Download file'}
+          </a>
         ) : (
           <p className="text-left whitespace-pre-wrap text-zp-xs">
             {message.chatMessageContent}

@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { CiImageOn } from 'react-icons/ci';
 import { FaFileContract, FaFolderOpen } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
@@ -9,6 +9,7 @@ import Contract from '@components/chat/Contract';
 import Material from '@components/chat/Material';
 import FullModal from '@components/common/FullModal';
 import { useUserStore } from '@stores/userStore';
+import { WebSocketProvider } from '@utils/socket/WebSocketProvider';
 
 interface MenuItem {
   id: number;
@@ -21,14 +22,20 @@ interface MenuItem {
 
 interface ToggleChatMenuProps {
   setImagePreview: React.Dispatch<React.SetStateAction<string | undefined>>;
+  chatroomSerial: number;
+  name: string | undefined;
 }
 
 export default function ToggleChatMenu({
   setImagePreview,
+  chatroomSerial,
+  name,
 }: ToggleChatMenuProps) {
   const { userType } = useUserStore();
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const webSocketContext = useContext(WebSocketProvider);
+  const sendMessage = webSocketContext?.sendMessage;
 
   const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
@@ -58,7 +65,11 @@ export default function ToggleChatMenu({
   };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('File selected:', event.target.files?.[0]);
+    const files = event.target.files;
+    if (files && files[0] && sendMessage) {
+      const file = files[0];
+      sendMessage('', 1, file);
+    }
   };
 
   const handleAfterService = () => {
@@ -185,14 +196,20 @@ export default function ToggleChatMenu({
         <AfterService closeAfterServiceModal={closeAfterServiceModal} />
       </FullModal>
 
-      <FullModal
-        isOpen={isContractModalOpen}
-        onRequestClose={closeContractModal}
-        height="60%"
-        maxWidth="400px"
-      >
-        <Contract closeContractModal={closeContractModal} />
-      </FullModal>
+      {name && (
+        <FullModal
+          isOpen={isContractModalOpen}
+          onRequestClose={closeContractModal}
+          height="65%"
+          maxWidth="400px"
+        >
+          <Contract
+            closeContractModal={closeContractModal}
+            chatroomSerial={chatroomSerial}
+            name={name}
+          />
+        </FullModal>
+      )}
 
       <FullModal
         isOpen={isMaterialModalOpen}

@@ -25,7 +25,7 @@ export default function ChatRoomHeader({
   fieldName,
   imageUrl,
 }: ChatRoomHeaderProps) {
-  const { chatRoomSerial } = useParams<{ chatRoomSerial?: string }>();
+  const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
 
   const navigate = useNavigate();
   const selectedChatRoom = useChatStore((state) => state.selectedChatRoom);
@@ -34,7 +34,7 @@ export default function ChatRoomHeader({
 
   const handleClickVideo = () => {
     if (selectedChatRoom) {
-      navigate(`/chatrooms/${chatRoomSerial}/videoroom`);
+      navigate(`/chatrooms/${chatroomSerial}/videoroom`);
     }
   };
 

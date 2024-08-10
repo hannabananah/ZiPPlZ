@@ -22,6 +22,7 @@ interface TextInputBoxProps {
   onImagePreviewRemove: () => void;
   type: TextInputBoxType;
   imageSrc?: string;
+  fileData?: { name: string; type: string; url: string };
 }
 
 export default function TextInputBox({
@@ -30,20 +31,23 @@ export default function TextInputBox({
   userSerial,
   imageSrc,
   onImagePreviewRemove,
+  fileData,
+  type,
 }: TextInputBoxProps) {
-  const [message, setMessage] = useState('');
   const context = useContext(WebSocketContext);
 
   if (!context) {
     throw new Error('TextInputBox must be used within a WebSocketProvider');
   }
+
   const { sendMessage } = context;
+  const [message, setMessage] = useState('');
 
   useEffect(() => {
-    if (imageSrc) {
+    if (imageSrc || fileData) {
       onMenuToggle();
     }
-  }, [imageSrc]);
+  }, [imageSrc, fileData, onMenuToggle]);
 
   const handleChangeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -56,36 +60,10 @@ export default function TextInputBox({
     }
   };
 
-  const handleSendMessage = async () => {
-    if (message.trim() || imageSrc) {
-      if (imageSrc) {
-        try {
-          const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
-          const match = imageSrc.match(base64Regex);
-
-          let fileName = 'image';
-          let fileExtension = 'png';
-
-          if (match) {
-            fileExtension = match[1];
-            fileName = `image_${Date.now()}.${fileExtension}`;
-          }
-
-          const response = await fetch(imageSrc);
-          const blob = await response.blob();
-          const file = new File([blob], fileName, {
-            type: `image/${fileExtension}`,
-          });
-
-          sendMessage('', userSerial, file);
-          onImagePreviewRemove();
-        } catch (error) {
-          console.error('Error creating file from image preview:', error);
-        }
-      } else {
-        sendMessage(message, userSerial);
-        setMessage('');
-      }
+  const handleSendMessage = () => {
+    if (message.trim()) {
+      sendMessage(message, userSerial);
+      setMessage('');
     }
   };
 
@@ -124,8 +102,22 @@ export default function TextInputBox({
           </button>
         </div>
       )}
+      {fileData && (
+        <div className="absolute bg-white border rounded w-18 max-w-24 right-20 bottom-14 border-zp-light-gray z-4">
+          <div className="p-2">
+            <p className="text-sm">{fileData.name}</p>
+            <a
+              href={fileData.url}
+              download={fileData.name}
+              className="text-blue-600"
+            >
+              Download
+            </a>
+          </div>
+        </div>
+      )}
       <button onClick={handleSendMessage} className="p-2 cursor-pointer">
-        <FiSend size={22} />
+        <FiSend size={20} />
       </button>
     </div>
   );

@@ -1,5 +1,5 @@
-import { Material } from '@/apis/worker/MaterialApi';
-import formatNumberWithCommas from '@/utils/formatNumberWithCommas';
+import type { Material } from '@/types';
+import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
 interface MaterialItemProps {
   material: Material;
@@ -15,13 +15,13 @@ export default function MaterialItem({
   return (
     <div
       onClick={() => onSelect(material.materialSerial)}
-      className={`flex items-center justify-between p-2 border-b cursor-pointer 
-      ${isSelected ? 'bg-zp-sub-color' : 'bg-zp-transparent'} 
-      border-zp-sub-color`}
+      className={`flex items-center justify-between p-1 border-b cursor-pointer 
+    ${isSelected ? 'bg-zp-sub-color' : 'bg-zp-transparent'} 
+    border-zp-sub-color`}
     >
       <div className="flex items-center">
         <img
-          src={material.img}
+          src={material.img.saveFile}
           alt={material.materialName}
           className="object-cover w-12 mr-2 aspect-square"
         />
