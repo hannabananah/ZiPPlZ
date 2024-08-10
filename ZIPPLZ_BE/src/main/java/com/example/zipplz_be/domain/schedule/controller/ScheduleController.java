@@ -4,6 +4,7 @@ import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
+import com.example.zipplz_be.domain.schedule.dto.TodayWorkListDTO;
 import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
@@ -161,10 +162,29 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    //유저별 시공 중인 공종 조회
+    @GetMapping("users/working")
+    public ResponseEntity<?> getWorkingWork(Authentication authentication) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
+        try {
+            List<TodayWorkListDTO> todayWorkList= planService.getWorkingWorkService(portfolioService.getUserSerial(authentication));
 
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(),"조회 성공", todayWorkList);
+        } catch(UserNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }  catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
 
-        //계획 추가
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //계획 추가
     @PostMapping("/plans")
     public ResponseEntity<ResponseDTO<?>> insertPlan(Authentication authentication, @RequestBody Map<String, Object> params) {
         ResponseDTO<?> responseDTO;
@@ -415,9 +435,12 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+
+
+
+
     //영상 다운로드
     //평면도 가져오기
     //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
-
 }
 

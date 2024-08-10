@@ -1,6 +1,8 @@
 package com.example.zipplz_be.domain.user.service;
 
 import com.example.zipplz_be.domain.model.entity.Field;
+import com.example.zipplz_be.domain.model.entity.Local;
+import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
@@ -28,14 +30,16 @@ public class JoinService {
     private final WorkerRepository workerRepository;
     private final PortfolioService portfolioService;
     private final PortfolioRepository portfolioRepository;
+    private final LocalRepository localRepository;
 
-    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, WorkerRepository workerRepository, PortfolioService portfolioService, PortfolioRepository portfolioRepository) {
+    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, WorkerRepository workerRepository, PortfolioService portfolioService, PortfolioRepository portfolioRepository, LocalRepository localRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.customerRepository = customerRepository;
         this.workerRepository = workerRepository;
         this.portfolioService = portfolioService;
         this.portfolioRepository = portfolioRepository;
+        this.localRepository = localRepository;
     }
 
     public boolean isEmailAlreadyExist(String email) {
@@ -118,6 +122,18 @@ public class JoinService {
         Worker savedWorker = workerRepository.save(worker);
 
         List<WorkerLocationDTO> locationList = insertWorkerDTO.getLocationList();
+        if (locationList != null) {
+            List<Local> localList = insertWorkerDTO.getLocationList().stream()
+                    .map(location ->
+                            Local.builder()
+                            .userSerial(user)
+                            .sidoCode(location.getSidoCode())
+                            .gugunCode(location.getGugunCode())
+                            .localName(location.getLocalName()).build())
+                    .collect(Collectors.toList());
+            localRepository.saveAll(localList);
+        }
+
         List<Field> fieldList = insertWorkerDTO.getFieldList();
         if (fieldList == null) {
             throw new FieldListNullException("전문 분야가 없습니다.");
