@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
 import type { Material } from '@/types';
 import { getMaterials } from '@apis/worker/MaterialApi';
@@ -8,9 +8,12 @@ import Button from '@components/common/Button';
 import DropDown from '@components/common/DropDown';
 import SearchInput from '@components/common/SearchInput';
 import Pagination from '@utils/Pagination';
+import formatNumberWithCommas from '@utils/formatNumberWithCommas';
+import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
 interface MaterialProps {
   closeMaterialModal: () => void;
+  chatroomSerial: number;
 }
 
 const categoryMap: { [key: string]: number } = {
@@ -18,8 +21,13 @@ const categoryMap: { [key: string]: number } = {
   바닥재: 1,
 };
 
-export default function Material({ closeMaterialModal }: MaterialProps) {
-  const [selectedMaterial, setSelectedMaterial] = useState<number | null>(null);
+export default function Material({
+  closeMaterialModal,
+  chatroomSerial,
+}: MaterialProps) {
+  const [selectedMaterial, setSelectedMaterial] = useState<Material | null>(
+    null
+  );
   const [page, setPage] = useState(1);
   const [perPage, setPerPage] = useState(4);
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,6 +35,9 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   const [materials, setMaterials] = useState<Material[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { sendMessage } = useContext(WebSocketContext) || {
+    sendMessage: () => {},
+  };
 
   const fetchMaterials = async () => {
     setLoading(true);
@@ -86,7 +97,8 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
   }, [numPages]);
 
   const handleSelectMaterial = (serial: number) => {
-    setSelectedMaterial(serial);
+    const material = materials.find((mat) => mat.materialSerial === serial);
+    setSelectedMaterial(material || null);
   };
 
   const handleSearch = (query: string) => {
@@ -95,6 +107,20 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
 
   const handleCategoryChange = (category: string) => {
     setSelectedCategory(categoryMap[category] || null);
+  };
+
+  const handleConfirm = () => {
+    if (selectedMaterial) {
+      const message = `
+ ✨ 선택된 자재 ✨
+ 
+   📦 자재명: ${selectedMaterial.materialName}
+   📄 상세설명: ${selectedMaterial.description}
+   💰 가격: ${formatNumberWithCommas(selectedMaterial.materialPrice)}원
+  `;
+      sendMessage(message, chatroomSerial);
+      closeMaterialModal();
+    }
   };
 
   if (loading) {
@@ -135,7 +161,9 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
                 <MaterialItem
                   key={material.materialSerial}
                   material={material}
-                  isSelected={selectedMaterial === material.materialSerial}
+                  isSelected={
+                    selectedMaterial?.materialSerial === material.materialSerial
+                  }
                   onSelect={handleSelectMaterial}
                 />
               ))
@@ -164,12 +192,13 @@ export default function Material({ closeMaterialModal }: MaterialProps) {
             닫기
           </Button>
           <Button
-            type="submit"
+            type="button"
             buttonType="primary"
             width="full"
             height={2.5}
             fontSize="xl"
             radius="btn"
+            onClick={handleConfirm}
           >
             확인
           </Button>
