@@ -31,7 +31,6 @@ function ChatRoomContent() {
   const userSerial = loginUser?.userSerial;
 
   const { messages } = useContext(WebSocketContext) || { messages: [] };
-
   const fetchChatRoomDetails = async (
     chatroomSerial: number
   ): Promise<ChatRoomDetails> => {

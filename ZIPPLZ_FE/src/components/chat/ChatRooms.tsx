@@ -20,7 +20,6 @@ export default function ChatRooms() {
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const { openModal, closeModal } = useModalActions();
-  console.log('token======>', `${localStorage.getItem('token')}`);
 
   useEffect(() => {
     const fetchChatRooms = async () => {
@@ -115,7 +114,6 @@ export default function ChatRooms() {
   const handleSearch = (text: string) => {
     setSearchText(text);
   };
-
   return (
     <div className="relative flex flex-col w-full pb-8 overflow-y-auto">
       <div className="sticky top-0 z-30 w-full px-8 pt-6 mb-4 bg-zp-white">

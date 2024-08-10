@@ -67,7 +67,7 @@ export default function ChatRoomHeader({
           <div className="flex gap-2 text-sm text-zp-gray">
             <span className="flex items-center truncate max-w-20 text-zp-xs">
               {fieldName}
-            </span>{' '}
+            </span>
             |
             <span className="flex items-center truncate max-w-20 text-zp-xs">
               {location}
@@ -97,12 +97,13 @@ export default function ChatRoomHeader({
               className="flex items-center w-full p-1 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-yellow bg-zp-white border-zp-sub-color text-zp-3xs"
             >
               <IoExitOutline size={18} className="mr-2" />
-              <span>채팅방 떠나기</span>
+              <span>채팅방 나가기</span>
             </button>
             <button
               onClick={() => {
                 handleCloseModal();
-                navigate('/portfolio');
+                // TODO: 상대방 userSerial로 넘어가기
+                navigate(`/workers/${userSerial}/portfolio`);
               }}
               className="flex items-center w-full p-1 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-yellow bg-zp-white border-zp-sub-color text-zp-3xs"
             >
