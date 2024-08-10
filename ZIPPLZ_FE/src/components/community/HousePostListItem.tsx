@@ -14,7 +14,6 @@ interface HousePost {
 }
 
 export default function HousePostListItem({
-  // post_serial,
   post_image,
   title,
   profile_image,
@@ -28,12 +27,11 @@ export default function HousePostListItem({
 
   return (
     <div
-      className="h-64 p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col"
+      className="h-64 w-full p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col"
       onClick={() => navigate(`/HousePostDetail`)}
-      // onClick={() => navigate(`/OverView/${post_serial}`)}
     >
       {/* 이미지 */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center w-full">
         {post_image ? (
           <img
             src={post_image}
