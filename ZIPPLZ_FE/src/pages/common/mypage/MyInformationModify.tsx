@@ -79,7 +79,7 @@ export default function MyInformationModify() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-zp-gray">
+      <div className="flex justify-center items-start min-h-screen p-6">
         <div className="w-full">
           <div className="mt-12 h-12 flex items-center justify-between w-full relative">
             <div className="flex items-center">

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { AiOutlinePlus } from 'react-icons/ai';
 import { CgProfile } from 'react-icons/cg';
+import { FaHouseUser } from 'react-icons/fa';
+import { GiMonkey } from 'react-icons/gi';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiChevronRight } from 'react-icons/hi2';
 import { IoLogoOctocat } from 'react-icons/io';
@@ -167,164 +168,163 @@ export default function MyPage() {
   };
 
   return (
-    <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-zp-gray">
-        <div className="w-full">
-          {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
-          <div className="flex items-center justify-between w-full relative">
-            <div className="flex items-center">
-              <GoArrowLeft
-                className="mr-6 cursor-pointer"
-                onClick={handleGoBack}
-                size={20}
-              />
-            </div>
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">
-              마이페이지
-            </div>
+    <div className="flex justify-center items-start min-h-screen p-6">
+      <div className="w-full">
+        {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
+        <div className="flex items-center justify-between w-full relative">
+          <div className="flex items-center">
+            <GoArrowLeft
+              className="mr-6 cursor-pointer"
+              onClick={handleGoBack}
+              size={20}
+            />
           </div>
-
-          {/* 프로필 사진, 닉네임 또는 본명 */}
-          <div className="flex justify-center w-full mt-4 relative">
-            <div className="flex flex-col items-center">
-              <div className="w-36 h-36 relative">
-                {profileImage ? (
-                  <div
-                    className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center"
-                  >
-                    <img
-                      src={profileImage}
-                      alt="Profile"
-                      className="w-full h-full object-cover rounded-zp-radius-full"
-                    />
-                  </div>
-                ) : selectedIcon ? (
-                  <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
-                    {React.cloneElement(selectedIcon, { size: 100 })}
-                  </div>
-                ) : (
-                  <div className="w-full h-full rounded-zp-radius-full overflow-hidden bg-zp-white flex items-center justify-center">
-                    <CgProfile size={144} />
-                  </div>
-                )}
-                <div
-                  className="absolute bottom-0 right-0 bg-zp-white rounded-zp-radius-full p-1 cursor-pointer"
-                  onClick={handleOpenProfileModal}
-                >
-                  <FaPlusCircle size={24} />
-                </div>
-              </div>
-              <div className="w-36 h-8 grid place-items-center text-zp-lg font-bold">
-                {userType === 'customer'
-                  ? userInfo.nickname
-                  : userInfo.fullname}
-              </div>
-            </div>
+          <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">
+            마이페이지
           </div>
+        </div>
 
-          <hr className="mt-6 w-full border-zp-light-gray" />
-
-          {/* 내 정보 수정하기 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">내 정보 수정하기</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToMyInformationModify}
-              />
-            </div>
-          </div>
-
-          {/* 비밀번호 변경 */}
-          <div className="mt-6 flex items-center justify-between w-full ">
-            <div className="text-zp-lg">비밀번호 변경</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToMyPasswordModify}
-              />
-            </div>
-          </div>
-
-          {userType === 'customer' && (
-            <>
-              {/* 내가 쓴 글 / 스크랩 글 목록 */}
-              <div className="mt-6 flex items-center justify-between w-full ">
-                <div className="text-zp-lg">내가 쓴 글 목록</div>
-                <div>
-                  <HiChevronRight
-                    className="cursor-pointer"
-                    onClick={handleNavigateToMyFindWorkerList}
+        {/* 프로필 사진, 닉네임 또는 본명 */}
+        <div className="flex justify-center w-full mt-4 relative">
+          <div className="flex flex-col items-center">
+            <div className="w-36 h-36 relative">
+              {profileImage ? (
+                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+                  <img
+                    src={profileImage}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-zp-radius-full"
                   />
                 </div>
-              </div>
-
-              <div className="mt-6 flex items-center justify-between w-full ">
-                <div className="text-zp-lg">스크랩 글 목록</div>
-                <div>
-                  <HiChevronRight
-                    className="cursor-pointer"
-                    onClick={handleNavigateToMyFindWorkerScrapList}
-                  />
+              ) : selectedIcon ? (
+                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
+                  {React.cloneElement(selectedIcon, { size: 100 })}
                 </div>
+              ) : (
+                <div className="w-full h-full rounded-zp-radius-full overflow-hidden bg-zp-white flex items-center justify-center">
+                  <CgProfile size={144} />
+                </div>
+              )}
+              <div
+                className="absolute bottom-0 right-0 bg-zp-white rounded-zp-radius-full p-1 cursor-pointer"
+                onClick={handleOpenProfileModal}
+              >
+                <MdOutlinePhotoCamera size={24} />
               </div>
-
-          {/* 관심있는 시공업자 / 찜한 자재 목록 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">관심있는 시공업자 / 찜한 자재 목록</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToWishWorkerList}
-              />
+            </div>
+            <div className="w-36 h-8 grid place-items-center text-zp-lg font-bold">
+              {userType === 'customer' ? userInfo.nickname : userInfo.fullname}
             </div>
           </div>
+        </div>
 
-          <hr className="mt-6 w-full border-zp-light-gray" />
+        <hr className="mt-6 w-full border-zp-light-gray" />
 
-          {/* 이용약관 / 개인정보처리방침 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">이용약관 / 개인정보처리방침</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToPolicy}
-              />
-            </div>
+        {/* 내 정보 수정하기 */}
+        <div className="mt-6 flex items-center justify-between w-full">
+          <div className="text-zp-lg">내 정보 수정하기</div>
+          <div>
+            <HiChevronRight
+              className="cursor-pointer"
+              onClick={handleNavigateToMyInformationModify}
+            />
           </div>
+        </div>
 
-          {/* 버전 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">버전</div>
-            <div className="flex align-middle">
-              <div className="px-2">1.1.0</div>
-              <HiChevronRight
-                className="cursor-pointer relative top-1"
-                onClick={handleNavigateToVersion}
-              />
-            </div>
+        {/* 비밀번호 변경 */}
+        <div className="mt-6 flex items-center justify-between w-full ">
+          <div className="text-zp-lg">비밀번호 변경</div>
+          <div>
+            <HiChevronRight
+              className="cursor-pointer"
+              onClick={handleNavigateToMyPasswordModify}
+            />
           </div>
+        </div>
 
-          {/* 로그아웃 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">로그아웃</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleLogoutClick}
-              />
-            </div>
+        {/* 내가 쓴 글 / 스크랩 글 목록 */}
+        <div className="mt-6 flex items-center justify-between w-full ">
+          <div className="text-zp-lg">내가 쓴 글 목록</div>
+          <div>
+            <HiChevronRight
+              className="cursor-pointer"
+              onClick={handleNavigateToMyFindWorkerList}
+            />
           </div>
+        </div>
 
-          {/* 탈퇴하기 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">탈퇴하기</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToResign}
-              />
+        <div className="mt-6 flex items-center justify-between w-full ">
+          <div className="text-zp-lg">스크랩 글 목록</div>
+          <div>
+            <HiChevronRight
+              className="cursor-pointer"
+              onClick={handleNavigateToMyFindWorkerScrapList}
+            />
+          </div>
+        </div>
+
+        {/* 고객의 경우에만 보여줄 섹션 */}
+        {userType === 'customer' && (
+          <>
+            {/* 관심있는 시공업자 / 찜한 자재 목록 */}
+            <div className="mt-6 flex items-center justify-between w-full">
+              <div className="text-zp-lg">
+                관심있는 시공업자 / 찜한 자재 목록
+              </div>
+              <div>
+                <HiChevronRight
+                  className="cursor-pointer"
+                  onClick={handleNavigateToWishWorkerList}
+                />
+              </div>
             </div>
+          </>
+        )}
+
+        <hr className="mt-6 w-full border-zp-light-gray" />
+
+        {/* 이용약관 / 개인정보처리방침 */}
+        <div className="mt-6 flex items-center justify-between w-full">
+          <div className="text-zp-lg">이용약관 / 개인정보처리방침</div>
+          <div>
+            <HiChevronRight
+              className="cursor-pointer"
+              onClick={handleNavigateToPolicy}
+            />
+          </div>
+        </div>
+
+        {/* 버전 */}
+        <div className="mt-6 flex items-center justify-between w-full">
+          <div className="text-zp-lg">버전</div>
+          <div className="flex align-middle">
+            <div className="px-2">1.1.0</div>
+            <HiChevronRight
+              className="cursor-pointer relative top-1"
+              onClick={handleNavigateToVersion}
+            />
+          </div>
+        </div>
+
+        {/* 로그아웃 */}
+        <div className="mt-6 flex items-center justify-between w-full">
+          <div className="text-zp-lg">로그아웃</div>
+          <div>
+            <HiChevronRight
+              className="cursor-pointer"
+              onClick={handleLogoutClick}
+            />
+          </div>
+        </div>
+
+        {/* 탈퇴하기 */}
+        <div className="mt-6 flex items-center justify-between w-full">
+          <div className="text-zp-lg">탈퇴하기</div>
+          <div>
+            <HiChevronRight
+              className="cursor-pointer"
+              onClick={handleNavigateToResign}
+            />
           </div>
         </div>
       </div>
@@ -365,8 +365,14 @@ export default function MyPage() {
 
       {/* 프로필 이미지 변경 모달 */}
       {showProfileModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
-          <div className="bg-zp-sub-color rounded-zp-radius-big p-6 w-80">
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50"
+          onClick={handleCloseProfileModal} // 모달 외부를 클릭하면 닫힘
+        >
+          <div
+            className="bg-zp-sub-color rounded-zp-radius-big p-6 w-80"
+            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 중지
+          >
             <h2 className="text-zp-2xl font-bold flex justify-center mb-4">
               프로필 이미지 선택
             </h2>
@@ -428,6 +434,6 @@ export default function MyPage() {
           </div>
         </div>
       )}
-    </>
+    </div>
   );
 }

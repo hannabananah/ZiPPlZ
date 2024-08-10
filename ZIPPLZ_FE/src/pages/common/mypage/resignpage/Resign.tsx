@@ -8,7 +8,7 @@ export default function Resign() {
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('-1');
+    navigate('mypage');
   };
 
   // 더 이상 ZIP-PlZ를 사용하지 않아요 페이지로 이동
@@ -33,10 +33,10 @@ export default function Resign() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-zp-gray">
+      <div className="flex justify-center items-start min-h-screen p-6">
         <div className="w-full">
           {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
-          <div className="flex items-center justify-between w-full relative">
+          <div className="mt-16 flex items-center justify-between w-full relative">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
@@ -44,7 +44,6 @@ export default function Resign() {
                 size={20} // 아이콘 크기 조정
               />
             </div>
-            <div className="">건너뛰기</div>
           </div>
           <div className="mt-6 text-zp-xl font-bold">
             회원 탈퇴 전 주의사항을 확인해주세요
