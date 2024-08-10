@@ -1,8 +1,8 @@
 package com.example.zipplz_be.domain.board.repository;
 
 import com.example.zipplz_be.domain.board.dto.BoardJoinDTO;
-import com.example.zipplz_be.domain.board.dto.WorkerTagDTO;
 import com.example.zipplz_be.domain.board.entity.Board;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -50,6 +50,11 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial", nativeQuery = true)
     BoardJoinDTO getBoard(@Param("boardSerial") int boardSerial);
 
-//    @Query(value = " ", nativeQuery = true)
-//    List<WorkerTagDTO> getWorkerTags(@Param("boardSerial") int boardSerial);
+    @Query(value = "SELECT LAST_INSERT_ID()", nativeQuery = true)
+    int getLastInsertId();
+
+    @Query(value = "SELECT user_serial " +
+            "FROM board " +
+            "WHERE board_type = :boardType and board_serial = :boardSerial", nativeQuery = true)
+    int getBoardUser(@Param("boardType") int boardType, @Param("boardSerial") int boardSerial);
 }
