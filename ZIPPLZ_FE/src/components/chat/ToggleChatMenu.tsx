@@ -24,15 +24,18 @@ interface ToggleChatMenuProps {
   setImagePreview: React.Dispatch<React.SetStateAction<string | undefined>>;
   chatroomSerial: number;
   name: string | undefined;
+  setFileSrc: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
 export default function ToggleChatMenu({
   setImagePreview,
   chatroomSerial,
   name,
+  setFileSrc,
 }: ToggleChatMenuProps) {
   const { loginUser } = useLoginUserStore();
   const userType = loginUser?.role || '';
+  const userSerial = loginUser?.userSerial;
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -68,9 +71,20 @@ export default function ToggleChatMenu({
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files && files[0] && sendMessage) {
+    if (files && files[0]) {
       const file = files[0];
-      sendMessage('', 1, file);
+      if (!file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          console.log('file========>', file);
+          // sendMessage('', userSerial, file, 'FILE');
+          const textData = reader.result as string;
+          setFileSrc(textData);
+        };
+        reader.readAsText(file);
+        console.log('reader========>', reader);
+        console.log('file========>', file);
+      }
     }
   };
 
@@ -217,7 +231,10 @@ export default function ToggleChatMenu({
         height="80%"
         maxWidth="400px"
       >
-        <Material closeMaterialModal={closeMaterialModal} />
+        <Material
+          closeMaterialModal={closeMaterialModal}
+          chatroomSerial={chatroomSerial}
+        />
       </FullModal>
     </div>
   );

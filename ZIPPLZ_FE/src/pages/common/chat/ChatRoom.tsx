@@ -25,12 +25,14 @@ function ChatRoomContent() {
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
   const [loading, setLoading] = useState(true);
   const [imageSrc, setImageSrc] = useState<string | undefined>(undefined);
+  const [fileSrc, setFileSrc] = useState<string | undefined>(undefined);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const { loginUser } = useLoginUserStore();
   const userSerial = loginUser?.userSerial;
 
   const { messages } = useContext(WebSocketContext) || { messages: [] };
+
   const fetchChatRoomDetails = async (
     chatroomSerial: number
   ): Promise<ChatRoomDetails> => {
@@ -43,6 +45,7 @@ function ChatRoomContent() {
       );
 
       if (response.status === 200) {
+        console.log('response.data.data', response.data.data);
         return response.data.data;
       } else {
         throw new Error('Unexpected response');
@@ -99,7 +102,16 @@ function ChatRoomContent() {
           <>
             <div className="flex-1 overflow-y-auto">
               {messages.map((msg, index) => (
-                <Message key={`${msg.chatroomSerial}-${index}`} message={msg} />
+                <Message
+                  key={`${msg.userSerial}-${index}`}
+                  chatMessageContent={msg.chatMessageContent}
+                  createdAt={msg.createdAt}
+                  userSerial={msg.userSerial}
+                  fileName={msg.file?.fileName}
+                  originalFile={msg.file?.originalFile}
+                  fileType={msg.fileType}
+                  saveFile={msg.file?.saveFile}
+                />
               ))}
               <div ref={messagesEndRef} />
             </div>
@@ -110,12 +122,14 @@ function ChatRoomContent() {
               onImagePreviewRemove={handleImagePreviewRemove}
               type="TALK"
               imageSrc={imageSrc}
+              fileSrc={fileSrc}
             />
             {isMenuVisible && (
               <ToggleChatMenu
                 name={selectedChatRoom?.otherUser.name}
                 setImagePreview={setImageSrc}
                 chatroomSerial={roomIdNumber}
+                setFileSrc={setFileSrc}
               />
             )}
           </>

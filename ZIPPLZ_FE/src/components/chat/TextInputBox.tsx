@@ -23,6 +23,7 @@ interface TextInputBoxProps {
   type: TextInputBoxType;
   imageSrc?: string;
   fileData?: { name: string; type: string; url: string };
+  fileSrc?: string;
 }
 
 export default function TextInputBox({
@@ -32,7 +33,7 @@ export default function TextInputBox({
   imageSrc,
   onImagePreviewRemove,
   fileData,
-  type,
+  fileSrc,
 }: TextInputBoxProps) {
   const context = useContext(WebSocketContext);
 
@@ -47,7 +48,13 @@ export default function TextInputBox({
     if (imageSrc || fileData) {
       onMenuToggle();
     }
-  }, [imageSrc, fileData, onMenuToggle]);
+  }, [imageSrc, fileData]);
+
+  useEffect(() => {
+    if (fileSrc || fileData) {
+      onMenuToggle();
+    }
+  }, [fileSrc, fileData]);
 
   const handleChangeText = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setMessage(e.target.value);
@@ -60,10 +67,51 @@ export default function TextInputBox({
     }
   };
 
-  const handleSendMessage = () => {
-    if (message.trim()) {
-      sendMessage(message, userSerial);
-      setMessage('');
+  const handleSendMessage = async () => {
+    if (message.trim() || imageSrc) {
+      if (imageSrc) {
+        try {
+          const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
+          const match = imageSrc.match(base64Regex);
+          let fileName = 'image';
+          let fileExtension = 'png';
+
+          if (match) {
+            fileExtension = match[1];
+            fileName = `image_${Date.now()}.${fileExtension}`;
+          }
+          const response = await fetch(imageSrc);
+          const blob = await response.blob();
+          const file = new File([blob], fileName, {
+            type: `image/${fileExtension}`,
+          });
+
+          sendMessage(imageSrc, userSerial, file, 'IMAGE');
+          onImagePreviewRemove();
+        } catch (error) {
+          console.error('Error creating file from image preview:', error);
+        }
+      } else if (fileSrc) {
+        const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
+        const match = fileSrc.match(base64Regex);
+        let fileName = 'image';
+        let fileExtension = 'png';
+
+        if (match) {
+          fileExtension = match[1];
+          fileName = `image_${Date.now()}.${fileExtension}`;
+        }
+        const response = await fetch(fileSrc);
+        const blob = await response.blob();
+        const file = new File([blob], fileName, {
+          type: `image/${fileExtension}`,
+        });
+        console.log('file', file);
+        sendMessage(fileSrc, userSerial, file, 'FILE');
+      } else {
+        sendMessage(message, userSerial);
+        setMessage('');
+      }
     }
   };
 
