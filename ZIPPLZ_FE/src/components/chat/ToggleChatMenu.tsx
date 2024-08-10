@@ -8,7 +8,7 @@ import AfterService from '@components/chat/AfterService';
 import Contract from '@components/chat/Contract';
 import Material from '@components/chat/Material';
 import FullModal from '@components/common/FullModal';
-import { useUserStore } from '@stores/userStore';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import { WebSocketProvider } from '@utils/socket/WebSocketProvider';
 
 interface MenuItem {
@@ -31,7 +31,9 @@ export default function ToggleChatMenu({
   chatroomSerial,
   name,
 }: ToggleChatMenuProps) {
-  const { userType } = useUserStore();
+  const { loginUser } = useLoginUserStore();
+  const userType = loginUser?.role || '';
+
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const webSocketContext = useContext(WebSocketProvider);
@@ -102,7 +104,7 @@ export default function ToggleChatMenu({
       icon: CiImageOn,
       label: '이미지',
       bgColor: '#75C734',
-      role: ['user', 'worker'],
+      role: ['customer', 'worker'],
       onClick: handleImageUpload,
     },
     {
@@ -110,7 +112,7 @@ export default function ToggleChatMenu({
       icon: FaFolderOpen,
       label: '파일',
       bgColor: '#0697FF',
-      role: ['user', 'worker'],
+      role: ['customer', 'worker'],
       onClick: handleFileUpload,
     },
     {
@@ -126,7 +128,7 @@ export default function ToggleChatMenu({
       icon: FiTool,
       label: 'A/S 신청',
       bgColor: '#FC7FF0',
-      role: 'user',
+      role: 'customer',
       onClick: handleAfterService,
     },
     {
@@ -134,7 +136,7 @@ export default function ToggleChatMenu({
       icon: TbWood,
       label: '자재 관리',
       bgColor: '#A2845E',
-      role: ['user', 'worker'],
+      role: ['customer', 'worker'],
       onClick: handleMaterial,
     },
   ];
@@ -143,12 +145,10 @@ export default function ToggleChatMenu({
     <div className="sticky bottom-0 content-center w-full h-24 border bg-zp-white border-zp-sub-color rounded-t-zp-radius-big">
       <ul className="flex items-center w-11/12 h-full m-auto bg-zp-white justify-evenly">
         {menus
-          .filter(
-            (menu) =>
-              menu.role === 'both' ||
-              (Array.isArray(menu.role)
-                ? menu.role.includes(userType)
-                : menu.role === userType)
+          .filter((menu) =>
+            Array.isArray(menu.role)
+              ? menu.role.includes(userType)
+              : menu.role === userType
           )
           .map((menu) => (
             <li
