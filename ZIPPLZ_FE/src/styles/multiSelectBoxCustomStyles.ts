@@ -45,7 +45,7 @@ const multiSelectBoxCustomStyles: StylesConfig<any, true> = {
   }),
   valueContainer: (provided) => ({
     ...provided,
-    maxHeight: 100,
+    maxHeight: 145,
     display: 'flex',
     alignItems: 'center',
     overflow: 'auto',

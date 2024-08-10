@@ -39,7 +39,7 @@ export default function Message({ message }: MessageProps) {
         />
       )}
       <div
-        className={`px-3 py-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 ${
+        className={`p-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 ${
           message.userSerial === currUserSerial
             ? 'text-right rounded-se-zp-radius-none'
             : 'text-left rounded-ss-zp-radius-none'

@@ -109,3 +109,14 @@ export interface Material {
   };
   wished: boolean;
 }
+
+// 계약서 초안 생성 응답
+export interface ContractPostRes {
+  requestSerial: number;
+  requestDate: string;
+  requestType: 'add';
+  senderName: string;
+  receiverName: string;
+  requestStatus: 'pending';
+  requestComment: '계약서 초안 작성해서 보냅니다.';
+}

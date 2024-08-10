@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Select from 'react-select';
 
 import { Material } from '@/types';
@@ -7,7 +7,11 @@ import { ContractRequestData } from '@apis/worker/ContractApi';
 import { getMaterials } from '@apis/worker/MaterialApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
+import { formatDateWithTime } from '@utils/formatDateWithTime';
+import formatNumberWithCommas from '@utils/formatNumberWithCommas';
+import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
 interface ContractProps {
   closeContractModal: () => void;
@@ -78,6 +82,11 @@ export default function Contract({
   const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([]);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
+  const { sendMessage } = useContext(WebSocketContext) || {
+    sendMessage: () => {},
+  };
+  const { loginUser } = useLoginUserStore();
+  const userSerial: number | undefined = loginUser?.userSerial;
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -93,25 +102,54 @@ export default function Contract({
   }, []);
 
   const handlePostContract = async () => {
+    if (!chatroomSerial) {
+      console.error('Invalid chatroomSerial');
+      return;
+    }
+
+    const workPrice =
+      Number(fields.find((field) => field.label === '작업 가격')?.value) || 0;
+
+    const calculateTotalDuration = (
+      startDate: string,
+      endDate: string
+    ): number => {
+      const start = new Date(startDate);
+      const end = new Date(endDate);
+      const timeDifference = end.getTime() - start.getTime() + 1;
+      const dayDifference = timeDifference / (1000 * 3600 * 24);
+      return Math.ceil(dayDifference);
+    };
+
+    const totalDuration =
+      startDate && endDate ? calculateTotalDuration(startDate, endDate) : 0;
+
     const requestData: ContractRequestData = {
       requestComment: '계약서 초안 작성해서 보냅니다.',
       startDate,
       endDate,
-      workPrice:
-        Number(fields.find((field) => field.label === '작업 가격')?.value) || 0,
+      workPrice,
       materialList: selectedMaterials.map(
         (material) => material.materialSerial
       ),
     };
 
-    if (chatroomSerial === undefined) {
-      console.error('Invalid chatroomSerial');
-      return;
-    }
-
     try {
       const response = await postContract(chatroomSerial, requestData);
       console.log('계약서 초안 작성 성공:', response.data);
+      const formattedMessage = `
+                ✨ 계약서 초안 작성 완료! ✨
+  // TODO 시공자 이름 로컬에서 받아오기
+  👷‍♂️ 시공자: ${name}
+  👩‍🦰 고객: ${name}
+  👏 요청 일자: ${formatDateWithTime(new Date().toISOString())}
+  💵 작업 가격: ${formatNumberWithCommas(workPrice)}원
+  🏠 출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
+  📅 작업 기간: ${startDate}~${endDate}(${totalDuration}일)
+  🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
+  `;
+
+      sendMessage(formattedMessage, userSerial as number);
       closeContractModal();
     } catch (error) {
       console.error('계약서 초안 작성 실패:', error);
@@ -137,7 +175,6 @@ export default function Contract({
         (material) => material.materialSerial === option.value
       );
     });
-
     setSelectedMaterials(selectedMaterials.filter(Boolean) as Material[]);
   };
 
@@ -243,7 +280,7 @@ export default function Contract({
             취소
           </Button>
           <Button
-            type="reset"
+            type="button"
             buttonType="normal"
             width="full"
             height={2.5}
