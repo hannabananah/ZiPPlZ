@@ -1,7 +1,9 @@
 package com.example.zipplz_be.domain.board.service;
 
 import com.example.zipplz_be.domain.board.dto.*;
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -22,4 +24,5 @@ public interface BoardService {
     FindWorkerDetailDTO getFindWorker(int boardSerial);
 
     int addBoardToPortfolio(int board_serial, List<PortfolioViewDTO> views);
+    int uploadImageService(List<MultipartFile> images, int boardSerial);
 }

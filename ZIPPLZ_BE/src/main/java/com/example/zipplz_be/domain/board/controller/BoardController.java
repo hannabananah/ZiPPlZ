@@ -2,13 +2,18 @@ package com.example.zipplz_be.domain.board.controller;
 
 import com.example.zipplz_be.domain.board.dto.*;
 import com.example.zipplz_be.domain.board.service.BoardService;
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -51,28 +56,42 @@ public class BoardController {
     }
 
     // 질문글 추가하기
+    @Transactional
     @PostMapping("/question/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addQuestion(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addQuestion(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("params") String params) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> paramsMap = objectMapper.readValue(params, Map.class);
+
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             int user_serial = customUserDetails.getUserSerial();
             int board_type = 1;
-            String title = (String) params.get("title");
-            String board_content = (String) params.get("board_content");
+            String title = (String) paramsMap.get("title");
+            String board_content = (String) paramsMap.get("board_content");
             LocalDateTime board_date = LocalDateTime.now();
             int hit = 0;
 
             int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
+            int board_serial = boardService.getLastInsertId();
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 실패 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "질문글 삽입 실패 없음");
             } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                int file_result = boardService.uploadImageService(images, board_serial);
+                if (file_result == 0) {
+                    status = HttpStatus.NOT_FOUND;
+                    responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                } else {
+                    status = HttpStatus.OK;
+                    responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                }
             }
+        } catch (S3Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
@@ -154,49 +173,58 @@ public class BoardController {
     }
 
     // 자랑글 추가하기
+    @Transactional
     @PostMapping("/showoff/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addShowBoard(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addShowBoard(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("params") String params) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> paramsMap = objectMapper.readValue(params, Map.class);
+
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             int user_serial = customUserDetails.getUserSerial();
             int board_type = 2;
-            String title = (String) params.get("title");
-            String board_content = (String) params.get("board_content");
+            String title = (String) paramsMap.get("title");
+            String board_content = (String) paramsMap.get("board_content");
             LocalDateTime board_date = LocalDateTime.now();
             int hit = 0;
             int addBoard_result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
-            int lastInsertId = boardService.getLastInsertId();
+            int board_serial = boardService.getLastInsertId();
 
             if (addBoard_result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "보드 삽입 실패");
+                responseDTO = new ResponseDTO<>(status.value(), "자랑글 삽입 실패");
             } else {
-                List<?> rawViews = (List<?>) params.get("selected_portfolio");
+                List<?> rawViews = (List<?>) paramsMap.get("selected_portfolio");
 
                 List<PortfolioViewDTO> views = rawViews.stream()
                         .map(item -> {
                             LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) item;
                             PortfolioViewDTO dto = new PortfolioViewDTO();
                             dto.setPortfolio_serial((Integer) map.get("portfolio_serial"));
-                            // PortfolioViewDTO의 다른 필드들도 여기에 추가적으로 설정합니다.
                             return dto;
                         })
                         .collect(Collectors.toList());
 
-                if (!views.isEmpty()) {
-                    int addWorkToPortfolio_result = boardService.addBoardToPortfolio(lastInsertId, views);
-                    if (addWorkToPortfolio_result == 0) {
+                int addWorkToPortfolio_result = boardService.addBoardToPortfolio(board_serial, views);
+                if (addWorkToPortfolio_result == 0) {
+                    status = HttpStatus.NOT_FOUND;
+                    responseDTO = new ResponseDTO<>(status.value(), "관계 시공자 삽입 실패");
+                } else {
+                    int file_result = boardService.uploadImageService(images, board_serial);
+                    if (file_result == 0) {
                         status = HttpStatus.NOT_FOUND;
-                        responseDTO = new ResponseDTO<>(status.value(), "관계 시공자 삽입 실패");
+                        responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                    } else {
+                        status = HttpStatus.OK;
+                        responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
                     }
                 }
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
             }
         } catch (Exception e) {
+
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -277,27 +305,38 @@ public class BoardController {
     }
 
     // 구인구직글 추가하기
+    @Transactional
     @PostMapping("/findworker/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("params") String params) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Object> paramsMap = objectMapper.readValue(params, Map.class);
+
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             int user_serial = customUserDetails.getUserSerial();
             int board_type = 3;
-            String title = (String) params.get("title");
-            String board_content = (String) params.get("board_content");
+            String title = (String) paramsMap.get("title");
+            String board_content = (String) paramsMap.get("board_content");
             LocalDateTime board_date = LocalDateTime.now();
             int hit = 0;
 
             int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
+            int board_serial = boardService.getLastInsertId();
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 실패 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "구인구직글 삽입 실패 없음");
             } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                int file_result = boardService.uploadImageService(images, board_serial);
+                if (file_result == 0) {
+                    status = HttpStatus.NOT_FOUND;
+                    responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                } else {
+                    status = HttpStatus.OK;
+                    responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                }
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
