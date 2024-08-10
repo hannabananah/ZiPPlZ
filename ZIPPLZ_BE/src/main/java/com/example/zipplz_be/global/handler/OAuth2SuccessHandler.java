@@ -37,23 +37,31 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         // 2-1. 만약 아직 회원가입을 하지 않은 유저라면
         if (isNewUser) {
-            String token = jwtUtil.createJwt(email, userSerial, "");
+            String token = jwtUtil.createJwt(email, userSerial, "", "");
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true);
 //            emailCookie.setSecure(true); // HTTPS 환경에서만 쿠키가 전송
             cookie.setPath("/");
             response.addCookie(cookie); // 예시로 쿠키 사용
             response.sendRedirect("http://localhost:5173/member/join/common/1/extra-agree");
+
+            System.out.println("social before join!!!!!!!!!!!!!!!!!!!token!!!!!!!!!! => " + token);
+            System.out.println("social before join!!!!!!!!!!!!!name from token!!!!!!!!!! => " + jwtUtil.getName(token));
             return;
         }
 
         // 2-2. 이미 회원가입 한 유저라면,
         String role = customOAuth2User.getRole();
-        String token = jwtUtil.createJwt(email, userSerial, role);
+        String name = customOAuth2User.getUserName();
+        String token = jwtUtil.createJwt(email, userSerial, role, name);
         Cookie cookie = new Cookie("token", token);
         cookie.setHttpOnly(true);
         cookie.setPath("/");
         response.addCookie(cookie); // 예시로 쿠키 사용
+
+
+        System.out.println("social after join!!!!!!!!!!!!!!!!!!!!!!token!!!!!!!!!! => " + token);
+        System.out.println("social after join!!!!!!!!!!!!!name from token!!!!!!!!!! => " + jwtUtil.getName(token));
         response.sendRedirect("http://localhost:5173/success");
     }
 }
