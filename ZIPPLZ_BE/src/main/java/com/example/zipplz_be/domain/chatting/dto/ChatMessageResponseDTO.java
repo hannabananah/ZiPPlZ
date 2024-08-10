@@ -2,6 +2,7 @@ package com.example.zipplz_be.domain.chatting.dto;
 
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.model.entity.MessageType;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
@@ -18,14 +19,14 @@ public class ChatMessageResponseDTO {
     private String chatMessageContent;
     @JsonFormat(pattern = "yyyy-MM-dd hh:mm", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
-    private Boolean isFile;
+    private MessageType fileType;
     private File file;
 
     public ChatMessageResponseDTO(ChatMessageRequestDTO request) {
         this.userSerial = request.getUserSerial();
         this.userName = request.getUserName();
         this.chatMessageContent = request.getChatMessageContent();
-        this.isFile = request.getIsFile();
+        this.fileType = request.getType();
         this.createdAt = LocalDateTime.now();
         this.file = null;
     }
@@ -35,16 +36,7 @@ public class ChatMessageResponseDTO {
         this.userName = chatMessage.getUserName();
         this.chatMessageContent = chatMessage.getChatMessageContent();
         this.createdAt = chatMessage.getCreatedAt();
-        this.isFile = chatMessage.isFile();
-        this.file = null;
-    }
-
-    public ChatMessageResponseDTO(ChatMessage chatMessage, File file) {
-        this.userSerial = chatMessage.getUserSerial();
-        this.userName = chatMessage.getUserName();
-        this.chatMessageContent = chatMessage.getChatMessageContent();
-        this.createdAt = chatMessage.getCreatedAt();
-        this.isFile = chatMessage.isFile();
-        this.file = file;
+        this.fileType = chatMessage.getFileType();
+        this.file = chatMessage.getFile();
     }
 }

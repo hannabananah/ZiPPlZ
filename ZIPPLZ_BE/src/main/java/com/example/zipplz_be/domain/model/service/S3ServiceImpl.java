@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +40,18 @@ public class S3ServiceImpl implements S3Service {
         }catch(IOException e) {
             throw new S3Exception("이미지 업로드 중 에러 발생했습니다.");
         }
+    }
 
+    @Override
+    public File uploadBase64File(String base64File, String originalFilename) {
+        this.validateImageFileExtension(originalFilename);
+
+        try {
+            byte[] bytes = Base64.getDecoder().decode(base64File); // Base64 디코딩
+            return this.uploadToS3(bytes, originalFilename);
+        } catch (IOException e) {
+            throw new S3Exception("Base64 파일 업로드 중 에러 발생했습니다.");
+        }
     }
 
     @Override
@@ -91,6 +103,40 @@ public class S3ServiceImpl implements S3Service {
         return url;
     }
 
+    private File uploadToS3(byte[] bytes, String originalFilename) throws IOException {
+        String extention = originalFilename.substring(originalFilename.lastIndexOf("."));
+        String s3FileName = UUID.randomUUID().toString().substring(0, 10) + originalFilename;
+
+        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+        String url = "";
+
+        try {
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentType("image/" + extention);
+            metadata.setContentLength(bytes.length);
+
+            PutObjectRequest putObjectRequest =
+                    new PutObjectRequest(bucketName, s3FileName, byteArrayInputStream, metadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead);
+
+            amazonS3.putObject(putObjectRequest);
+
+            url = amazonS3.getUrl(bucketName, s3FileName).toString();
+
+            File file = new File();
+            file.setSaveFile(url);
+            file.setFileName(s3FileName);
+            file.setOriginalFile(originalFilename);
+
+            fileRepository.save(file);
+            return file;
+        } catch (Exception e) {
+            throw new S3Exception("Put Object 도중에 에러 발생");
+        } finally {
+            byteArrayInputStream.close();
+        }
+    }
+
     private void validateImageFileExtension(String filename) {
         int lastDotIndex = filename.lastIndexOf(".");
         if (lastDotIndex == -1) {
@@ -98,7 +144,7 @@ public class S3ServiceImpl implements S3Service {
         }
 
         String extention = filename.substring(lastDotIndex + 1).toLowerCase();
-        List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif");
+        List<String> allowedExtentionList = Arrays.asList("jpg", "jpeg", "png", "gif", "pdf", "txt", "doc", "docx", "hwp", "svg", "wbep");
 
         if (!allowedExtentionList.contains(extention)) {
             throw new S3Exception("유효하지 않은 파일 형식입니다.");

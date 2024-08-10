@@ -9,6 +9,7 @@ interface Props {
   isOpen: boolean;
   plan: any;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchPlan: (planSerial: number) => void;
 }
 const customModalStyles: ReactModal.Styles = {
   overlay: {
@@ -38,12 +39,18 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-export default function UpdatePlan({ isOpen, setIsOpen, plan }: Props) {
+export default function UpdatePlan({
+  isOpen,
+  setIsOpen,
+  plan,
+  fetchPlan,
+}: Props) {
   const closeModal = () => {
     setIsOpen(false);
   };
   const [newName, setNewName] = useState<string>(plan.planName);
   const [memo, setMemo] = useState<string>(plan.sharedContents || '');
+  const [isUpdate, setIsUpdate] = useState<boolean>(false);
   const updatePlan = async (
     planName: string,
     address: string,
@@ -58,14 +65,8 @@ export default function UpdatePlan({ isOpen, setIsOpen, plan }: Props) {
     }
   };
   useEffect(() => {
-    console.log(plan);
-  }, [isOpen]);
-  useEffect(() => {
-    // setNewName(plan.planName);
-    // setMemo(plan.sharedContents);
-    console.log(newName);
-    console.log(memo);
-  }, [newName, memo]);
+    if (isUpdate) fetchPlan(plan.planSerial);
+  }, [plan]);
   return (
     <>
       <Modal
@@ -74,10 +75,10 @@ export default function UpdatePlan({ isOpen, setIsOpen, plan }: Props) {
         closeTimeoutMS={150}
         style={customModalStyles}
       >
-        <p className="text-center text-zp-lg font-bold">
+        <p className="font-bold text-center text-zp-lg">
           계획 정보를 입력해주세요
         </p>
-        <div className="w-full flex flex-col  gap-2">
+        <div className="flex flex-col w-full gap-2">
           <p className="text-zp-xs w-[2rem] font-bold">이름</p>
           <Input
             type="text"
@@ -107,7 +108,7 @@ export default function UpdatePlan({ isOpen, setIsOpen, plan }: Props) {
             additionalStyle="pointer-events-none"
           />
         </div>
-        <div className="w-full flex flex-col gap-2">
+        <div className="flex flex-col w-full gap-2">
           <p className="text-zp-xs w-[2rem] font-bold">메모</p>
           <Input
             type="text"
@@ -123,7 +124,7 @@ export default function UpdatePlan({ isOpen, setIsOpen, plan }: Props) {
             value={memo}
           />
         </div>
-        <div className="w-full flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center w-full gap-6">
           <Button
             buttonType="second"
             fontSize="xs"
@@ -142,6 +143,7 @@ export default function UpdatePlan({ isOpen, setIsOpen, plan }: Props) {
             children="수정"
             onClick={() => {
               updatePlan(newName, plan.address, memo);
+              setIsUpdate(true);
               closeModal();
             }}
           />
