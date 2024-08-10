@@ -32,7 +32,7 @@ export default function HousePostListItem({
       onClick={() => navigate(`/housepost/${post_serial}`)}
     >
       {/* 이미지 */}
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center w-full">
         {post_image ? (
           <img
             src={post_image}
