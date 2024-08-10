@@ -14,7 +14,7 @@ import MyPage from '@pages/common/mypage/MyPage';
 import MyPasswordModify from '@pages/common/mypage/MyPasswordModify';
 import MyScrapList from '@pages/common/mypage/MyScrapList';
 import Policy from '@pages/common/mypage/Policy';
-import Resign from '@pages/common/mypage/Resign';
+import Resign from '@/pages/common/mypage/resignpage/Resign';
 import Version from '@pages/common/mypage/Version';
 import WishWorkerList from '@pages/common/mypage/WishWorkerList';
 import BeforeResign from '@pages/common/mypage/resignpage/BeforeResign';
