@@ -1,5 +1,8 @@
 package com.example.zipplz_be.domain.mypage.controller;
 
+import com.example.zipplz_be.domain.board.dto.FindWorkerListDTO;
+import com.example.zipplz_be.domain.board.dto.QuestionListDTO;
+import com.example.zipplz_be.domain.board.dto.ShowBoardListDTO;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.mypage.dto.LocalResponseDTO;
 import com.example.zipplz_be.domain.mypage.dto.MyPageResponseDTO;
@@ -196,58 +199,58 @@ public class MyPageController {
     }
 
     // 내가 쓴 질문글
-//    @GetMapping("/questions")
-//    public ResponseEntity<ResponseDTO> getMyQuestions(Authentication authentication) {
-//        ResponseDTO responseDTO;
-//        HttpStatus status;
-//
-//        try {
-//
-//            status = HttpStatus.OK;
-//            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 질문 목록 조회 성공", myPage);
-//        } catch (Exception e) {
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-//        }
-//
-//        return new ResponseEntity<>(responseDTO, status);
-//    }
-//
-//    // 내가 쓴 자랑글
-//    @GetMapping("/showboards")
-//    public ResponseEntity<ResponseDTO> getMyShowBoards(Authentication authentication) {
-//        ResponseDTO responseDTO;
-//        HttpStatus status;
-//
-//        try {
-//
-//            status = HttpStatus.OK;
-//            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 자랑글 목록 조회 성공", myPage);
-//        } catch (Exception e) {
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-//        }
-//
-//        return new ResponseEntity<>(responseDTO, status);
-//    }
-//
-//    // 내가 쓴 구인구직글
-//    @GetMapping("/findworkers")
-//    public ResponseEntity<ResponseDTO> getMyFindWorkers(Authentication authentication) {
-//        ResponseDTO responseDTO;
-//        HttpStatus status;
-//
-//        try {
-//
-//            status = HttpStatus.OK;
-//            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 구인구직글 조회 성공", myPage);
-//        } catch (Exception e) {
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-//        }
-//
-//        return new ResponseEntity<>(responseDTO, status);
-//    }
+    @GetMapping("/questions")
+    public ResponseEntity<ResponseDTO> getMyQuestions(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+
+        try {
+            List<QuestionListDTO> questions = myPageService.getMyQuestions(this.getUserSerial(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 질문 목록 조회 성공", questions);
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 내가 쓴 자랑글
+    @GetMapping("/showboards")
+    public ResponseEntity<ResponseDTO> getMyShowBoards(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+
+        try {
+            List<ShowBoardListDTO> showBoards = myPageService.getMyShowBoards(this.getUserSerial(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 자랑글 목록 조회 성공", showBoards);
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 내가 쓴 구인구직글
+    @GetMapping("/findworkers")
+    public ResponseEntity<ResponseDTO> getMyFindWorkers(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+
+        try {
+            List<FindWorkerListDTO> findWorkers = myPageService.getMyFindWorkers(this.getUserSerial(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 구인구직글 조회 성공", findWorkers);
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
 
     public int getUserSerial(Authentication authentication) {
