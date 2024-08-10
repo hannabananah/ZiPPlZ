@@ -1,9 +1,6 @@
 import { useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
-
-// import { User, Worker } from '@apis/worker/WorkerApi';
-// import { getGugun, getSido } from '@apis/worker/WorkerApi';
 import Button from '@components/common/Button';
 
 type Location = {
@@ -11,57 +8,17 @@ type Location = {
   district: string;
 };
 
-// // 시도 인터페이스
-// interface Sido {
-//   sidoCode: number;
-//   sidoName: string;
-// }
-// // 구군 인터페이스
-// interface Gugun {
-//   gugunCode: number;
-//   sidoCode: number;
-//   gugunName: string;
-// }
-// // 지역 인터페이스
-// interface location {
-//   sidoCode: number;
-//   gugunCode: number;
-//   localName: string;
-// }
-// interface Props {
-//   setNext: React.Dispatch<React.SetStateAction<boolean>>;
-//   setLink: React.Dispatch<React.SetStateAction<string>>;
-//   setWorker: React.Dispatch<React.SetStateAction<Worker>>;
-// }
-
 export default function WorkerInfoLocationDetail() {
-  // 유저, worker 정보 가져오기
-  // const [user, setUser] = useState<User>({
-  //   email: '',
-  //   password: '',
-  //   userName: '',
-  //   birthDate: '',
-  //   tel: '',
-  // });
-  // const [worker, setWorker] = useState<Worker>({
-  //   userSerial: 0,
-  //   locationList: [],
-  //   fieldList: [],
-  //   businessNumber: '',
-  //   company: '',
-  //   companyAddress: '',
-  // });
-
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
-  const [selectedLocations, setSelectedLocations] = useState<Location[]>([]); // 선택된 도시와 구역의 배열
+  const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
 
   const navigate = useNavigate();
-  const maxSelections: number = 8; // 최대 선택 가능한 조합 수
+  const maxSelections: number = 8;
 
   const handleCityClick = (city: string) => {
     setSelectedCity(city);
-    setSelectedDistrict(null); // 도시 클릭 시 구역 초기화
+    setSelectedDistrict(null);
   };
 
   const handleDistrictClick = (district: string) => {
@@ -71,7 +28,6 @@ export default function WorkerInfoLocationDetail() {
       const location: Location = { city: selectedCity, district };
 
       setSelectedLocations((prev) => {
-        // 이미 선택된 조합이 아닌 경우에만 추가하고 최대 개수를 초과하지 않도록 제한
         if (
           !prev.some(
             (loc) => loc.city === selectedCity && loc.district === district
@@ -87,12 +43,14 @@ export default function WorkerInfoLocationDetail() {
 
   const handleConfirmClick = () => {
     if (selectedLocations.length > 0) {
-      console.log('Selected Locations:', selectedLocations);
+      navigate('/mypage/myinformationmodify', {
+        state: { locations: selectedLocations },
+      });
     }
   };
 
   const handleClose = () => {
-    navigate('../WorkerInfoList'); // 우측 상단 x 클릭 시 이전 페이지로 돌아가기
+    navigate('../WorkerInfoList');
   };
 
   const handleRemoveLocation = (index: number) => {
@@ -100,23 +58,7 @@ export default function WorkerInfoLocationDetail() {
   };
 
   const cityButtons: string[] = [
-    '서울',
-    '부산',
-    '경기',
-    '대전',
-    '대구',
-    '인천',
-    '울산',
-    '광주',
-    '강원',
-    '세종',
-    '충북',
-    '충남',
-    '전북',
-    '전남',
-    '경북',
-    '경남',
-    '제주',
+    '서울', '부산', '경기', '대전', '대구', '인천', '울산', '광주', '강원', '세종', '충북', '충남', '전북', '전남', '경북', '경남', '제주',
   ];
 
   const districtMap: { [key: string]: string[] } = {
@@ -153,7 +95,6 @@ export default function WorkerInfoLocationDetail() {
           />
         </div>
 
-        {/* 밑줄 */}
         <hr className="p-2 my-2" />
 
         <div className="grid grid-cols-4 gap-4 mb-4">
@@ -172,7 +113,6 @@ export default function WorkerInfoLocationDetail() {
           ))}
         </div>
 
-        {/* 밑줄 */}
         <hr className="p-2 my-2" />
 
         <div className="grid grid-cols-4 gap-4 mb-4">
@@ -192,7 +132,6 @@ export default function WorkerInfoLocationDetail() {
             ))}
         </div>
 
-        {/* 밑줄 */}
         <hr className="p-2" />
 
         <div className="flex flex-wrap mb-4">
@@ -209,16 +148,13 @@ export default function WorkerInfoLocationDetail() {
           ))}
         </div>
 
-        {/* 선택한 조합의 개수 표시 */}
         <div className="flex justify-end mb-4 font-bold text-zp-lg text-zp-light-gray">
           <span>
             {selectedLocations.length}/{maxSelections}
           </span>
         </div>
 
-        {/* 초기화 및 확인 버튼 묶는 div */}
         <div className="flex items-center justify-between h-20 space-x-2 font-bold first-letter:mb-4">
-          {/* 초기화 버튼 */}
           <Button
             children="초기화"
             buttonType="second"
@@ -229,11 +165,10 @@ export default function WorkerInfoLocationDetail() {
             onClick={() => {
               setSelectedCity(null);
               setSelectedDistrict(null);
-              setSelectedLocations([]); // 선택된 지역들 초기화
+              setSelectedLocations([]);
             }}
           />
 
-          {/* 확인 버튼 */}
           <Button
             children="확인"
             buttonType="primary"

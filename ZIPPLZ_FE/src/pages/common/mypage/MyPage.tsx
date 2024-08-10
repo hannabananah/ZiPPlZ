@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from 'react';
+import { AiOutlinePlus } from 'react-icons/ai';
 import { CgProfile } from 'react-icons/cg';
+import { FaHouseUser } from 'react-icons/fa';
+import { GiMonkey } from 'react-icons/gi';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiChevronRight } from 'react-icons/hi2';
-import { AiOutlinePlus } from 'react-icons/ai';
-import { MdOutlinePhotoCamera } from 'react-icons/md';
-import { TbDog } from 'react-icons/tb';
 import { IoLogoOctocat } from 'react-icons/io';
-import { GiMonkey } from 'react-icons/gi';
-import { SiFoodpanda } from 'react-icons/si';
-import { FaHouseUser } from 'react-icons/fa';
+import { MdOutlinePhotoCamera } from 'react-icons/md';
 import { PiRabbit } from 'react-icons/pi';
 import { PiCow } from 'react-icons/pi';
-import { RiBearSmileLine } from 'react-icons/ri';
 import { PiHorse } from 'react-icons/pi';
+import { RiBearSmileLine } from 'react-icons/ri';
+import { SiFoodpanda } from 'react-icons/si';
+import { TbDog } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 
 interface UserInfo {
@@ -41,7 +41,9 @@ export default function MyPage() {
     nickname: '',
     fullname: '',
   });
-  const [profileImage, setProfileImage] = useState<string | JSX.Element | null>(null);
+  const [profileImage, setProfileImage] = useState<string | JSX.Element | null>(
+    null
+  );
   const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null);
 
   // 페이지 돌아가기 핸들러
@@ -99,7 +101,11 @@ export default function MyPage() {
 
   // 탈퇴하기 페이지로 이동
   const handleNavigateToResign = () => {
-    navigate('/mypage/resign');
+    if (userType === 'customer') {
+      navigate('/mypage/resign');
+    } else if (userType === 'worker') {
+      navigate('/mypage/BeforeResign');
+    }
   };
 
   // 프로필 이미지 변경 모달 열기
@@ -163,9 +169,7 @@ export default function MyPage() {
             <div className="flex flex-col items-center">
               <div className="w-36 h-36 relative">
                 {profileImage ? (
-                  <div
-                    className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center"
-                  >
+                  <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
                     <img
                       src={profileImage}
                       alt="Profile"
@@ -232,15 +236,19 @@ export default function MyPage() {
           </div>
 
           {/* 관심있는 시공업자 / 찜한 자재 목록 */}
-          <div className="mt-6 flex items-center justify-between w-full">
-            <div className="text-zp-lg">관심있는 시공업자 / 찜한 자재 목록</div>
-            <div>
-              <HiChevronRight
-                className="cursor-pointer"
-                onClick={handleNavigateToWishWorkerList}
-              />
+          {userType === 'customer' && (
+            <div className="mt-6 flex items-center justify-between w-full">
+              <div className="text-zp-lg">
+                관심있는 시공업자 / 찜한 자재 목록
+              </div>
+              <div>
+                <HiChevronRight
+                  className="cursor-pointer"
+                  onClick={handleNavigateToWishWorkerList}
+                />
+              </div>
             </div>
-          </div>
+          )}
 
           <hr className="mt-6 w-full border-zp-light-gray" />
 
@@ -293,8 +301,14 @@ export default function MyPage() {
 
       {/* 로그아웃 모달 */}
       {showLogoutModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
-          <div className="px-8 h-[250px] bg-zp-white rounded-zp-radius-big p-6">
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50"
+          onClick={handleCloseModal} // 모달 외부를 클릭하면 닫힘
+        >
+          <div
+            className="px-8 h-[250px] bg-zp-white rounded-zp-radius-big p-6"
+            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 중지
+          >
             <h2 className="p-6 text-zp-3xl font-bold flex justify-center">
               로그아웃
             </h2>
@@ -321,11 +335,18 @@ export default function MyPage() {
 
       {/* 프로필 이미지 변경 모달 */}
       {showProfileModal && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
-          <div className="bg-zp-sub-color rounded-zp-radius-big p-6 w-80">
-            <h2 className="text-zp-2xl font-bold flex justify-center mb-4">
+        <div
+          className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50"
+          onClick={handleCloseProfileModal} // 모달 외부를 클릭하면 닫힘
+        >
+          <div
+            className="bg-zp-sub-color rounded-zp-radius-big p-6 w-80"
+            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 중지
+          >
+            <h2 className="mb-4 text-zp-2xl font-bold flex justify-center">
               프로필 이미지 선택
             </h2>
+
             <div className="flex justify-center mb-4">
               <CgProfile size={72} />
             </div>
