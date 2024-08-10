@@ -59,7 +59,7 @@ export default function MyInformationModify() {
   };
 
   // Daum Postcode Complete Handler
-  const handleComplete = (data) => {
+  const handleComplete = (data: any) => {
     let fullAddress = data.address;
     let extraAddress = '';
 
@@ -79,7 +79,7 @@ export default function MyInformationModify() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+      <div className="flex justify-center items-start min-h-screen p-6 bg-zp-gray">
         <div className="w-full">
           <div className="mt-12 h-12 flex items-center justify-between w-full relative">
             <div className="flex items-center">

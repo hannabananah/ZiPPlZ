@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import {
   FaRegCircle, // FaRegCircleCheck,
-  FaSortAmountDown,
 } from 'react-icons/fa';
 // import { FaRegCircleDot } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
@@ -76,13 +75,13 @@ export default function MyScrapList() {
             <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
               <button
                 onClick={() => handleNavigate('/mypage/myscraplist')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
               >
                 스크랩 글 목록
               </button>
               <button
-                onClick={() => handleNavigate('/mypage/myboardlist')}
-                className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                onClick={() => handleNavigate('/mypage/MyFindWorkerScrapList')}
+                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
               >
                 내가 쓴 글 목록
               </button>
@@ -108,8 +107,7 @@ export default function MyScrapList() {
             className="absolute right-[7rem] cursor-pointer"
           />
           {/* 정렬 버튼 셀렉트바*/}
-          <div className="relative flex justify-end items-center">
-            <FaSortAmountDown />
+          <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
                 backgroundColor="none"

@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import MyFindWorkerScrapList from '@/pages/common/mypage/scrappage/MyFindWorkerScrapList';
 import Layout from '@components/layout/Layout';
 // 공통 컴포넌트
 // 구인 게시물 컴포넌트, 시공자 컴포넌트
@@ -8,7 +9,6 @@ import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
 import Community from '@pages/common/community/HousePostList';
 import Home from '@pages/common/home/Home';
-import MyBoardList from '@pages/common/mypage/MyBoardList';
 import MyInformationModify from '@pages/common/mypage/MyInformationModify';
 import MyPage from '@pages/common/mypage/MyPage';
 import MyPasswordModify from '@pages/common/mypage/MyPasswordModify';
@@ -17,6 +17,7 @@ import Policy from '@pages/common/mypage/Policy';
 import Resign from '@/pages/common/mypage/resignpage/Resign';
 import Version from '@pages/common/mypage/Version';
 import WishWorkerList from '@pages/common/mypage/WishWorkerList';
+import MyFindWorkerList from '@pages/common/mypage/postpage/MyFindWorkerList';
 import BeforeResign from '@pages/common/mypage/resignpage/BeforeResign';
 import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
@@ -32,7 +33,11 @@ import Portfolio from '@pages/worker/Portfolio';
 
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
+import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
+import MyQuestionPostList from './pages/common/mypage/postpage/MyQuestionPostList';
 import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
+import MyHousePostScrapList from './pages/common/mypage/scrappage/MyHousePostScrapList';
+import MyQuestionPostScrapList from './pages/common/mypage/scrappage/MyQuestionPostScrapList';
 import SignUp from './pages/common/signup/SignUp';
 
 export default function App() {
@@ -61,7 +66,24 @@ export default function App() {
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
 
         {/* 마이페이지 */}
-        <Route path="mypage/myboardlist" element={<MyBoardList />} />
+        <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} />
+        <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
+        <Route
+          path="mypage/Myquestionpostlist"
+          element={<MyQuestionPostList />}
+        />
+        <Route
+          path="mypage/myfindworkerscraplist"
+          element={<MyFindWorkerScrapList />}
+        />
+        <Route
+          path="mypage/Myhousepostscraplist"
+          element={<MyHousePostScrapList />}
+        />
+        <Route
+          path="mypage/Myquestionpostscraplist"
+          element={<MyQuestionPostScrapList />}
+        />
         <Route path="mypage/myscraplist" element={<MyScrapList />} />
         <Route
           path="mypage/myinformationmodify"
