@@ -214,13 +214,13 @@ export default function MyFindWorkerList() {
                 fontSize="xs"
                 radius="btn"
                 border="none"
-                hover="light-gray"
+                hover="main"
               />
             </div>
           </div>
         </div>
         {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">전체 3</div>
+        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
 
         {/* 선택하기-삭제하기 버튼 */}
         <div className="w-full flex justify-between items-center text-zp-2xs">

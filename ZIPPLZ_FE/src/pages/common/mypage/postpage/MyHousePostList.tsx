@@ -127,7 +127,7 @@ export default function MyHousePostList() {
   };
 
   const handleWorkerClick = (user_serial: number) => {
-    navigate(`/workers/${user_serial}/portfolio`);
+    navigate(`/housepost/${user_serial}`);
   };
 
   return (
@@ -142,21 +142,24 @@ export default function MyHousePostList() {
               size={20} // 아이콘 크기 조정
             />
             <div className="flex items-center space-x-2">
-              <span className="text-zp-lg font-bold">집들이</span>
-              <div
-                onClick={toggleDropdown}
-                className="cursor-pointer flex items-center space-x-2"
-              >
-                <IoMdArrowDropdown
-                  className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-                  size={24}
-                />
-              </div>
+              <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
             </div>
           </div>
-          {/* 드롭다운 메뉴 */}
+        </div>
+
+        <div className="flex justify-center space-x-2 w-full relative">
+          <span className="text-zp-lg font-bold">집들이</span>
+          <div
+            onClick={toggleDropdown}
+            className="cursor-pointer flex items-center space-x-2"
+          >
+            <IoMdArrowDropdown
+              className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              size={24}
+            />
+          </div>
           {isDropdownOpen && (
-            <div className="absolute left-1/2 transform -translate-x-1/2 top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
+            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
               <button
                 onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
                 className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
@@ -215,7 +218,7 @@ export default function MyHousePostList() {
           </div>
         </div>
         {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">전체 3</div>
+        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
 
         {/* 선택하기-삭제하기 버튼 */}
         <div className="w-full flex justify-between items-center text-zp-2xs">
@@ -265,7 +268,7 @@ export default function MyHousePostList() {
           {list.map((worker) => (
             <div
               key={worker.user_serial}
-              className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
+              className={`relative rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
                 selectedWorkers.includes(worker.user_serial)
                   ? 'bg-zp-light-gray'
                   : ''

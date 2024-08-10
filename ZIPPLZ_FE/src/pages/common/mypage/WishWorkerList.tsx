@@ -27,13 +27,13 @@ const fields: string[] = [
   '기타',
 ];
 
-// 더미 데이터
 export interface HotWorker {
   name: string;
   region: string;
   field: string;
   temp: string;
 }
+
 const list: HotWorker[] = [
   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
@@ -54,7 +54,6 @@ export default function WishWorkerList() {
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
 
   const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption);
   };
 
@@ -99,7 +98,6 @@ export default function WishWorkerList() {
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
         <div className="mt-20 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
@@ -107,21 +105,18 @@ export default function WishWorkerList() {
               onClick={handleGoBack}
               size={20}
             />
-            {/* 관심 있는 시공업자 text */}
             <div className="flex items-center space-x-2">
               <div className="text-zp-lg font-bold">관심 있는 시공업자</div>
             </div>
           </div>
         </div>
 
-        {/* 공종이 이미지로 표시됨 */}
         <div className="grid w-full grid-cols-6 gap-4">
-          {fields.map((item, index) => (
-            <FieldListItem key={index} field={item} />
+          {fields.map((item) => (
+            <FieldListItem key={item} field={item} />
           ))}
         </div>
 
-        {/* 검색 input */}
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -138,30 +133,25 @@ export default function WishWorkerList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바 */}
           <div className="relative top-3 left-3 flex justify-end items-center">
-            <div>
-              <Selectbar
-                backgroundColor="none"
-                fontColor="black"
-                options={options}
-                selectedValue={selectedValue}
-                setSelectedValue={handleSortSelect}
-                width={6}
-                height={2.5}
-                fontSize="xs"
-                radius="btn"
-                border="none"
-                hover="light-gray"
-              />
-            </div>
+            <Selectbar
+              backgroundColor="none"
+              fontColor="black"
+              options={options}
+              selectedValue={selectedValue}
+              setSelectedValue={handleSortSelect}
+              width={6}
+              height={2.5}
+              fontSize="xs"
+              radius="btn"
+              border="none"
+              hover="light-gray"
+            />
           </div>
         </div>
-        {/* 전체 게시글 수 표시 부분 */}
         <div className="text-zp-xl font-bold text-zp-gray">
           <div>전체 {list.length}</div>
         </div>
-        {/* 선택하기-삭제하기 버튼 */}
         <div className="w-full flex justify-between items-center text-zp-2xs">
           {isSelecting && (
             <div
@@ -202,15 +192,13 @@ export default function WishWorkerList() {
             )}
           </button>
         </div>
-        {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* WorkerCard 컴포넌트 */}
-        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="w-full mt-2 overflow-x-auto gap-4">
           {list.map((worker, index) => (
             <div
               key={index}
-              className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
+              className={`relative h-36 rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
                 selectedWorkers.includes(index) ? '' : ''
               }`}
               onClick={() => handleWorkerSelect(index)}
@@ -224,13 +212,19 @@ export default function WishWorkerList() {
                   )}
                 </div>
               )}
-              <WorkerCard worker={worker} />
+              <WorkerCard
+                worker={{
+                  user_name: worker.name,
+                  locations: [worker.region],
+                  field_name: worker.field,
+                  temperature: worker.temp,
+                }}
+              />
             </div>
           ))}
         </div>
       </div>
 
-      {/* 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">

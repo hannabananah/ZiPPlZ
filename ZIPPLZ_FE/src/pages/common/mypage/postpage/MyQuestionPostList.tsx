@@ -13,60 +13,32 @@ import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
-const list: WorkerInfo[] = [
+const list = [
   {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
+    post_serial: 1,
+    title: '전기 문제 질문',
+    content: '전기 작업 중 발생한 문제에 대한 질문입니다.',
+    profile_image: null,
+    nickname: '전기장인',
+    calendar_image: null,
+    upload_date: new Date(),
+    view_cnt: 123,
+    bookmark_cnt: 12,
+    comment_cnt: 5,
   },
   {
-    user_serial: 2,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '철거',
-    career: 4,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
+    post_serial: 2,
+    title: '철거 작업 질문',
+    content: '철거 작업 중 발생한 문제에 대한 질문입니다.',
+    profile_image: null,
+    nickname: '철거마스터',
+    calendar_image: null,
+    upload_date: new Date(),
+    view_cnt: 98,
+    bookmark_cnt: 8,
+    comment_cnt: 3,
   },
-  {
-    user_serial: 3,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '설비',
-    career: 5,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 4,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '타일',
-    career: 6,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  // 다른 worker 정보 추가
+  // 다른 질문글 정보 추가
 ];
 
 export default function MyQuestionPostList() {
@@ -84,7 +56,6 @@ export default function MyQuestionPostList() {
     setSelectedValue(sortOption as SortOption);
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/mypage');
   };
@@ -95,23 +66,23 @@ export default function MyQuestionPostList() {
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+    setIsDropdownOpen(false);
   };
 
   const toggleAllSelected = () => {
     if (isAllSelected) {
       setSelectedWorkers([]);
     } else {
-      setSelectedWorkers(list.map((worker) => worker.user_serial));
+      setSelectedWorkers(list.map((post) => post.post_serial));
     }
     setIsAllSelected(!isAllSelected);
   };
 
-  const handleWorkerSelect = (user_serial: number) => {
-    if (selectedWorkers.includes(user_serial)) {
-      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+  const handleWorkerSelect = (post_serial: number) => {
+    if (selectedWorkers.includes(post_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== post_serial));
     } else {
-      setSelectedWorkers([...selectedWorkers, user_serial]);
+      setSelectedWorkers([...selectedWorkers, post_serial]);
     }
   };
 
@@ -127,20 +98,19 @@ export default function MyQuestionPostList() {
     setIsModalOpen(true);
   };
 
-  const handleWorkerClick = (user_serial: number) => {
-    navigate(`/workers/${user_serial}/portfolio`);
+  const handleWorkerClick = (post_serial: number) => {
+    navigate(`/QuestionPostDetail/${post_serial}`);
   };
 
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
-              size={20} // 아이콘 크기 조정
+              size={20}
             />
             <div className="flex items-center space-x-2">
               <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
@@ -182,7 +152,7 @@ export default function MyQuestionPostList() {
             </div>
           )}
         </div>
-        {/* 검색 input */}
+
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -199,7 +169,6 @@ export default function MyQuestionPostList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
           <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
@@ -218,10 +187,9 @@ export default function MyQuestionPostList() {
             </div>
           </div>
         </div>
-        {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">전체 3</div>
 
-        {/* 선택하기-삭제하기 버튼 */}
+        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+
         <div className="w-full flex justify-between items-center text-zp-2xs">
           {isSelecting && (
             <div
@@ -260,16 +228,15 @@ export default function MyQuestionPostList() {
             </button>
           </div>
         </div>
-        {/* 가로선 */}
+
         <hr className="w-full border-zp-main-color" />
 
-        {/* QuestionPostListItem 컴포넌트 */}
         <div className="w-full mt-2 grid grid-cols-1 gap-4">
-          {list.map((worker) => (
+          {list.map((post) => (
             <div
-              key={worker.user_serial}
+              key={post.post_serial}
               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
-                selectedWorkers.includes(worker.user_serial)
+                selectedWorkers.includes(post.post_serial)
                   ? 'bg-zp-light-gray'
                   : ''
               }`}
@@ -279,10 +246,10 @@ export default function MyQuestionPostList() {
                   className="absolute top-2 right-2 z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleWorkerSelect(worker.user_serial);
+                    handleWorkerSelect(post.post_serial);
                   }}
                 >
-                  {selectedWorkers.includes(worker.user_serial) ? (
+                  {selectedWorkers.includes(post.post_serial) ? (
                     <FaRegCircleCheck />
                   ) : (
                     <FaRegCircle />
@@ -293,23 +260,20 @@ export default function MyQuestionPostList() {
                 className={`w-full h-full ${
                   isSelecting ? 'pointer-events-none' : ''
                 }`}
-                onClick={() => handleWorkerClick(worker.user_serial)}
+                onClick={() => handleWorkerClick(post.post_serial)}
               >
-                <QuestionPostListItem />
+                <QuestionPostListItem {...post} />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">
             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
-            <div className="mb-4 font-bold">
-              선택한 항목을 삭제하시겠습니까?
-            </div>
+            <div className="mb-4 font-bold">선택한 항목을 삭제하시겠습니까?</div>
             <div className="flex justify-end space-x-2">
               <button
                 className="w-full font-bold px-4 py-2 bg-zp-light-beige rounded-zp-radius-big"

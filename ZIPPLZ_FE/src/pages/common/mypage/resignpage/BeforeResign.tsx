@@ -27,7 +27,7 @@ export default function BeforeResign() {
 
   return (
     <>
-      <div className="flex flex-col min-h-screen p-6 bg-zp-gray">
+      <div className="flex flex-col min-h-screen p-6">
         <div className="w-full max-w-3xl flex-grow">
           {/* 뒤로가기 버튼 */}
           <div className="flex items-center">
@@ -44,7 +44,7 @@ export default function BeforeResign() {
             </div>
           </div>
 
-          <div className="p-4 bg-zp-light-gray rounded-zp-radius-big text-zp-xs font-bold">
+          <div className="p-4 bg-zp-light-beige rounded-zp-radius-big text-zp-xs font-bold">
             <div className="flex items-center space-x-2 text-zp-gray">
               <IoAlertCircleOutline />
               <div>주의사항</div>
