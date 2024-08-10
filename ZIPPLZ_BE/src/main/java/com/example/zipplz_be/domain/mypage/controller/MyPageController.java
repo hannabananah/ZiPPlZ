@@ -1,7 +1,9 @@
 package com.example.zipplz_be.domain.mypage.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.mypage.dto.LocalResponseDTO;
 import com.example.zipplz_be.domain.mypage.dto.MyPageResponseDTO;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.mypage.dto.UpdateCustomerDTO;
 import com.example.zipplz_be.domain.mypage.dto.UpdateWorkerDTO;
@@ -12,6 +14,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
@@ -27,7 +32,6 @@ public class MyPageController {
 
     @GetMapping("")
     public ResponseEntity<ResponseDTO> getMyPage(Authentication authentication) {
-
         ResponseDTO responseDTO;
         HttpStatus status;
 
@@ -114,6 +118,137 @@ public class MyPageController {
 
         return new ResponseEntity<>(responseDTO, status);
     }
+
+    @PostMapping("/profile-img")
+    public ResponseEntity<ResponseDTO> setProfileImg(Authentication authentication, @RequestPart MultipartFile image) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            myPageService.setProfileImg(this.getUserSerial(authentication), image);
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "프로필 이미지 변경 성공");
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    @DeleteMapping("/profile-img")
+    public ResponseEntity<ResponseDTO> deleteProfileImg(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            myPageService.deleteProfileImg(this.getUserSerial(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "프로필 이미지 삭제 성공");
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 시공자 활동지역 조회
+    @GetMapping("/worker/locations")
+    public ResponseEntity<ResponseDTO> getWorkerLocations(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            if (!this.getUserRole(authentication).equals("worker")) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "이 유저는 시공자가 아닙니다.");
+            } else {
+                List<LocalResponseDTO> locations = myPageService.getWorkerLocations(this.getUserSerial(authentication));
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "시공자 활동지역 조회 성공", locations);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 찜한 시공업자 목록 조회
+    @GetMapping("/wish-workers")
+    public ResponseEntity<ResponseDTO> getWishWorkers(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            List<PortfolioViewDTO> wishWorkerList = myPageService.getWishWorkers(this.getUserSerial(authentication));
+            if (!this.getUserRole(authentication).equals("customer")) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "이 유저는 시공자가 아닙니다.");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "찜한 시공자 목록 조회 성공", wishWorkerList);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 내가 쓴 질문글
+//    @GetMapping("/questions")
+//    public ResponseEntity<ResponseDTO> getMyQuestions(Authentication authentication) {
+//        ResponseDTO responseDTO;
+//        HttpStatus status;
+//
+//        try {
+//
+//            status = HttpStatus.OK;
+//            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 질문 목록 조회 성공", myPage);
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
+//
+//    // 내가 쓴 자랑글
+//    @GetMapping("/showboards")
+//    public ResponseEntity<ResponseDTO> getMyShowBoards(Authentication authentication) {
+//        ResponseDTO responseDTO;
+//        HttpStatus status;
+//
+//        try {
+//
+//            status = HttpStatus.OK;
+//            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 자랑글 목록 조회 성공", myPage);
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
+//
+//    // 내가 쓴 구인구직글
+//    @GetMapping("/findworkers")
+//    public ResponseEntity<ResponseDTO> getMyFindWorkers(Authentication authentication) {
+//        ResponseDTO responseDTO;
+//        HttpStatus status;
+//
+//        try {
+//
+//            status = HttpStatus.OK;
+//            responseDTO = new ResponseDTO<>(status.value(), "내가 쓴 구인구직글 조회 성공", myPage);
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
+
 
     public int getUserSerial(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
