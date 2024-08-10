@@ -5,6 +5,12 @@ import com.example.zipplz_be.domain.board.repository.BoardRepository;
 import com.example.zipplz_be.domain.board.repository.CommentRepository;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.mypage.repository.WishRepository;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
+import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -17,12 +23,28 @@ public class BoardServiceImpl implements BoardService {
     private final CommentRepository commentRepository;
     private final WishRepository wishRepository;
     private final FileRepository fileRepository;
+    private final PortfolioRepository portfolioRepository;
 
-    public BoardServiceImpl(BoardRepository boardRepository, CommentRepository commentRepository, WishRepository wishRepository, FileRepository fileRepository) {
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public BoardServiceImpl(BoardRepository boardRepository, CommentRepository commentRepository, WishRepository wishRepository, FileRepository fileRepository, PortfolioRepository portfolioRepository, EntityManager entityManager) {
         this.boardRepository = boardRepository;
         this.commentRepository = commentRepository;
         this.wishRepository = wishRepository;
         this.fileRepository = fileRepository;
+        this.portfolioRepository = portfolioRepository;
+        this.entityManager = entityManager;
+    }
+
+    @Override
+    public int getBoardUser(int boardType, int boardSerial) {
+        return boardRepository.getBoardUser(boardType, boardSerial);
+    }
+
+    @Override
+    public int getLastInsertId() {
+        return boardRepository.getLastInsertId();
     }
 
     @Override
@@ -88,9 +110,7 @@ public class BoardServiceImpl implements BoardService {
     public ShowBoardDetailDTO getShowBoard(int boardSerial) {
         BoardJoinDTO board = boardRepository.getBoard(boardSerial);
         List<BoardFileDTO> files = fileRepository.getBoardImg(boardSerial);
-
-        // tag 포트폴리오 저장하는 방식 및 가져오는 방식
-//        List<WorkerTagDTO> tags = boardRepository.getWorkerTags(boardSerial);
+        List<PortfolioJoinDTO> tags = portfolioRepository.getPortfolioTags(boardSerial);
         
         List<CommentJoinDTO> parent_comments = commentRepository.getComment(boardSerial, -1);
         List<CommentViewDTO> comments = new ArrayList<>();
@@ -102,8 +122,7 @@ public class BoardServiceImpl implements BoardService {
             CommentViewDTO comment = new CommentViewDTO(parent_comment, child_comments);
             comments.add(comment);
         }
-//        ShowBoardDetailDTO showboard = new ShowBoardDetailDTO(board, files, tags, comments);
-        ShowBoardDetailDTO showboard = new ShowBoardDetailDTO(board, files, comments);
+        ShowBoardDetailDTO showboard = new ShowBoardDetailDTO(board, files, tags, comments);
         return showboard;
     }
 
@@ -136,5 +155,23 @@ public class BoardServiceImpl implements BoardService {
         }
         FindWorkerDetailDTO findworker = new FindWorkerDetailDTO(board, files, comments);
         return findworker;
+    }
+
+    @Override
+    @Transactional
+    public int addBoardToPortfolio(int board_serial, List<PortfolioViewDTO> views) {
+        String query = "INSERT INTO BoardToPortfolio(board_serial, portfolio_serial) VALUES ";
+
+        StringBuilder sb = new StringBuilder();
+        for (PortfolioViewDTO view : views) {
+            if (!sb.isEmpty()) {
+                sb.append(", ");
+            }
+            sb.append(String.format("(%d, %d)", board_serial, view.getPortfolio_serial()));
+        }
+
+        query += sb.toString();
+        System.out.println(query);
+        return entityManager.createNativeQuery(query).executeUpdate();
     }
 }
