@@ -8,7 +8,6 @@ import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import { isAxiosError } from 'axios';
-import base64 from 'base-64';
 
 export default function Login() {
   const { setIsLogin, setLoginUser } = useLoginUserStore();
@@ -19,13 +18,16 @@ export default function Login() {
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
-  const handleClickEye = function () {
+
+  const handleClickEye = () => {
     setShowPassword(!showPassword);
   };
+
   const login = async (email: string, password: string) => {
     try {
       const response = await requestLogin(email, password);
       const authorizationHeader = response.headers.authorization;
+
       if (authorizationHeader) {
         let token: string = authorizationHeader.split(' ')[1];
 
@@ -34,12 +36,25 @@ export default function Login() {
           token.indexOf('.') + 1,
           token.lastIndexOf('.')
         );
-        let dec = base64.decode(payload);
-        let decodingInfoJson = JSON.parse(dec);
+
+        let decodedPayload = atob(payload);
+
+        const bytes = new Uint8Array(decodedPayload.length);
+        for (let i = 0; i < decodedPayload.length; i++) {
+          bytes[i] = decodedPayload.charCodeAt(i);
+        }
+
+        const decoder = new TextDecoder('utf-8');
+        const decodedText = decoder.decode(bytes);
+        console.log(decodedText);
+
+        let decodingInfoJson = JSON.parse(decodedText);
+
         setLoginUser({
           userSerial: decodingInfoJson.userSerial,
           email: decodingInfoJson.email,
           role: decodingInfoJson.role,
+          userName: decodingInfoJson.name,
         });
         setIsLogin(true);
 
@@ -62,10 +77,10 @@ export default function Login() {
   };
 
   function validateEmail(email: string): boolean {
-    let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
-    if (!email) return true;
-    return regex.test(email);
+    const regex = new RegExp('[a-z0-9]+@[a-z]+\\.[a-z]{2,3}');
+    return email ? regex.test(email) : true;
   }
+
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       <div
@@ -147,7 +162,6 @@ export default function Login() {
             radius="btn"
             onClick={() => {
               login(email, password);
-
               setEmail('');
               setPassword('');
             }}
@@ -155,7 +169,7 @@ export default function Login() {
         </div>
         <div className="flex w-full justify-between px-[15%] z-30">
           <p
-            className="text-zp-md text-zp-gray  ml-[5%] cursor-pointer font-bold"
+            className="text-zp-md text-zp-gray ml-[5%] cursor-pointer font-bold"
             onClick={() => {
               navigate('/member/join/common/1/agree');
             }}
@@ -171,7 +185,7 @@ export default function Login() {
             아이디/비밀번호 찾기
           </p>
         </div>
-        <div className="absolute  left-0 bottom-[4rem] px-4 w-full flex flex-col gap-4 z-30">
+        <div className="absolute left-0 bottom-[4rem] px-4 w-full flex flex-col gap-4 z-30">
           <Link to={GOOGLE_LOGIN_URL}>
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
@@ -181,7 +195,6 @@ export default function Login() {
               style={{
                 backgroundImage: "url('/src/assets/login/GoogleLogin.svg')",
                 backgroundRepeat: 'no-repeat',
-                // backgroundSize: '30%',
                 backgroundPosition: 'center center',
               }}
             />
@@ -192,7 +205,6 @@ export default function Login() {
               style={{
                 backgroundImage: "url('/src/assets/login/KakaoLogin.svg')",
                 backgroundRepeat: 'no-repeat',
-                // backgroundSize: '30%',
                 backgroundPosition: 'center center',
               }}
             />
