@@ -80,11 +80,9 @@ export default function MyHousePostList() {
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
 
   const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption);
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/mypage');
   };
@@ -95,7 +93,7 @@ export default function MyHousePostList() {
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+    setIsDropdownOpen(false);
   };
 
   const toggleAllSelected = () => {
@@ -114,6 +112,7 @@ export default function MyHousePostList() {
       setSelectedWorkers([...selectedWorkers, user_serial]);
     }
   };
+
   const toggleSelecting = () => {
     if (isSelecting) {
       setSelectedWorkers([]);
@@ -290,7 +289,17 @@ export default function MyHousePostList() {
                   )}
                 </div>
               )}
-              <HousePostListItem worker={worker} />
+              <HousePostListItem
+                post_serial={worker.user_serial} 
+                post_image={worker.img} 
+                title={worker.field_name} 
+                profile_image={null} 
+                nickname={worker.name} 
+                upload_date={new Date()} 
+                view_cnt={100} 
+                bookmark_cnt={50} 
+                comment_cnt={10} 
+              />
             </div>
           ))}
         </div>

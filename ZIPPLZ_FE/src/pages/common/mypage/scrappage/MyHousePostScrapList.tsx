@@ -264,9 +264,9 @@ export default function MyHousePostScrapList() {
         {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* workerInfoListitem 컴포넌트 */}
+        {/* HousePostListItem 컴포넌트 */}
         {/* 화면 width 따라 grid 개수 변화 */}
-        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="w-full mt-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {list.map((worker) => (
             <div
               key={worker.user_serial}
@@ -292,7 +292,17 @@ export default function MyHousePostScrapList() {
                   )}
                 </div>
               )}
-              <HousePostListItem worker={worker} />
+              <HousePostListItem
+                post_serial={worker.user_serial}
+                post_image={worker.img}
+                title={worker.field_name}
+                profile_image={null} // 프로필 이미지가 없을 경우 null 전달
+                nickname={worker.name}
+                upload_date={new Date()} // 임시로 현재 시간 사용
+                view_cnt={100} // 예시 값
+                bookmark_cnt={50} // 예시 값
+                comment_cnt={10} // 예시 값
+              />
             </div>
           ))}
         </div>

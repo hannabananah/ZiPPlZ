@@ -95,6 +95,11 @@ export default function WishWorkerList() {
     setIsModalOpen(false);
   };
 
+  const handleFieldClick = (field: string) => {
+    console.log(`Selected field: ${field}`);
+    // 이곳에 필드 선택 시 동작할 로직 추가 가능
+  };
+
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
@@ -113,7 +118,11 @@ export default function WishWorkerList() {
 
         <div className="grid w-full grid-cols-6 gap-4">
           {fields.map((item) => (
-            <FieldListItem key={item} field={item} />
+            <FieldListItem
+              key={item}
+              field={item}
+              handlClickField={() => handleFieldClick(item)}
+            />
           ))}
         </div>
 

@@ -49,65 +49,51 @@ export default function MyPage() {
     null
   );
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('-1');
   };
 
-  // 내 정보 수정하기 페이지로 이동
   const handleNavigateToMyInformationModify = () => {
     navigate('/mypage/myinformationmodify');
   };
 
-  // 비밀번호 변경 페이지로 이동
   const handleNavigateToMyPasswordModify = () => {
     navigate('/mypage/mypasswordmodify');
   };
 
-  // 내가 쓴 글 목록 페이지로 이동
   const handleNavigateToMyFindWorkerList = () => {
     navigate('/mypage/MyFindWorkerList');
   };
 
-  // 스크랩 글 목록 페이지로 이동
   const handleNavigateToMyFindWorkerScrapList = () => {
     navigate('/mypage/MyFindWorkerScrapList');
   };
 
-  // 관심있는 시공업자 목록 페이지로 이동
   const handleNavigateToWishWorkerList = () => {
     navigate('/mypage/wishworkerlist');
   };
 
-  // 이용약관 / 개인정보처리방침 페이지로 이동
   const handleNavigateToPolicy = () => {
     navigate('/mypage/policy');
   };
 
-  // 버전 페이지로 이동
   const handleNavigateToVersion = () => {
     navigate('/mypage/version');
   };
 
-  // 로그아웃 모달 열기
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
   };
 
-  // 로그아웃 모달 닫기
   const handleCloseModal = () => {
     setShowLogoutModal(false);
   };
 
-  // 실제 로그아웃 처리 (로그아웃 구현 후 적용 예정)
   const handleLogoutConfirm = () => {
     setShowLogoutModal(false);
-    // 로그아웃 로직 추가 필요
-    // 임시로 홈으로 이동하게 해놓음
     navigate('/');
   };
 
-  // 탈퇴하기 페이지로 이동
   const handleNavigateToResign = () => {
     if (userType === 'customer') {
       navigate('/mypage/resign');
@@ -116,26 +102,21 @@ export default function MyPage() {
     }
   };
 
-  // 프로필 이미지 변경 모달 열기
   const handleOpenProfileModal = () => {
     setTempProfileImage(profileImage as string);
     setTempSelectedIcon(selectedIcon);
     setShowProfileModal(true);
   };
 
-  // 프로필 이미지 변경 모달 닫기
   const handleCloseProfileModal = () => {
     setShowProfileModal(false);
   };
 
-  // 사용자 정보 가져오기 (실제 구현에서는 API 호출 등을 통해 가져오게 됨)
   useEffect(() => {
-    // 예시 데이터를 설정합니다. 실제로는 API 호출 등을 통해 데이터를 가져옵니다.
-    setUserType('customer'); // 'customer' 또는 'worker'
+    setUserType('customer');
     setUserInfo({ nickname: '강신구', fullname: '김현태' });
   }, []);
 
-  // 이미지 업로드 핸들러
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
@@ -148,20 +129,17 @@ export default function MyPage() {
     }
   };
 
-  // 아이콘 선택 핸들러
   const handleIconSelect = (icon: JSX.Element) => {
     setTempProfileImage(null);
     setTempSelectedIcon(icon);
   };
 
-  // 선택한 프로필 이미지 저장 핸들러
   const handleSaveProfile = () => {
     setProfileImage(tempProfileImage);
     setSelectedIcon(tempSelectedIcon);
     setShowProfileModal(false);
   };
 
-  // 선택한 프로필 이미지 지우기 핸들러
   const handleClearProfile = () => {
     setTempProfileImage(null);
     setTempSelectedIcon(null);
@@ -170,7 +148,6 @@ export default function MyPage() {
   return (
     <div className="flex justify-center items-start min-h-screen p-6">
       <div className="w-full">
-        {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
         <div className="flex items-center justify-between w-full relative">
           <div className="flex items-center">
             <GoArrowLeft
@@ -184,11 +161,10 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 프로필 사진, 닉네임 또는 본명 */}
         <div className="flex justify-center w-full mt-4 relative">
           <div className="flex flex-col items-center">
             <div className="w-36 h-36 relative">
-              {profileImage ? (
+              {profileImage && typeof profileImage === 'string' ? (
                 <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
                   <img
                     src={profileImage}
@@ -220,7 +196,6 @@ export default function MyPage() {
 
         <hr className="mt-6 w-full border-zp-light-gray" />
 
-        {/* 내 정보 수정하기 */}
         <div className="mt-6 flex items-center justify-between w-full">
           <div className="text-zp-lg">내 정보 수정하기</div>
           <div>
@@ -231,7 +206,6 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 비밀번호 변경 */}
         <div className="mt-6 flex items-center justify-between w-full ">
           <div className="text-zp-lg">비밀번호 변경</div>
           <div>
@@ -242,7 +216,6 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 내가 쓴 글 / 스크랩 글 목록 */}
         <div className="mt-6 flex items-center justify-between w-full ">
           <div className="text-zp-lg">내가 쓴 글 목록</div>
           <div>
@@ -263,10 +236,8 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 고객의 경우에만 보여줄 섹션 */}
         {userType === 'customer' && (
           <>
-            {/* 관심있는 시공업자 / 찜한 자재 목록 */}
             <div className="mt-6 flex items-center justify-between w-full">
               <div className="text-zp-lg">
                 관심있는 시공업자 / 찜한 자재 목록
@@ -283,7 +254,6 @@ export default function MyPage() {
 
         <hr className="mt-6 w-full border-zp-light-gray" />
 
-        {/* 이용약관 / 개인정보처리방침 */}
         <div className="mt-6 flex items-center justify-between w-full">
           <div className="text-zp-lg">이용약관 / 개인정보처리방침</div>
           <div>
@@ -294,7 +264,6 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 버전 */}
         <div className="mt-6 flex items-center justify-between w-full">
           <div className="text-zp-lg">버전</div>
           <div className="flex align-middle">
@@ -306,7 +275,6 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 로그아웃 */}
         <div className="mt-6 flex items-center justify-between w-full">
           <div className="text-zp-lg">로그아웃</div>
           <div>
@@ -317,7 +285,6 @@ export default function MyPage() {
           </div>
         </div>
 
-        {/* 탈퇴하기 */}
         <div className="mt-6 flex items-center justify-between w-full">
           <div className="text-zp-lg">탈퇴하기</div>
           <div>
@@ -329,15 +296,14 @@ export default function MyPage() {
         </div>
       </div>
 
-      {/* 로그아웃 모달 */}
       {showLogoutModal && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50"
-          onClick={handleCloseModal} // 모달 외부를 클릭하면 닫힘
+          onClick={handleCloseModal}
         >
           <div
             className="px-8 h-[250px] bg-zp-white rounded-zp-radius-big p-6"
-            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 중지
+            onClick={(e) => e.stopPropagation()}
           >
             <h2 className="p-6 text-zp-3xl font-bold flex justify-center">
               로그아웃
@@ -363,15 +329,14 @@ export default function MyPage() {
         </div>
       )}
 
-      {/* 프로필 이미지 변경 모달 */}
       {showProfileModal && (
         <div
           className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50"
-          onClick={handleCloseProfileModal} // 모달 외부를 클릭하면 닫힘
+          onClick={handleCloseProfileModal}
         >
           <div
             className="bg-zp-sub-color rounded-zp-radius-big p-6 w-80"
-            onClick={(e) => e.stopPropagation()} // 모달 내부 클릭 시 이벤트 전파 중지
+            onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-zp-2xl font-bold flex justify-center mb-4">
               프로필 이미지 선택

@@ -9,7 +9,7 @@ export default function MyInformationModify() {
   const location = useLocation();
 
   // 사용자가 고객인지 시공업자인지 상태를 설정합니다.
-  const [userType, setUserType] = useState<'customer' | 'worker'>('worker');
+  const [userType, ] = useState<'customer' | 'worker'>('worker');
 
   // 각 입력 필드의 상태를 관리합니다.
   const [nickname, setNickname] = useState('백승범123');
@@ -33,7 +33,7 @@ export default function MyInformationModify() {
   useEffect(() => {
     if (location.state && location.state.locations) {
       const locations = location.state.locations.map(
-        (loc) => `${loc.city} ${loc.district}`
+        (loc: any) => `${loc.city} ${loc.district}`
       );
       setLocationDetails(locations);
     }

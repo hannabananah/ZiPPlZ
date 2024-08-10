@@ -9,7 +9,6 @@ import { useNavigate } from 'react-router-dom';
 import Selectbar from '@/components/common/Selectbar';
 import QuestionPostListItem from '@/components/community/QuestionPostListItem';
 import Input from '@components/common/Input';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
