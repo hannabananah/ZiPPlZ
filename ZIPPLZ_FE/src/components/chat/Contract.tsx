@@ -7,7 +7,6 @@ import { ContractRequestData } from '@apis/worker/ContractApi';
 import { getMaterials } from '@apis/worker/MaterialApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import DateInput from '@components/signup/DateInput';
 import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
 
 interface ContractProps {
@@ -54,14 +53,14 @@ export default function Contract({
     {
       label: '작업 시작일',
       value: '',
-      placeholder: 'YYYY/MM/DD',
+      placeholder: 'YYYY-MM-DD',
       type: 'input',
       editable: true,
     },
     {
       label: '작업 마감일',
       value: '',
-      placeholder: 'YYYY/MM/DD',
+      placeholder: 'YYYY-MM-DD',
       type: 'input',
       editable: true,
     },
@@ -73,6 +72,7 @@ export default function Contract({
       editable: true,
     },
   ];
+
   const [fields, setFields] = useState<Field[]>(defaultContractInfo);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([]);
@@ -123,6 +123,12 @@ export default function Contract({
       i === index ? { ...field, [key]: value } : field
     );
     setFields(newFields);
+
+    if (fields[index].label === '작업 시작일') {
+      setStartDate(value);
+    } else if (fields[index].label === '작업 마감일') {
+      setEndDate(value);
+    }
   };
 
   const handleMaterialChange = (selectedOptions: any) => {
@@ -147,6 +153,14 @@ export default function Contract({
     setEndDate('');
   };
 
+  const getTodayDate = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
   return (
     <div className="w-full p-4 bg-zp-white">
       <h2 className="font-bold text-center text-zp-2xl">계약서</h2>
@@ -163,12 +177,20 @@ export default function Contract({
               {field.type === 'input' ? (
                 field.label === '작업 시작일' ||
                 field.label === '작업 마감일' ? (
-                  <DateInput
+                  <input
+                    type="date"
                     value={field.value}
-                    onChange={(date) => handleFieldChange(index, 'value', date)}
+                    min={
+                      field.label === '작업 마감일' ? startDate : getTodayDate()
+                    }
+                    onChange={(e) =>
+                      handleFieldChange(index, 'value', e.target.value)
+                    }
                     placeholder={field.placeholder}
-                    inputType="normal"
-                    radius="btn"
+                    className="w-full px-2 border border-zp-light-gray focus:outline-none caret-zp-main-color placeholder-zp-main-color rounded-zp-radius-btn hover:border-zp-main-color "
+                    style={{
+                      cursor: 'pointer',
+                    }}
                   />
                 ) : (
                   <Input

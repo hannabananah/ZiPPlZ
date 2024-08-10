@@ -1,7 +1,7 @@
 interface Props {
   className?: string;
   placeholder?: string;
-  type: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel';
+  type: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel' | 'date';
   inputType:
     | 'none'
     | 'login'

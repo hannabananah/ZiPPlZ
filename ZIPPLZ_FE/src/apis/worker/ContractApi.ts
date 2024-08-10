@@ -19,6 +19,7 @@ export const postContract = async (
   if (!requestData) {
     throw new Error('requestData가 필요합니다.');
   }
+  console.log('requestData', requestData);
 
   try {
     const response = await axiosInstance.post(
