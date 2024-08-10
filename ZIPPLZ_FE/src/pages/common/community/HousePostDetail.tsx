@@ -1,17 +1,11 @@
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
-// import { FaRegComment } from 'react-icons/fa';
-// import { FaChevronDown } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoMdArrowDropdown } from 'react-icons/io';
-// , IoMdArrowDropup
-import { IoBookmarkOutline } from 'react-icons/io5';
-import { IoBookmark } from 'react-icons/io5';
+import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -20,17 +14,37 @@ import Photos from '@/components/worker/detail/overView/Photos';
 
 // 더미 데이터
 export interface HotWorker {
-  name: string;
-  region: string;
-  field: string;
-  temp: string;
+  user_name: string;
+  locations: string[];
+  field_name: string;
+  temperature: string;
 }
 
 const list: HotWorker[] = [
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-  { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
+  {
+    user_name: '김현태',
+    locations: ['서울 강남구'],
+    field_name: '전기',
+    temperature: '36.5도',
+  },
+  {
+    user_name: '김현태',
+    locations: ['서울 강남구'],
+    field_name: '전기',
+    temperature: '36.5도',
+  },
+  {
+    user_name: '김현태',
+    locations: ['서울 강남구'],
+    field_name: '전기',
+    temperature: '36.5도',
+  },
+  {
+    user_name: '김현태',
+    locations: ['서울 강남구'],
+    field_name: '전기',
+    temperature: '36.5도',
+  },
 ];
 
 export default function HousePostDetail() {
@@ -44,6 +58,7 @@ export default function HousePostDetail() {
     console.log('게시물 ID:', id);
     // fetch or use a store to get the post data by ID
   }, [id]);
+
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate(-1);
@@ -131,10 +146,12 @@ export default function HousePostDetail() {
           <div className="mt-6 text-zp-xl font-bold">이 분들과 함께 했어요</div>
 
           {/* workercard 나열 + swiper로 좌우 이동 가능 */}
-          <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
-            {list.map((worker, index) => (
-              <WorkerCard key={index} worker={worker} />
-            ))}
+          <div className="flex w-full overflow-x-auto mt-4">
+            <div className="flex justify-between w-full h-[8rem] ">
+              {list.map((worker) => (
+                <WorkerCard worker={worker} />
+              ))}
+            </div>
           </div>
 
           {/* 리뷰 text */}
@@ -160,8 +177,6 @@ export default function HousePostDetail() {
               height={2.5}
               fontSize="xs"
               radius="none"
-              // value={inputValue}
-              // onChange={handleInputChange}
               additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
             />
           </div>
@@ -169,7 +184,7 @@ export default function HousePostDetail() {
           <div className="mt-6 flex flex-col">
             <div className="flex items-center">
               <CgProfile size={40} />
-              <div className="px-2  text-zp-xs font-bold">원숭이</div>
+              <div className="px-2 text-zp-xs font-bold">원숭이</div>
               <div className="text-zp-xs text-zp-gray font-bold">· 2주 전</div>
             </div>
             <div className="ml-12 text-zp-xs font-bold text-zp-gray">
@@ -182,10 +197,6 @@ export default function HousePostDetail() {
               <IoMdArrowDropdown />
             </div>
             <div className="p-2 font-bold">답글 1개</div>
-            {/* <div className="ml-2">
-              <FaRegComment />
-            </div>
-            <div className="ml-2">답글 작성하기</div> */}
           </div>
 
           <div className="ml-12 mt-2 flex justify-start items-center">
@@ -211,7 +222,6 @@ export default function HousePostDetail() {
             <div className="text-lg font-bold mb-4">삭제 확인</div>
             <div className="mb-4">정말로 삭제하시겠습니까?</div>
             <div className="flex justify-end space-x-4">
-              {/* 모달의 취소 버튼 */}
               <div className="font-bold">
                 <Button
                   children="취소"
@@ -223,7 +233,6 @@ export default function HousePostDetail() {
                   onClick={handleCloseModal}
                 />
               </div>
-              {/* 모달의 삭제 버튼 */}
               <div className="font-bold">
                 <Button
                   children="삭제"
