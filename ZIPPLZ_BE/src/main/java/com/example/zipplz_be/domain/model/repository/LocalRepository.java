@@ -26,7 +26,11 @@ public interface LocalRepository extends JpaRepository<Local, Integer> {
             "WHERE Local.user_serial = :user_serial", nativeQuery = true)
     List<String> getLocalNames(@Param("user_serial") int user_serial);
 
-    Local findByUserSerial(User user);
+    Local findFirstByUserSerial(User user);
 
     boolean existsByUserSerial(User user);
+
+    void deleteByUserSerial(User user);
+
+    List<Local> findAllByUserSerial(User user);
 }

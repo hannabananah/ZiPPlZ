@@ -48,11 +48,14 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         User user = userRepository.findByEmail(email);
         int userSerial = user.getUserSerial();
         String role = user.getRole();
+        String name = user.getUserName();
 
         System.out.println("succesfulAuthentication => " + user.toString());
 
-        String token = jwtUtil.createJwt(email, userSerial, role);
+        String token = jwtUtil.createJwt(email, userSerial, role, name);
 
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!token!!!!!!!!!! => " + token);
+        System.out.println("!!!!!!!!!!!!!name from token!!!!!!!!!! => " + jwtUtil.getName(token));
         response.addHeader("Authorization", "Bearer " + token);
     }
 

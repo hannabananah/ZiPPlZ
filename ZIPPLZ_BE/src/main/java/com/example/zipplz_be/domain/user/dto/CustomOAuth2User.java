@@ -40,6 +40,10 @@ public record CustomOAuth2User(
         return user.getRole();
     }
 
+    public String getUserName() {
+        return user.getUserName();
+    }
+
     @Override
     public boolean isNewUser() {
         return isNewUser;

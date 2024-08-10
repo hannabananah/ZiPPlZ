@@ -3,11 +3,11 @@ package com.example.zipplz_be.domain.portfolio.dto;
 import java.util.*;
 
 public class PortfolioViewDTO{
-    private int user_serial;
     private int portfolio_serial;
+    private int worker;
     private String user_name;
     private Integer birth_date;
-    private double temp;
+    private double temperature;
     private int field_id;
     private String field_name;
     private double career;
@@ -15,12 +15,15 @@ public class PortfolioViewDTO{
     private List<String> locations;
     private String img;
 
+    public PortfolioViewDTO() {
+    }
+
     public PortfolioViewDTO(PortfolioJoinDTO pjDTO, List<String> locations, String img) {
-        this.user_serial = pjDTO.getUser_serial();
         this.portfolio_serial = pjDTO.getPortfolio_serial();
+        this.worker = pjDTO.getWorker();
         this.user_name = pjDTO.getUser_name();
         this.birth_date = pjDTO.getBirth_date();
-        this.temp = pjDTO.getTemp();
+        this.temperature = pjDTO.getTemperature();
         this.field_id = pjDTO.getField_id();
         this.field_name = pjDTO.getField_name();
         this.career = pjDTO.getCareer();
@@ -29,20 +32,20 @@ public class PortfolioViewDTO{
         this.img = img;
     }
 
-    public int getUser_serial() {
-        return user_serial;
-    }
-
-    public void setUser_serial(int user_serial) {
-        this.user_serial = user_serial;
-    }
-
     public int getPortfolio_serial() {
         return portfolio_serial;
     }
 
     public void setPortfolio_serial(int portfolio_serial) {
         this.portfolio_serial = portfolio_serial;
+    }
+
+    public int getWorker() {
+        return worker;
+    }
+
+    public void setWorker(int worker) {
+        this.worker = worker;
     }
 
     public String getUser_name() {
@@ -61,12 +64,12 @@ public class PortfolioViewDTO{
         this.birth_date = birth_date;
     }
 
-    public double getTemp() {
-        return temp;
+    public double getTemperature() {
+        return temperature;
     }
 
-    public void setTemp(double temp) {
-        this.temp = temp;
+    public void setTemperature(double temperature) {
+        this.temperature = temperature;
     }
 
     public int getField_id() {
@@ -120,11 +123,11 @@ public class PortfolioViewDTO{
     @Override
     public String toString() {
         return "PortfolioViewDTO{" +
-                "user_serial=" + user_serial +
-                ", portfolio_serial=" + portfolio_serial +
+                "portfolio_serial=" + portfolio_serial +
+                ", worker=" + worker +
                 ", user_name='" + user_name + '\'' +
                 ", birth_date=" + birth_date +
-                ", temp=" + temp +
+                ", temperature=" + temperature +
                 ", field_id=" + field_id +
                 ", field_name='" + field_name + '\'' +
                 ", career=" + career +

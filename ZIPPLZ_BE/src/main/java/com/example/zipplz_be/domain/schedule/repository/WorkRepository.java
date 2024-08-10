@@ -24,4 +24,11 @@ public interface WorkRepository extends JpaRepository<Work, Integer> {
     Integer sumWorkPrice(@Param("planSerial") int planSerial);
 
     List<Work> findByPlanSerialAndFieldNameAndStatus(Plan plan, String fieldName, String awaiting);
+
+
+    @Query(value="select * from work where status= 'confirmed' and worker_serial= :workerSerial and now() between start_date and end_date", nativeQuery = true)
+    List<Work> getTodayWork(int workerSerial);
+
+    @Query(value="select * from work where status= 'confirmed' and plan_serial= :planSerial and now() between start_date and end_date", nativeQuery = true)
+    List<Work> getTodayWorkByPlan(int planSerial);
 }

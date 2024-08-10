@@ -6,4 +6,6 @@ import java.util.*;
 
 public interface WorkerListService {
     List<PortfolioViewDTO> getWorkLists();
+    List<PortfolioViewDTO> getWorkListByName(String name);
+    List<PortfolioViewDTO> getWorkListTop();
 }
