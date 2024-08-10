@@ -82,7 +82,7 @@ public class MaterialServiceImpl implements MaterialService {
         }
         User user = userRepository.findByUserSerial(userSerial);
 
-        List<Integer> wishSerialList = wishRepository.findByUserSerialAndWishType(user, 4).stream()
+        List<Integer> wishSerialList = wishRepository.findAllByUserSerialAndWishType(user, 4).stream()
                 .map(Wish::getWishSerial)
                 .collect(Collectors.toList());
 

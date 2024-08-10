@@ -15,6 +15,9 @@ public class PortfolioViewDTO{
     private List<String> locations;
     private String img;
 
+    public PortfolioViewDTO() {
+    }
+
     public PortfolioViewDTO(PortfolioJoinDTO pjDTO, List<String> locations, String img) {
         this.portfolio_serial = pjDTO.getPortfolio_serial();
         this.worker = pjDTO.getWorker();

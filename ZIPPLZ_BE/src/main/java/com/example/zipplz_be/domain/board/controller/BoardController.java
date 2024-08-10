@@ -3,6 +3,7 @@ package com.example.zipplz_be.domain.board.controller;
 import com.example.zipplz_be.domain.board.dto.*;
 import com.example.zipplz_be.domain.board.service.BoardService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -21,6 +23,31 @@ public class BoardController {
 
     public BoardController(BoardService boardService) {
         this.boardService = boardService;
+    }
+
+    @PostMapping("/user")
+    public ResponseEntity<ResponseDTO<Integer>> getBoardUser(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
+        ResponseDTO<Integer> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = params.get("board_type");
+            System.out.println(board_type);
+            int board_serial = params.get("board_serial");
+            System.out.println(board_serial);
+            int result = boardService.getBoardUser(board_type, board_serial);
+            if (result == 0) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", result);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
     }
 
     // 질문글 추가하기
@@ -79,7 +106,7 @@ public class BoardController {
 
     // 질문글 가져오기
     @PostMapping("/question/list/{boardSerial}")
-    public ResponseEntity<ResponseDTO<QuestionDetailDTO>> getQuestion(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+    public ResponseEntity<ResponseDTO<QuestionDetailDTO>> getQuestion(@PathVariable(value = "boardSerial") int boardSerial) {
         ResponseDTO<QuestionDetailDTO> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
@@ -140,12 +167,32 @@ public class BoardController {
             String board_content = (String) params.get("board_content");
             LocalDateTime board_date = LocalDateTime.now();
             int hit = 0;
+            int addBoard_result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
+            int lastInsertId = boardService.getLastInsertId();
 
-            int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
-            if (result == 0) {
+            if (addBoard_result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 실패 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "보드 삽입 실패");
             } else {
+                List<?> rawViews = (List<?>) params.get("selected_portfolio");
+
+                List<PortfolioViewDTO> views = rawViews.stream()
+                        .map(item -> {
+                            LinkedHashMap<String, Object> map = (LinkedHashMap<String, Object>) item;
+                            PortfolioViewDTO dto = new PortfolioViewDTO();
+                            dto.setPortfolio_serial((Integer) map.get("portfolio_serial"));
+                            // PortfolioViewDTO의 다른 필드들도 여기에 추가적으로 설정합니다.
+                            return dto;
+                        })
+                        .collect(Collectors.toList());
+
+                if (!views.isEmpty()) {
+                    int addWorkToPortfolio_result = boardService.addBoardToPortfolio(lastInsertId, views);
+                    if (addWorkToPortfolio_result == 0) {
+                        status = HttpStatus.NOT_FOUND;
+                        responseDTO = new ResponseDTO<>(status.value(), "관계 시공자 삽입 실패");
+                    }
+                }
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
             }
@@ -182,7 +229,7 @@ public class BoardController {
 
     // 자랑글 가져오기
     @PostMapping("/showoff/list/{boardSerial}")
-    public ResponseEntity<ResponseDTO<ShowBoardDetailDTO>> getShowBoard(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+    public ResponseEntity<ResponseDTO<ShowBoardDetailDTO>> getShowBoard(@PathVariable(value = "boardSerial") int boardSerial) {
         ResponseDTO<ShowBoardDetailDTO> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
@@ -285,7 +332,7 @@ public class BoardController {
 
     // 구인구직글 가져오기
     @PostMapping("/findworker/list/{boardSerial}")
-    public ResponseEntity<ResponseDTO<FindWorkerDetailDTO>> getFindWorker(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+    public ResponseEntity<ResponseDTO<FindWorkerDetailDTO>> getFindWorker(@PathVariable(value = "boardSerial") int boardSerial) {
         ResponseDTO<FindWorkerDetailDTO> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
