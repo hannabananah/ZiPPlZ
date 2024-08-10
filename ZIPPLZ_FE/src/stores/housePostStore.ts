@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
+// 자랑글 인터페이스
 interface HousePost {
   board_serial: number;
   board_type: number;
@@ -14,6 +15,15 @@ interface HousePost {
   comment_cnt: number;
 }
 
+// 댓글 인터페이스
+interface Comment {
+  board_serial: number;
+  comment_content: string;
+  parent_comment_serial: number;
+  order_number: number;
+}
+
+// 자랑글 상태 인터페이스
 interface HousePostState {
   title: string;
   boardContent: string;
@@ -22,6 +32,7 @@ interface HousePostState {
   setBoardContent: (content: string) => void;
   fetchHousePosts: () => Promise<void>;
   createPost: (token: string) => Promise<{ code: number; message: string }>;
+  addComment: (token: string, comment: Comment) => Promise<{ code: number; message: string }>;
 }
 
 export const useHousePostStore = create<HousePostState>((set, get) => ({
@@ -43,6 +54,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
     }
   },
 
+  // 게시글 등록
   createPost: async (token: string) => {
     const { title, boardContent } = get();
     try {
@@ -67,6 +79,30 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
         console.error('Response data:', error.response?.data.data);
       }
       return { code: 500, message: '삽입 실패' };
+    }
+  },
+
+  // 댓글 추가
+  addComment: async (token: string, comment: Comment) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/comment/add',
+        { body: comment },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      const { code, message } = response.data.proc;
+      return { code, message };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Failed to add comment:', error);
+        console.error('Response data:', error.response?.data.proc);
+      }
+      return { code: 500, message: '댓글 삽입 실패' };
     }
   },
 }));

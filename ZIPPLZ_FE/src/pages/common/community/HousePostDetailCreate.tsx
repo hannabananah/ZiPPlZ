@@ -45,6 +45,37 @@ export default function HousePostDetailCreate() {
   const { title, setTitle, boardContent, setBoardContent, createPost } =
     useHousePostStore();
 
+      // 여기에 임시 workers 데이터를 추가합니다.
+  const workers: WorkerInfo[] = [
+    {
+      user_serial: 1,
+      portfolio_serial: 1,
+      name: '김현태',
+      birth_date: 1990,
+      temp: 36.5,
+      field_id: 1,
+      field_name: '전기',
+      career: 3,
+      certificated_badge: 1,
+      locations: ['서울 강남구'],
+      img: '/',
+    },
+    {
+      user_serial: 2,
+      portfolio_serial: 1,
+      name: '이영수',
+      birth_date: 1985,
+      temp: 37.2,
+      field_id: 2,
+      field_name: '설비',
+      career: 5,
+      certificated_badge: 1,
+      locations: ['서울 서초구'],
+      img: '/',
+    },
+    // 더미 데이터를 추가하거나 필요한 만큼 추가합니다.
+  ];
+
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     // 이미지 업로드 함수
   };

@@ -7,7 +7,7 @@ import Layout from '@components/layout/Layout';
 import Custom404 from '@pages/common/404';
 import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
-import Community from '@pages/common/community/HousePostList';
+import Community from '@pages/common/community/HousePost';
 import Home from '@pages/common/home/Home';
 import MyInformationModify from '@pages/common/mypage/MyInformationModify';
 import MyPage from '@pages/common/mypage/MyPage';
@@ -75,6 +75,7 @@ export default function App() {
         <Route path="findworkers/:id" element={<FindWorkerDetail />} />
         <Route path="workers" element={<WorkerInfoList />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
+        {/* 커뮤니티 */}
         <Route path="housepost" element={<HousePost />} />
         <Route path="housepost/:id" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
