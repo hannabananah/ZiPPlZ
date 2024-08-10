@@ -1,12 +1,18 @@
 package com.example.zipplz_be.domain.board.entity;
 
+import com.example.zipplz_be.domain.model.BoardFileRelation;
+import com.example.zipplz_be.domain.model.BoardToPortfolio;
 import com.example.zipplz_be.domain.user.entity.User;
+
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -28,4 +34,16 @@ public class Board {
     @Column(name="board_date")
     private LocalDateTime boardDate;
     private int hit;
+
+    @OneToMany(mappedBy = "boardSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<Comment> comments = new ArrayList<>();
+
+    @OneToMany(mappedBy = "boardSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<BoardToPortfolio> boardToPortfolios = new ArrayList<>();
+
+    @OneToMany(mappedBy = "boardSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<BoardFileRelation> boardFileRelations = new ArrayList<>();
 }

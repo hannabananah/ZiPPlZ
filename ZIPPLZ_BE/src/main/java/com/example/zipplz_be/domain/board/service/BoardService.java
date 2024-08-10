@@ -25,4 +25,6 @@ public interface BoardService {
 
     int addBoardToPortfolio(int board_serial, List<PortfolioViewDTO> views);
     int uploadImageService(List<MultipartFile> images, int boardSerial);
+
+    int deleteBoard(int boardSerial);
 }

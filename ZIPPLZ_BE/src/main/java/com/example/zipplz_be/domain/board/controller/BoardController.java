@@ -37,9 +37,7 @@ public class BoardController {
 
         try {
             int board_type = params.get("board_type");
-            System.out.println(board_type);
             int board_serial = params.get("board_serial");
-            System.out.println(board_serial);
             int result = boardService.getBoardUser(board_type, board_serial);
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
@@ -80,10 +78,15 @@ public class BoardController {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "질문글 삽입 실패 없음");
             } else {
-                int file_result = boardService.uploadImageService(images, board_serial);
-                if (file_result == 0) {
-                    status = HttpStatus.NOT_FOUND;
-                    responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                    int file_result = boardService.uploadImageService(images, board_serial);
+                    if (file_result == 0) {
+                        status = HttpStatus.NOT_FOUND;
+                        responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                    } else {
+                        status = HttpStatus.OK;
+                        responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                    }
                 } else {
                     status = HttpStatus.OK;
                     responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
@@ -213,10 +216,15 @@ public class BoardController {
                     status = HttpStatus.NOT_FOUND;
                     responseDTO = new ResponseDTO<>(status.value(), "관계 시공자 삽입 실패");
                 } else {
-                    int file_result = boardService.uploadImageService(images, board_serial);
-                    if (file_result == 0) {
-                        status = HttpStatus.NOT_FOUND;
-                        responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                    if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                        int file_result = boardService.uploadImageService(images, board_serial);
+                        if (file_result == 0) {
+                            status = HttpStatus.NOT_FOUND;
+                            responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                        } else {
+                            status = HttpStatus.OK;
+                            responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                        }
                     } else {
                         status = HttpStatus.OK;
                         responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
@@ -224,7 +232,6 @@ public class BoardController {
                 }
             }
         } catch (Exception e) {
-
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -329,10 +336,15 @@ public class BoardController {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "구인구직글 삽입 실패 없음");
             } else {
-                int file_result = boardService.uploadImageService(images, board_serial);
-                if (file_result == 0) {
-                    status = HttpStatus.NOT_FOUND;
-                    responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                    int file_result = boardService.uploadImageService(images, board_serial);
+                    if (file_result == 0) {
+                        status = HttpStatus.NOT_FOUND;
+                        responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                    } else {
+                        status = HttpStatus.OK;
+                        responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                    }
                 } else {
                     status = HttpStatus.OK;
                     responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
@@ -410,6 +422,28 @@ public class BoardController {
             } else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "수정 성공", true);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 구인구직글 수정하기
+    @DeleteMapping("/delete/{boardSerial}")
+    public ResponseEntity<ResponseDTO<Boolean>> modifyFindWorker(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+        ResponseDTO<Boolean> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int result= boardService.deleteBoard(boardSerial);
+            if (result == 0) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "삭제 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "삭제 성공", true);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;

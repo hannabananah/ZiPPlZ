@@ -78,6 +78,14 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public int deleteBoard(int boardSerial) {
+        boardRepository.deleteComment(boardSerial);
+        boardRepository.deleteBoardToPortfolio(boardSerial);
+        boardRepository.deleteBoardFileRelation(boardSerial);
+        return boardRepository.deleteBoard(boardSerial);
+    }
+
+    @Override
     public List<QuestionListDTO> getQuestions(int boardType) {
         List<QuestionListDTO> views = new ArrayList<>();
         List<BoardJoinDTO> boards = boardRepository.getBoards(boardType);
@@ -197,7 +205,6 @@ public class BoardServiceImpl implements BoardService {
     @Override
     @Transactional
     public int uploadImageService(List<MultipartFile> images, int boardSerial) {
-        System.out.println("image input prepare");
         if(images.isEmpty()) {
             throw new S3Exception("파일이 비었습니다.");
         }
@@ -208,12 +215,10 @@ public class BoardServiceImpl implements BoardService {
             }
 
             String url = this.uploadImage(image);
-            System.out.println(url);
             File file = fileRepository.findBySaveFile(url);
-            System.out.println(file.getFileSerial());
             file_serials.add(file.getFileSerial());
         }
-        System.out.println(file_serials);
+
         String query = "INSERT INTO BoardFileRelation(board_serial, file_serial) VALUES ";
 
         StringBuilder sb = new StringBuilder();
