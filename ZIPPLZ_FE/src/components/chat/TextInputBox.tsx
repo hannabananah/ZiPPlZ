@@ -43,8 +43,6 @@ export default function TextInputBox({
   const { sendMessage } = context;
   const [message, setMessage] = useState('');
 
-  console.log('fileSrc', fileSrc);
-
   useEffect(() => {
     if (imageSrc || fileSrc) {
       onMenuToggle();
@@ -65,7 +63,6 @@ export default function TextInputBox({
   const handleSendMessage = async () => {
     if (message.trim() || imageSrc || fileSrc) {
       if (imageSrc) {
-        console.log('여긴 어떻게', imageSrc);
         try {
           const base64Regex = /^data:image\/(png|jpeg|jpg);base64,/;
           const match = imageSrc.match(base64Regex);
@@ -88,8 +85,6 @@ export default function TextInputBox({
           console.error('Error creating file from image preview:', error);
         }
       } else if (fileSrc) {
-        console.log('왜 안찍혀', fileSrc);
-
         function getExtensionFromMimeType(mimeType) {
           const mimeTypes = {
             'text/plain': 'txt',

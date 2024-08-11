@@ -31,7 +31,6 @@ export default function Message({
   const isFile = fileType === 'FILE' || fileType === 'IMAGE';
   const { loginUser } = useLoginUserStore();
   const currUserSerial = loginUser?.userSerial;
-  console.log('saveFile', saveFile);
   return (
     <li
       className={`flex items-start px-4 py-2 ${

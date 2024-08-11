@@ -39,9 +39,6 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         if (response.status === 200) {
-          console.log('response', response);
-          console.log('response', response.data);
-          console.log('response', response.data.data);
           setMessages(response.data.data.chatMessages);
         }
       } catch (error) {
@@ -69,7 +66,6 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
           `/sub/chat/room/${chatroomSerial}`,
           (message: IMessage) => {
             if (message.body) {
-              console.log('message===body======>', message.body);
               try {
                 const msg: ChatMessageData = JSON.parse(message.body);
                 setMessages((prevMessages) => [...prevMessages, msg]);
@@ -158,7 +154,6 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     } else if (type === 'FILE' && file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        console.log('File here', file);
         const arrayBuffer = reader.result as ArrayBuffer;
         const base64String = arrayBufferToBase64(arrayBuffer);
         messagePayload.chatMessageContent = base64String;

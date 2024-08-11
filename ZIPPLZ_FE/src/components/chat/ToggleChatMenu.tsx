@@ -73,13 +73,10 @@ export default function ToggleChatMenu({
     const files = event.target.files;
     if (files && files[0]) {
       const file = files[0];
-      console.log('fileSrc========>', file);
       if (!file.type.startsWith('image/')) {
         const reader = new FileReader();
         reader.onload = () => {
-          console.log('fileSrc========>', reader.result);
           const arrayBuffer = reader.result as ArrayBuffer;
-          console.log('arrayBuffer========>', arrayBuffer);
           setFileSrc(arrayBuffer);
         };
         reader.readAsDataURL(file);

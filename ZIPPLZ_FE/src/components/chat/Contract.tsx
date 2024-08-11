@@ -137,7 +137,6 @@ export default function Contract({
 
     try {
       const response = await postContract(chatroomSerial, requestData);
-      console.log('계약서 초안 작성 성공:', response.data);
       const formattedMessage = `
                 ✨ 계약서 초안 작성 완료! ✨
   👷‍♂️ 시공자: ${userName}

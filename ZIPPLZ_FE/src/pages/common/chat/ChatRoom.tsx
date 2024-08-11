@@ -45,7 +45,6 @@ function ChatRoomContent() {
       );
 
       if (response.status === 200) {
-        console.log('response.data.data', response.data.data);
         return response.data.data;
       } else {
         throw new Error('Unexpected response');
