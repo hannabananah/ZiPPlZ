@@ -10,8 +10,10 @@ export default function WorkerInfoListItem({ worker }: Props) {
 
   return (
     <div
-      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big"
-      onClick={() => navigate(`${worker.worker}/portfolio?tab=overview`)}
+      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[10rem]"
+      onClick={() =>
+        navigate(`/workers/${worker.worker}/portfolio?tab=overview`)
+      }
     >
       {worker.img ? (
         <img className="w-full h-[35%] rounded-t-zp-radius-big" src="" />
