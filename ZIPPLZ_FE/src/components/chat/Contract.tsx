@@ -32,7 +32,7 @@ export default function Contract({
   chatroomSerial,
   name,
 }: ContractProps) {
-  const defaultContractInfo: Field[] = [
+  const contractInfo: Field[] = [
     {
       label: '고객 이름',
       value: name,
@@ -77,7 +77,7 @@ export default function Contract({
     },
   ];
 
-  const [fields, setFields] = useState<Field[]>(defaultContractInfo);
+  const [fields, setFields] = useState<Field[]>(contractInfo);
   const [materials, setMaterials] = useState<Material[]>([]);
   const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([]);
   const [startDate, setStartDate] = useState<string>('');
@@ -136,7 +136,7 @@ export default function Contract({
     };
 
     try {
-      const response = await postContract(chatroomSerial, requestData);
+      await postContract(chatroomSerial, requestData);
       const formattedMessage = `
                 ✨ 계약서 초안 작성 완료! ✨
   👷‍♂️ 시공자: ${userName}
@@ -183,7 +183,7 @@ export default function Contract({
   };
 
   const handleReset = () => {
-    setFields(defaultContractInfo);
+    setFields(contractInfo);
     setSelectedMaterials([]);
     setStartDate('');
     setEndDate('');
@@ -206,7 +206,7 @@ export default function Contract({
       >
         <div className="flex flex-col justify-start">
           {fields.map((field, index) => (
-            <div key={index} className="flex items-center mb-2 gap-x-3">
+            <div key={field.label} className="flex items-center mb-2 gap-x-3">
               <label className="w-24 break-keep text-zp-xs">
                 {field.label}
               </label>
