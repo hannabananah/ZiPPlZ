@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
+// 질문글 형식
 interface QuestionPost {
   board_serial: number;
   title: string;
@@ -10,8 +11,10 @@ interface QuestionPost {
   hit: number;
   wish_cnt: number;
   comment_cnt: number;
+  images?: string[]; // images 필드 추가
 }
 
+// 질문글 상태 관리
 interface QuestionPostState {
   title: string;
   boardContent: string;
@@ -19,7 +22,10 @@ interface QuestionPostState {
   setTitle: (title: string) => void;
   setBoardContent: (content: string) => void;
   fetchQuestionPosts: () => Promise<void>;
-  createPost: (token: string) => Promise<{ code: number; message: string }>;
+  createPost: (
+    token: string,
+    images: File[]
+  ) => Promise<{ code: number; message: string }>;
 }
 
 export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
@@ -35,39 +41,55 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
       const response = await axios.post(
         'http://localhost:5000/board/question/list'
       );
-      console.log('Fetched question posts:', response.data.data); // 응답 데이터 구조 확인
       set({ questionPosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch question posts:', error);
     }
   },
 
-  createPost: async (token: string) => {
+  createPost: async (token: string, images: File[]) => {
     const { title, boardContent } = get();
     try {
+      const formData = new FormData();
+
+      // 이미지 파일이 있을 경우에만 추가
+      if (images.length > 0) {
+        images.forEach((image) => {
+          formData.append('images', image);
+        });
+      }
+
+      // params 객체를 JSON 문자열로 변환하여 추가
+      const params = {
+        title: title,
+        board_content: boardContent,
+      };
+
+      formData.append(
+        'params',
+        new Blob([JSON.stringify(params)], { type: 'application/json' })
+      );
+
       const response = await axios.post(
         'http://localhost:5000/board/question/add',
-        {
-          title: title,
-          board_content: boardContent,
-        },
+        formData,
         {
           headers: {
             Authorization: token,
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
 
-      const { code, message } = response.data.data.proc;
+      const { code, message } = response.data.proc;
       if (code === 200) {
-        // 새로운 글이 등록되었으면 목록을 다시 가져옵니다.
         await get().fetchQuestionPosts();
       }
       return { code, message };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Failed to create post:', error);
-        console.error('Response data:', error.response?.data.data);
+        console.error('Response data:', error.response?.data);
       }
       return { code: 500, message: '삽입 실패' };
     }

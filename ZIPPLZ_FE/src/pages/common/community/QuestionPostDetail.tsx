@@ -1,39 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
-// import { FaRegComment } from 'react-icons/fa';
-// import { FaChevronDown } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoMdArrowDropdown } from 'react-icons/io';
-// , IoMdArrowDropup
-import { IoBookmarkOutline } from 'react-icons/io5';
-import { IoBookmark } from 'react-icons/io5';
+import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-// import WorkerCard from '@/components/home/WorkerCard';
-import Photos from '@/components/worker/detail/overView/Photos';
-
-export interface HotWorker {
-  name: string;
-  region: string;
-  field: string;
-  temp: string;
-}
-
-// const list: HotWorker[] = [
-//   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-//   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-//   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-//   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },
-// ];
+import { useQuestionPostStore } from '@stores/QuestionPostStore';
 
 export default function QuestionPostDetail() {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const { questionPosts } = useQuestionPostStore();
+  const [post, setPost] = useState<any>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (id) {
+      const foundPost = questionPosts.find(
+        (post) => post.board_serial === parseInt(id)
+      );
+      setPost(foundPost);
+    }
+  }, [id, questionPosts]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -60,6 +53,10 @@ export default function QuestionPostDetail() {
     setIsDeleteModalOpen(false);
   };
 
+  if (!post) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6">
@@ -73,7 +70,7 @@ export default function QuestionPostDetail() {
           </div>
           <div className="mt-6 flex justify-between items-center">
             <div className="flex items-center">
-              <div className="text-zp-2xl font-bold">질문이 있습니다...</div>
+              <div className="text-zp-2xl font-bold">{post.title}</div>
               <div
                 className="ml-2 cursor-pointer"
                 onClick={handleBookmarkClick}
@@ -98,26 +95,38 @@ export default function QuestionPostDetail() {
             <div className="">
               <CgProfile />
             </div>
-            <div className="text-zp-md text-zp-gray">닉네임</div>
-            <div className="ml-auto text-zp-xs text-zp-gray">24.7.17</div>
+            <div className="text-zp-md text-zp-gray">{post.nickname}</div>
+            <div className="ml-auto text-zp-xs text-zp-gray">
+              {new Date(post.board_date).toLocaleDateString('ko-KR')}
+            </div>
           </div>
           <div className="mt-2 text-zp-gray">작성일자</div>
-          <div className="mt-4 flex justify-center">
-            <img
-              src="https://via.placeholder.com/600x400"
-              alt="placeholder"
-              className="rounded-lg shadow-md"
-            />
-          </div>
 
-          {/* 사진 넘겨보기 */}
-          <Photos />
+          {/* 이미지 렌더링 */}
+          <div className="mt-4 flex justify-center">
+            {post.images && post.images.length > 0 ? (
+              <div className="flex flex-wrap justify-center">
+                {post.images.map((image: string, index: number) => (
+                  <img
+                    key={index}
+                    src={image}
+                    alt={`Post image ${index + 1}`}
+                    className="rounded-lg shadow-md m-2"
+                    style={{ maxHeight: '400px', maxWidth: '600px' }}
+                  />
+                ))}
+              </div>
+            ) : (
+              <img
+                src="https://via.placeholder.com/600x400"
+                alt="placeholder"
+                className="rounded-lg shadow-md"
+              />
+            )}
+          </div>
 
           {/* 글 내용 */}
-          <div className="mt-6 text-zp-sm font-bold">
-            이거는 어떤 시공을 맡겨야 할까요.. 만져보다가 부러졌는데 복구
-            가능할까요...?
-          </div>
+          <div className="mt-6 text-zp-sm font-bold">{post.board_content}</div>
 
           {/* 리뷰 text */}
           <div className="mt-6 text-zp-xl font-bold">리뷰</div>
@@ -142,8 +151,6 @@ export default function QuestionPostDetail() {
               height={2.5}
               fontSize="xs"
               radius="none"
-              // value={inputValue}
-              // onChange={handleInputChange}
               additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
             />
           </div>
@@ -164,10 +171,6 @@ export default function QuestionPostDetail() {
               <IoMdArrowDropdown />
             </div>
             <div className="p-2 font-bold">답글 1개</div>
-            {/* <div className="ml-2">
-              <FaRegComment />
-            </div>
-            <div className="ml-2">답글 작성하기</div> */}
           </div>
 
           <div className="ml-12 mt-2 flex justify-start items-center">

@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import Resign from '@/pages/common/mypage/resignpage/Resign';
 import MyFindWorkerScrapList from '@/pages/common/mypage/scrappage/MyFindWorkerScrapList';
 import Layout from '@components/layout/Layout';
 // 공통 컴포넌트
@@ -14,7 +15,6 @@ import MyPage from '@pages/common/mypage/MyPage';
 import MyPasswordModify from '@pages/common/mypage/MyPasswordModify';
 import MyScrapList from '@pages/common/mypage/MyScrapList';
 import Policy from '@pages/common/mypage/Policy';
-import Resign from '@/pages/common/mypage/resignpage/Resign';
 import Version from '@pages/common/mypage/Version';
 import WishWorkerList from '@pages/common/mypage/WishWorkerList';
 import MyFindWorkerList from '@pages/common/mypage/postpage/MyFindWorkerList';
@@ -56,9 +56,7 @@ export default function App() {
         {/* 스케줄 & 계약서 */}
         <Route path="schedule" element={<Schedule />} />
         <Route path="contract/:workserial" element={<Contract />} />
-
         <Route path="community" element={<Community />} />
-
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
@@ -79,7 +77,8 @@ export default function App() {
         <Route path="housepost" element={<HousePost />} />
         <Route path="housepost/:id" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
-        <Route path="questionpostdetail" element={<QuestionPostDetail />} />
+        <Route path="questionpost/:id" element={<QuestionPostDetail />} />
+        {/* 수정된 부분 */}
         <Route
           path="housepostdetailcreate"
           element={<HousePostDetailCreate />}
@@ -88,7 +87,6 @@ export default function App() {
           path="questionpostdetailcreate"
           element={<QuestionPostDetailCreate />}
         />
-
         {/* 마이페이지 */}
         <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} />
         <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />

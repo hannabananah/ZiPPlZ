@@ -19,6 +19,7 @@ interface QuestionPost {
 }
 
 export default function QuestionPostListItem({
+  post_serial,
   title,
   content,
   profile_image,
@@ -34,7 +35,7 @@ export default function QuestionPostListItem({
   return (
     <div
       className="w-full rounded-zp-radius-big h-32 shadow-lg flex items-center"
-      onClick={() => navigate(`/QuestionPostDetail`)}
+      onClick={() => navigate(`/questionpost/${post_serial}`)}
     >
       <div className="p-2 flex items-center space-x-4 w-full">
         {/* 제목 + 내용 */}

@@ -9,6 +9,7 @@ import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
@@ -21,7 +22,7 @@ import 'swiper/css/navigation';
 
 export default function HousePostDetailCreate() {
   type Image = string;
-
+  const { loginUser } = useLoginUserStore();
   const [images, setImages] = useState<Image[]>([]);
   const [address, setAddress] = useState<string>('');
   const [addressDetail, setAddressDetail] = useState<string>('');
@@ -45,7 +46,7 @@ export default function HousePostDetailCreate() {
   const { title, setTitle, boardContent, setBoardContent, createPost } =
     useHousePostStore();
 
-      // 여기에 임시 workers 데이터를 추가합니다.
+  // 여기에 임시 workers 데이터를 추가합니다.
   const workers: WorkerInfo[] = [
     {
       user_serial: 1,
@@ -101,20 +102,20 @@ export default function HousePostDetailCreate() {
 
     setBoardContent(workDetail); // 상태에 workDetail 저장
 
-    const token =
-      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNlbGluZUBnbWFpbC5jb20iLCJ1c2VyU2VyaWFsIjoxLCJyb2xlIjoiIiwiaWF0IjoxNzIzMTc0NTg1LCJleHAiOjE3MjM3NzQ1ODV9.JHxrlhK0osCVUE8aTap5LWdT6RAaHjtmiDxPwJK57V0'; // 실제 사용 시 올바른 토큰 값으로 변경
+    const token = `Bearer ${localStorage.getItem('token')}`;
     const { code, message } = await createPost(token);
 
     if (code === 200) {
       alert('자랑글이 성공적으로 등록되었습니다.');
-      navigate('/FindWorkerList');
+      navigate('/housepost');
     } else {
       alert(`자랑글 등록에 실패했습니다: ${message}`);
     }
   };
 
+  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('/FindWorkerList');
+    navigate('/housepost');
   };
 
   const handleComplete = (data: any) => {

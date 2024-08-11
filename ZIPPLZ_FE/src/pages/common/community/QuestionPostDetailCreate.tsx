@@ -8,14 +8,12 @@ import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import { useQuestionPostStore } from '@stores/QuestionPostStore';
 
-type Image = string;
-
 export default function QuestionPostDetailCreate() {
-  const [images, setImages] = useState<Image[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const [workDetail, setWorkDetail] = useState<string>('');
 
   const { title, setTitle, createPost, setBoardContent, fetchQuestionPosts } =
-    useQuestionPostStore(); // fetchQuestionPosts 추가
+    useQuestionPostStore();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
@@ -23,20 +21,10 @@ export default function QuestionPostDetailCreate() {
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const readerPromises = files.map((file) => {
-      const reader = new FileReader();
-      return new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-    });
-
-    Promise.all(readerPromises).then((results) => {
-      setImages((prevImages) => [
-        ...prevImages,
-        ...results.slice(0, maxImages - prevImages.length),
-      ]);
-    });
+    setImages((prevImages) => [
+      ...prevImages,
+      ...files.slice(0, maxImages - prevImages.length),
+    ]);
   };
 
   const handleImageRemove = (index: number) => {
@@ -56,9 +44,8 @@ export default function QuestionPostDetailCreate() {
 
     setBoardContent(workDetail);
 
-    const token =
-      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImVtYWlsMyIsInVzZXJTZXJpYWwiOjEsInJvbGUiOiIiLCJpYXQiOjE3MjMxODAwMTMsImV4cCI6MTcyMzc4MDAxM30.QOtL9rliHuH3DeW3Qla2OH5H58TeEx6h5x_uzPy_CYA';
-    const { code, message } = await createPost(token);
+    const token = `Bearer ${localStorage.getItem('token')}`;
+    const { code, message } = await createPost(token, images);
 
     if (code === 200) {
       alert('질문글이 성공적으로 등록되었습니다.');
@@ -70,7 +57,7 @@ export default function QuestionPostDetailCreate() {
   };
 
   const handleGoBack = () => {
-    navigate('/FindWorkerList');
+    navigate('/questionpost');
   };
 
   return (
@@ -129,7 +116,7 @@ export default function QuestionPostDetailCreate() {
                   className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
                 >
                   <img
-                    src={image}
+                    src={URL.createObjectURL(image)}
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded-zp-radius-btn"
                     onClick={() => handleImageRemove(index)}
@@ -199,7 +186,7 @@ export default function QuestionPostDetailCreate() {
             </div>
           </div>
 
-          <div className="mt-6 font-bold h-20 flex items-center justify-center">
+          <div className="mb-12 mt-6 font-bold h-20 flex items-center justify-center">
             <Button
               children="확인"
               buttonType="second"

@@ -65,7 +65,7 @@ export default function HousePostDetail() {
   }, [id]);
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate(-1);
+    navigate('/housepost');
   };
 
   const handleBookmarkClick = () => {
@@ -90,7 +90,8 @@ export default function HousePostDetail() {
   };
 
   const handleCommentSubmit = async () => {
-    const token = 'Bearer your-jwt-token'; // 실제 토큰으로 교체
+    const token =
+      'Bearer eyJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6ImNlbGluZUBnbWFpbC5jb20iLCJ1c2VyU2VyaWFsIjoxLCJyb2xlIjoiIiwiaWF0IjoxNzIzMTc0NTg1LCJleHAiOjE3MjM3NzQ1ODV9.JHxrlhK0osCVUE8aTap5LWdT6RAaHjtmiDxPwJK57V0'; // 실제 토큰으로 교체
     const comment = {
       board_serial: Number(id),
       comment_content: commentContent,

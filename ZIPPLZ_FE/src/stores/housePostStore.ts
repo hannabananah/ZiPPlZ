@@ -32,7 +32,10 @@ interface HousePostState {
   setBoardContent: (content: string) => void;
   fetchHousePosts: () => Promise<void>;
   createPost: (token: string) => Promise<{ code: number; message: string }>;
-  addComment: (token: string, comment: Comment) => Promise<{ code: number; message: string }>;
+  addComment: (
+    token: string,
+    comment: Comment
+  ) => Promise<{ code: number; message: string }>;
 }
 
 export const useHousePostStore = create<HousePostState>((set, get) => ({
@@ -57,13 +60,30 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   // 게시글 등록
   createPost: async (token: string) => {
     const { title, boardContent } = get();
+    const formData = new FormData();
+    const images: File[] = [];
+    // 이미지가 있는 경우에만 추가합니다.
+    if (images && images.length > 0) {
+      images.forEach((image, index) => {
+        formData.append(`images`, image);
+      });
+    }
+
+    // 제목과 내용을 FormData에 추가합니다.
+    formData.append('title', title);
+    formData.append('board_content', boardContent);
     try {
       const response = await axios.post(
         'http://localhost:5000/board/showoff/add',
-        {
-          title: title,
-          board_content: boardContent,
-        },
+        // {
+        //   images: null,
+        //   params: {
+        //     title: title,
+        //     board_content: boardContent,
+        //     selected_portfolio: null,
+        //   },
+        // },
+        formData,
         {
           headers: {
             Authorization: token,
