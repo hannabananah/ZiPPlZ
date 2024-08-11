@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
-import { IoMdArrowDropdown } from 'react-icons/io';
 import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
+import { useQuestionPostStore } from '@/stores/QuestionPostStore';
 import axios from 'axios';
 
 export default function QuestionPostDetail() {
@@ -17,6 +17,8 @@ export default function QuestionPostDetail() {
   const [post, setPost] = useState<any>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+  const { deletePost } = useQuestionPostStore();
 
   useEffect(() => {
     if (id) {
@@ -58,8 +60,19 @@ export default function QuestionPostDetail() {
     setIsDeleteModalOpen(false);
   };
 
-  const handleConfirmDelete = () => {
-    // 삭제 로직을 여기에 추가하세요.
+  const handleConfirmDelete = async () => {
+    if (!id) return;
+
+    const token = `Bearer ${localStorage.getItem('token')}`;
+    const response = await deletePost(token, parseInt(id));
+
+    if (response.code === 200) {
+      alert('게시글이 성공적으로 삭제되었습니다.');
+      navigate('/QuestionPost');
+    } else {
+      alert(`게시글 삭제에 실패했습니다: ${response.message}`);
+    }
+
     setIsDeleteModalOpen(false);
   };
 
@@ -75,7 +88,7 @@ export default function QuestionPostDetail() {
             <GoArrowLeft
               className="mr-6 cursor-pointer"
               onClick={handleGoBack}
-              size={20} // 아이콘 크기 조정
+              size={20}
             />
           </div>
           <div className="mt-6 flex justify-between items-center">

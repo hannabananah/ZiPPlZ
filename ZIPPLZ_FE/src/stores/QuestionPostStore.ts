@@ -31,6 +31,10 @@ interface QuestionPostState {
     id: number,
     postData: { title: string; board_content: string }
   ) => Promise<{ code: number; message: string }>;
+  deletePost: (
+    token: string,
+    id: number
+  ) => Promise<{ code: number; message: string }>;
 }
 
 export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
@@ -107,7 +111,32 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
         console.error('Failed to update post:', error);
         console.error('Response data:', error.response?.data);
       }
-      return { code: 500, message: '수정 실패' };
+      return { code, message: '수정 실패' };
+    }
+  },
+
+  deletePost: async (token: string, id: number) => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/board/delete/${id}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      const { code, message } = response.data.proc;
+      if (code === 200) {
+        await get().fetchQuestionPosts();
+      }
+      return { code, message };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Failed to delete post:', error);
+        console.error('Response data:', error.response?.data);
+      }
+      return { code: 500, message: '삭제 실패' };
     }
   },
 }));
