@@ -51,4 +51,25 @@ public class CommentController {
         }
         return new ResponseEntity<>(responseDTO, status);
     }
+
+    @DeleteMapping("/delete/{comment_serial}")
+    public ResponseEntity<ResponseDTO> deleteComment(Authentication authentication, @PathVariable("comment_serial") int comment_serial) {
+        ResponseDTO responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int result = commentService.deleteComment(comment_serial);
+            if (result == 1 ) {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "댓글 삭제 완료", true);
+            } else {
+                status = HttpStatus.BAD_REQUEST;
+                responseDTO = new ResponseDTO<>(status.value(), "댓글 삭제 실패");
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
 }
