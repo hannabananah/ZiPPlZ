@@ -36,20 +36,22 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
                     @Param("boardContent") String boardContent,
                     @Param("boardDate") LocalDateTime boardDate);
 
-    @Query(value = "SELECT b.*, cus.nickname, u.user_name " +
+    @Query(value = "SELECT b.*, cus.nickname, u.user_name, f.save_file " +
             "FROM ( SELECT * " +
             "FROM Board " +
             "WHERE board_type = :boardType ) b " +
             "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial " +
-            "LEFT JOIN User u on u.user_serial = b.user_serial", nativeQuery = true)
+            "LEFT JOIN User u on u.user_serial = b.user_serial " +
+            "LEFT JOIN File f on f.file_serial = u.file_serial", nativeQuery = true)
     List<BoardJoinDTO> getBoards(@Param("boardType") int boardType);
 
-    @Query(value = "SELECT b.*, cus.nickname, u.user_name " +
+    @Query(value = "SELECT b.*, cus.nickname, u.user_name, f.save_file " +
             "FROM ( SELECT * " +
             "FROM Board " +
             "WHERE board_serial = :boardSerial ) b " +
             "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial " +
-            "LEFT JOIN User u on u.user_serial = b.user_serial", nativeQuery = true)
+            "LEFT JOIN User u on u.user_serial = b.user_serial " +
+            "LEFT JOIN File f on f.file_serial = u.file_serial", nativeQuery = true)
     BoardJoinDTO getBoard(@Param("boardSerial") int boardSerial);
 
     @Query(value = "SELECT LAST_INSERT_ID()", nativeQuery = true)

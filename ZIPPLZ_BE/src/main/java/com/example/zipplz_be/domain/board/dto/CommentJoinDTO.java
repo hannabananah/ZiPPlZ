@@ -13,4 +13,5 @@ public interface CommentJoinDTO {
     int getIsDeleted();
     String getNickName();
     String getUserName();
+    String getSaveFile();
 }
