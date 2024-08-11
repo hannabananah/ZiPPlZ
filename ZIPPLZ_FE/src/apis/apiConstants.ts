@@ -21,6 +21,7 @@ export const END_POINT = {
   PORTFOLIO: 'workerlist/portfolios',
   MATERIAL: 'materials?category=',
   CONTRACT: 'contract',
+  AFTERSERVICE: 'afterservice',
 } as const;
 
 export const HTTP_STATUS_CODE = {
