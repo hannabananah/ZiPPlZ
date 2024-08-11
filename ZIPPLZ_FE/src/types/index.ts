@@ -120,3 +120,8 @@ export interface ContractPostRes {
   requestStatus: 'pending';
   requestComment: '계약서 초안 작성해서 보냅니다.';
 }
+
+// A/S 요청
+export interface AfterServiceRequestData {
+  requestContent: string;
+}
