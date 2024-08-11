@@ -3,16 +3,19 @@ import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoMdArrowDropdown } from 'react-icons/io';
-import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
+// , IoMdArrowDropup
+import { IoBookmarkOutline } from 'react-icons/io5';
+import { IoBookmark } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import WorkerCard from '@/components/home/WorkerCard';
 import Photos from '@/components/worker/detail/overView/Photos';
+import { useHousePostStore } from '@/stores/housePostStore';
 
-// 더미 데이터
 export interface HotWorker {
   user_name: string;
   locations: string[];
@@ -52,13 +55,14 @@ export default function HousePostDetail() {
   const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [commentContent, setCommentContent] = useState('');
+  const { addComment } = useHousePostStore(); // Zustand store에서 addComment 가져오기
 
   useEffect(() => {
     // id를 사용해 데이터를 가져오는 로직을 구현
     console.log('게시물 ID:', id);
     // fetch or use a store to get the post data by ID
   }, [id]);
-
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate(-1);
@@ -83,6 +87,25 @@ export default function HousePostDetail() {
   const handleConfirmDelete = () => {
     // 삭제 로직을 여기에 추가하세요.
     setIsDeleteModalOpen(false);
+  };
+
+  const handleCommentSubmit = async () => {
+    const token = 'Bearer your-jwt-token'; // 실제 토큰으로 교체
+    const comment = {
+      board_serial: Number(id),
+      comment_content: commentContent,
+      parent_comment_serial: -1, // 부모 댓글이 없으므로 -1
+      order_number: 1,
+    };
+
+    const { code, message } = await addComment(token, comment);
+
+    if (code === 200) {
+      alert('댓글이 성공적으로 저장되었습니다.');
+      setCommentContent(''); // 댓글이 성공적으로 추가되면 입력 필드를 초기화
+    } else {
+      alert(`댓글 저장에 실패했습니다: ${message}`);
+    }
   };
 
   return (
@@ -177,7 +200,18 @@ export default function HousePostDetail() {
               height={2.5}
               fontSize="xs"
               radius="none"
+              // value={inputValue}
+              // onChange={handleInputChange}
               additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
+            />
+            <Button
+              children="댓글 추가"
+              buttonType="second"
+              width={8}
+              height={2.5}
+              fontSize="xs"
+              radius="full"
+              onClick={handleCommentSubmit}
             />
           </div>
 
@@ -222,6 +256,7 @@ export default function HousePostDetail() {
             <div className="text-lg font-bold mb-4">삭제 확인</div>
             <div className="mb-4">정말로 삭제하시겠습니까?</div>
             <div className="flex justify-end space-x-4">
+              {/* 모달의 취소 버튼 */}
               <div className="font-bold">
                 <Button
                   children="취소"
@@ -233,6 +268,7 @@ export default function HousePostDetail() {
                   onClick={handleCloseModal}
                 />
               </div>
+              {/* 모달의 삭제 버튼 */}
               <div className="font-bold">
                 <Button
                   children="삭제"

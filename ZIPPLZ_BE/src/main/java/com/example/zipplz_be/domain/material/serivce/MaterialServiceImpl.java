@@ -101,8 +101,9 @@ public class MaterialServiceImpl implements MaterialService {
                     boolean isInWishList = wishSerialList.contains(material.getMaterialSerial());
 
                     return MaterialViewDTO.builder()
+                            .materialSerial(material.getMaterialSerial())
                             .materialName(material.getMaterialName())
-                            .majorCategory(material.getMajorCategory().getMajorName())
+                            .majorCategory(material.getMajorCategory().getMajorCode())
                             .description(material.getDescription())
                             .materialPrice(material.getMaterialPrice())
                             .img((relation != null) ? relation.getFileSerial() : null)

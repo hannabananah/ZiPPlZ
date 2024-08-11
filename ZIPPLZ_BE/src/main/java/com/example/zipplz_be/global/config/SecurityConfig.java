@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsUtils;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -71,16 +72,19 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         // CORS 설정
-//        http.cors(cors -> cors.configurationSource(request -> {
-//            CorsConfiguration configuration = new CorsConfiguration();
-//            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-//            configuration.setAllowedMethods(Collections.singletonList("*"));
-//            configuration.setAllowCredentials(true);
-//            configuration.setAllowedHeaders(Collections.singletonList("*"));
-//            configuration.setMaxAge(3600L);
-//            configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
-//            return configuration;
-//        }));
+        http.cors(cors -> cors.configurationSource(request -> {
+            CorsConfiguration configuration = new CorsConfiguration();
+            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+            configuration.setAllowedMethods(Collections.singletonList("*"));
+            configuration.setAllowCredentials(true);
+            configuration.setAllowedHeaders(Collections.singletonList("*"));
+            configuration.setMaxAge(3600L);
+            configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
+
+            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+            source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 대해 CORS 설정 적용
+            return configuration;
+        }));
 
         return http.build();
     }
