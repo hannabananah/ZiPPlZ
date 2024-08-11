@@ -16,15 +16,19 @@ public interface BoardService {
 
     List<QuestionListDTO> getQuestions(int boardType);
     QuestionDetailDTO getQuestion(int boardSerial);
+    List<QuestionListDTO> findQuestionsByContent(int boardType, String searchContent);
 
     List<ShowBoardListDTO> getShowBoards(int boardType);
     ShowBoardDetailDTO getShowBoard(int boardSerial);
+    List<ShowBoardListDTO> findShowBoardByContent(int boardType, String searchContent);
 
     List<FindWorkerListDTO> getFindWorkers(int boardType);
     FindWorkerDetailDTO getFindWorker(int boardSerial);
+    List<FindWorkerListDTO> findFindWorkerByContent(int boardType, String searchContent);
 
     int addBoardToPortfolio(int board_serial, List<PortfolioViewDTO> views);
     int uploadImageService(List<MultipartFile> images, int boardSerial);
 
     int deleteBoard(int boardSerial);
+
 }

@@ -2,7 +2,6 @@ package com.example.zipplz_be.domain.board.repository;
 
 import com.example.zipplz_be.domain.board.dto.BoardJoinDTO;
 import com.example.zipplz_be.domain.board.entity.Board;
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -53,6 +52,15 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             "LEFT JOIN User u on u.user_serial = b.user_serial " +
             "LEFT JOIN File f on f.file_serial = u.file_serial", nativeQuery = true)
     BoardJoinDTO getBoard(@Param("boardSerial") int boardSerial);
+
+    @Query(value = "SELECT b.*, cus.nickname, u.user_name, f.save_file " +
+            "FROM ( SELECT * " +
+            "FROM Board " +
+            "WHERE board_type = :boardType and ( title LIKE CONCAT('%', :searchContent, '%')  or board_content LIKE CONCAT('%', :searchContent, '%') ) ) b " +
+            "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial " +
+            "LEFT JOIN User u on u.user_serial = b.user_serial " +
+            "LEFT JOIN File f on f.file_serial = u.file_serial", nativeQuery = true)
+    List<BoardJoinDTO> findBoardsByContent(@Param("boardType") int boardType, @Param("searchContent") String searchContent);
 
     @Query(value = "SELECT LAST_INSERT_ID()", nativeQuery = true)
     int getLastInsertId();

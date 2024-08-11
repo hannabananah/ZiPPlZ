@@ -117,6 +117,19 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public List<QuestionListDTO> findQuestionsByContent(int boardType, String searchContent) {
+        List<QuestionListDTO> views = new ArrayList<>();
+        List<BoardJoinDTO> boards = boardRepository.findBoardsByContent(boardType, searchContent);
+        for (BoardJoinDTO board : boards) {
+            int comment_cnt = commentRepository.getComment(board.getBoardSerial(), -1).size();
+            int wish_cnt = wishRepository.getWishCnt(board.getBoardSerial());
+            QuestionListDTO view = new QuestionListDTO(board, comment_cnt, wish_cnt);
+            views.add(view);
+        }
+        return views;
+    }
+
+    @Override
     public List<ShowBoardListDTO> getShowBoards(int boardType) {
         List<ShowBoardListDTO> views = new ArrayList<>();
         List<BoardJoinDTO> boards = boardRepository.getBoards(boardType);
@@ -155,6 +168,24 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public List<ShowBoardListDTO> findShowBoardByContent(int boardType, String searchContent) {
+        List<ShowBoardListDTO> views = new ArrayList<>();
+        List<BoardJoinDTO> boards = boardRepository.findBoardsByContent(boardType, searchContent);
+        for (BoardJoinDTO board : boards) {
+            List<BoardFileDTO> files = fileRepository.getBoardImg(board.getBoardSerial());
+            String img = null;
+            if (!files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            int comment_cnt = commentRepository.getComment(board.getBoardSerial(), -1).size();
+            int wish_cnt = wishRepository.getWishCnt(board.getBoardSerial());
+            ShowBoardListDTO view = new ShowBoardListDTO(board, img, comment_cnt, wish_cnt);
+            views.add(view);
+        }
+        return views;
+    }
+
+    @Override
     public List<FindWorkerListDTO> getFindWorkers(int boardType) {
         List<FindWorkerListDTO> views = new ArrayList<>();
         List<BoardJoinDTO> boards = boardRepository.getBoards(boardType);
@@ -183,6 +214,19 @@ public class BoardServiceImpl implements BoardService {
         }
         FindWorkerDetailDTO findworker = new FindWorkerDetailDTO(board, files, comments);
         return findworker;
+    }
+
+    @Override
+    public List<FindWorkerListDTO> findFindWorkerByContent(int boardType, String searchContent) {
+        List<FindWorkerListDTO> views = new ArrayList<>();
+        List<BoardJoinDTO> boards = boardRepository.findBoardsByContent(boardType, searchContent);
+        for (BoardJoinDTO board : boards) {
+            int comment_cnt = commentRepository.getComment(board.getBoardSerial(), -1).size();
+            int wish_cnt = wishRepository.getWishCnt(board.getBoardSerial());
+            FindWorkerListDTO view = new FindWorkerListDTO(board, comment_cnt, wish_cnt);
+            views.add(view);
+        }
+        return views;
     }
 
     @Override
