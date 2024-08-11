@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { getTopWorkerList } from '@/apis/worker/WorkerListApi';
+import { useWorkerListStore } from '@/stores/workerListStore';
 import { getWorksByUser } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
@@ -25,47 +27,6 @@ const fields: string[] = [
   '기타',
 ];
 
-const hotWorkerList = [
-  {
-    portfolio_serial: 1,
-    worker: 1,
-    user_name: 'celine5',
-    birth_date: 99,
-    temperature: 36.5,
-    field_id: 1,
-    field_name: '철거',
-    career: 3.0,
-    certificated_badge: 1,
-    locations: ['서울 강남구', '서울 강서구'],
-    img: 'save_file_path1',
-  },
-  {
-    portfolio_serial: 2,
-    worker: 1,
-    user_name: 'celine5',
-    birth_date: 99,
-    temperature: 36.5,
-    field_id: 2,
-    field_name: '설비',
-    career: 30.0,
-    certificated_badge: 1,
-    locations: ['서울 강남구', '서울 강서구'],
-    img: 'save_file_path2',
-  },
-  {
-    portfolio_serial: 3,
-    worker: 2,
-    user_name: 'celine6',
-    birth_date: 99,
-    temperature: 36.5,
-    field_id: 3,
-    field_name: '샷시',
-    career: 20.0,
-    certificated_badge: 0,
-    locations: ['인천 강화군', '인천 남동구'],
-    img: null,
-  },
-];
 interface Work {
   starDate: string;
   endDate: string;
@@ -76,6 +37,7 @@ export default function Home() {
   const [scheduleList, setScheduleList] = useState<Work[]>([]);
   const navigate = useNavigate();
   const { loginUser } = useLoginUserStore();
+  const { workerList, setWorkerList } = useWorkerListStore();
   const handleClickImageChange = () =>
     navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
   const fetchWorks = async () => {
@@ -85,11 +47,19 @@ export default function Home() {
   const handleClickField = (field: string) => {
     navigate(`/workers?field=${field}`);
   };
+  const fetchHotWorkers = async () => {
+    const response = await getTopWorkerList();
+    setWorkerList(response.data.data);
+  };
   useEffect(() => {
+    fetchHotWorkers();
     if (loginUser?.role) {
       fetchWorks();
     }
   }, []);
+  useEffect(() => {
+    console.log(workerList);
+  }, [workerList]);
   return (
     <div className="relative flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       <div className="w-full p-4 rounded-zp-radius-big bg-zp-white">
@@ -144,9 +114,7 @@ export default function Home() {
       <p className="font-extrabold text-zp-xl">HOT한 시공업자</p>
       <div className="flex w-full overflow-x-auto">
         <div className="flex justify-between w-full h-[8rem] ">
-          {hotWorkerList.map((worker) => (
-            <WorkerCard worker={worker} />
-          ))}
+          {workerList?.map((worker) => <WorkerCard worker={worker} />)}
         </div>
       </div>
     </div>

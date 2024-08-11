@@ -9,10 +9,10 @@ import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
+import { WorkerInfo } from '@/components/worker/workerinfolist/WorkerInfoList';
+import WorkerInfoListItem from '@/components/worker/workerinfolist/WorkerInfoListItem';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 import 'swiper/css';
 import 'swiper/css/navigation';
 

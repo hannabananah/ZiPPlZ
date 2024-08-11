@@ -5,18 +5,95 @@ import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import { writeFindWorker } from '@apis/worker/WorkerListApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
+const board = {
+  board: {
+    title: '구인구직글3',
+    nickname: 'user1',
+    userSerial: 1,
+    boardSerial: 7,
+    hit: 0,
+    boardType: 3,
+    boardContent: '구인구직글3_content',
+    boardDate: '2024-08-08T23:49:59.988909',
+  },
+  board_images: [
+    {
+      fileName: 'file_name13',
+      saveFile: 'save_file_path13',
+      boardSerial: 7,
+      fileSerial: 13,
+      saveFolder: 'save_folder_path13',
+      originalFile: 'original_file_path13',
+    },
+    {
+      fileName: 'file_name14',
+      saveFile: 'save_file_path14',
+      boardSerial: 7,
+      fileSerial: 14,
+      saveFolder: 'save_folder_path14',
+      originalFile: 'original_file_path14',
+    },
+    {
+      fileName: 'file_name15',
+      saveFile: 'save_file_path15',
+      boardSerial: 7,
+      fileSerial: 15,
+      saveFolder: 'save_folder_path15',
+      originalFile: 'original_file_path15',
+    },
+  ],
+  comments: [
+    {
+      parent_comment: {
+        userSerial: 1,
+        boardSerial: 7,
+        commentSerial: 13,
+        parentCommentSerial: -1,
+        commentContent: '치매세요?',
+        commentDate: '2024-08-08T23:51:36.86451',
+        orderNumber: 3,
+        isDeleted: 0,
+      },
+      child_comments: [
+        {
+          userSerial: 1,
+          boardSerial: 7,
+          commentSerial: 14,
+          parentCommentSerial: 13,
+          commentContent: '치매세요?',
+          commentDate: '2024-08-08T23:51:57.047113',
+          orderNumber: 4,
+          isDeleted: 0,
+        },
+        {
+          userSerial: 1,
+          boardSerial: 7,
+          commentSerial: 15,
+          parentCommentSerial: 13,
+          commentContent: '치매세요?',
+          commentDate: '2024-08-08T23:52:00.205974',
+          orderNumber: 5,
+          isDeleted: 0,
+        },
+      ],
+    },
+  ],
+};
 // 이미지 상태의 타입 정의
-type Image = File;
+type Image = string;
 
-export default function FindWorkerDetailCreate() {
-  const [images, setImages] = useState<Image[]>([]);
-  const [title, setTitle] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [workDetail, setWorkDetail] = useState<string>('');
+export default function UpdateFindWorker() {
+  const [images, setImages] = useState<Image[]>(
+    board.board_images.map((img) => img.saveFile)
+  );
+  const [title, setTitle] = useState<string>(board.board.title);
+  const [address, setAddress] = useState<string>('주소');
+  const [workDetail, setWorkDetail] = useState<string>(
+    board.board.boardContent
+  );
 
   const navigate = useNavigate();
 
@@ -26,11 +103,20 @@ export default function FindWorkerDetailCreate() {
   // 이미지 업로드 핸들러
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
+    const readerPromises = files.map((file) => {
+      const reader = new FileReader();
+      return new Promise<string>((resolve) => {
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.readAsDataURL(file);
+      });
+    });
 
-    setImages((prevImages: Image[]) => [
-      ...prevImages,
-      ...files.slice(0, 10 - prevImages.length),
-    ]);
+    Promise.all(readerPromises).then((results) => {
+      setImages((prevImages) => [
+        ...prevImages,
+        ...results.slice(0, 10 - prevImages.length),
+      ]);
+    });
   };
 
   // 이미지 삭제 핸들러
@@ -39,16 +125,8 @@ export default function FindWorkerDetailCreate() {
   };
 
   // 확인 버튼 핸들러
-  const handleClickRegistButton = async (
-    images: Image[],
-    title: string,
-    content: string
-  ) => {
-    return await writeFindWorker({
-      images: images,
-      title: title,
-      board_content: content,
-    });
+  const handleConfirm = () => {
+    goList();
   };
 
   return (
@@ -94,7 +172,7 @@ export default function FindWorkerDetailCreate() {
             {images.map((image, index) => (
               <div key={index} className="relative w-[5rem] h-[5rem] ">
                 <img
-                  src={URL.createObjectURL(image)}
+                  src={image}
                   className="w-full h-full opacity-50 rounded-zp-radius-big"
                   onClick={() => handleImageRemove(index)}
                 />
@@ -149,7 +227,7 @@ export default function FindWorkerDetailCreate() {
           <textarea
             placeholder="희망하시는 작업 또는 시공에 대해 입력해주세요."
             value={workDetail}
-            className="w-full h-[15rem] p-4 border text-zp-xs border-zp-main-color rounded-zp-radius-btn bg-zp-transparent resize-none"
+            className="w-full h-[15rem] p-4 border text-zp-xs border-zp-main-color rounded-zp-radius-btn bg-zp-transparent"
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
               setWorkDetail((e.target as HTMLTextAreaElement).value)
             }
@@ -162,11 +240,7 @@ export default function FindWorkerDetailCreate() {
           height={3}
           fontSize="xl"
           radius="btn"
-          onClick={() => {
-            handleClickRegistButton(images, title, workDetail);
-
-            goList();
-          }}
+          onClick={handleConfirm}
         />
       </div>
     </>

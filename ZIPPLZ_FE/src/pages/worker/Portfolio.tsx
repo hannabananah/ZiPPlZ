@@ -56,131 +56,105 @@ export default function Portfolio() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-        <div className="w-full">
-          {/* 북마크 이미지 */}
-          <div className="w-full flex justify-end">
-            {isBookmarked ? (
-              <IoBookmark
-                size={24}
-                className="cursor-pointer"
-                onClick={toggleBookmark}
-              />
-            ) : (
-              <IoBookmarkOutline
-                size={24}
-                className="cursor-pointer"
-                onClick={toggleBookmark}
-              />
-            )}
+      <div className="flex flex-col w-full gap-2 min-h-screen p-6 mt-[4rem]">
+        <div className="relative flex items-start w-full gap-6 font-bold">
+          {/* 사진, 이름 */}
+          <div className="flex flex-col items-center">
+            <CgProfile size={100} />
+            <p className="font-bold text-zp-lg">강신구</p>
           </div>
 
-          <div className="w-full font-bold flex items-start space-x-8 p-2">
-            {/* 사진, 이름 */}
-            <div>
-              <div className="grid w-32 h-32 place-items-center">
-                <CgProfile size={120} />
-              </div>
-              <div className="grid w-32 h-8 place-items-center text-zp-xl text-zp-black">
-                강신구
-              </div>
+          {/* 지역, 전화번호, 분야 */}
+          <div className="flex flex-col mt-4 font-bold text-zp-xs">
+            <div className="flex items-center gap-2">
+              <CiLocationOn />
+              <p>{area}</p>
             </div>
+            <div className="flex items-center gap-2">
+              <IoCallOutline />
+              <p>{tel}</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <GrTools />
+                <p>Skills</p>
+              </div>
 
-            {/* 지역, 전화번호, 분야 */}
-            <div className="w-full flex flex-col text-zp-xs text-zp-black">
-              <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
-                <div>
-                  <CiLocationOn />
-                </div>
-                <div className="flex-4 h-4">Area</div>
-                <div className="flex-1 h-4">{area}</div>
-              </div>
-              <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
-                <div>
-                  <IoCallOutline />
-                </div>
-                <div className="flex-4 h-4">Phone</div>
-                <div className="flex-1 h-4">{tel}</div>
-              </div>
-              <div className="w-full h-4 flex flex-wrap gap-2">
-                <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
-                  <div>
-                    <GrTools />
-                  </div>
-                  <div className="w-full h-4">Skills</div>
-                </div>
-                {/* Skills as buttons */}
+              {/* Skills as buttons */}
+              <div className="grid grid-cols-3 gap-4">
                 {skills.map((skill, index) => (
-                  <button
+                  <Button
+                    buttonType="second"
+                    width={4}
+                    height={2}
+                    fontSize="xs"
+                    radius="big"
                     key={index}
-                    className="flex-1 min-w-[100px] h-8 px-2 py-1 bg-zp-sub-color rounded-zp-radius-big"
                   >
                     {skill}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
           </div>
+          {/* 북마크 이미지 */}
+          {isBookmarked ? (
+            <IoBookmark
+              size={24}
+              className="absolute cursor-pointer right-4"
+              color="#73744a"
+              onClick={toggleBookmark}
+            />
+          ) : (
+            <IoBookmarkOutline
+              size={24}
+              className="absolute cursor-pointer right-4"
+              color="#73744a"
+              onClick={toggleBookmark}
+            />
+          )}
+        </div>
+        {/* 버튼 섹션 */}
+        <div className="grid w-full grid-cols-3 font-bold text-zp-sm">
+          <div
+            className={`p-2 cursor-pointer ${
+              activeTab === 'overview'
+                ? 'rounded-t-zp-radius-big border-x-2 border-t-2 border-zp-main-color'
+                : 'rounded-b-lg border-b-2 border-zp-main-color'
+            }`}
+          >
+            <p className="text-center" onClick={overviewClick}>
+              종합정보
+            </p>
+          </div>
+          <div
+            className={`p-2 cursor-pointer ${
+              activeTab === 'workerschedule'
+                ? 'rounded-t-zp-radius-big border-x-2 border-t-2 border-zp-main-color'
+                : 'rounded-b-lg border-b-2 border-zp-main-color'
+            }`}
+          >
+            <p className="text-center" onClick={workerScheduleClick}>
+              시공자 일정
+            </p>
+          </div>
 
-          {/* 버튼 섹션 */}
-          <div className="font-bold w-full flex ">
-            <div
-              className={`flex-1 ${
-                activeTab === 'overview'
-                  ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-                  : 'rounded-b-lg border-b-2 border-zp-main-color'
-              }`}
-            >
-              <Button
-                children="종합 정보"
-                buttonType="light"
-                width="100%" // 퍼센트 너비로 설정
-                height={2}
-                fontSize="xs"
-                radius="btn"
-                onClick={overviewClick}
-              />
-            </div>
-            <div
-              className={`flex-1 ${
-                activeTab === 'workerschedule'
-                  ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-                  : 'rounded-b-lg border-b-2 border-zp-main-color'
-              }`}
-            >
-              <Button
-                children="시공자 일정"
-                buttonType="light"
-                width="100%" // 퍼센트 너비로 설정
-                height={2}
-                fontSize="xs"
-                radius="btn"
-                onClick={workerScheduleClick}
-              />
-            </div>
-            <div
-              className={`flex-1 ${
-                activeTab === 'review'
-                  ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-                  : 'rounded-b-lg border-b-2 border-zp-main-color'
-              }`}
-            >
-              <Button
-                children="후기"
-                buttonType="light"
-                width="100%" // 퍼센트 너비로 설정
-                height={2}
-                fontSize="xs"
-                radius="btn"
-                onClick={reviewClick}
-              />
-            </div>
+          <div
+            className={`p-2 cursor-pointer ${
+              activeTab === 'review'
+                ? 'rounded-t-zp-radius-big border-x-2 border-t-2 border-zp-main-color'
+                : 'rounded-b-lg border-b-2 border-zp-main-color'
+            }`}
+          >
+            <p className="text-center" onClick={reviewClick}>
+              후기
+            </p>
           </div>
-          <div className="mb-10">
-            {activeTab === 'overview' && <OverView />}
-            {activeTab === 'workerschedule' && <WorkerSchedule />}
-            {activeTab === 'review' && <WorkerReview />}
-          </div>
+        </div>
+        <div className="mb-[4rem]">
+          {activeTab === 'overview' && <OverView />}
+          {activeTab === 'workerschedule' && <WorkerSchedule />}
+          {activeTab === 'review' && <WorkerReview />}
         </div>
       </div>
     </>
