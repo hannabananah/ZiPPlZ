@@ -93,4 +93,11 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     @Query(value = "DELETE FROM Board " +
             "WHERE board_serial = :boardSerial ", nativeQuery = true)
     int deleteBoard(@Param("boardSerial") int boardSerial);
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE Board " +
+            "SET hit = hit + 1 " +
+            "WHERE board_serial = :boardSerial", nativeQuery = true)
+    void updateboardhit(@Param("boardSerial") int boardSerial);
 }

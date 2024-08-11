@@ -86,6 +86,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public void updateboardhit(int boardSerial) {
+        boardRepository.updateboardhit(boardSerial);
+    }
+
+    @Override
     public List<QuestionListDTO> getQuestions(int boardType) {
         List<QuestionListDTO> views = new ArrayList<>();
         List<BoardJoinDTO> boards = boardRepository.getBoards(boardType);

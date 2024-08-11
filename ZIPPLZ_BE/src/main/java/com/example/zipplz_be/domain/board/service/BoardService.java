@@ -31,4 +31,5 @@ public interface BoardService {
 
     int deleteBoard(int boardSerial);
 
+    void updateboardhit(int boardSerial);
 }

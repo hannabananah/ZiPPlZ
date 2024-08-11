@@ -134,6 +134,7 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             QuestionDetailDTO question= boardService.getQuestion(boardSerial);
 
             if (question == null) {
@@ -281,6 +282,7 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             ShowBoardDetailDTO question= boardService.getShowBoard(boardSerial);
 
             if (question == null) {
@@ -421,6 +423,7 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             FindWorkerDetailDTO findworker= boardService.getFindWorker(boardSerial);
 
             if (findworker == null) {
