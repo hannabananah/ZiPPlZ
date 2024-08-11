@@ -40,7 +40,7 @@ export const getFIndWorkerDetail = async (boardSerial: number) => {
 //구인구직글 작성
 export const writeFindWorker = async (data: FindWork) => {
   const formData = new FormData();
-  data.images.forEach((image: File, idx: number) => {
+  data.images.forEach((image: File) => {
     formData.append('images', image);
   });
   formData.append('title', data.title);

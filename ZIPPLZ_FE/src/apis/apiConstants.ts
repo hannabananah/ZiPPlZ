@@ -15,7 +15,7 @@ export const END_POINT = {
   WORK: (planSerial: number) => `schedule/plans/${planSerial}/works`,
   WORK_SERIAL: (planSerial: number, workSerial: number) =>
     `schedule/plans/${planSerial}/works/${workSerial}`,
-
+  WORKS_USERS: 'schedule/users/works',
   //시공자 리스트
   WORKER_LIST: 'workerlist/portfolios',
   WORKER_LIST_SEARCH: (name: string) => `workerlist/portfolios/${name}`,
