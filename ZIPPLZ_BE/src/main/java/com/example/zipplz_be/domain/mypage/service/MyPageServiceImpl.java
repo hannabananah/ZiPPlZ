@@ -35,6 +35,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Service
@@ -197,24 +198,6 @@ public class MyPageServiceImpl implements MyPageService {
     }
 
     @Override
-    public List<PortfolioViewDTO> getWishWorkers(int userSerial) {
-        if (!userRepository.existsByUserSerial(userSerial)) {
-            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
-        }
-        User user = userRepository.findByUserSerial(userSerial);
-
-        List<Wish> wishList = wishRepository.findAllByUserSerialAndWishType(user, 5); // 포트폴리오는 wishType == 5
-        List<Integer> portfolioWishList = wishList.stream()
-                .map(Wish::getWishSerial)
-                .collect(Collectors.toList());
-
-        List<PortfolioViewDTO> portfolioList = workerListService.getWorkLists();
-        return portfolioList.stream()
-                .filter(portfolio -> portfolioWishList.contains(portfolio.getPortfolio_serial()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public List<QuestionListDTO> getMyQuestions(int userSerial) {
         if (!userRepository.existsByUserSerial(userSerial)) {
             throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
@@ -250,6 +233,79 @@ public class MyPageServiceImpl implements MyPageService {
         List<FindWorkerListDTO> findWorkerList = boardService.getFindWorkers(3);
         return findWorkerList.stream()
                 .filter(findWorker -> findWorker.getUser_serial() == user.getUserSerial())
+                .collect(Collectors.toList());
+    }
+
+    // 찜
+    @Override
+    public List<PortfolioViewDTO> getWishedWorkers(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<Wish> wishList = wishRepository.findAllByUserSerialAndWishType(user, 5); // 포트폴리오는 wishType == 5
+        List<Integer> portfolioWishList = wishList.stream()
+                .map(Wish::getWishSerial)
+                .collect(Collectors.toList());
+
+        List<PortfolioViewDTO> portfolioList = workerListService.getWorkLists();
+        return portfolioList.stream()
+                .filter(portfolio -> portfolioWishList.contains(portfolio.getPortfolio_serial()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<QuestionListDTO> getWishedQuestions(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<Wish> wishList = wishRepository.findAllByUserSerialAndWishType(user, 1);
+        List<Integer> questionWishList = wishList.stream()
+                .map(Wish::getWishSerial)
+                .collect(Collectors.toList());
+
+        List<QuestionListDTO> questionList = boardService.getQuestions(1);
+        return questionList.stream()
+                .filter(question -> questionWishList.contains(question.getBoard_serial()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ShowBoardListDTO> getWishedShowBoards(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<Wish> wishList = wishRepository.findAllByUserSerialAndWishType(user, 2);
+        List<Integer> showBoardWishList = wishList.stream()
+                .map(Wish::getWishSerial)
+                .collect(Collectors.toList());
+
+        List<ShowBoardListDTO> showBoardList = boardService.getShowBoards(2);
+        return showBoardList.stream()
+                .filter(showBoard -> showBoardWishList.contains(showBoard.getBoard_serial()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<FindWorkerListDTO> getWishedFindWorkers(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        List<Wish> wishList = wishRepository.findAllByUserSerialAndWishType(user, 3);
+        List<Integer> findWorkerWishList = wishList.stream()
+                .map(Wish::getWishSerial)
+                .collect(Collectors.toList());
+
+        List<FindWorkerListDTO> findWorkerList = boardService.getFindWorkers(3);
+        return findWorkerList.stream()
+                .filter(findWorker -> findWorkerWishList.contains(findWorker.getBoard_serial()))
                 .collect(Collectors.toList());
     }
 }
