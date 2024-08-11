@@ -31,4 +31,7 @@ public interface WorkRepository extends JpaRepository<Work, Integer> {
 
     @Query(value="select * from work where status= 'confirmed' and plan_serial= :planSerial and now() between start_date and end_date", nativeQuery = true)
     List<Work> getTodayWorkByPlan(int planSerial);
+
+    @Query(value="select count(*) from work where is_completed= 1 and worker_serial = :workerSerial and field_code= :fieldCode", nativeQuery = true)
+    int getWorkCount(int workerSerial, int fieldCode);
 }

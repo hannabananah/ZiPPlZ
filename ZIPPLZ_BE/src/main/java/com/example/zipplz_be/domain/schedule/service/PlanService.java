@@ -457,7 +457,6 @@ public class PlanService {
     }
 
 
-
     //fileSerial 받았으니까 일단 이 객체를 관계 테이블에서 삭제하고, 해당 file 또한 s3에서 삭제하고 지운다!
     @Transactional
     public void deleteImageService(int userSerial, int planSerial, int fileSerial) throws IOException {
@@ -484,5 +483,4 @@ public class PlanService {
             throw new IOException("Error Deleting file in S3", e);
         }
     }
-
 }
