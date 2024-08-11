@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
+import { useLoginUserStore } from '@stores/loginUserStore';
 import axios, { AxiosError } from 'axios';
 import {
   Session as OVSession,
@@ -11,8 +13,8 @@ import {
 } from 'openvidu-browser';
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
-
 export default function useOpenVidu() {
+  const { chatroomSerial } = useParams();
   const [session, setSession] = useState<OVSession | ''>('');
   const [sessionId, setSessionId] = useState<string>('');
   const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
@@ -20,7 +22,8 @@ export default function useOpenVidu() {
   const [OV, setOV] = useState<OpenVidu | null>(null);
   const [recordingId, setRecordingId] = useState<string | null>(null);
   const navigate = useNavigate();
-
+  const { loginUser } = useLoginUserStore();
+  const email: string | undefined = loginUser?.email;
   const leaveSession = useCallback(() => {
     if (session) session.disconnect();
 
@@ -30,7 +33,6 @@ export default function useOpenVidu() {
     setSubscriber(null);
     setPublisher(null);
     setRecordingId(null);
-    // 이전 채팅방으로 돌아가기
     navigate(-1);
   }, [session, navigate]);
 
@@ -40,13 +42,14 @@ export default function useOpenVidu() {
     setSession(OVs.initSession());
   };
 
-  const Data = 'monkey';
   useEffect(() => {
-    if (Data) {
-      setSessionId(Data);
+    if (email) {
+      const derivedSessionId = email?.split('@')[0].trim();
+      console.log('Derived Session ID:', derivedSessionId);
+      setSessionId(derivedSessionId);
       joinSession();
     }
-  }, [Data]);
+  }, [email]);
 
   useEffect(() => {
     window.addEventListener('beforeunload', leaveSession);
@@ -153,20 +156,29 @@ export default function useOpenVidu() {
       try {
         const data = JSON.stringify({
           customSessionId: sessionIds,
-          chatroomSerial: 1,
+          chatroomSerial: Number(chatroomSerial),
         });
         const response = await axios.post(
           `${base_url}/openvidu/api/sessions`,
           data,
           {
             headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              Authorization: `Basic ${localStorage.getItem('token')}`,
+              // Authorization: 'Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU',
               'Content-Type': 'application/json',
             },
           }
         );
+        console.log('Session response=====>', response);
         return (response.data as { data: string }).data;
       } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error('Error response:', error.response);
+          console.error('Error message:', error.message);
+          console.error('Error config:', error.config);
+        } else {
+          console.error('Unexpected error:', error);
+        }
         const errorResponse = (error as AxiosError)?.response;
         if (errorResponse?.status === 409) {
           return sessionIds;
@@ -180,7 +192,7 @@ export default function useOpenVidu() {
         const data = JSON.stringify({
           role: 'PUBLISHER',
           sessionId: sessionIds,
-          chatroomSerial: 1,
+          chatroomSerial: Number(chatroomSerial),
         });
         const response = await axios.post(
           `${base_url}/openvidu/api/sessions/connections`,
