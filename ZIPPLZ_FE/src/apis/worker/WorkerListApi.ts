@@ -14,7 +14,11 @@ interface FindWork {
 
 //시공자목록 가져오기
 export const getWorkerList = async () => {
-  return await axiosInstance.post(END_POINT.WORKER_LIST);
+  return await axiosInstance.get(END_POINT.WORKER_LIST);
+};
+//분야별 시공자 목록 가져오기
+export const getWorkerListByField = async (field: number) => {
+  return await axiosInstance.get(END_POINT.WORKER_LIST + `/${field}`);
 };
 //시공자 검색
 export const searchWorkerList = async (data: string) => {
@@ -22,7 +26,7 @@ export const searchWorkerList = async (data: string) => {
 };
 //인기시공자 가져오기
 export const getTopWorkerList = async () => {
-  return await axiosInstance.post(END_POINT.WORKER_LIST + '/top');
+  return await axiosInstance.get(END_POINT.WORKER_LIST + '/top');
 };
 //구인구직글 목록 가져오기
 export const getFindWorkerList = async () => {

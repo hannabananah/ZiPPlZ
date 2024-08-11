@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
+import { FaRegTrashCan } from 'react-icons/fa6';
 import { IoChatbubblesOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 import { writeReview } from '@/apis/board/reviewApi';
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import { Comment } from '@/stores/workerListStore';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
@@ -16,6 +18,7 @@ interface Props {
   childComments?: Comment[];
 }
 export default function Review({ comment, childComments }: Props) {
+  const { loginUser } = useLoginUserStore();
   const navigate = useNavigate();
   const [isWriteReview, setIsWriteReview] = useState<boolean>(false);
   const [isShowReview, setIsShowReview] = useState<boolean>(false);
@@ -49,6 +52,9 @@ export default function Review({ comment, childComments }: Props) {
             <p className="font-bold">
               {comment?.nickName ? comment.nickName : comment?.userName}
             </p>
+            {comment?.userSerial === loginUser?.userSerial && (
+              <FaRegTrashCan size={12} className="cursor-pointer" />
+            )}
           </div>
           {comment && (
             <p className="text-zp-gray">{formatDate(comment.commentDate)}</p>

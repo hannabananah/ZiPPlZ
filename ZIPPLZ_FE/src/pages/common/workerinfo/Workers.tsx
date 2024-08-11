@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
+import { searchWorkerList } from '@apis/worker/WorkerListApi';
+import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import FieldListItem from '@components/home/FieldListItem';
 import FindWorkerList from '@components/worker/findworker/FindWorkerList';
 import WorkerInfoList from '@components/worker/workerinfolist/WorkerInfoList';
+import { useBoardStore } from '@stores/boardStore';
+import { useWorkerListStore } from '@stores/workerListStore';
 
 const fields: string[] = [
   '전체',
@@ -21,9 +24,12 @@ const fields: string[] = [
   '마루',
   '도배',
   '가구',
+  '기타',
 ];
 export default function Workers() {
+  const { setWorkerList } = useWorkerListStore();
   const { category } = useParams<{ category?: string }>();
+  const { keyword, setKeyword } = useBoardStore();
   const location = useLocation();
   const queryParam = new URLSearchParams(location.search);
   const type: string | null = queryParam.get('type');
@@ -43,12 +49,26 @@ export default function Workers() {
     }
     setIsOpen(false); // 드롭다운을 닫기
   };
-  const [inputValue, setInputValue] = useState<string>('');
   const navigate = useNavigate();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setInputValue(e.target.value);
+    setKeyword(e.target.value);
   };
+  const searchWorker = async () => {
+    if (keyword !== '') {
+      const response = await searchWorkerList(keyword);
+      setWorkerList(response.data.data);
+    }
+  };
+  useEffect(() => {
+    if (category === 'portfolios') setSelectedOption('전문 시공자 둘러보기');
+    else {
+      setSelectedOption('전문 시공자 구하기');
+    }
+  }, []);
+  useEffect(() => {
+    setKeyword('');
+  }, [category, type]);
   return (
     <>
       <div className="flex flex-col items-center mt-[3rem] gap-4 p-6">
@@ -127,16 +147,16 @@ export default function Workers() {
             height={1.8}
             fontSize="xs"
             radius="none"
-            value={inputValue}
+            value={keyword}
             onChange={handleInputChange} // `onChange` 핸들러 추가
             additionalStyle="text-center relative"
           />
           <HiMagnifyingGlass
-            className="absolute left-[15%] top-[0.45rem]"
-            onClick={() => alert('검색')}
+            className="absolute left-[15%] top-[0.45rem] cursor-pointer"
+            onClick={searchWorker}
           />
-          {selectedOption === '전문 시공자 구하기' ? (
-            <div className="flex items-center justify-end justify-between w-full mt-4">
+          {selectedOption === '전문 시공자 구하기' && (
+            <div className="flex items-center justify-end  w-full mt-4">
               <Button
                 buttonType="normal"
                 children="글 작성하기"
@@ -146,18 +166,19 @@ export default function Workers() {
                 radius="btn"
                 onClick={() => navigate('/workers/findworker/write')}
               />
-              <div>정렬</div>
             </div>
-          ) : (
-            <div className="flex items-end justify-end w-full mt-4">정렬</div>
           )}
         </div>
         {category === 'portfolios' && type && (
           <div className="w-full">
             {type === '전체' ? (
-              <WorkerInfoList />
+              <WorkerInfoList keyword={keyword} searchWorker={searchWorker} />
             ) : (
-              <WorkerInfoList field={fields.indexOf(type)} />
+              <WorkerInfoList
+                field={fields.indexOf(type)}
+                keyword={keyword}
+                searchWorker={searchWorker}
+              />
             )}
           </div>
         )}

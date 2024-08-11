@@ -15,3 +15,7 @@ export const writeReview = async (data: Comment) => {
     },
   });
 };
+//리뷰 삭제
+export const deleteReview = async (commentSerial: number) => {
+  return await axiosInstance.delete(END_POINT.COMMENT + `/${commentSerial}`);
+};

@@ -52,17 +52,34 @@ export interface FindWorkerDetail {
     child_comments: Comment[] | null;
   }[];
 }
+export interface WorkerList {
+  portfolio_serial: number;
+  worker: number;
+  user_name: string;
+  birth_date: number;
+  temperature: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
 interface useWokerListStore {
   findWorker: FindWorkerDetail | null;
   findWorkerList: FindWorker[] | null;
+  workerList: WorkerList[] | null;
   setFindWorker: (findWorker: FindWorkerDetail | null) => void;
   setFindWorkerList: (findWorkerList: FindWorker[] | null) => void;
+  setWorkerList: (workerList: WorkerList[] | null) => void;
 }
 
 export const useWorkerListStore = create<useWokerListStore>((set) => ({
   findWorker: null,
   findWorkerList: null,
+  workerList: null,
   setFindWorker: (findWorker: FindWorkerDetail | null) => set({ findWorker }),
   setFindWorkerList: (findWorkerList: FindWorker[] | null) =>
     set({ findWorkerList }),
+  setWorkerList: (workerList: WorkerList[] | null) => set({ workerList }),
 }));
