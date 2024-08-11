@@ -10,7 +10,6 @@ interface Props {
   name?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
-  children?: React.ReactNode;
 }
 
 const fontSizeClasses: Record<Props['fontSize'], string> = {
@@ -30,9 +29,8 @@ export default function TextArea({
   name,
   onChange,
   onKeyDown,
-  children,
 }: Props) {
-  const baseStyle = `flex justify-center items-center rounded-zp-radius-big ${fontSizeClasses[fontSize]} bg-zp-transparent resize-none p-4 bg-zp-white border border-zp-light-gray outline-none caret-zp-main-color placeholder-zp-main-color`;
+  const baseStyle = `flex justify-center items-center rounded-zp-radius-big ${fontSizeClasses[fontSize]} bg-zp-transparent resize-none p-3 bg-zp-white border border-zp-light-gray outline-none caret-zp-main-color placeholder-zp-main-color leading-4`;
 
   const widthStyle = typeof width === 'number' ? `${width}rem` : width;
   const heightStyle = typeof height === 'number' ? `${height}rem` : height;

@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { CiImageOn } from 'react-icons/ci';
 import { FaFileContract, FaFolderOpen } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
@@ -45,6 +45,7 @@ export default function ToggleChatMenu({
   const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   const handleImageUpload = () => {
     imageInputRef.current?.click();
@@ -98,6 +99,7 @@ export default function ToggleChatMenu({
 
   const closeAfterServiceModal = () => {
     setIsAfterServiceModalOpen(false);
+    setIsConfirmationModalOpen(true);
   };
 
   const closeContractModal = () => {
@@ -107,6 +109,16 @@ export default function ToggleChatMenu({
   const closeMaterialModal = () => {
     setIsMaterialModalOpen(false);
   };
+
+  useEffect(() => {
+    if (isConfirmationModalOpen) {
+      const timer = setTimeout(() => {
+        setIsConfirmationModalOpen(false);
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isConfirmationModalOpen]);
 
   const menus: MenuItem[] = [
     {
@@ -203,7 +215,10 @@ export default function ToggleChatMenu({
         height="60%"
         maxWidth="400px"
       >
-        <AfterService closeAfterServiceModal={closeAfterServiceModal} />
+        <AfterService
+          closeAfterServiceModal={closeAfterServiceModal}
+          name={name}
+        />
       </FullModal>
 
       {name && (
@@ -231,6 +246,18 @@ export default function ToggleChatMenu({
           closeMaterialModal={closeMaterialModal}
           chatroomSerial={chatroomSerial}
         />
+      </FullModal>
+
+      <FullModal
+        isOpen={isConfirmationModalOpen}
+        onRequestClose={() => setIsConfirmationModalOpen(false)}
+        height="20%"
+        maxWidth="300px"
+      >
+        <div className="flex flex-col items-center justify-center w-full h-full gap-6 p-3">
+          <h2 className="font-bold text-center text-zp-2xl">A/S 신청 완료</h2>
+          <p className="text-center text-zp-md">A/S 신청이 완료되었습니다.</p>
+        </div>
       </FullModal>
     </div>
   );
