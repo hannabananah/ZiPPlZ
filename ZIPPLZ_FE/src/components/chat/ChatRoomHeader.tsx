@@ -16,6 +16,7 @@ type ChatRoomHeaderProps = {
   location: string;
   fieldName: string;
   imageUrl?: string;
+  otherUserSerial: number;
 };
 
 export default function ChatRoomHeader({
@@ -24,6 +25,7 @@ export default function ChatRoomHeader({
   location,
   fieldName,
   imageUrl,
+  otherUserSerial,
 }: ChatRoomHeaderProps) {
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
 
@@ -84,7 +86,6 @@ export default function ChatRoomHeader({
         </button>
         <Modal
           isOpen={currentModals.includes('mini')}
-          onRequestClose={handleCloseModal}
           className="absolute right-0 overflow-hidden top-10 max-w-40 shadow-zp-deep rounded-zp-radius-big"
           overlayClassName="bg-transparent bg-opacity-none fixed inset-0"
         >
@@ -102,8 +103,7 @@ export default function ChatRoomHeader({
             <button
               onClick={() => {
                 handleCloseModal();
-                // TODO: 상대방 userSerial로 넘어가기
-                navigate(`/workers/${userSerial}/portfolio`);
+                navigate(`/workers/${otherUserSerial}/portfolio`);
               }}
               className="flex items-center w-full p-1 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-yellow bg-zp-white border-zp-sub-color text-zp-3xs"
             >

@@ -94,6 +94,7 @@ function ChatRoomContent() {
           location={selectedChatRoom.otherUser.location}
           fieldName={selectedChatRoom.otherUser.fieldName}
           imageUrl={selectedChatRoom.otherUser.image?.saveFile || ''}
+          otherUserSerial={selectedChatRoom.otherUser.userSerial}
         />
       )}
       <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
