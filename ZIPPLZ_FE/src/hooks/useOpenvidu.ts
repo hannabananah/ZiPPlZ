@@ -13,6 +13,7 @@ import {
 } from 'openvidu-browser';
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
+
 export default function useOpenVidu() {
   const { chatroomSerial } = useParams();
   const [session, setSession] = useState<OVSession | ''>('');
@@ -24,17 +25,6 @@ export default function useOpenVidu() {
   const navigate = useNavigate();
   const { loginUser } = useLoginUserStore();
   const email: string | undefined = loginUser?.email;
-  const leaveSession = useCallback(() => {
-    if (session) session.disconnect();
-
-    setOV(null);
-    setSession('');
-    setSessionId('');
-    setSubscriber(null);
-    setPublisher(null);
-    setRecordingId(null);
-    navigate(-1);
-  }, [session, navigate]);
 
   const joinSession = () => {
     const OVs = new OpenVidu();
@@ -44,13 +34,43 @@ export default function useOpenVidu() {
 
   useEffect(() => {
     if (email) {
-      const derivedSessionId = email?.split('@')[0].trim();
-      console.log('Derived Session ID:', derivedSessionId);
-      setSessionId(derivedSessionId);
+      // const derivedSessionId = email?.split('@')[0].trim();
+      // console.log('Derived Session ID:', derivedSessionId);
+      // setSessionId(derivedSessionId);
+
+      setSessionId(String(chatroomSerial));
       joinSession();
     }
   }, [email]);
 
+  const leaveSession = async () => {
+    if (sessionId) {
+      try {
+        const data = JSON.stringify({
+          sessionId: sessionId,
+        });
+
+        await axios.delete(`${base_url}/openvidu/api/sessions`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+            'Content-Type': 'application/json',
+          },
+          data,
+        });
+        setOV(null);
+        setSession('');
+        setSessionId('');
+        setSubscriber(null);
+        setPublisher(null);
+        setRecordingId(null);
+        navigate(-1);
+
+        console.log('Session ended successfully');
+      } catch (error) {
+        console.error('Error ending session:', error);
+      }
+    }
+  };
   useEffect(() => {
     window.addEventListener('beforeunload', leaveSession);
 
@@ -61,7 +81,8 @@ export default function useOpenVidu() {
 
   const startRecording = async () => {
     if (sessionId) {
-      console.log('Starting recording with sessionId=========>', sessionId);
+      console.log('Recording started');
+      console.log(sessionId);
       try {
         const response = await axios.post(
           `${base_url}/openvidu/api/sessions/recording`,
@@ -73,23 +94,24 @@ export default function useOpenVidu() {
             },
           }
         );
-        console.log('Recording started:', response.data);
+        console.log('response=======>', response);
         setRecordingId(response.data.recordingId);
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.error(
-            'Axios error:',
-            error.response?.data || error.message,
-            error
-          );
+          console.error('Error status:', error.response?.status);
+          console.error('Error data:', error.response?.data);
+          console.error('Error message:', error.message);
         } else {
           console.error('Unexpected error:', error);
         }
       }
+    } else {
+      console.error('Session ID is missing');
     }
   };
 
   const stopRecording = async () => {
+    console.log('recording', recordingId);
     if (recordingId) {
       try {
         const response = await axios.post(
@@ -102,7 +124,6 @@ export default function useOpenVidu() {
             },
           }
         );
-        console.log('Recording stopped:', response.data);
         setRecordingId(null);
       } catch (error) {
         console.error('Error stopping recording:', error);
@@ -116,6 +137,9 @@ export default function useOpenVidu() {
     if (session === '') return;
 
     const handleStreamDestroyed = (event: StreamEvent) => {
+      console.log('Stream destroyed:', event.stream.streamId);
+      console.log('subscriber destroyed:', subscriber?.stream.streamId);
+      console.log('publisher destroyed:', publisher?.stream.streamId);
       if (subscriber && event.stream.streamId === subscriber.stream.streamId) {
         setSubscriber(null);
         stopRecording();
@@ -140,8 +164,24 @@ export default function useOpenVidu() {
       }
     };
 
+    //     setIsSubscriberPresent(true);
+    //     checkAndStartRecording();
+    //     console.log('subscriber있어?', subscriber);
+    //     console.log('publisher있어?', publisher);
+    //   } else if (!publisher) {
+    //     console.log('==========================');
+    //     const newPublisher = session.publish(event.stream);
+    //     setPublisher(newPublisher);
+    //     // checkAndStartRecording();
+    //     console.log('subscriber있어?', subscriber);
+    //     console.log('publisher있어?', publisher);
+    //   }
+    // };
+
     session.on('streamDestroyed', handleStreamDestroyed);
     session.on('streamCreated', handleStreamCreated);
+    console.log('subscriber있어?', subscriber);
+    console.log('publisher있어?', publisher);
 
     return () => {
       session.off('streamDestroyed', handleStreamDestroyed);
@@ -163,14 +203,12 @@ export default function useOpenVidu() {
           data,
           {
             headers: {
-              Authorization: `Basic ${localStorage.getItem('token')}`,
-              // Authorization: 'Basic T1BFTlZJRFVBUFA6TVlfU0VDUkVU',
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
               'Content-Type': 'application/json',
             },
           }
         );
-        console.log('Session response=====>', response);
-        return (response.data as { data: string }).data;
+        return response.data.data;
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Error response:', error.response);
@@ -223,6 +261,7 @@ export default function useOpenVidu() {
       try {
         const sessionIds = await createSession(sessionId);
         const token = await createToken(sessionIds);
+        console.log('토큰 받았다!!!!!!');
         return token;
       } catch (error) {
         throw new Error('Failed to get token.');
@@ -235,16 +274,16 @@ export default function useOpenVidu() {
           .connect(token)
           .then(() => {
             if (OV) {
-              const publishers = OV.initPublisher(undefined, {
+              const publisher = OV.initPublisher(undefined, {
                 audioSource: undefined,
                 videoSource: undefined,
                 publishAudio: true,
                 publishVideo: true,
                 mirror: true,
               });
-              setPublisher(publishers);
+              setPublisher(publisher);
               session
-                .publish(publishers)
+                .publish(publisher)
                 .catch((error) => console.error('Error publishing:', error));
             }
           })
