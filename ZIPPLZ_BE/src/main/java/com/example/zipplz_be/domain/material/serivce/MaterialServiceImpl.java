@@ -5,12 +5,15 @@ import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.material.dto.MaterialDTO;
 import com.example.zipplz_be.domain.material.dto.MaterialFileDTO;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
+import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
 import com.example.zipplz_be.domain.material.entity.Material;
 import com.example.zipplz_be.domain.material.exception.MaterialNotFoundException;
 import com.example.zipplz_be.domain.material.repository.MaterialRepository;
+import com.example.zipplz_be.domain.material.repository.MaterialSearchRepository;
 import com.example.zipplz_be.domain.model.MaterialFileRelation;
 import com.example.zipplz_be.domain.model.UserFileRelation;
 import com.example.zipplz_be.domain.model.entity.MajorCategory;
+import com.example.zipplz_be.domain.model.entity.MiddleCategory;
 import com.example.zipplz_be.domain.model.repository.MajorCategoryRepository;
 import com.example.zipplz_be.domain.model.repository.MaterialFileRelationRepository;
 import com.example.zipplz_be.domain.model.repository.UserFileRelationRepository;
@@ -43,6 +46,7 @@ public class MaterialServiceImpl implements MaterialService {
     private final UserRepository userRepository;
     private final UserFileRelationRepository userFileRelationRepository;
     private final WishRepository wishRepository;
+    private final MaterialSearchRepository materialSearchRepository;
 
 //    @Override
 //    public List<MaterialViewDTO> getMaterialList() {
@@ -134,6 +138,7 @@ public class MaterialServiceImpl implements MaterialService {
                 .user(user)
                 .file(file)
                 .build();
+        System.out.println(file.toString());
 
         userFileRelationRepository.save(userFileRelation);
     }
@@ -183,5 +188,33 @@ public class MaterialServiceImpl implements MaterialService {
         } else {
             throw new MaterialNotFoundException("존재하지 않는 자재입니다.");
         }
+    }
+
+    @Override
+    @Transactional
+    public void insertMaterialService(Map<String, Object> params) {
+        Material material = Material.builder()
+                .description((String) params.get("description"))
+                .materialName((String) params.get("materialName"))
+                .materialPrice((Integer) params.get("materialPrice"))
+                .build();
+
+        materialRepository.save(material);
+
+        ElasticMaterial elasticMaterial = ElasticMaterial.builder()
+                .materialName(material.getMaterialName())
+                .materialPrice(material.getMaterialPrice())
+                .materialSerial(material.getMaterialSerial())
+                .description(material.getDescription())
+                .build();
+
+        materialSearchRepository.save(elasticMaterial);
+    }
+
+    @Override
+    public List<ElasticMaterial> searchMaterialService(Map<String, Object> params) {
+        List<ElasticMaterial> elasticMaterials =  materialSearchRepository.findByMaterialName((String) params.get("searchWord"));
+
+        return elasticMaterials;
     }
 }

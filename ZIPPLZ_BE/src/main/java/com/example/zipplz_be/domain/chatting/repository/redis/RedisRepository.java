@@ -72,12 +72,14 @@ public class RedisRepository {
 
     // 채팅방에서 사용자가 읽지 않은 메세지의 갯수 추가
     public void addChatRoomMessageCount(String chatroomSerial, Integer userSerial) {
-        chatroomUnReadMessageInfo.put(chatroomSerial, userSerial, chatroomUnReadMessageInfo.get(chatroomSerial, userSerial) + 1);
+        Integer count = chatroomUnReadMessageInfo.get(chatroomSerial, userSerial);
+        chatroomUnReadMessageInfo.put(chatroomSerial, userSerial, (count != null ? count : 0) + 1);
     }
 
     // 채팅방 안읽은 갯수 가져오기
     public int getChatRoomMessageCount(String chatroomSerial, Integer userSerial) {
-        return chatroomUnReadMessageInfo.get(chatroomSerial, userSerial);
+        Integer count = chatroomUnReadMessageInfo.get(chatroomSerial, userSerial);
+        return count != null ? count : 0;
     }
 
     // step3

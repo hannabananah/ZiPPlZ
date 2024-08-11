@@ -29,11 +29,20 @@ public interface MyPageService {
 
     List<LocalResponseDTO> getWorkerLocations(int userSerial);
 
-    List<PortfolioViewDTO> getWishWorkers(int userSerial);
-
+    // 내가 쓴
     List<QuestionListDTO> getMyQuestions(int userSerial);
 
     List<ShowBoardListDTO> getMyShowBoards(int userSerial);
 
     List<FindWorkerListDTO> getMyFindWorkers(int userSerial);
+
+    // 찜
+    List<PortfolioViewDTO> getWishedWorkers(int userSerial);
+
+    List<QuestionListDTO> getWishedQuestions(int userSerial);
+
+    List<ShowBoardListDTO> getWishedShowBoards(int userSerial);
+
+    List<FindWorkerListDTO> getWishedFindWorkers(int userSerial);
+
 }

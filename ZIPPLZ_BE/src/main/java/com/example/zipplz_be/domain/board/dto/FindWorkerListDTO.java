@@ -20,6 +20,7 @@ public class FindWorkerListDTO {
     LocalDateTime board_date;
     int hit;
     String nickname;
+    String user_name;
     int comment_cnt;
     int wish_cnt;
 
@@ -32,6 +33,7 @@ public class FindWorkerListDTO {
         this.board_date = bjd.getBoardDate();
         this.hit = bjd.getHit();
         this.nickname = bjd.getNickname();
+        this.user_name = bjd.getUserName();
         this.comment_cnt = comment_cnt;
         this.wish_cnt = wish_cnt;
     }

@@ -357,6 +357,8 @@ public class PlanService {
                 List<Work> workList = workRepository.findByPlanSerial(plan);
 
                 for(Work work : workList) {
+                    if(!work.getStatus().equals("confirmed")) continue;
+
                     WorkListDTO workListDTO = WorkListDTO.builder()
                             .endDate(portfolioService.convertTimestamp(work.getEndDate()))
                             .startDate(portfolioService.convertTimestamp(work.getStartDate()))
@@ -385,6 +387,8 @@ public class PlanService {
             List<Work> workList = workRepository.getTodayWork(worker.getWorkerSerial());
 
             for(Work work : workList) {
+                if(!work.getStatus().equals("confirmed")) continue;
+
                 Customer customer = work.getPlanSerial().getCustomerSerial();
 
                 TodayWorkListDTO workListDTO = TodayWorkListDTO.builder()
@@ -410,6 +414,8 @@ public class PlanService {
                 List<Work> workList = workRepository.getTodayWorkByPlan(plan.getPlanSerial());
 
                 for(Work work : workList) {
+                    if(!work.getStatus().equals("confirmed")) continue;
+
                     TodayWorkListDTO workListDTO = TodayWorkListDTO.builder()
                             .workSerial(work.getWorkSerial())
                             .endDate(portfolioService.convertTimestamp(work.getEndDate()))

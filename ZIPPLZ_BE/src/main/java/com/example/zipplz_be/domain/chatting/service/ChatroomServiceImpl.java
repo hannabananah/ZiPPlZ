@@ -153,6 +153,7 @@ public class ChatroomServiceImpl implements ChatroomService {
                 userSerial == chatroom.getWuser().getUserSerial()? true : false;
         User otherUser =
                 userSerial == chatroom.getWuser().getUserSerial()? chatroom.getCuser() : chatroom.getWuser();
+        int otherUserSerial = otherUser.getUserSerial();
         String name = otherUser.getUserName();
         String location;
         String fieldName;
@@ -178,6 +179,7 @@ public class ChatroomServiceImpl implements ChatroomService {
         }
 
         OtherUserInfoDTO otherUserInfo = OtherUserInfoDTO.builder()
+                .userSerial(otherUserSerial)
                 .name(name)
                 .location(location)
                 .fieldName(fieldName)
