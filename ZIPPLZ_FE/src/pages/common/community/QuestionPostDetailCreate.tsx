@@ -1,23 +1,38 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import { useQuestionPostStore } from '@stores/QuestionPostStore';
 
 export default function QuestionPostDetailCreate() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [images, setImages] = useState<File[]>([]);
+  const [title, setTitle] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [postId, setPostId] = useState<number | null>(null); // 수정된 부분
 
-  const { title, setTitle, createPost, setBoardContent, fetchQuestionPosts } =
+  const { createPost, fetchQuestionPosts, setBoardContent, updatePost } =
     useQuestionPostStore();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const navigate = useNavigate();
   const maxImages = 10;
+
+  useEffect(() => {
+    if (location.state) {
+      const { post, isEditMode } = location.state;
+      setTitle(post.title);
+      setWorkDetail(post.boardContent);
+      setImages(post.images || []);
+      setIsEditMode(isEditMode);
+      setPostId(post.boardSerial); // 수정된 부분
+    }
+  }, [location.state]);
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
@@ -45,14 +60,30 @@ export default function QuestionPostDetailCreate() {
     setBoardContent(workDetail);
 
     const token = `Bearer ${localStorage.getItem('token')}`;
-    const { code, message } = await createPost(token, images);
 
-    if (code === 200) {
-      alert('질문글이 성공적으로 등록되었습니다.');
-      await fetchQuestionPosts(); // 새 게시물이 등록된 후 목록 갱신
-      navigate('/QuestionPost');
+    const postData = {
+      title,
+      board_content: workDetail,
+    };
+
+    if (isEditMode && postId) {
+      // 수정된 부분
+      const { code, message } = await updatePost(token, postId, postData);
+      if (code === 200) {
+        alert('질문글이 성공적으로 수정되었습니다.');
+        navigate('/QuestionPost');
+      } else {
+        alert(`질문글 수정에 실패했습니다: ${message}`);
+      }
     } else {
-      alert(`질문글 등록에 실패했습니다: ${message}`);
+      const { code, message } = await createPost(token, formData);
+      if (code === 200) {
+        alert('질문글이 성공적으로 등록되었습니다.');
+        await fetchQuestionPosts();
+        navigate('/QuestionPost');
+      } else {
+        alert(`질문글 등록에 실패했습니다: ${message}`);
+      }
     }
   };
 
@@ -116,11 +147,14 @@ export default function QuestionPostDetailCreate() {
                   className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
                 >
                   <img
-                    src={URL.createObjectURL(image)}
+                    src={
+                      image instanceof File ? URL.createObjectURL(image) : image
+                    }
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded-zp-radius-btn"
                     onClick={() => handleImageRemove(index)}
                   />
+
                   <button
                     onClick={() => handleImageRemove(index)}
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
@@ -186,17 +220,19 @@ export default function QuestionPostDetailCreate() {
             </div>
           </div>
 
-          <div className="mb-12 mt-6 font-bold h-20 flex items-center justify-center">
-            <Button
-              children="확인"
-              buttonType="second"
-              width="full"
-              height={2.375}
-              fontSize="xl"
-              radius="btn"
-              onClick={handleConfirm}
-            />
-          </div>
+          {isEditMode && (
+            <div className="mb-12 mt-6 font-bold h-20 flex items-center justify-center">
+              <Button
+                children="수정하기"
+                buttonType="second"
+                width="full"
+                height={2.375}
+                fontSize="xl"
+                radius="btn"
+                onClick={handleConfirm}
+              />
+            </div>
+          )}
         </div>
       </div>
     </>

@@ -9,24 +9,32 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
-import { useQuestionPostStore } from '@stores/QuestionPostStore';
+import axios from 'axios';
 
 export default function QuestionPostDetail() {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
-  const { questionPosts } = useQuestionPostStore();
   const [post, setPost] = useState<any>(null);
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
   useEffect(() => {
     if (id) {
-      const foundPost = questionPosts.find(
-        (post) => post.board_serial === parseInt(id)
-      );
-      setPost(foundPost);
+      axios
+        .post(`http://localhost:5000/board/question/list/${id}`)
+        .then((response) => {
+          const { board, board_images, comments } = response.data.data;
+          setPost({
+            ...board,
+            images: board_images.map((img) => img.saveFile),
+            comments,
+          });
+        })
+        .catch((error) => {
+          console.error('Error fetching post:', error);
+        });
     }
-  }, [id, questionPosts]);
+  }, [id]);
 
   const handleGoBack = () => {
     navigate(-1);
@@ -37,7 +45,9 @@ export default function QuestionPostDetail() {
   };
 
   const handleEditClick = () => {
-    navigate('/QuestionPostDetailCreate'); // URL을 필요에 따라 수정하세요.
+    navigate('/QuestionPostDetailCreate', {
+      state: { post, isEditMode: true },
+    });
   };
 
   const handleDeleteClick = () => {
@@ -97,7 +107,7 @@ export default function QuestionPostDetail() {
             </div>
             <div className="text-zp-md text-zp-gray">{post.nickname}</div>
             <div className="ml-auto text-zp-xs text-zp-gray">
-              {new Date(post.board_date).toLocaleDateString('ko-KR')}
+              {new Date(post.boardDate).toLocaleDateString('ko-KR')}
             </div>
           </div>
           <div className="mt-2 text-zp-gray">작성일자</div>
@@ -126,17 +136,66 @@ export default function QuestionPostDetail() {
           </div>
 
           {/* 글 내용 */}
-          <div className="mt-6 text-zp-sm font-bold">{post.board_content}</div>
+          <div className="mt-6 text-zp-sm font-bold">{post.boardContent}</div>
 
-          {/* 리뷰 text */}
-          <div className="mt-6 text-zp-xl font-bold">리뷰</div>
+          {/* 댓글 렌더링 */}
+          <div className="mt-6 text-zp-xl font-bold">댓글</div>
+          {post.comments && post.comments.length > 0 ? (
+            post.comments.map((comment: any, index: number) => (
+              <div key={index} className="mt-4">
+                <div className="flex items-center">
+                  <CgProfile size={40} />
+                  <div className="px-2 text-zp-xs font-bold">
+                    {comment.parent_comment.nickName}
+                  </div>
+                  <div className="text-zp-xs text-zp-gray font-bold">
+                    ·{' '}
+                    {new Date(
+                      comment.parent_comment.commentDate
+                    ).toLocaleDateString('ko-KR')}
+                  </div>
+                </div>
+                <div className="ml-12 text-zp-xs font-bold text-zp-gray">
+                  {comment.parent_comment.commentContent}
+                </div>
+                {/* 대댓글 렌더링 */}
+                {comment.child_comments &&
+                  comment.child_comments.length > 0 && (
+                    <div className="ml-12">
+                      {comment.child_comments.map(
+                        (childComment: any, childIndex: number) => (
+                          <div
+                            key={childIndex}
+                            className="mt-2 flex justify-start items-center"
+                          >
+                            <div className="">
+                              <CgProfile size={40} />
+                            </div>
+                            <div className="ml-2 text-zp-xs font-bold">
+                              {childComment.nickName}
+                            </div>
+                            <div className="ml-2 text-zp-xs font-bold text-zp-gray">
+                              ·{' '}
+                              {new Date(
+                                childComment.commentDate
+                              ).toLocaleDateString('ko-KR')}
+                            </div>
+                            <div className="ml-12 text-zp-xs font-bold text-zp-gray">
+                              {childComment.commentContent}
+                            </div>
+                          </div>
+                        )
+                      )}
+                    </div>
+                  )}
+              </div>
+            ))
+          ) : (
+            <div className="text-zp-xs text-zp-gray">댓글이 없습니다.</div>
+          )}
 
-          {/* 댓글 수 */}
-          <div className="mt-6 text-zp-xl font-bold">댓글 356개</div>
-
-          {/* 시공업자의 이름을 입력하세요. */}
+          {/* 댓글 입력 */}
           <div className="mt-6 w-full flex space-x-2">
-            {/* 댓글 다는 유저(본인) */}
             <div className="flex justify-start items-center">
               <div className="">
                 <CgProfile size={40} />
@@ -144,7 +203,7 @@ export default function QuestionPostDetail() {
             </div>
 
             <Input
-              placeholder="리뷰 작성하기"
+              placeholder="댓글 작성하기"
               inputType="signup"
               type="text"
               width="100%"
@@ -153,39 +212,6 @@ export default function QuestionPostDetail() {
               radius="none"
               additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
             />
-          </div>
-
-          <div className="mt-6 flex flex-col">
-            <div className="flex items-center">
-              <CgProfile size={40} />
-              <div className="px-2  text-zp-xs font-bold">원숭이</div>
-              <div className="text-zp-xs text-zp-gray font-bold">· 2주 전</div>
-            </div>
-            <div className="ml-12 text-zp-xs font-bold text-zp-gray">
-              리뷰 내용
-            </div>
-          </div>
-
-          <div className="flex justify-start items-center">
-            <div>
-              <IoMdArrowDropdown />
-            </div>
-            <div className="p-2 font-bold">답글 1개</div>
-          </div>
-
-          <div className="ml-12 mt-2 flex justify-start items-center">
-            <div className="">
-              <CgProfile size={40} />
-            </div>
-            <div className="ml-2 text-zp-xs font-bold">대댓글 유저</div>
-            <div className="ml-2 text-zp-xs font-bold text-zp-gray">
-              · 2주 전
-            </div>
-          </div>
-          <div className="ml-12 mb-12">
-            <div className="ml-12 text-zp-xs font-bold text-zp-gray">
-              감사합니다ㅠㅠ
-            </div>
           </div>
         </div>
       </div>
