@@ -1,0 +1,68 @@
+import { create } from 'zustand';
+
+export interface FindWorker {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  user_name: string;
+  comment_cnt: number;
+  wish_cnt: number;
+}
+interface FIndWorker2 {
+  title: string;
+  userSerial: number;
+  boardSerial: number;
+  hit: number;
+  nickname: string;
+  userName: string;
+  boardContent: string;
+  boardDate: string;
+  boardType: number;
+}
+interface File {
+  fileName: string;
+  saveFile: string;
+  boardSerial: number;
+  fileSerial: number;
+  saveFolder: string;
+  originalFile: string;
+}
+export interface Comment {
+  userName: string;
+  userSerial: number;
+  boardSerial: number;
+  commentSerial: number;
+  parentCommentSerial: number;
+  commentContent: string;
+  commentDate: string;
+  orderNumber: number;
+  isDeleted: number;
+  nickName: string | null;
+}
+export interface FindWorkerDetail {
+  board: FIndWorker2 | null;
+  board_images: File[];
+  comments: {
+    parent_comment: Comment | null;
+    child_comments: Comment[] | null;
+  }[];
+}
+interface useWokerListStore {
+  findWorker: FindWorkerDetail | null;
+  findWorkerList: FindWorker[] | null;
+  setFindWorker: (findWorker: FindWorkerDetail | null) => void;
+  setFindWorkerList: (findWorkerList: FindWorker[] | null) => void;
+}
+
+export const useWorkerListStore = create<useWokerListStore>((set) => ({
+  findWorker: null,
+  findWorkerList: null,
+  setFindWorker: (findWorker: FindWorkerDetail | null) => set({ findWorker }),
+  setFindWorkerList: (findWorkerList: FindWorker[] | null) =>
+    set({ findWorkerList }),
+}));
