@@ -180,6 +180,8 @@ public class PortfolioService {
         List<PortfolioWorkListDTO> portfolioWorkListDTOList = new ArrayList<>();
 
         for(Work work: workList) {
+            if(!work.getStatus().equals("confirmed")) continue;
+
             PortfolioWorkListDTO portfolioWorkListDTO = PortfolioWorkListDTO.builder()
                     .workSerial(work.getWorkSerial())
                     .endDate(convertTimestamp(work.getEndDate()))
