@@ -138,6 +138,7 @@ public class MaterialServiceImpl implements MaterialService {
                 .user(user)
                 .file(file)
                 .build();
+        System.out.println(file.toString());
 
         userFileRelationRepository.save(userFileRelation);
     }

@@ -25,4 +25,15 @@ public class File {
     private String saveFile;
     @Column(name= "file_name")
     private String fileName;
+
+    @Override
+    public String toString() {
+        return "File{" +
+                "fileSerial=" + fileSerial +
+                ", saveFolder='" + saveFolder + '\'' +
+                ", originalFile='" + originalFile + '\'' +
+                ", saveFile='" + saveFile + '\'' +
+                ", fileName='" + fileName + '\'' +
+                '}';
+    }
 }
