@@ -16,61 +16,54 @@ const base_url = import.meta.env.VITE_APP_BASE_URL;
 
 export default function useOpenVidu() {
   const { chatroomSerial } = useParams();
-  const [session, setSession] = useState<OVSession | ''>('');
+  const [session, setSession] = useState<OVSession | null>(null);
   const [sessionId, setSessionId] = useState<string>('');
   const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
   const [recordingId, setRecordingId] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { loginUser } = useLoginUserStore();
-  const email: string | undefined = loginUser?.email;
+  const [participants, setParticipants] = useState<number>(0);
+  const [isRecording, setIsRecording] = useState(false);
 
-  const joinSession = () => {
+  const joinSession = useCallback(() => {
     const OVs = new OpenVidu();
     setOV(OVs);
     setSession(OVs.initSession());
-  };
+  }, []);
 
   useEffect(() => {
-    if (email) {
-      // const derivedSessionId = email?.split('@')[0].trim();
-      // console.log('Derived Session ID:', derivedSessionId);
-      // setSessionId(derivedSessionId);
-
+    if (chatroomSerial) {
       setSessionId(String(chatroomSerial));
       joinSession();
     }
-  }, [email]);
+  }, [chatroomSerial, joinSession]);
 
-  const leaveSession = async () => {
+  const leaveSession = useCallback(async () => {
     if (sessionId) {
       try {
-        const data = JSON.stringify({
-          sessionId: sessionId,
-        });
-
         await axios.delete(`${base_url}/openvidu/api/sessions`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
             'Content-Type': 'application/json',
           },
-          data,
+          data: JSON.stringify({ sessionId }),
         });
         setOV(null);
-        setSession('');
+        setSession(null);
         setSessionId('');
         setSubscriber(null);
         setPublisher(null);
         setRecordingId(null);
-        navigate(-1);
-
+        setParticipants(0);
+        navigate(`/chatrooms/${chatroomSerial}`);
         console.log('Session ended successfully');
       } catch (error) {
         console.error('Error ending session:', error);
       }
     }
-  };
+  }, [sessionId, navigate]);
+
   useEffect(() => {
     window.addEventListener('beforeunload', leaveSession);
 
@@ -80,9 +73,7 @@ export default function useOpenVidu() {
   }, [leaveSession]);
 
   const startRecording = async () => {
-    if (sessionId) {
-      console.log('Recording started');
-      console.log(sessionId);
+    if (sessionId && participants >= 2) {
       try {
         const response = await axios.post(
           `${base_url}/openvidu/api/sessions/recording`,
@@ -94,8 +85,9 @@ export default function useOpenVidu() {
             },
           }
         );
-        console.log('response=======>', response);
         setRecordingId(response.data.recordingId);
+        console.log('Recording started successfully');
+        console.log(response.data);
       } catch (error) {
         if (axios.isAxiosError(error)) {
           console.error('Error status:', error.response?.status);
@@ -106,15 +98,14 @@ export default function useOpenVidu() {
         }
       }
     } else {
-      console.error('Session ID is missing');
+      console.error('Session ID is missing or not enough participants');
     }
   };
 
   const stopRecording = async () => {
-    console.log('recording', recordingId);
-    if (recordingId) {
+    if (recordingId && participants < 2) {
       try {
-        const response = await axios.post(
+        await axios.post(
           `${base_url}/openvidu/api/sessions/recording/stop`,
           { recordingId },
           {
@@ -124,6 +115,7 @@ export default function useOpenVidu() {
             },
           }
         );
+        console.log('Recording stopped successfully');
         setRecordingId(null);
       } catch (error) {
         console.error('Error stopping recording:', error);
@@ -134,7 +126,7 @@ export default function useOpenVidu() {
   };
 
   useEffect(() => {
-    if (session === '') return;
+    if (!session) return;
 
     const handleStreamDestroyed = (event: StreamEvent) => {
       console.log('Stream destroyed:', event.stream.streamId);
@@ -160,28 +152,11 @@ export default function useOpenVidu() {
       ) {
         const newSubscriber = session.subscribe(event.stream, '');
         setSubscriber(newSubscriber);
-        startRecording();
       }
     };
 
-    //     setIsSubscriberPresent(true);
-    //     checkAndStartRecording();
-    //     console.log('subscriber있어?', subscriber);
-    //     console.log('publisher있어?', publisher);
-    //   } else if (!publisher) {
-    //     console.log('==========================');
-    //     const newPublisher = session.publish(event.stream);
-    //     setPublisher(newPublisher);
-    //     // checkAndStartRecording();
-    //     console.log('subscriber있어?', subscriber);
-    //     console.log('publisher있어?', publisher);
-    //   }
-    // };
-
     session.on('streamDestroyed', handleStreamDestroyed);
     session.on('streamCreated', handleStreamCreated);
-    console.log('subscriber있어?', subscriber);
-    console.log('publisher있어?', publisher);
 
     return () => {
       session.off('streamDestroyed', handleStreamDestroyed);
@@ -190,9 +165,9 @@ export default function useOpenVidu() {
   }, [session, publisher, subscriber]);
 
   useEffect(() => {
-    if (session === '') return;
+    if (!session) return;
 
-    const createSession = async (sessionIds: string): Promise<string> => {
+    const createSession = async (sessionIds: string) => {
       try {
         const data = JSON.stringify({
           customSessionId: sessionIds,
@@ -221,11 +196,11 @@ export default function useOpenVidu() {
         if (errorResponse?.status === 409) {
           return sessionIds;
         }
-        throw new Error('Failed to create session.');
+        throw new Error('세션 생성에 실패했습니다.');
       }
     };
 
-    const createToken = async (sessionIds: string): Promise<string> => {
+    const createToken = async (sessionIds: string) => {
       try {
         const data = JSON.stringify({
           role: 'PUBLISHER',
@@ -291,6 +266,53 @@ export default function useOpenVidu() {
       })
       .catch((error) => console.error('Error getting token:', error));
   }, [session, OV, sessionId]);
+
+  useEffect(() => {
+    const getDetailSession = async () => {
+      if (sessionId) {
+        try {
+          const response = await axios.post(
+            `${base_url}/openvidu/api/sessions/info`,
+            { sessionId },
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          const participantsCount = response.data.data.connections.length;
+          setParticipants(participantsCount);
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            console.error('Error status:', error.response?.status);
+            console.error('Error data:', error.response?.data);
+          } else {
+            console.error('Unexpected error:', error);
+          }
+        }
+      } else {
+        console.error('Session ID is missing');
+      }
+    };
+
+    const intervalId = setInterval(() => {
+      getDetailSession();
+    }, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [sessionId]);
+
+  useEffect(() => {
+    if (participants >= 2 && !isRecording) {
+      console.log('두명이다');
+      startRecording();
+      setIsRecording(true);
+    } else if (participants < 2 && isRecording) {
+      console.log('두명 이상이 아니다');
+      stopRecording();
+      setIsRecording(false);
+    }
+  }, [participants, startRecording, stopRecording]);
 
   return {
     session,
