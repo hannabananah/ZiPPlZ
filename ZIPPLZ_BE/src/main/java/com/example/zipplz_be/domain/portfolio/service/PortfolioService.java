@@ -130,6 +130,13 @@ public class PortfolioService {
             throw new PortfolioNotFoundException("해당 포트폴리오는 존재하지 않습니다.");
         }
 
+        //누적 시공 수 업데이트
+        //완료된 공종들 중 portfolio의 (worker, fieldName)과 겹치는 공종의 수로 업뎃
+        int workCount = workRepository.getWorkCount(portfolio.getWorker().getWorkerSerial(), portfolio.getFieldId().getFieldCode());
+        portfolio.setWorkCount(workCount);
+        portfolioRepository.save(portfolio);
+
+
         Worker worker = portfolio.getWorker();
         PortfolioWorkerDTO portfolioWorkerDTO = PortfolioWorkerDTO.builder()
                 .workerSerial(worker.getWorkerSerial())
@@ -180,6 +187,8 @@ public class PortfolioService {
         List<PortfolioWorkListDTO> portfolioWorkListDTOList = new ArrayList<>();
 
         for(Work work: workList) {
+            if(!work.getStatus().equals("confirmed")) continue;
+
             PortfolioWorkListDTO portfolioWorkListDTO = PortfolioWorkListDTO.builder()
                     .workSerial(work.getWorkSerial())
                     .endDate(convertTimestamp(work.getEndDate()))

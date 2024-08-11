@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -56,7 +57,8 @@ public class WorkService {
         if (plan == null) {
             throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
         }
-        Page<Work> workPage = workRepository.findByPlanSerial(plan, pageable);
+
+        Page<Work> workPage = workRepository.findByPlanSerialAndStatusIn(plan, Arrays.asList("confirmed", "draft"), pageable);
 
         //해당 Work들에 대해 완료 검사 진행
         //만약 end date가 비어있지 않으면서, 현재 날짜보다 이전이라면 is_completed 1로 바꾸기(업데이트 후 return)
@@ -105,7 +107,7 @@ public class WorkService {
             field = fieldRepository.findByFieldCode(0);
 
             work = Work.builder()
-                    .status("draft")
+                    .status("confirmed")
                     .plan(plan)
                     .field(field)
                     .fieldName(fieldName)
