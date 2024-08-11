@@ -87,6 +87,7 @@ export default function Contract({
   };
   const { loginUser } = useLoginUserStore();
   const userSerial: number | undefined = loginUser?.userSerial;
+  const userName: string | undefined = loginUser?.userName;
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -139,8 +140,7 @@ export default function Contract({
       console.log('계약서 초안 작성 성공:', response.data);
       const formattedMessage = `
                 ✨ 계약서 초안 작성 완료! ✨
-  // TODO 시공자 이름 로컬에서 받아오기
-  👷‍♂️ 시공자: ${name}
+  👷‍♂️ 시공자: ${userName}
   👩‍🦰 고객: ${name}
   👏 요청 일자: ${formatDateWithTime(new Date().toISOString())}
   💵 작업 가격: ${formatNumberWithCommas(workPrice)}원

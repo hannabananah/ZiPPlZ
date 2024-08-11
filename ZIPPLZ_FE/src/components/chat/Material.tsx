@@ -112,7 +112,7 @@ export default function Material({
   const handleConfirm = () => {
     if (selectedMaterial) {
       const message = `
- ✨ 선택된 자재 ✨
+ ✨ 선택한 자재 ✨
  
    📦 자재명: ${selectedMaterial.materialName}
    📄 상세설명: ${selectedMaterial.description}
