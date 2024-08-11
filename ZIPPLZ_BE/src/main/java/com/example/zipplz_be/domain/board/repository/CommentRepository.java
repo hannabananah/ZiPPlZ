@@ -33,4 +33,10 @@ public interface CommentRepository extends JpaRepository<Comment, Integer> {
             "LEFT JOIN Customer cus ON cus.user_serial = c.user_serial " +
             "LEFT JOIN User u ON u.user_serial = c.user_serial", nativeQuery = true)
     List<CommentJoinDTO> getComment(@Param("boardSerial") int boardSerial, @Param("commentSerial") int commentSerial);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM Comment " +
+            "WHERE comment_serial = :commentSerial", nativeQuery = true)
+    int deleteComment(@Param("commentSerial") int commentSerial);
 }
