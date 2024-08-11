@@ -45,7 +45,7 @@ export default function QuestionPostDetail() {
   };
 
   const handleEditClick = () => {
-    navigate('/QuestionPostDetailCreate', {
+    navigate('/QuestionPostUpdate', {
       state: { post, isEditMode: true },
     });
   };

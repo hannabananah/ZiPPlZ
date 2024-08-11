@@ -11,7 +11,7 @@ interface QuestionPost {
   hit: number;
   wish_cnt: number;
   comment_cnt: number;
-  images?: string[]; // 이미지 URL 배열 필드 추가
+  images?: string[];
 }
 
 // 질문글 상태 관리
@@ -24,7 +24,12 @@ interface QuestionPostState {
   fetchQuestionPosts: () => Promise<void>;
   createPost: (
     token: string,
-    formData: FormData // 이미지와 다른 데이터를 포함하는 FormData 사용
+    formData: FormData
+  ) => Promise<{ code: number; message: string }>;
+  updatePost: (
+    token: string,
+    id: number,
+    postData: { title: string; board_content: string }
   ) => Promise<{ code: number; message: string }>;
 }
 
@@ -41,7 +46,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
       const response = await axios.post(
         'http://localhost:5000/board/question/list'
       );
-      console.log('Fetched question posts:', response.data.data); // 서버 응답 확인
+      console.log('Fetched question posts:', response.data.data);
       set({ questionPosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch question posts:', error);
@@ -83,11 +88,11 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
     try {
       const response = await axios.patch(
         `http://localhost:5000/board/question/list/${id}`,
-        postData, // JSON 형식으로 데이터를 전송합니다.
+        postData,
         {
           headers: {
             Authorization: token,
-            'Content-Type': 'application/json', // JSON 형식의 Content-Type을 명시합니다.
+            'Content-Type': 'application/json',
           },
         }
       );
@@ -101,8 +106,6 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
       if (axios.isAxiosError(error)) {
         console.error('Failed to update post:', error);
         console.error('Response data:', error.response?.data);
-      } else {
-        console.error('An unexpected error occurred:', error);
       }
       return { code: 500, message: '수정 실패' };
     }

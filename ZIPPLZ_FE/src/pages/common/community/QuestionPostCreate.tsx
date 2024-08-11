@@ -8,14 +8,14 @@ import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import { useQuestionPostStore } from '@stores/QuestionPostStore';
 
-export default function QuestionPostDetailCreate() {
+export default function QuestionPostCreate() {
   const location = useLocation();
   const navigate = useNavigate();
   const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
   const [isEditMode, setIsEditMode] = useState(false);
-  const [postId, setPostId] = useState<number | null>(null); // 수정된 부분
+  const [postId, setPostId] = useState<number | null>(null);
 
   const { createPost, fetchQuestionPosts, setBoardContent, updatePost } =
     useQuestionPostStore();
@@ -30,7 +30,7 @@ export default function QuestionPostDetailCreate() {
       setWorkDetail(post.boardContent);
       setImages(post.images || []);
       setIsEditMode(isEditMode);
-      setPostId(post.boardSerial); // 수정된 부분
+      setPostId(post.boardSerial);
     }
   }, [location.state]);
 
@@ -61,29 +61,43 @@ export default function QuestionPostDetailCreate() {
 
     const token = `Bearer ${localStorage.getItem('token')}`;
 
-    const postData = {
-      title,
+    const formData = new FormData();
+
+    // 'params' 필드를 JSON으로 추가
+    const params = {
+      title: title,
       board_content: workDetail,
     };
+    formData.append('params', JSON.stringify(params));
 
-    if (isEditMode && postId) {
-      // 수정된 부분
-      const { code, message } = await updatePost(token, postId, postData);
+    // 이미지 추가
+    images.forEach((image) => {
+      formData.append('images', image);
+    });
+
+    try {
+      let response;
+      if (isEditMode && postId) {
+        response = await updatePost(token, postId, formData);
+      } else {
+        response = await createPost(token, formData);
+      }
+
+      const { code, message } = response;
       if (code === 200) {
-        alert('질문글이 성공적으로 수정되었습니다.');
+        alert(
+          isEditMode
+            ? '질문글이 성공적으로 수정되었습니다.'
+            : '질문글이 성공적으로 등록되었습니다.'
+        );
         navigate('/QuestionPost');
       } else {
-        alert(`질문글 수정에 실패했습니다: ${message}`);
+        alert(`질문글 처리에 실패했습니다: ${message}`);
       }
-    } else {
-      const { code, message } = await createPost(token, formData);
-      if (code === 200) {
-        alert('질문글이 성공적으로 등록되었습니다.');
-        await fetchQuestionPosts();
-        navigate('/QuestionPost');
-      } else {
-        alert(`질문글 등록에 실패했습니다: ${message}`);
-      }
+    } catch (error) {
+      console.error('Failed to create/update post:', error);
+      console.error('Response data:', error.response?.data);
+      alert('오류가 발생했습니다. 나중에 다시 시도해 주세요.');
     }
   };
 
@@ -152,7 +166,6 @@ export default function QuestionPostDetailCreate() {
                     }
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded-zp-radius-btn"
-                    onClick={() => handleImageRemove(index)}
                   />
 
                   <button
@@ -220,19 +233,18 @@ export default function QuestionPostDetailCreate() {
             </div>
           </div>
 
-          {isEditMode && (
-            <div className="mb-12 mt-6 font-bold h-20 flex items-center justify-center">
-              <Button
-                children="수정하기"
-                buttonType="second"
-                width="full"
-                height={2.375}
-                fontSize="xl"
-                radius="btn"
-                onClick={handleConfirm}
-              />
-            </div>
-          )}
+          {/* 확인 버튼 추가 */}
+          <div className="mb-12 mt-6 font-bold h-20 flex items-center justify-center">
+            <Button
+              children={isEditMode ? '수정하기' : '작성하기'}
+              buttonType="second"
+              width="full"
+              height={2.375}
+              fontSize="xl"
+              radius="btn"
+              onClick={handleConfirm}
+            />
+          </div>
         </div>
       </div>
     </>

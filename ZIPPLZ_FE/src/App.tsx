@@ -36,8 +36,9 @@ import HousePost from './pages/common/community/HousePost';
 import HousePostDetail from './pages/common/community/HousePostDetail';
 import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
 import QuestionPost from './pages/common/community/QuestionPost';
+import QuestionPostCreate from './pages/common/community/QuestionPostCreate';
 import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
-import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
+import QuestionPostUpdate from './pages/common/community/QuestionPostUpdate';
 import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
@@ -83,10 +84,8 @@ export default function App() {
           path="housepostdetailcreate"
           element={<HousePostDetailCreate />}
         />
-        <Route
-          path="questionpostdetailcreate"
-          element={<QuestionPostDetailCreate />}
-        />
+        <Route path="questionpostupdate" element={<QuestionPostUpdate />} />
+        <Route path="questionpostcreate" element={<QuestionPostCreate />} />
         {/* 마이페이지 */}
         <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} />
         <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />

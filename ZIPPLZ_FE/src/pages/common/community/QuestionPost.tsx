@@ -24,7 +24,7 @@ export default function QuestionPost() {
   }, [fetchQuestionPosts]);
 
   const handleWritePost = () => {
-    navigate('/QuestionPostDetailCreate');
+    navigate('/QuestionPostCreate');
   };
 
   const toggleDropdown = () => {
