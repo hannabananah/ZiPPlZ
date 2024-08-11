@@ -86,7 +86,6 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-
     //공종 추가
     @PostMapping("/plans/{planSerial}/works")
     public ResponseEntity<ResponseDTO<?>> insertWork(@PathVariable("planSerial") int planSerial, @RequestBody Map<String, Object> params) {
