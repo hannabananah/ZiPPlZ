@@ -36,18 +36,20 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
                     @Param("boardContent") String boardContent,
                     @Param("boardDate") LocalDateTime boardDate);
 
-    @Query(value = "SELECT b.*, cus.nickname " +
+    @Query(value = "SELECT b.*, cus.nickname, u.user_name " +
             "FROM ( SELECT * " +
             "FROM Board " +
             "WHERE board_type = :boardType ) b " +
-            "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial", nativeQuery = true)
+            "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial " +
+            "LEFT JOIN User u on u.user_serial = b.user_serial", nativeQuery = true)
     List<BoardJoinDTO> getBoards(@Param("boardType") int boardType);
 
-    @Query(value = "SELECT b.*, cus.nickname " +
+    @Query(value = "SELECT b.*, cus.nickname, u.user_name " +
             "FROM ( SELECT * " +
             "FROM Board " +
             "WHERE board_serial = :boardSerial ) b " +
-            "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial", nativeQuery = true)
+            "LEFT JOIN Customer cus ON cus.user_serial = b.user_serial " +
+            "LEFT JOIN User u on u.user_serial = b.user_serial", nativeQuery = true)
     BoardJoinDTO getBoard(@Param("boardSerial") int boardSerial);
 
     @Query(value = "SELECT LAST_INSERT_ID()", nativeQuery = true)
@@ -57,4 +59,28 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             "FROM board " +
             "WHERE board_type = :boardType and board_serial = :boardSerial", nativeQuery = true)
     int getBoardUser(@Param("boardType") int boardType, @Param("boardSerial") int boardSerial);
+
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM Comment " +
+            "WHERE board_serial = :boardSerial ", nativeQuery = true)
+    void deleteComment(@Param("boardSerial") int boardSerial);@Modifying
+
+    @Transactional
+    @Query(value = "DELETE FROM BoardToPortfolio " +
+            "WHERE board_serial = :boardSerial ", nativeQuery = true)
+    void deleteBoardToPortfolio(@Param("boardSerial") int boardSerial);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM BoardFileRelation " +
+            "WHERE board_serial = :boardSerial ", nativeQuery = true)
+    void deleteBoardFileRelation(@Param("boardSerial") int boardSerial);
+
+    @Modifying
+    @Transactional
+    @Query(value = "DELETE FROM Board " +
+            "WHERE board_serial = :boardSerial ", nativeQuery = true)
+    int deleteBoard(@Param("boardSerial") int boardSerial);
 }
