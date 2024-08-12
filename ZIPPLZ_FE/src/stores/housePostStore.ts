@@ -101,6 +101,19 @@ interface HousePostState {
     token: string,
     reply: Comment
   ) => Promise<{ code: number; message: string }>;
+  deleteComment: (
+    token: string,
+    commentSerial: number
+  ) => Promise<{ code: number; message: string }>;
+  updateComment: (
+    token: string,
+    commentSerial: number,
+    updatedContent: string
+  ) => Promise<{ code: number; message: string }>;
+  toggleBookmark: (
+    id: number,
+    isBookmarked: boolean
+  ) => Promise<{ success: boolean }>;
 }
 
 export const useHousePostStore = create<HousePostState>((set, get) => ({
@@ -321,6 +334,60 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
       return { code: 500, message: '대댓글 삽입 실패' };
     }
   },
+
+  deleteComment: async (
+    token: string,
+    commentSerial: number
+  ): Promise<{ code: number; message: string }> => {
+    try {
+      const response = await axios.delete(
+        `http://localhost:5000/comment/delete/${commentSerial}`,
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      const { code, message } = response.data.proc;
+      return { code, message };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Failed to delete comment:', error);
+        console.error('Response data:', error.response?.data);
+      }
+      return { code: 500, message: '댓글 삭제 실패' };
+    }
+  },
+
+  updateComment: async (
+    token: string,
+    commentSerial: number,
+    updatedContent: string
+  ) => {
+    try {
+      const response = await axios.patch(
+        `http://localhost:5000/comment/update/${commentSerial}`,
+        { comment_content: updatedContent },
+        {
+          headers: {
+            Authorization: token,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const { code, message } = response.data.proc;
+      return { code, message };
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error('Failed to update comment:', error);
+        console.error('Response data:', error.response?.data);
+      }
+      return { code: 500, message: '댓글 수정 실패' };
+    }
+  },
+
   toggleBookmark: async (id: number, isBookmarked: boolean) => {
     try {
       const response = await axios.post(

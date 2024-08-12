@@ -3,6 +3,7 @@ import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
+import { GoPencil } from 'react-icons/go';
 import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
 import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
@@ -35,7 +36,9 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
     deletePost,
     addComment,
     addReply,
-    toggleBookmark, // 북마크 토글 함수 추가
+    toggleBookmark,
+    deleteComment, // deleteComment 함수 추가
+    updateComment, // updateComment 함수 추가
   } = useHousePostStore();
 
   useEffect(() => {
@@ -144,8 +147,15 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   };
 
   const isAuthor = (userSerial: number) => {
-    const currentUserSerial = Number(localStorage.getItem('userSerial'));
-    return userSerial === currentUserSerial;
+    const loginUserData = localStorage.getItem('login-user');
+
+    if (loginUserData) {
+      const parsedData = JSON.parse(loginUserData);
+      const currentUserSerial = parsedData.state.loginUser.userSerial;
+      return userSerial === currentUserSerial;
+    }
+
+    return false; // 로그인 정보가 없을 경우 false 반환
   };
 
   const handleCommentClick = () => {
@@ -175,15 +185,36 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
     setDropdownOpen(null); // 드롭다운 닫기
   };
 
-  const handleDeleteComment = () => {
-    setIsDeleteModalOpen(true);
-    setDropdownOpen(null); // 드롭다운 닫기
+  const handleDeleteComment = async (commentSerial: number) => {
+    const token = `Bearer ${localStorage.getItem('token')}`;
+
+    const { code, message } = await deleteComment(token, commentSerial);
+
+    if (code === 200) {
+      alert('댓글이 성공적으로 삭제되었습니다.');
+      setEditingCommentId(null);
+      fetchPostDetails(Number(id)); // 새로고침
+    } else {
+      alert(`댓글 삭제에 실패했습니다: ${message}`);
+    }
   };
 
   const handleSaveEditedComment = async (commentSerial: number) => {
-    // 여기서 수정된 댓글 내용을 서버에 저장하는 로직을 추가할 수 있습니다.
-    setEditingCommentId(null);
-    fetchPostDetails(Number(id)); // 새로고침
+    const token = `Bearer ${localStorage.getItem('token')}`;
+
+    const { code, message } = await updateComment(
+      token,
+      commentSerial,
+      commentContent
+    );
+
+    if (code === 200) {
+      alert('댓글이 성공적으로 수정되었습니다.');
+      setEditingCommentId(null); // 수정 모드 해제
+      fetchPostDetails(Number(id)); // 새로고침
+    } else {
+      alert(`댓글 수정에 실패했습니다: ${message}`);
+    }
   };
 
   return (
@@ -339,22 +370,37 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                       />
                       {dropdownOpen ===
                         comment.parent_comment.commentSerial && (
-                        <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-300 shadow-lg">
-                          <div
-                            className="px-4 py-2 cursor-pointer hover:bg-gray-200"
-                            onClick={() =>
-                              handleEditComment(
-                                comment.parent_comment.commentSerial
-                              )
-                            }
-                          >
-                            수정
+                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                          <div className="flex justify-center items-center">
+                            <div className="p-2">
+                              <FaRegTrashAlt />
+                            </div>
+                            <div
+                              className="p-2 cursor-pointer hover:bg-gray-200"
+                              onClick={() =>
+                                handleEditComment(
+                                  comment.parent_comment.commentSerial
+                                )
+                              }
+                            >
+                              수정
+                            </div>
                           </div>
-                          <div
-                            className="px-4 py-2 cursor-pointer hover:bg-gray-200"
-                            onClick={handleDeleteComment}
-                          >
-                            삭제
+
+                          <div className="flex justify-center items-center">
+                            <div className="p-2">
+                              <GoPencil />
+                            </div>
+                            <div
+                              className="p-2 cursor-pointer hover:bg-gray-200"
+                              onClick={() =>
+                                handleDeleteComment(
+                                  comment.parent_comment.commentSerial
+                                )
+                              }
+                            >
+                              삭제
+                            </div>
                           </div>
                         </div>
                       )}
@@ -505,7 +551,9 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                                     </div>
                                     <div
                                       className="px-4 py-2 cursor-pointer hover:bg-gray-200"
-                                      onClick={handleDeleteComment}
+                                      onClick={() =>
+                                        handleDeleteComment(child.commentSerial)
+                                      }
                                     >
                                       삭제
                                     </div>
