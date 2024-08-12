@@ -82,10 +82,10 @@ export default function App() {
         <Route path="housepostdetail" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
         <Route path="questionpostdetail" element={<QuestionPostDetail />} />
-        <Route
+        {/*<Route
           path="housepostdetailcreate"
           element={<HousePostDetailCreate />}
-        />
+        />*/}
         <Route
           path="questionpostdetailcreate"
           element={<QuestionPostDetailCreate />}
