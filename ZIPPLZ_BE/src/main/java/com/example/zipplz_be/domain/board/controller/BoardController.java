@@ -134,6 +134,7 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             QuestionDetailDTO question= boardService.getQuestion(boardSerial);
 
             if (question == null) {
@@ -168,6 +169,30 @@ public class BoardController {
             } else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "수정 성공", true);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 질문글 검색
+    @GetMapping("/find/question/{search_content}")
+    public ResponseEntity<ResponseDTO<List<QuestionListDTO>>> findQuestionByContent(Authentication authentication, @PathVariable(value = "search_content") String search_content) {
+        ResponseDTO<List<QuestionListDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = 1;
+            List<QuestionListDTO> questions = boardService.findQuestionsByContent(board_type, search_content);
+
+            if (questions == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", questions);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -257,6 +282,7 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             ShowBoardDetailDTO question= boardService.getShowBoard(boardSerial);
 
             if (question == null) {
@@ -291,6 +317,30 @@ public class BoardController {
             } else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "수정 성공", true);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 질문글 검색
+    @GetMapping("/find/showboard/{search_content}")
+    public ResponseEntity<ResponseDTO<List<ShowBoardListDTO>>> findShowBoardByContent(Authentication authentication, @PathVariable(value = "search_content") String search_content) {
+        ResponseDTO<List<ShowBoardListDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = 2;
+            List<ShowBoardListDTO> showboards = boardService.findShowBoardByContent(board_type, search_content);
+
+            if (showboards == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", showboards);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -373,6 +423,7 @@ public class BoardController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             FindWorkerDetailDTO findworker= boardService.getFindWorker(boardSerial);
 
             if (findworker == null) {
@@ -415,7 +466,31 @@ public class BoardController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    // 구인구직글 삭제하기
+    // 구인구직글 검색
+    @GetMapping("/find/findworker/{search_content}")
+    public ResponseEntity<ResponseDTO<List<FindWorkerListDTO>>> findFindWorkerByContent(Authentication authentication, @PathVariable(value = "search_content") String search_content) {
+        ResponseDTO<List<FindWorkerListDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = 3;
+            List<FindWorkerListDTO> findworkers = boardService.findFindWorkerByContent(board_type, search_content);
+
+            if (findworkers == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", findworkers);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 게시글 삭제하기
     @DeleteMapping("/delete/{boardSerial}")
     public ResponseEntity<ResponseDTO<Boolean>> deleteBoard(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
         ResponseDTO<Boolean> responseDTO;

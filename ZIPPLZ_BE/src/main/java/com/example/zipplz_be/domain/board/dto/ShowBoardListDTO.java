@@ -19,6 +19,7 @@ public class ShowBoardListDTO {
     String title;
     String nickname;
     String user_name;
+    String save_file;
     LocalDateTime board_date;
     int hit;
     int comment_cnt;
@@ -31,6 +32,7 @@ public class ShowBoardListDTO {
         this.title = bjd.getTitle();
         this.nickname = bjd.getNickname();
         this.user_name = bjd.getUserName();
+        this.save_file = bjd.getSaveFile();
         this.board_date = bjd.getBoardDate();
         this.hit = bjd.getHit();
         this.img = img;

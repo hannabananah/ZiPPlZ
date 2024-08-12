@@ -163,6 +163,7 @@ public class PortfolioService {
 
         //포트폴리오 번호로 포트폴리오에서 필요한 정보들 찾고 DTO 리턴
         PortfolioInfoDTO portfolioInfoDTO = PortfolioInfoDTO.builder()
+                .portfolioSerial(portfolio.getPortfolioSerial())
                 .asPeriod(portfolio.getAsPeriod())
                 .career(portfolio.getCareer())
                 .workCount(portfolio.getWorkCount())
