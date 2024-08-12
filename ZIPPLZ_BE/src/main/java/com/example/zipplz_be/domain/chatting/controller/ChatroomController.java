@@ -22,6 +22,7 @@ import java.util.List;
 public class ChatroomController {
 
     private final ChatroomService chatroomService;
+    private int chatroomSerial;
 
     @PostMapping("")
     public ResponseEntity<ResponseDTO> createChatroom(Authentication authentication, @RequestBody CreateChatroomDTO createChatroomDTO) {
@@ -90,7 +91,7 @@ public class ChatroomController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    @GetMapping("/{chatroomSerial}")
+    @GetMapping ("/{chatroomSerial}/name")
     public ResponseEntity getOtherUserName(Authentication authentication, @PathVariable int chatroomSerial) {
         ResponseDTO responseDTO;
         HttpStatus status;

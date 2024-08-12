@@ -11,6 +11,7 @@ import { useParams } from 'react-router-dom';
 
 import Contract from '@components/chat/Contract';
 import FullModal from '@components/common/FullModal';
+import useOpenVidu from '@hooks/useOpenvidu';
 import axios from 'axios';
 import {
   Session as OVSession,
@@ -23,7 +24,7 @@ interface OptionsProps {
   leaveSession: () => void;
   subscriber: Subscriber | null;
   publisher: Publisher;
-  session: OVSession | '';
+  session: OVSession | null;
   OV: OpenVidu | null;
   setPublisher: (publisher: Publisher) => void;
   publishAudio: (enabled: boolean) => void;
@@ -41,6 +42,7 @@ export default function Options({
   publishAudio,
   publishVideo,
 }: OptionsProps) {
+  const { startScreenShare } = useOpenVidu();
   const [isMuted, setIsMuted] = useState(false);
   const [isHided, setIsHided] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(false);
@@ -66,7 +68,7 @@ export default function Options({
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const url = `${base_url}chatroom/${chatroomSerial}`;
+      const url = `${base_url}/chatroom/${chatroomSerial}/name`;
 
       const response = await axios.get(url, { headers });
 
@@ -133,12 +135,14 @@ export default function Options({
 
   const handleSharingContract = () => {
     setIsContractModalOpen(true);
+    startScreenShare();
   };
 
   useEffect(() => {
     const getName = async () => {
       try {
         const userName = await getOtherUserName();
+        console.log('other user name:', userName);
         setName(userName);
       } catch (error) {
         if (error instanceof Error) {
@@ -148,7 +152,6 @@ export default function Options({
         }
       }
     };
-
     getName();
   }, [chatroomSerial]);
 

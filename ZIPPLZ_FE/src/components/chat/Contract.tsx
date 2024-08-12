@@ -138,7 +138,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
 
     try {
       const response = await axios.get(
-        `${base_url}chatroom/${chatroomSerial}`,
+        `${base_url}/chatroom/${chatroomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
@@ -158,7 +158,12 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
           📅 작업 기간: ${startDate}~${endDate}(${totalDuration}일)
           🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
         `;
-        sendMessage(formattedMessage, userSerial as number);
+        if (sendMessage) {
+          sendMessage(formattedMessage, userSerial as number);
+        } else {
+          console.error('메시지를 전송할 수 없습니다.');
+        }
+
         closeContractModal();
       } else {
         throw new Error('Unexpected response from the server');
