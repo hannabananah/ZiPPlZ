@@ -7,7 +7,7 @@ const TelescopeFilled = (props: SVGProps<SVGSVGElement>) => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_625_11060)">
+    <g clipPath="url(#clip0_625_11060)">
       <path
         fill-rule="evenodd"
         clip-rule="evenodd"
