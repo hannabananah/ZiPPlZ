@@ -45,4 +45,7 @@ public interface MyPageService {
 
     List<FindWorkerListDTO> getWishedFindWorkers(int userSerial);
 
+    // 회원 탈퇴
+    void deleteAccount(int userSerial);
+
 }
