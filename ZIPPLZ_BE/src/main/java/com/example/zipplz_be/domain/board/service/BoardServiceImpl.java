@@ -11,7 +11,9 @@ import com.example.zipplz_be.domain.board.repository.CommentRepository;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
+import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.mypage.repository.WishRepository;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioFileDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
@@ -43,17 +45,19 @@ public class BoardServiceImpl implements BoardService {
     private final WishRepository wishRepository;
     private final FileRepository fileRepository;
     private final PortfolioRepository portfolioRepository;
+    private final LocalRepository localRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public BoardServiceImpl(AmazonS3 amazonS3, BoardRepository boardRepository, CommentRepository commentRepository, WishRepository wishRepository, FileRepository fileRepository, PortfolioRepository portfolioRepository, EntityManager entityManager) {
+    public BoardServiceImpl(AmazonS3 amazonS3, BoardRepository boardRepository, CommentRepository commentRepository, WishRepository wishRepository, FileRepository fileRepository, PortfolioRepository portfolioRepository, LocalRepository localRepository, EntityManager entityManager) {
         this.amazonS3 = amazonS3;
         this.boardRepository = boardRepository;
         this.commentRepository = commentRepository;
         this.wishRepository = wishRepository;
         this.fileRepository = fileRepository;
         this.portfolioRepository = portfolioRepository;
+        this.localRepository = localRepository;
         this.entityManager = entityManager;
     }
 
@@ -156,8 +160,19 @@ public class BoardServiceImpl implements BoardService {
     public ShowBoardDetailDTO getShowBoard(int boardSerial) {
         BoardJoinDTO board = boardRepository.getBoard(boardSerial);
         List<BoardFileDTO> files = fileRepository.getBoardImg(boardSerial);
-        List<PortfolioJoinDTO> tags = portfolioRepository.getPortfolioTags(boardSerial);
-        
+        List<PortfolioViewDTO> tags = new ArrayList<>();
+        List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioTags(boardSerial);
+        for (PortfolioJoinDTO portfolio : portfolios) {
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
+            List<PortfolioFileDTO> portfolio_files = fileRepository.getImg(portfolio.getPortfolio_serial());
+            String img = null;
+            if (!portfolio_files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
+            tags.add(portfolioView);
+        }
+
         List<CommentJoinDTO> parent_comments = commentRepository.getComment(boardSerial, -1);
         List<CommentViewDTO> comments = new ArrayList<>();
         for (CommentJoinDTO parent_comment : parent_comments) {
