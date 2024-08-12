@@ -13,7 +13,7 @@ import {
 const base_url = import.meta.env.VITE_APP_BASE_URL;
 
 export default function useOpenVidu() {
-  const { chatroomSerial } = useParams();
+  const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
   const [session, setSession] = useState<OVSession | null>(null);
   const [sessionId, setSessionId] = useState<string>('');
   const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
@@ -79,7 +79,7 @@ export default function useOpenVidu() {
       navigate(`/chatrooms/${chatroomSerial}`);
       console.log('세션이 성공적으로 종료되었습니다');
     }
-  }, [sessionId, participants, navigate, stopRecording, chatroomSerial]);
+  }, [sessionId, navigate, chatroomSerial]);
 
   useEffect(() => {
     window.addEventListener('beforeunload', leaveSession);
@@ -121,7 +121,6 @@ export default function useOpenVidu() {
           console.error('오류 상태:', error.response?.status);
           console.error('오류 데이터:', error.response?.data);
           console.error('오류 메시지:', error.message);
-
           if (error.response?.status === 409) {
             console.log(
               '녹화 요청 충돌 발생. 세션이 이미 녹화 중이거나 세션 ID가 올바르지 않을 수 있습니다.'
@@ -174,7 +173,6 @@ export default function useOpenVidu() {
       session.off('streamCreated', handleStreamCreated);
     };
   }, [session, publisher, subscriber]);
-
   useEffect(() => {
     if (!session) return;
 
@@ -182,7 +180,7 @@ export default function useOpenVidu() {
       try {
         const data = JSON.stringify({
           customSessionId: sessionId,
-          mediaMode: 'ROUTED', // 미디어 모드를 ROUTED로 설정
+          mediaMode: 'ROUTED',
           chatroomSerial: Number(chatroomSerial),
         });
         const response = await axios.post(
@@ -305,6 +303,38 @@ export default function useOpenVidu() {
     getDetailSession();
   }, [sessionId]);
 
+  const startScreenShare = async () => {
+    try {
+      const token = await getToken();
+      if (OV && session) {
+        const publisher = OV.initPublisher(undefined, {
+          videoSource: 'screen',
+          publishAudio: false,
+          publishVideo: true,
+        });
+
+        publisher.once('accessAllowed', () => {
+          publisher.stream
+            .getMediaStream()
+            .getVideoTracks()[0]
+            .addEventListener('ended', () => {
+              console.log('User pressed the "Stop sharing" button');
+            });
+          session.publish(publisher);
+        });
+
+        publisher.once('accessDenied', () => {
+          console.warn('ScreenShare: Access Denied');
+        });
+
+        await session.connect(token);
+        session.publish(publisher);
+      }
+    } catch (error) {
+      console.error('Failed to start screen share:', error);
+    }
+  };
+
   useEffect(() => {
     if (participants >= 2 && !isRecording && publisher) {
       startRecording();
@@ -320,6 +350,7 @@ export default function useOpenVidu() {
     publisher,
     subscriber,
     leaveSession,
+    startScreenShare,
     joinSession,
     setSubscriber,
     setPublisher,
