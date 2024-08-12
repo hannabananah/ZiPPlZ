@@ -11,7 +11,7 @@ export default function Policy() {
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('-1');
+    navigate('/mypage');
   };
 
   // "더보기" / "접기" 버튼 핸들러
@@ -166,7 +166,7 @@ export default function Policy() {
 본 약관은 2024년 08월 02일부터 적용한다.`;
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+    <div className="mt-16 flex justify-center items-start min-h-screen p-6">
       <div className="w-full">
         {/* 뒤로가기 버튼 + "개인정보처리방침" 글자 */}
         <div className="h-12 flex items-center justify-between w-full relative">
@@ -182,7 +182,7 @@ export default function Policy() {
           </div>
         </div>
 
-        <div className="mt-6 w-full font-bold bg-zp-sub-color border rounded-zp-radius-big p-6">
+        <div className="mt-6 w-full text-zp-xs font-bold bg-zp-sub-color rounded-zp-radius-big p-6">
           <div
             className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'h-auto' : 'h-[calc(20rem)]'} `}
           >

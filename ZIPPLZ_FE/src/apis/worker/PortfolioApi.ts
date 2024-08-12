@@ -1,57 +1,69 @@
-import { END_POINT } from '@apis/apiConstants';
-import { axiosInstance } from '@apis/axiosInstance';
+import { END_POINT } from '../apiConstants';
+import { axiosInstance } from '../axiosInstance';
 
-// User 객체 선언
-export interface User {
-  userName: string;
-  birthDate: string;
-}
-
-// Worker 객체 선언
-export interface Worker {
-  userSerial: number;
-}
-
-// Porfolio 객체 선언 및 확장: User와 Worker 변수 받아오기
-export interface Portfolio extends User, Worker {
-  portfolioSerial: number;
+interface Portfolio {
+  publickRelation: string;
   career: number;
-  fieldId: number;
-  fieldName: string;
-  temp: number;
-  locationList: Location[];
-  fieldList: Field[];
+  asPeriod: number;
+  company: string;
+  companyAddress: string;
+  businessNumber: string;
 }
-
-// 지역(시도, 구군, 지역이름) 객체
-interface Location {
-  sidoCode: number;
-  gugunCode: number;
-  localName: string;
-}
-
-// 시공 분야(코드, 이름) 객체
-interface Field {
-  fieldCode: number;
-  fieldName: string;
-}
-
-// axios로 포트폴리오 정보 받아오는 함수
-export const getPortfolio = async () => {
-  return await axiosInstance.get(END_POINT.PORTFOLIO);
+//시공자별 포트폴리오 목록 조회
+export const getPortfolioList = async (userSerial: number) => {
+  return await axiosInstance.get(END_POINT.PORTFOLIO_LIST(userSerial));
 };
 
-// axios로 시도 정보 받아오는 함수
-// export const getSido = async () => {
-//   return await axiosInstance.get(END_POINT.SIDO);
-// };
-
-// axios로 구군 정보 받아보는 함수
-// export const getGugun = async (sidocode: number) => {
-//   return await axiosInstance.get(END_POINT.GUGUN(sidocode));
-// };
-
-// axios로 공종 정보 받아오는 함수
-// export const getFields = async () => {
-//   return await axiosInstance.get(END_POINT.DEFAULT + '/field');
-// };
+//포트폴리오 상세조회
+export const getPortfolitDetail = async (portfolioSerial: number) => {
+  return await axiosInstance.get(END_POINT.PORTFOLIO(portfolioSerial));
+};
+//포트폴리오 수정
+export const updatePortfolio = async (
+  portfolioSerial: number,
+  data: Portfolio
+) => {
+  return await axiosInstance.patch(END_POINT.PORTFOLIO(portfolioSerial), data);
+};
+//포트폴리오 삭제
+export const deletePortfolio = async (portfolioSerial: number) => {
+  return await axiosInstance.delete(END_POINT.PORTFOLIO(portfolioSerial));
+};
+//시공자별 일정 조회
+export const getWorkerSchedule = async (workerSerial: number) => {
+  return await axiosInstance.get(END_POINT.PORTFOLIO_SCHEDULE(workerSerial));
+};
+//시공자별 일정 세부사항 조회
+export const getWorkerScheduleDetail = async (
+  workerSerial: number,
+  workSerial: number
+) => {
+  return await axiosInstance.get(
+    END_POINT.PORTFOLIO_SCHEDULE(workerSerial) + `/view/${workSerial}`
+  );
+};
+//포트폴리오 리뷰 조회
+export const getPortfolioReview = async (portfolioSerial: number) => {
+  return await axiosInstance.get(END_POINT.PORTFOLIO_REVIEW(portfolioSerial));
+};
+//사장님 댓글 달기
+export const wirteWorkerReview = async (
+  customerSerial: number,
+  data: { reviewComment: string }
+) => {
+  return await axiosInstance.post(
+    END_POINT.PORTFOLIO_REVIEW(customerSerial),
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
+};
+//GPT요약리뷰 조회
+export const getGPTReview = async (portfolioSerial: number) => {
+  return await axiosInstance.get(
+    END_POINT.PORTFOLIO_REVIEW(portfolioSerial) + '/chatgpt'
+  );
+};

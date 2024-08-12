@@ -9,6 +9,7 @@ import Input from '@/components/common/Input';
 interface Props {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  fetchPlanList: () => void;
 }
 const postCodeStyle = {
   width: '200px',
@@ -42,7 +43,11 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-export default function RegistPlan({ isOpen, setIsOpen }: Props) {
+export default function RegistPlan({
+  isOpen,
+  setIsOpen,
+  fetchPlanList,
+}: Props) {
   const closeModal = () => {
     setIsOpen(false);
   };
@@ -75,10 +80,10 @@ export default function RegistPlan({ isOpen, setIsOpen }: Props) {
         closeTimeoutMS={150}
         style={customModalStyles}
       >
-        <p className="text-center text-zp-lg font-bold">
+        <p className="font-bold text-center text-zp-lg">
           계획 정보를 입력해주세요
         </p>
-        <div className="w-full flex flex-col  gap-2">
+        <div className="flex flex-col w-full gap-2">
           <p className="text-zp-xs w-[2rem] font-bold">이름</p>
           <Input
             type="text"
@@ -94,8 +99,8 @@ export default function RegistPlan({ isOpen, setIsOpen }: Props) {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <p className="text-zp-xs font-bold">주소 </p>
-          <div className="w-full flex gap-4">
+          <p className="font-bold text-zp-xs">주소 </p>
+          <div className="flex w-full gap-4">
             <Input
               type="text"
               inputType="normal"
@@ -134,7 +139,7 @@ export default function RegistPlan({ isOpen, setIsOpen }: Props) {
             }}
           />
         </div>
-        <div className="w-full flex flex-col  gap-2">
+        <div className="flex flex-col w-full gap-2">
           <p className="text-zp-xs w-[2rem] font-bold">메모</p>
           <Input
             type="text"
@@ -149,7 +154,7 @@ export default function RegistPlan({ isOpen, setIsOpen }: Props) {
             }}
           />
         </div>
-        <div className="w-full flex items-center justify-center gap-6">
+        <div className="flex items-center justify-center w-full gap-6">
           <Button
             buttonType="second"
             fontSize="xs"
@@ -168,6 +173,7 @@ export default function RegistPlan({ isOpen, setIsOpen }: Props) {
             children="등록"
             onClick={() => {
               registPlan(name, address, memo);
+              fetchPlanList();
               closeModal();
             }}
           />
