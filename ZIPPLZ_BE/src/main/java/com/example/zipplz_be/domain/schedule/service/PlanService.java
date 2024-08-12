@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.schedule.service;
 
+import com.amazonaws.SdkClientException;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -10,8 +11,10 @@ import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
 import com.example.zipplz_be.domain.model.repository.PlanFileRelationRepository;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioWorkListDTO;
+import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
+import com.example.zipplz_be.domain.schedule.dto.TodayWorkListDTO;
 import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
@@ -31,7 +34,6 @@ import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -82,6 +84,18 @@ public class PlanService {
     }
 
     @Transactional
+    public void deactivatePlanStatus(Customer customer) {
+        List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+        for(Plan plan: planList) {
+            plan.setIsActive(0);
+
+            planRepository.save(plan);
+        }
+    }
+
+
+    @Transactional
     public void insertPlanService(int userSerial, Map<String, Object> params) {
         Customer customer = findUser(userSerial);
 
@@ -90,6 +104,9 @@ public class PlanService {
         if(planName == null) {
             planName = customer.getNickname() + "의 계획";
         }
+
+        //모든 plan을 deactivate
+        this.deactivatePlanStatus(customer);
 
         Plan plan = Plan.builder()
                 .planName(planName)
@@ -108,6 +125,7 @@ public class PlanService {
         for(Field field : fieldList) {
             if(field.getFieldCode() != 0) {
                 Work work = Work.builder()
+                        .status("draft")
                         .field(field)
                         .fieldName(field.getFieldName())
                         .plan(plan).build();
@@ -116,7 +134,6 @@ public class PlanService {
             }
         }
     }
-
     @Transactional
     public void modifyPlanService(int userSerial, int planSerial, Map<String, Object> params) {
         System.out.println(userSerial);
@@ -315,8 +332,6 @@ public class PlanService {
         }
 
         if(user.getRole().equals("worker")) {
-            System.out.println("Worker!!");
-
             Worker worker = workerRepository.findByUserSerial(user);
 
             List<PortfolioWorkListDTO> portfolioWorkListDTOList = portfolioService.getWorkerScheduleService(worker.getWorkerSerial());
@@ -331,7 +346,6 @@ public class PlanService {
                 workListDTOList.add(workListDTO);
             }
         }else {
-            System.out.println("Customer!!");
             //계획에서 해당 고객의 계획 빼오고, 그 계획의 공종들 전부 가져와야함
             Customer customer = customerRepository.findByUserSerial(user);
             List<Plan> planList = planRepository.findBycustomerSerial(customer);
@@ -343,6 +357,8 @@ public class PlanService {
                 List<Work> workList = workRepository.findByPlanSerial(plan);
 
                 for(Work work : workList) {
+                    if(!work.getStatus().equals("confirmed")) continue;
+
                     WorkListDTO workListDTO = WorkListDTO.builder()
                             .endDate(portfolioService.convertTimestamp(work.getEndDate()))
                             .startDate(portfolioService.convertTimestamp(work.getStartDate()))
@@ -355,6 +371,116 @@ public class PlanService {
         }
 
         return workListDTOList;
+    }
 
+    @Transactional
+    public List<TodayWorkListDTO> getWorkingWorkService(int userSerial) {
+        User user = userRepository.findByUserSerial(userSerial);
+        List<TodayWorkListDTO> todayWorkListDTOList = new ArrayList<>();
+
+        if(user.getRole().equals("")) {
+            throw new UserNotFoundException("유저의 역할이 비어 있습니다.");
+        }
+
+        if(user.getRole().equals("worker")) {
+            Worker worker = workerRepository.findByUserSerial(user);
+            List<Work> workList = workRepository.getTodayWork(worker.getWorkerSerial());
+
+            for(Work work : workList) {
+                if(!work.getStatus().equals("confirmed")) continue;
+
+                Customer customer = work.getPlanSerial().getCustomerSerial();
+
+                TodayWorkListDTO workListDTO = TodayWorkListDTO.builder()
+                        .workSerial(work.getWorkSerial())
+                        .startDate(portfolioService.convertTimestamp(work.getStartDate()))
+                        .endDate(portfolioService.convertTimestamp(work.getEndDate()))
+                        .field(work.getFieldName())
+                        .address(work.getPlanSerial().getAddress())
+                        .worker(worker)
+                        .customer(customer)
+                        .workerProfile(worker.getUserSerial().getFileSerial())
+                        .customerProfile(customer.getUserSerial().getFileSerial())
+                        .build();
+
+                todayWorkListDTOList.add(workListDTO);
+            }
+        } else {
+            //계획에서 해당 고객의 계획 빼오고, 그 계획의 공종들 전부 가져와야함
+            Customer customer = customerRepository.findByUserSerial(user);
+            List<Plan> planList = planRepository.findBycustomerSerial(customer);
+
+            for(Plan plan: planList) {
+                List<Work> workList = workRepository.getTodayWorkByPlan(plan.getPlanSerial());
+
+                for(Work work : workList) {
+                    if(!work.getStatus().equals("confirmed")) continue;
+
+                    TodayWorkListDTO workListDTO = TodayWorkListDTO.builder()
+                            .workSerial(work.getWorkSerial())
+                            .endDate(portfolioService.convertTimestamp(work.getEndDate()))
+                            .startDate(portfolioService.convertTimestamp(work.getStartDate()))
+                            .field(work.getFieldName())
+                            .address(plan.getAddress())
+                            .worker(work.getWorkerSerial())
+                            .customer(customer)
+                            .workerProfile(work.getWorkerSerial().getUserSerial().getFileSerial())
+                            .customerProfile(customer.getUserSerial().getFileSerial())
+                            .build();
+
+                    todayWorkListDTOList.add(workListDTO);
+                }
+            }
+        }
+
+        return todayWorkListDTOList;
+    }
+
+    @Transactional
+    public void activatePlanService(int userSerial, int planSerial) {
+        User user = userRepository.findByUserSerial(userSerial);
+        Customer customer = customerRepository.findByUserSerial(user);
+
+        Plan curPlan = planRepository.findByPlanSerial(planSerial);
+
+        if(curPlan == null) throw new PlanNotFoundException("유효하지 않은 계획 연번입니다.");
+        if(curPlan.getCustomerSerial().getCustomerSerial() != customer.getCustomerSerial()) {
+            throw new UnauthorizedUserException("활성화할 권한이 없습니다.");
+        }
+
+        Plan originalPlan = planRepository.findByCustomerSerialAndIsActive(customer, 1);
+        originalPlan.setIsActive(0);
+        planRepository.save(originalPlan);
+
+        curPlan.setIsActive(1);
+        planRepository.save(curPlan);
+    }
+
+
+    //fileSerial 받았으니까 일단 이 객체를 관계 테이블에서 삭제하고, 해당 file 또한 s3에서 삭제하고 지운다!
+    @Transactional
+    public void deleteImageService(int userSerial, int planSerial, int fileSerial) throws IOException {
+        Plan plan = planRepository.findByPlanSerial(planSerial);
+        File file = fileRepository.findByFileSerial(fileSerial);
+
+        if(userSerial != plan.getCustomerSerial().getUserSerial().getUserSerial()) {
+            throw new UnauthorizedUserException("삭제할 권한이 없습니다.");
+        }
+
+        PlanFileRelation planFileRelation = planFileRelationRepository.findByPlanSerialAndFileSerial(plan, file);
+        planFileRelationRepository.delete(planFileRelation);
+        
+        //파일을 S3에서 삭제
+        deleteS3(file.getFileName());
+
+        fileRepository.delete(file);
+    }
+
+    public void deleteS3(String fileName) throws IOException{
+        try {
+            amazonS3.deleteObject(bucketName, fileName);
+        } catch(SdkClientException e) {
+            throw new IOException("Error Deleting file in S3", e);
+        }
     }
 }

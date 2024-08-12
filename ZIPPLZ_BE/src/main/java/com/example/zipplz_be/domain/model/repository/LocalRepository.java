@@ -4,6 +4,7 @@ import com.example.zipplz_be.domain.model.dto.GugunDTO;
 import com.example.zipplz_be.domain.model.dto.SidoDTO;
 import com.example.zipplz_be.domain.model.entity.Gugun;
 import com.example.zipplz_be.domain.model.entity.Local;
+import com.example.zipplz_be.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -24,4 +25,12 @@ public interface LocalRepository extends JpaRepository<Local, Integer> {
             "FROM Local " +
             "WHERE Local.user_serial = :user_serial", nativeQuery = true)
     List<String> getLocalNames(@Param("user_serial") int user_serial);
+
+    Local findFirstByUserSerial(User user);
+
+    boolean existsByUserSerial(User user);
+
+    void deleteByUserSerial(User user);
+
+    List<Local> findAllByUserSerial(User user);
 }

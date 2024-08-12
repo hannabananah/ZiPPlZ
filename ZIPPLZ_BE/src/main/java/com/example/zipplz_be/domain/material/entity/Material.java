@@ -1,12 +1,18 @@
 package com.example.zipplz_be.domain.material.entity;
 
+import com.example.zipplz_be.domain.model.entity.MajorCategory;
+import com.example.zipplz_be.domain.model.entity.MiddleCategory;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
 
 @Entity
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Material {
@@ -14,11 +20,34 @@ public class Material {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "material_serial")
     private int materialSerial;
+
     @Column(name = "material_name")
     private String materialName;
-    @Column(name = "field_id")
-    private int fieldId;
+
+
+    @ManyToOne
+    @JoinColumn(name = "major_category", referencedColumnName = "major_code", insertable = false, updatable = false)
+    private MajorCategory majorCategory;
+    @ManyToOne
+    @JoinColumns({
+            @JoinColumn(referencedColumnName = "major_code", insertable = false, updatable = false),
+            @JoinColumn(referencedColumnName = "middle_code", insertable = false, updatable = false)
+    })
+    private MiddleCategory middleCategory;
+
     private String description;
     @Column(name = "material_price")
     private int materialPrice;
+
+    @Override
+    public String toString() {
+        return "Material{" +
+                "materialSerial=" + materialSerial +
+                ", materialName='" + materialName + '\'' +
+                ", majorCategory=" + majorCategory +
+                ", middleCategory=" + middleCategory +
+                ", description='" + description + '\'' +
+                ", materialPrice=" + materialPrice +
+                '}';
+    }
 }

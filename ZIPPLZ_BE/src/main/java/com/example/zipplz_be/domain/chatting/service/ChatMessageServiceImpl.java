@@ -7,7 +7,12 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
+import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.model.entity.MessageType;
 import com.example.zipplz_be.domain.model.entity.Status;
+import com.example.zipplz_be.domain.model.service.S3Service;
+import com.example.zipplz_be.domain.model.service.S3ServiceImpl;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
@@ -16,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +34,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final RedisPublisher redisPublisher;
     private final ChannelTopic channelTopic;
     private final RedisRepository redisRepository;
+    private final S3Service s3Service;
 
     @Override
     public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
@@ -39,17 +47,37 @@ public class ChatMessageServiceImpl implements ChatMessageService {
             throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");
         }
 
-        ChatMessage chatMessage = ChatMessage.builder()
-                .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
-                .userSerial(userSerial)
-                .userName(userRepository.findByUserSerial(userSerial).getUserName())
-                .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
-                .isFile(chatMessageRequestDTO.getIsFile())
-                .build();
+        ChatMessage chatMessage;
+        File file;
+        if (chatMessageRequestDTO.getIsFile()) {
+
+            file = s3Service.uploadBase64File(chatMessageRequestDTO.getChatMessageContent(), chatMessageRequestDTO.getOriginalFileName());
+
+            chatMessage = ChatMessage.builder()
+                    .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
+                    .userSerial(userSerial)
+                    .userName(userRepository.findByUserSerial(userSerial).getUserName())
+                    .chatMessageContent(file.getFileName()) // return 받은 S3 file url
+                    .fileType(chatMessageRequestDTO.getType())
+                    .file(file)
+                    .build();
+        } else {
+            file = null;
+
+            chatMessage = ChatMessage.builder()
+                    .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
+                    .userSerial(userSerial)
+                    .userName(userRepository.findByUserSerial(userSerial).getUserName())
+                    .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
+                    .fileType(chatMessageRequestDTO.getType())
+                    .file(file)
+                    .build();
+        }
 
         chatMessageRepository.save(chatMessage);
         chatMessageRequestDTO.setUserSerial(userSerial);
         chatMessageRequestDTO.setUserName(user.getUserName());
+        chatMessageRequestDTO.setFile(file);
 
         int otherUserSerial;
         if (role.equals("customer")) {
@@ -59,11 +87,13 @@ public class ChatMessageServiceImpl implements ChatMessageService {
         }
         chatMessageRequestDTO.setOtherUserSerial(otherUserSerial);
 
-        if (chatMessageRequestDTO.getType() == ChatMessageRequestDTO.MessageType.TALK) {
+        if (chatMessageRequestDTO.getType() != MessageType.UNREAD_MESSAGE_COUNT_ALARM) {
             redisPublisher.publish(channelTopic, chatMessageRequestDTO);
             updateUnReadMessageCount(chatMessageRequestDTO);
         }
     }
+
+
 
     // 안읽은 메세지 업데이트
     private void updateUnReadMessageCount(ChatMessageRequestDTO chatMessageRequestDTO) {

@@ -2,16 +2,14 @@ package com.example.zipplz_be.domain.chatting.entity;
 
 import com.example.zipplz_be.domain.schedule.entity.Work;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.sql.Timestamp;
 
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AfterService {
@@ -36,5 +34,5 @@ public class AfterService {
     String requestContent;
 
     @Column(name="as_score")
-    String asScore;
+    Integer asScore;
 }

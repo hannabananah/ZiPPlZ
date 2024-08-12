@@ -2,11 +2,9 @@ package com.example.zipplz_be.domain.board.entity;
 
 import com.example.zipplz_be.domain.user.entity.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -26,7 +24,7 @@ public class Comment {
     @Column(name = "comment_content")
     private String commentContent;
     @Column(name = "comment_date")
-    private Date commentDate;
+    private LocalDateTime commentDate;
     @Column(name = "parent_comment_serial")
     private int parentCommentSerial;
     @Column(name = "order_number")

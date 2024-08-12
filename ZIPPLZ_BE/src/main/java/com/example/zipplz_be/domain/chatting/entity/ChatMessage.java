@@ -1,6 +1,8 @@
 package com.example.zipplz_be.domain.chatting.entity;
 
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.BaseTimeEntity;
+import com.example.zipplz_be.domain.model.entity.MessageType;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
@@ -14,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(collection = "chat_messages")
-public class ChatMessage extends BaseTimeEntity {
+public class ChatMessage extends BaseTimeEntity implements Comparable<ChatMessage> {
 
     @Id
     private String id;
@@ -31,18 +33,22 @@ public class ChatMessage extends BaseTimeEntity {
     @JsonProperty("chat_message_content")
     private String chatMessageContent;
 
-    @JsonProperty("is_file")
-    private boolean isFile;
+    @JsonProperty("file_type")
+    private MessageType fileType;
+
+    @JsonProperty("file")
+    private File file;
 
     // 시간은 BaseTimeEntity에서 자동으로 컬럼 생성됨
 
     @Builder
-    public ChatMessage(int chatroomSerial, int userSerial, String userName, String chatMessageContent, boolean isFile) {
+    public ChatMessage(int chatroomSerial, int userSerial, String userName, String chatMessageContent, MessageType fileType, File file) {
         this.chatroomSerial = chatroomSerial;
         this.userSerial = userSerial;
         this.userName = userName;
         this.chatMessageContent = chatMessageContent;
-        this.isFile = isFile;
+        this.fileType = fileType;
+        this.file = file;
     }
 
     @Override
@@ -53,7 +59,12 @@ public class ChatMessage extends BaseTimeEntity {
                 ", userSerial=" + userSerial +
                 ", userName='" + userName + '\'' +
                 ", chatMessageContent='" + chatMessageContent + '\'' +
-                ", isFile=" + isFile +
+                ", fileType=" + fileType +
                 '}';
+    }
+
+    @Override
+    public int compareTo(ChatMessage o) {
+        return this.getCreatedAt().compareTo(o.getCreatedAt());
     }
 }

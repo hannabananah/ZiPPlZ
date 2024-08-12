@@ -1,22 +1,23 @@
 package com.example.zipplz_be.domain.portfolio.controller;
 
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioInfoDTO;
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioListDTO;
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioWorkDetailDTO;
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioWorkListDTO;
+import com.example.zipplz_be.domain.portfolio.dto.*;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
+import com.example.zipplz_be.domain.portfolio.exception.CustomerReviewException;
 import com.example.zipplz_be.domain.portfolio.exception.PortfolioNotFoundException;
 import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -28,8 +29,7 @@ public class PortfolioController {
         this.portfolioService = portfolioService;
     }
 
-    // 시공자별 포트폴리오 목록 조회
-    // 시공자가 가진 포트폴리오의 분야별 목록이 필요함. -> 해당 분야와 목록으로 포트폴리오 찾는 api로 번호 찾고 전환 가능
+    //시공자별 포트폴리오 목록 조회
     @GetMapping("/list/{userSerial}")
     public ResponseEntity<?> getPortfolioList(@PathVariable int userSerial) {
         ResponseDTO<?> responseDTO;
@@ -38,19 +38,18 @@ public class PortfolioController {
         try {
             List<PortfolioListDTO> portfolioList = portfolioService.getPortfolioListService(userSerial);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioList);
         } catch (UserNotFoundException e) {
             status = HttpStatus.BAD_REQUEST;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
 
         return new ResponseEntity<>(responseDTO, status);
     }
-
 
     //포트폴리오 상세조회
     @GetMapping("/{portfolioSerial}")
@@ -61,12 +60,12 @@ public class PortfolioController {
         try {
             PortfolioInfoDTO portfolioInfoDTO = portfolioService.getPortfolioInfoService(portfolioSerial);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioInfoDTO);
-        } catch(PortfolioNotFoundException e) {
+        } catch (PortfolioNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -84,19 +83,18 @@ public class PortfolioController {
         try {
             List<PortfolioWorkListDTO> portfolioWorkListDTOList = portfolioService.getWorkerScheduleService(workerSerial);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioWorkListDTOList);
-        } catch(UserNotFoundException e) {
+        } catch (UserNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
 
         return new ResponseEntity<>(responseDTO, status);
     }
-
 
     //시공자 일정 세부사항 조회
     @GetMapping("/schedule/{workerSerial}/view/{workSerial}")
@@ -108,17 +106,15 @@ public class PortfolioController {
             PortfolioWorkDetailDTO portfolioWorkDetailDTO =
                     portfolioService.getWorkerScheduleInfoService(portfolioService.getUserSerial(authentication), workerSerial, workSerial);
 
-            status= HttpStatus.OK;
-            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!",portfolioWorkDetailDTO);
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioWorkDetailDTO);
         } catch (UnauthorizedUserException e) {
             status = HttpStatus.UNAUTHORIZED;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        catch (UserNotFoundException e) {
+        } catch (UserNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -126,17 +122,125 @@ public class PortfolioController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    //매너온도와 리뷰 평균, 리뷰 목록 조회하기(페이징, 각 리뷰별 평균 별점도 리턴 필요)
+    //매너온도와 리뷰 평균, 리뷰 목록 조회하기(각 리뷰별 평균 별점도 리턴 필요)
+    @GetMapping("/review/{portfolioSerial}")
+    public ResponseEntity<?> getPortfolioReview(@PathVariable int portfolioSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
+        try {
+            PortfolioReviewDTO portfolioReviewDTO = portfolioService.getPortfolioReviewService(portfolioSerial);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioReviewDTO);
+        } catch (PortfolioNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
     //사장님 댓글 작성하기
+    @PostMapping("/review/{customerReviewSerial}/reviewcomment")
+    public ResponseEntity<?> insertReviewComment(Authentication authentication, @PathVariable int customerReviewSerial, @RequestBody Map<String, Object> params) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
+        try {
+            portfolioService.insertReviewCommentService(portfolioService.getUserSerial(authentication), customerReviewSerial, params);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "작성 성공!");
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (CustomerReviewException e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
     //포트폴리오 수정
+    @PatchMapping("/{portfolioSerial}")
+    public ResponseEntity<?> modifyPortfolio(Authentication authentication, @PathVariable int portfolioSerial, @RequestBody Map<String, Object> params) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
+        try {
+            portfolioService.modifyPortfolioService(portfolioService.getUserSerial(authentication), portfolioSerial, params);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "수정 성공!");
+        } catch (PortfolioNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
     //포트폴리오 삭제
+    @DeleteMapping("/{portfolioSerial}")
+    public ResponseEntity<?> deletePortfolio(Authentication authentication, @PathVariable int portfolioSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            portfolioService.deletePortfolioService(portfolioService.getUserSerial(authentication), portfolioSerial);
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
+        } catch (PortfolioNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //지피티로 프롬프트 보내서 요약
+    @GetMapping("/review/{portfolioSerial}/chatgpt")
+    public ResponseEntity<?> summarizeReview(@PathVariable int portfolioSerial) {
+        //좋은리뷰, 나쁜리뷰 각각 가져와서 리턴
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            ReviewSummarizeDTO reviewSummarizeDTO = portfolioService.summarizeReviewService(portfolioSerial);
+
+            status= HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "요약 성공!", reviewSummarizeDTO);
+        } catch (RestClientException e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
 
 
-    //지피티로 프롬프트 보내서 요약하기
+    }
 }

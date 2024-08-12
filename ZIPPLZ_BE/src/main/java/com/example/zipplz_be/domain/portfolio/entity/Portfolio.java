@@ -1,16 +1,19 @@
 package com.example.zipplz_be.domain.portfolio.entity;
 
+import com.example.zipplz_be.domain.model.BoardToPortfolio;
+import com.example.zipplz_be.domain.model.PortfolioFileRelation;
 import com.example.zipplz_be.domain.model.entity.Field;
-import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class Portfolio {
@@ -25,6 +28,9 @@ public class Portfolio {
     private String publicRelation;
     private double career;
 
+    @Column(name = "temperature")
+    private double temperature;
+
     @ManyToOne
     @JoinColumn(name = "field_id")
     public Field fieldId;
@@ -32,6 +38,19 @@ public class Portfolio {
     public int asPeriod;
     @Column(name = "work_count")
     public int workCount;
+
+    @OneToMany(mappedBy = "portfolioSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<CustomerReview> customerReviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "portfolioSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<PortfolioFileRelation> PortfolioFileRelations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "portfolioSerial", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    List<BoardToPortfolio> BoardToPortfolios = new ArrayList<>();
+
 
     @Override
     public String toString() {
@@ -43,6 +62,7 @@ public class Portfolio {
                 ", fieldId=" + fieldId +
                 ", asPeriod=" + asPeriod +
                 ", workCount=" + workCount +
+                ", temperature="+ temperature +
                 '}';
     }
 
@@ -54,5 +74,6 @@ public class Portfolio {
         this.career = 0L;
         this.asPeriod = 0;
         this.workCount = 0;
+        this.temperature = 36.5;
     }
 }

@@ -45,15 +45,20 @@ public class JWTUtil {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 
+    public String getName(String token) {
+        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("name", String.class);
+    }
+
     public Boolean isExpired(String token) {
         return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
     }
 
-    public String createJwt(String email, int userSerial, String role) {
+    public String createJwt(String email, int userSerial, String role, String name) {
         return Jwts.builder()
                 .claim("email", email)
                 .claim("userSerial", userSerial)
                 .claim("role", role)
+                .claim("name", name)
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(secretKey, Jwts.SIG.HS256)
@@ -68,14 +73,6 @@ public class JWTUtil {
 
         // 인증 객체 생성 후 반환 (UsernamePasswordAuthenticationToken = 해당 사용자가 인증되었음을 나타냄)
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-    public String updateRole(String token, String newRole) {
-        Claims claims = Jwts.parser().setSigningKey(secretKey).build().parseClaimsJws(token).getBody();
-        String email = claims.get("email", String.class);
-        int userSerial = claims.get("userSerial", Integer.class);
-
-        return createJwt(email, userSerial, newRole);
     }
 
     // 토큰에서 email 정보 추출

@@ -1,8 +1,6 @@
 package com.example.zipplz_be.domain.chatting.service;
 
-import com.example.zipplz_be.domain.chatting.dto.ChatMessageResponseDTO;
-import com.example.zipplz_be.domain.chatting.dto.ChatroomListDTO;
-import com.example.zipplz_be.domain.chatting.dto.CreateChatroomDTO;
+import com.example.zipplz_be.domain.chatting.dto.*;
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
 import com.example.zipplz_be.domain.chatting.exception.CannotCreateChatroomAloneException;
@@ -11,16 +9,20 @@ import com.example.zipplz_be.domain.chatting.exception.ChatroomNotFoundException
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
-import com.example.zipplz_be.domain.model.entity.Field;
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.model.repository.FieldRepository;
+import com.example.zipplz_be.domain.model.repository.LocalRepository;
+import com.example.zipplz_be.domain.model.repository.MessageFileRelationRepository;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
+import com.example.zipplz_be.domain.portfolio.service.CustomerReviewService;
+import com.example.zipplz_be.domain.schedule.repository.PlanRepository;
+import com.example.zipplz_be.domain.user.entity.Customer;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.example.zipplz_be.domain.user.entity.Worker;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
-import com.example.zipplz_be.global.util.Calculator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,10 +30,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,20 +46,25 @@ public class ChatroomServiceImpl implements ChatroomService {
     private final WorkerRepository workerRepository;
 
     private static final Map<String, Integer> CONSTRUCTION_FIELDS = Map.ofEntries(
-            Map.entry("기타", 0),
-            Map.entry("철거", 1),
-            Map.entry("설비", 2),
-            Map.entry("샷시", 3),
-            Map.entry("목공", 4),
-            Map.entry("전기", 5),
-            Map.entry("욕실", 6),
-            Map.entry("타일", 7),
-            Map.entry("마루", 8),
-            Map.entry("도배", 9),
-            Map.entry("가구", 10)
+            Map.entry("기타", 0), Map.entry("철거", 1), Map.entry("설비", 2),
+            Map.entry("샷시", 3), Map.entry("목공", 4), Map.entry("전기", 5),
+            Map.entry("욕실", 6), Map.entry("타일", 7), Map.entry("마루", 8),
+            Map.entry("도배", 9), Map.entry("가구", 10)
+    );
+    private static final Map<Integer, String> SIDO_NAMES = Map.ofEntries(
+            Map.entry(1, "서울"), Map.entry(2, "인천"), Map.entry(3, "대전"),
+            Map.entry(4, "대구"), Map.entry(5, "광주"), Map.entry(6, "부산"),
+            Map.entry(7, "울산"), Map.entry(8, "세종특별자치시"), Map.entry(31, "경기도"),
+            Map.entry(32, "강원도"), Map.entry(33, "충청북도"), Map.entry(34, "충정남도"),
+            Map.entry(35, "경상북도"), Map.entry(36, "경상남도"), Map.entry(37, "전라북도"),
+            Map.entry(38, "전라남도"), Map.entry(39, "제주도")
     );
     private final PortfolioRepository portfolioRepository;
     private final FieldRepository fieldRepository;
+    private final CustomerReviewService customerReviewService;
+    private final MessageFileRelationRepository messageFileRelationRepository;
+    private final LocalRepository localRepository;
+    private final PlanRepository planRepository;
 
     @Override
     public int createChatroom(int userSerial, CreateChatroomDTO createChatroomDTO) {
@@ -77,16 +81,17 @@ public class ChatroomServiceImpl implements ChatroomService {
 
         User cUser = customerRepository.existsByUserSerial(user) ? user : anotherUser;
         User wUser = customerRepository.existsByUserSerial(user) ? anotherUser : user;
+        String fieldName = createChatroomDTO.getField();
 
-        if (chatroomRepository.existsByStatusAndCuserAndWuser(Status.ACTIVE, cUser, wUser)) {
-            Chatroom savedChatroom =chatroomRepository.findByCuserAndWuserAndStatus(cUser, wUser, Status.ACTIVE);
+        if (chatroomRepository.existsByStatusAndCuserAndWuserAndFieldName(Status.ACTIVE, cUser, wUser, fieldName)) {
+            Chatroom savedChatroom =chatroomRepository.findByCuserAndWuserAndStatusAndFieldName(cUser, wUser, Status.ACTIVE, fieldName);
             return savedChatroom.getChatroomSerial();
         }
 
         Chatroom newChatroom = Chatroom.builder()
                 .cuser(cUser)
                 .wuser(wUser)
-                .fieldName(createChatroomDTO.getField()).build();
+                .fieldName(fieldName).build();
         chatroomRepository.save(newChatroom);
 
         return newChatroom.getChatroomSerial();
@@ -129,15 +134,60 @@ public class ChatroomServiceImpl implements ChatroomService {
         String customerName = chatroom.getCuser().getUserName();
         Worker worker = workerRepository.findByUserSerial(chatroom.getWuser());
         boolean isCertificated = (worker.getCertificatedBadge() == 1);
+        double temperature = customerReviewService.calculateAverageStars(portfolioRepository.findByWorkerAndFieldId(worker, fieldRepository.findByFieldName(fieldName)));
+        File otherUserImg = userSerial == chatroom.getWuser().getUserSerial() ?
+                chatroom.getCuser().getFileSerial() : chatroom.getWuser().getFileSerial();
 
         LocalDateTime lastTime = lastMessageOpt.map(ChatMessage::getCreatedAt).orElse(LocalDateTime.now());
 
-        long dayBeforeTime = ChronoUnit.MINUTES.between(lastTime, LocalDateTime.now());
-        String dayBefore = Calculator.time(dayBeforeTime);
-
-        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, lastTime, dayBefore, unReadMessageCount);
+        ChatroomListDTO chatroomDTO = new ChatroomListDTO(roomSerial, lastMessage, fieldName, workerName, customerName, isCertificated, temperature, otherUserImg, lastTime, unReadMessageCount);
         System.out.println(chatroomDTO);
         return chatroomDTO;
+    }
+
+    @Override
+    public ChatroomDetailDTO getChatroomDetail(int chatroomSerial, int userSerial) {
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
+        boolean isOtherUserCustomer =
+                userSerial == chatroom.getWuser().getUserSerial()? true : false;
+        User otherUser =
+                userSerial == chatroom.getWuser().getUserSerial()? chatroom.getCuser() : chatroom.getWuser();
+        int otherUserSerial = otherUser.getUserSerial();
+        String name = otherUser.getUserName();
+        String location;
+        String fieldName;
+        boolean isCertificated;
+        if (isOtherUserCustomer) {
+            Customer customer = customerRepository.findByUserSerial(otherUser);
+            fieldName = chatroomRepository.findByChatroomSerial(chatroomSerial).getFieldName();
+            isCertificated = false;
+            if (!planRepository.existsByCustomerSerialAndIsActive(customer, 1)) {
+                location = "";
+            } else {
+                location = planRepository.findByCustomerSerialAndIsActive(customer, 1).getAddress();
+            }
+        } else {
+            fieldName = chatroomRepository.findByChatroomSerial(chatroomSerial).getFieldName();
+            isCertificated = workerRepository.findByUserSerial(otherUser).getCertificatedBadge() == 1? true : false;
+            if (!localRepository.existsByUserSerial(otherUser)) {
+                location = "";
+            } else {
+                int sido = localRepository.findFirstByUserSerial(otherUser).getSidoCode();
+                location = SIDO_NAMES.get(sido);
+            }
+        }
+
+        OtherUserInfoDTO otherUserInfo = OtherUserInfoDTO.builder()
+                .userSerial(otherUserSerial)
+                .name(name)
+                .location(location)
+                .fieldName(fieldName)
+                .isCertificated(isCertificated)
+                .image(otherUser.getFileSerial()).build();
+
+        return ChatroomDetailDTO.builder()
+                        .otherUser(otherUserInfo)
+                        .chatMessages(getPreviousMessage(chatroomSerial, userSerial)).build();
     }
 
     @Override
@@ -152,11 +202,14 @@ public class ChatroomServiceImpl implements ChatroomService {
 
         if (!isUserInChatroom) throw new ChatroomForbiddenException("잘못된 접근입니다.");
 
-        System.out.println(chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial));
-        return chatMessageRepository.findAllByChatroomSerialOrderByCreatedAtDesc(chatroomSerial)
-                .stream()
-                .map(ChatMessageResponseDTO::new)
-                .collect(Collectors.toList());
+        List<ChatMessage> messages = chatMessageRepository.findAllByChatroomSerial(chatroomSerial);
+        Collections.sort(messages);
+        List<ChatMessageResponseDTO> previousMessages = new ArrayList<>();
+        for (ChatMessage message : messages) {
+            previousMessages.add(new ChatMessageResponseDTO(message));
+        }
+
+        return previousMessages;
     }
 
     @Override
@@ -167,4 +220,10 @@ public class ChatroomServiceImpl implements ChatroomService {
         Chatroom chatroom = chatroomRepository.findByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE);
         chatroomRepository.save(chatroom.inActive());
     }
+
+//    public double calculateTemperature(Worker worker, String fieldName) {
+//        Field field = fieldRepository.findByFieldName(fieldName);
+//        Portfolio portfolio = portfolioRepository.findByWorkerAndFieldId(worker, field);
+//        customerReviewRepository.findAllByPortfolioSerial(portfolio);
+//    }
 }

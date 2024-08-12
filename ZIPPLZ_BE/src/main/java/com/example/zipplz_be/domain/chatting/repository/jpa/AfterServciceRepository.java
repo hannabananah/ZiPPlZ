@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface AfterServciceRepository extends JpaRepository<AfterService,Integer> {
     Page<AfterService> findByWorkSerial(Work work, Pageable pageable);
 
+    AfterService findByAfterServiceSerial(int afterServiceSerial);
 }

@@ -41,7 +41,7 @@ public class WishServiceImpl implements WishService {
         List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
         List<PortfolioJoinDTO> portfolios = wishRepository.getWorkerWishList(wishType, userSerial);
         for (PortfolioJoinDTO portfolio : portfolios) {
-            List<String> locations = localRepository.getLocalNames(portfolio.getUser_serial());
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
             List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
             String img = null;
             if (!files.isEmpty()) {
@@ -53,19 +53,19 @@ public class WishServiceImpl implements WishService {
         return portfolioViews;
     }
 
-    @Override
-    public List<MaterialViewDTO> getMaterialWishList(int wishType, int userSerial) {
-        List<MaterialViewDTO> materialViews = new ArrayList<>();
-        List<MaterialDTO> materials = wishRepository.getMaterialWishList(wishType, userSerial);
-        for (MaterialDTO material : materials) {
-            List<MaterialFileDTO> files = fileRepository.getMaterialImg(material.getMaterialSerial());
-            String img = null;
-            if (!files.isEmpty()) {
-                img = files.getFirst().getSaveFile();
-            }
-            MaterialViewDTO materialView = new MaterialViewDTO(material, img);
-            materialViews.add(materialView);
-        }
-        return materialViews;
-    }
+//    @Override
+//    public List<MaterialViewDTO> getMaterialWishList(int wishType, int userSerial) {
+//        List<MaterialViewDTO> materialViews = new ArrayList<>();
+//        List<MaterialDTO> materials = wishRepository.getMaterialWishList(wishType, userSerial);
+//        for (MaterialDTO material : materials) {
+//            List<MaterialFileDTO> files = fileRepository.getMaterialImg(material.getMaterialSerial());
+//            String img = null;
+//            if (!files.isEmpty()) {
+//                img = files.getFirst().getSaveFile();
+//            }
+//            MaterialViewDTO materialView = new MaterialViewDTO(material, img);
+//            materialViews.add(materialView);
+//        }
+//        return materialViews;
+//    }
 }

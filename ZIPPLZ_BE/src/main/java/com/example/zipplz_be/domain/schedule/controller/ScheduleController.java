@@ -1,8 +1,10 @@
 package com.example.zipplz_be.domain.schedule.controller;
 
 import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.dto.PlanDetailDTO;
+import com.example.zipplz_be.domain.schedule.dto.TodayWorkListDTO;
 import com.example.zipplz_be.domain.schedule.dto.WorkListDTO;
 import com.example.zipplz_be.domain.schedule.entity.Plan;
 import com.example.zipplz_be.domain.schedule.entity.Work;
@@ -84,7 +86,6 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-
     //공종 추가
     @PostMapping("/plans/{planSerial}/works")
     public ResponseEntity<ResponseDTO<?>> insertWork(@PathVariable("planSerial") int planSerial, @RequestBody Map<String, Object> params) {
@@ -160,10 +161,29 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    //유저별 시공 중인 공종 조회
+    @GetMapping("users/working")
+    public ResponseEntity<?> getWorkingWork(Authentication authentication) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
 
+        try {
+            List<TodayWorkListDTO> todayWorkList= planService.getWorkingWorkService(portfolioService.getUserSerial(authentication));
 
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(),"조회 성공", todayWorkList);
+        } catch(UserNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }  catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
 
-        //계획 추가
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //계획 추가
     @PostMapping("/plans")
     public ResponseEntity<ResponseDTO<?>> insertPlan(Authentication authentication, @RequestBody Map<String, Object> params) {
         ResponseDTO<?> responseDTO;
@@ -367,10 +387,56 @@ public class ScheduleController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    //계획 활성화하기
+    @PatchMapping("/plans/{planSerial}/activate")
+    public ResponseEntity<?> activatePlan(Authentication authentication, @PathVariable int planSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            planService.activatePlanService(portfolioService.getUserSerial(authentication), planSerial);
+
+            status= HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "계획 활성화 성공!");
+        } catch (PlanNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //공유 문서에서 이미지 삭제하기
+    @DeleteMapping("/plans/{planSerial}/image/{fileSerial}")
+    public ResponseEntity<?> deleteImage(Authentication authentication, @PathVariable int planSerial, @PathVariable int fileSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            planService.deleteImageService(portfolioService.getUserSerial(authentication), planSerial, fileSerial);
+
+            status= HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
 
     //영상 다운로드
     //평면도 가져오기
     //계획, 커스텀 공종 만들기, 공유사항이나 메모 수정 시 유효성검사 필요!!!!!!!!!!!!!!
-    //이미지 삭제하기
 }
 

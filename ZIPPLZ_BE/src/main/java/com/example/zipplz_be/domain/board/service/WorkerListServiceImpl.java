@@ -28,7 +28,7 @@ public class WorkerListServiceImpl implements WorkerListService {
         List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
         List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoins();
         for (PortfolioJoinDTO portfolio : portfolios) {
-            List<String> locations = localRepository.getLocalNames(portfolio.getUser_serial());
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
             List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
             String img = null;
             if (!files.isEmpty()) {
@@ -40,16 +40,54 @@ public class WorkerListServiceImpl implements WorkerListService {
         return portfolioViews;
     }
 
-//    @Override
-//    public List<PortfolioViewDTO> getWorkListByField() {
-//        List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
-//        List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoinsByField();
-//        for (PortfolioJoinDTO portfolio : portfolios) {
-//            List<String> locations = modelRepository.getLocalNames(portfolio.getUser_serial());
-//            String img = fileRepository.getImg(portfolio.getUser_serial());
-//            PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
-//            portfolioViews.add(portfolioView);
-//        }
-//        return portfolioViews;
-//    }
+    @Override
+    public List<PortfolioViewDTO> getWorkListByField(int fieldCode) {
+        List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
+        List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoinsByField(fieldCode);
+        for (PortfolioJoinDTO portfolio : portfolios) {
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
+            List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
+            String img = null;
+            if (!files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
+            portfolioViews.add(portfolioView);
+        }
+        return portfolioViews;
+    }
+
+    @Override
+    public List<PortfolioViewDTO> getWorkListByName(String name) {
+        List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
+        List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoinsByName(name);
+        for (PortfolioJoinDTO portfolio : portfolios) {
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
+            List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
+            String img = null;
+            if (!files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
+            portfolioViews.add(portfolioView);
+        }
+        return portfolioViews;
+    }
+
+    @Override
+    public List<PortfolioViewDTO> getWorkListTop() {
+        List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
+        List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoinsTOP();
+        for (PortfolioJoinDTO portfolio : portfolios) {
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
+            List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
+            String img = null;
+            if (!files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
+            portfolioViews.add(portfolioView);
+        }
+        return portfolioViews;
+    }
 }
