@@ -30,14 +30,14 @@ import Portfolio from '@pages/worker/Portfolio';
 import Contract from './pages/common/Contract';
 import HousePost from './pages/common/community/HousePost';
 import HousePostDetail from './pages/common/community/HousePostDetail';
-import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
+// import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
 import QuestionPost from './pages/common/community/QuestionPost';
 import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
 import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
 import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
-import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
+// import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
 import MyQuestionPostList from './pages/common/mypage/postpage/MyQuestionPostList';
 import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
 // import MyHousePostScrapList from './pages/common/mypage/scrappage/MyHousePostScrapList';
@@ -82,10 +82,10 @@ export default function App() {
         <Route path="housepostdetail" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
         <Route path="questionpostdetail" element={<QuestionPostDetail />} />
-        <Route
-          path="housepostdetailcreate"
-          element={<HousePostDetailCreate />}
-        />
+        // <Route
+        //   path="housepostdetailcreate"
+        //   element={<HousePostDetailCreate />}
+        // />
         <Route
           path="questionpostdetailcreate"
           element={<QuestionPostDetailCreate />}
@@ -93,7 +93,7 @@ export default function App() {
 
         {/* 마이페이지 */}
         {/* <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} /> */}
-        <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
+        // <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
         <Route
           path="mypage/Myquestionpostlist"
           element={<MyQuestionPostList />}
