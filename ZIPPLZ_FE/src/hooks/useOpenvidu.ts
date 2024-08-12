@@ -1,9 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import { useLoginUserStore } from '@stores/loginUserStore';
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import {
   Session as OVSession,
   OpenVidu,
@@ -22,9 +20,9 @@ export default function useOpenVidu() {
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
   const [recordingId, setRecordingId] = useState<string | null>(null);
-  const navigate = useNavigate();
   const [participants, setParticipants] = useState<number>(0);
   const [isRecording, setIsRecording] = useState(false);
+  const navigate = useNavigate();
 
   const joinSession = useCallback(() => {
     const OVs = new OpenVidu();
@@ -39,69 +37,6 @@ export default function useOpenVidu() {
     }
   }, [chatroomSerial, joinSession]);
 
-  const leaveSession = useCallback(async () => {
-    if (sessionId) {
-      try {
-        await axios.delete(`${base_url}/openvidu/api/sessions`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`,
-            'Content-Type': 'application/json',
-          },
-          data: JSON.stringify({ sessionId }),
-        });
-        setOV(null);
-        setSession(null);
-        setSessionId('');
-        setSubscriber(null);
-        setPublisher(null);
-        setRecordingId(null);
-        setParticipants(0);
-        navigate(`/chatrooms/${chatroomSerial}`);
-        console.log('Session ended successfully');
-      } catch (error) {
-        console.error('Error ending session:', error);
-      }
-    }
-  }, [sessionId, navigate]);
-
-  useEffect(() => {
-    window.addEventListener('beforeunload', leaveSession);
-
-    return () => {
-      window.removeEventListener('beforeunload', leaveSession);
-    };
-  }, [leaveSession]);
-
-  const startRecording = async () => {
-    if (sessionId && participants >= 2) {
-      try {
-        const response = await axios.post(
-          `${base_url}/openvidu/api/sessions/recording`,
-          { sessionId },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        setRecordingId(response.data.recordingId);
-        console.log('Recording started successfully');
-        console.log(response.data);
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error('Error status:', error.response?.status);
-          console.error('Error data:', error.response?.data);
-          console.error('Error message:', error.message);
-        } else {
-          console.error('Unexpected error:', error);
-        }
-      }
-    } else {
-      console.error('Session ID is missing or not enough participants');
-    }
-  };
-
   const stopRecording = async () => {
     if (recordingId && participants < 2) {
       try {
@@ -115,13 +50,94 @@ export default function useOpenVidu() {
             },
           }
         );
-        console.log('Recording stopped successfully');
+        console.log('녹화가 성공적으로 중지되었습니다');
         setRecordingId(null);
       } catch (error) {
-        console.error('Error stopping recording:', error);
+        console.error('녹화 중지 오류:', error);
       }
     } else {
-      console.error('No recording ID available');
+      console.error('녹화 ID가 없거나 참여자가 2명 이상입니다');
+    }
+  };
+
+  const leaveSession = useCallback(async () => {
+    if (sessionId) {
+      await axios.delete(`${base_url}/openvidu/api/sessions`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({ sessionId }),
+      });
+      setOV(null);
+      setSession(null);
+      setSessionId('');
+      setSubscriber(null);
+      setPublisher(null);
+      setRecordingId(null);
+      setParticipants(0);
+      navigate(`/chatrooms/${chatroomSerial}`);
+      console.log('세션이 성공적으로 종료되었습니다');
+    }
+  }, [sessionId, participants, navigate, stopRecording, chatroomSerial]);
+
+  useEffect(() => {
+    window.addEventListener('beforeunload', leaveSession);
+
+    return () => {
+      window.removeEventListener('beforeunload', leaveSession);
+    };
+  }, [leaveSession]);
+
+  const startRecording = async () => {
+    if (!sessionId) {
+      console.error('세션 ID가 없습니다');
+      return;
+    }
+
+    if (participants < 2) {
+      console.error('녹화를 시작하기에 충분한 참여자가 없습니다');
+      return;
+    }
+
+    if (publisher && publisher.stream) {
+      try {
+        console.log('녹화 시작 시도...');
+        const response = await axios.post(
+          `${base_url}/openvidu/api/sessions/recording`,
+          JSON.stringify({ sessionId }),
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem('token')}`,
+              'Content-Type': 'application/json',
+            },
+            timeout: 60000,
+          }
+        );
+        setRecordingId(response.data.recordingId);
+        console.log('녹화가 성공적으로 시작되었습니다');
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          console.error('오류 상태:', error.response?.status);
+          console.error('오류 데이터:', error.response?.data);
+          console.error('오류 메시지:', error.message);
+
+          if (error.response?.status === 409) {
+            console.log(
+              '녹화 요청 충돌 발생. 세션이 이미 녹화 중이거나 세션 ID가 올바르지 않을 수 있습니다.'
+            );
+          } else {
+            console.error(
+              '기타 Axios 오류:',
+              error.response?.data || error.message
+            );
+          }
+        } else {
+          console.error('예상치 못한 오류:', error);
+        }
+      }
+    } else {
+      console.error('퍼블리셔 또는 퍼블리셔 스트림이 없습니다');
     }
   };
 
@@ -129,18 +145,13 @@ export default function useOpenVidu() {
     if (!session) return;
 
     const handleStreamDestroyed = (event: StreamEvent) => {
-      console.log('Stream destroyed:', event.stream.streamId);
-      console.log('subscriber destroyed:', subscriber?.stream.streamId);
-      console.log('publisher destroyed:', publisher?.stream.streamId);
       if (subscriber && event.stream.streamId === subscriber.stream.streamId) {
         setSubscriber(null);
-        stopRecording();
       } else if (
         publisher &&
         event.stream.streamId === publisher.stream.streamId
       ) {
         setPublisher(null);
-        stopRecording();
       }
     };
 
@@ -167,10 +178,11 @@ export default function useOpenVidu() {
   useEffect(() => {
     if (!session) return;
 
-    const createSession = async (sessionIds: string) => {
+    const createSession = async (sessionId: string) => {
       try {
         const data = JSON.stringify({
-          customSessionId: sessionIds,
+          customSessionId: sessionId,
+          mediaMode: 'ROUTED', // 미디어 모드를 ROUTED로 설정
           chatroomSerial: Number(chatroomSerial),
         });
         const response = await axios.post(
@@ -185,18 +197,13 @@ export default function useOpenVidu() {
         );
         return response.data.data;
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error('Error response:', error.response);
-          console.error('Error message:', error.message);
-          console.error('Error config:', error.config);
+        if (axios.isAxiosError(error) && error.response?.status === 409) {
+          console.log('세션이 이미 존재합니다. 기존 세션을 사용합니다.');
+          return sessionId;
         } else {
-          console.error('Unexpected error:', error);
+          console.error('세션 생성 실패:', error);
+          throw error;
         }
-        const errorResponse = (error as AxiosError)?.response;
-        if (errorResponse?.status === 409) {
-          return sessionIds;
-        }
-        throw new Error('세션 생성에 실패했습니다.');
       }
     };
 
@@ -224,11 +231,11 @@ export default function useOpenVidu() {
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.error('Axios error:', error.response?.data || error.message);
+          console.error('Axios 오류:', error.response?.data || error.message);
         } else {
-          console.error('Unexpected error:', error);
+          console.error('예상치 못한 오류:', error);
         }
-        throw new Error('Failed to create token.');
+        throw new Error('토큰 생성 실패.');
       }
     };
 
@@ -236,10 +243,10 @@ export default function useOpenVidu() {
       try {
         const sessionIds = await createSession(sessionId);
         const token = await createToken(sessionIds);
-        console.log('토큰 받았다!!!!!!');
+        console.log('토큰을 성공적으로 받았습니다');
         return token;
       } catch (error) {
-        throw new Error('Failed to get token.');
+        throw new Error('토큰 받기 실패.');
       }
     };
 
@@ -259,12 +266,12 @@ export default function useOpenVidu() {
               setPublisher(publisher);
               session
                 .publish(publisher)
-                .catch((error) => console.error('Error publishing:', error));
+                .catch((error) => console.error('퍼블리싱 오류:', error));
             }
           })
-          .catch((error) => console.error('Error connecting session:', error));
+          .catch((error) => console.error('세션 연결 오류:', error));
       })
-      .catch((error) => console.error('Error getting token:', error));
+      .catch((error) => console.error('토큰 받기 오류:', error));
   }, [session, OV, sessionId]);
 
   useEffect(() => {
@@ -273,7 +280,7 @@ export default function useOpenVidu() {
         try {
           const response = await axios.post(
             `${base_url}/openvidu/api/sessions/info`,
-            { sessionId },
+            JSON.stringify({ sessionId }),
             {
               headers: {
                 'Content-Type': 'application/json',
@@ -284,35 +291,29 @@ export default function useOpenVidu() {
           setParticipants(participantsCount);
         } catch (error) {
           if (axios.isAxiosError(error)) {
-            console.error('Error status:', error.response?.status);
-            console.error('Error data:', error.response?.data);
+            console.error('오류 상태:', error.response?.status);
+            console.error('오류 데이터:', error.response?.data);
           } else {
-            console.error('Unexpected error:', error);
+            console.error('예상치 못한 오류:', error);
           }
         }
       } else {
-        console.error('Session ID is missing');
+        console.error('세션 ID가 없습니다');
       }
     };
 
-    const intervalId = setInterval(() => {
-      getDetailSession();
-    }, 10000);
-
-    return () => clearInterval(intervalId);
+    getDetailSession();
   }, [sessionId]);
 
   useEffect(() => {
-    if (participants >= 2 && !isRecording) {
-      console.log('두명이다');
+    if (participants >= 2 && !isRecording && publisher) {
       startRecording();
       setIsRecording(true);
     } else if (participants < 2 && isRecording) {
-      console.log('두명 이상이 아니다');
       stopRecording();
       setIsRecording(false);
     }
-  }, [participants, startRecording, stopRecording]);
+  }, [participants, publisher, isRecording, startRecording, stopRecording]);
 
   return {
     session,
