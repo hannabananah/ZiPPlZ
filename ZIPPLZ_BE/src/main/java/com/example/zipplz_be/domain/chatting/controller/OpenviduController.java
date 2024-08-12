@@ -205,6 +205,7 @@ public class OpenviduController {
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
             Session session = openvidu.getActiveSession((String) params.get("sessionId"));
+
             if (session == null) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "그런 세션은 없습니다.");
@@ -218,6 +219,8 @@ public class OpenviduController {
                         .hasVideo(true)
                         .name(recordingFileName)
                         .build();
+
+                System.out.println(recordingFileName);
 
                 Recording recording = openvidu.startRecording(session.getSessionId(), recordingProperties);
 
