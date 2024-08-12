@@ -23,16 +23,63 @@ interface Comment {
   order_number: number;
 }
 
+// 자랑글 상세 정보 인터페이스
+interface HousePostDetails {
+  title: string;
+  userSerial: number;
+  boardSerial: number;
+  nickname: string;
+  userName: string;
+  saveFile: string;
+  boardContent: string;
+  boardDate: string;
+  boardType: number;
+  images: { saveFile: string }[];
+  tags: {
+    worker: number;
+    career: number;
+    portfolio_serial: number;
+    temperature: number;
+    certificated_badge: number;
+    user_name: string;
+    field_name: string;
+    birth_date: number;
+    field_id: number;
+  }[];
+  comments: {
+    parent_comment: {
+      userName: string;
+      userSerial: number;
+      commentSerial: number;
+      commentContent: string;
+      commentDate: string;
+      saveFile: string;
+      nickName: string;
+    };
+    child_comments: {
+      userName: string;
+      userSerial: number;
+      commentSerial: number;
+      commentContent: string;
+      commentDate: string;
+      saveFile: string;
+      nickName: string;
+    }[];
+  }[];
+}
+
 // 자랑글 상태 인터페이스
 interface HousePostState {
   title: string;
   boardContent: string;
   images: File[]; // 이미지 파일 상태 추가
   housePosts: HousePost[];
+  postDetails: HousePostDetails | null;
   setTitle: (title: string) => void;
   setBoardContent: (content: string) => void;
   setImages: (images: File[]) => void; // 이미지 파일 설정 함수 추가
   fetchHousePosts: () => Promise<void>;
+  fetchPostDetails: (id: number) => Promise<void>;
   createPost: (
     token: string,
     formData: FormData
@@ -57,6 +104,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   boardContent: '',
   images: [], // 이미지 파일 상태 초기화
   housePosts: [],
+  postDetails: null,
 
   setTitle: (title) => set({ title }),
   setBoardContent: (boardContent) => set({ boardContent }),
@@ -71,6 +119,25 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
       set({ housePosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch house posts:', error);
+    }
+  },
+
+  fetchPostDetails: async (id: number) => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/board/showoff/list/${id}`
+      );
+
+      if (response.data.proc.code === 200) {
+        set({ postDetails: response.data.data });
+      } else {
+        console.error(
+          'Failed to fetch post details:',
+          response.data.proc.message
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching post details:', error);
     }
   },
 

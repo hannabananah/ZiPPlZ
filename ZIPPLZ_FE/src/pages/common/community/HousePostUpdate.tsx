@@ -20,7 +20,7 @@ import 'swiper/css/navigation';
 
 // Zustand 스토어 import
 
-export default function HousePostDetailCreate() {
+export default function HousePostUpdate() {
   type Image = string;
   const { loginUser } = useLoginUserStore();
   const [images, setImages] = useState<Image[]>([]);

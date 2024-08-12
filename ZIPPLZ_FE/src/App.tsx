@@ -35,7 +35,7 @@ import Contract from './pages/common/Contract';
 import HousePost from './pages/common/community/HousePost';
 import HousePostCreate from './pages/common/community/HousePostCreate';
 import HousePostDetail from './pages/common/community/HousePostDetail';
-import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
+import HousePostDetailCreate from './pages/common/community/HousePostUpdate';
 import QuestionPost from './pages/common/community/QuestionPost';
 import QuestionPostCreate from './pages/common/community/QuestionPostCreate';
 import QuestionPostDetail from './pages/common/community/QuestionPostDetail';

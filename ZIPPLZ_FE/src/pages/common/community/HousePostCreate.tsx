@@ -1,46 +1,79 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
-import { FaCamera } from 'react-icons/fa';
+import { CiCirclePlus, CiSearch } from 'react-icons/ci';
+import { FaCamera, FaRegCircle } from 'react-icons/fa';
+import { FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
+import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
+import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 import { useHousePostStore } from '@stores/housePostStore';
+import axios from 'axios';
+import 'swiper/css';
+import 'swiper/css/navigation';
 
-export default function HousePostCreate() {
-  const {
-    title,
-    setTitle,
-    boardContent,
-    setBoardContent,
-    createPost,
-    setImages,
-  } = useHousePostStore();
-  const [images, setImagesState] = useState<File[]>([]);
+export default function HousePostDetailCreate() {
+  const [images, setImages] = useState<File[]>([]); // 이미지 파일 상태를 string[]에서 File[]로 변경
+  const [title, setTitle] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [addressDetail, setAddressDetail] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
   const [schedule, setSchedule] = useState<string>('');
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
+  const [selectedWorkers, setSelectedWorkers] = useState<WorkerInfo[]>([]);
+  const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
+    []
+  );
+  const [workerInfoList, setWorkerInfoList] = useState<WorkerInfo[]>([]); // 시공업자 목록 상태 추가
+
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
   const maxImages = 10;
 
+  const { createPost } = useHousePostStore();
+
+  // 시공업자 목록을 가져오는 함수
+  const fetchWorkerInfoList = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/workerlist/portfolios'
+      );
+      if (response.data.proc.code === 200) {
+        setWorkerInfoList(response.data.data);
+      } else {
+        console.error(
+          'Failed to fetch worker info list:',
+          response.data.proc.message
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching worker info list:', error);
+    }
+  };
+
+  // 컴포넌트가 마운트될 때 시공업자 목록을 가져옴
+  useEffect(() => {
+    fetchWorkerInfoList();
+  }, []);
+
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    setImagesState((prevImages) => [
-      ...prevImages,
-      ...files.slice(0, maxImages - prevImages.length),
-    ]);
-    setImages([...images, ...files.slice(0, maxImages - images.length)]);
+    const validFiles = files.slice(0, maxImages - images.length);
+
+    setImages((prevImages) => [...prevImages, ...validFiles]);
   };
 
   const handleImageRemove = (index: number) => {
-    setImagesState((prevImages) => prevImages.filter((_, i) => i !== index));
-    setImages(images.filter((_, i) => i !== index));
+    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
   const handleConfirm = async () => {
@@ -58,58 +91,50 @@ export default function HousePostCreate() {
       return;
     }
 
-    setBoardContent(workDetail); // 상태에 workDetail 저장
-
-    const token = `Bearer ${localStorage.getItem('token')}`;
     const formData = new FormData();
 
-    // 이미지 파일 추가
-    images.forEach((image) => formData.append('images', image));
-
-    // 제목과 내용 추가
-    formData.append('title', title);
-    formData.append('board_content', boardContent);
-
-    // 선택된 포트폴리오 추가 (예제 데이터)
     formData.append(
-      'selected_portfolio',
-      JSON.stringify([
-        {
-          portfolio_serial: 1,
-          worker: 1,
-          user_name: 'celine5',
-          birth_date: 99,
-          temperature: 10.0,
-          field_id: 1,
-          field_name: '철거',
-          career: 3.0,
-          certificated_badge: 1,
-          locations: ['서울 강남구', '서울 강서구'],
-          img: 'save_file_path1',
-        },
-        {
-          portfolio_serial: 2,
-          worker: 1,
-          user_name: 'celine5',
-          birth_date: 99,
-          temperature: 20.0,
-          field_id: 2,
-          field_name: '설비',
-          career: 30.0,
-          certificated_badge: 1,
-          locations: ['서울 강남구', '서울 강서구'],
-          img: 'save_file_path2',
-        },
-      ])
+      'params',
+      JSON.stringify({
+        title,
+        board_content: workDetail,
+        selected_portfolio: selectedWorkers.map((worker) => ({
+          portfolio_serial: worker.portfolio_serial,
+          worker: worker.user_serial,
+          user_name: worker.name,
+          birth_date: worker.birth_date,
+          temperature: worker.temp,
+          field_id: worker.field_id,
+          field_name: worker.field_name,
+          career: worker.career,
+          certificated_badge: worker.certificated_badge,
+          locations: worker.locations,
+          img: worker.img,
+        })),
+      })
     );
 
-    const { code, message } = await createPost(token, formData);
+    images.forEach((image) => {
+      formData.append('images', image);
+    });
 
-    if (code === 200) {
-      alert('자랑글이 성공적으로 등록되었습니다.');
-      navigate('/housepost');
-    } else {
-      alert(`자랑글 등록에 실패했습니다: ${message}`);
+    console.log('FormData:', Array.from(formData.entries()));
+
+    try {
+      const token = `Bearer ${localStorage.getItem('token')}`;
+      const { code, message } = await createPost(token, formData);
+
+      if (code === 200) {
+        alert('자랑글이 성공적으로 등록되었습니다.');
+        navigate('/housepost');
+      } else {
+        alert(`자랑글 등록에 실패했습니다: ${message}`);
+      }
+    } catch (error) {
+      console.error('Failed to create post:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+      }
     }
   };
 
@@ -133,6 +158,24 @@ export default function HousePostCreate() {
 
     setAddress(fullAddress);
     setIsPostcodeOpen(false);
+  };
+
+  const handleScheduleSelect = (schedule: string) => {
+    setSchedule(schedule);
+    setIsDropdownOpen(false);
+  };
+
+  const handleWorkerSelect = (worker: WorkerInfo) => {
+    setTempSelectedWorkers((prevSelected) =>
+      prevSelected.includes(worker)
+        ? prevSelected.filter((w) => w !== worker)
+        : [...prevSelected, worker]
+    );
+  };
+
+  const handleWorkerModalConfirm = () => {
+    setSelectedWorkers(tempSelectedWorkers);
+    setIsWorkerModalOpen(false);
   };
 
   return (
@@ -165,16 +208,16 @@ export default function HousePostCreate() {
             <div className="w-1/6">
               <div className="relative">
                 <label
-                  htmlFor="file-upload"
+                  htmlFor="file-upload-0"
                   className="flex items-center justify-center w-24 h-24 bg-zp-white border border-zp-light-gray rounded-zp-radius-btn p-2 cursor-pointer"
                 >
-                  <FaCamera size={36} />
+                  <FaCamera size={36} className="" />
                   <div className="w-full flex justify-center absolute bottom-2 font-bold text-zp-xs text-zp-gray">
                     {images.length}/{maxImages}
                   </div>
                 </label>
                 <input
-                  id="file-upload"
+                  id="file-upload-0"
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
@@ -215,6 +258,9 @@ export default function HousePostCreate() {
                   inputType="textArea"
                   width="100%"
                   height={2.375}
+                  className=""
+                  fontSize="xs"
+                  radius="btn"
                   value={title}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setTitle(e.target.value)
@@ -232,17 +278,24 @@ export default function HousePostCreate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">현장 주소</div>
-              <div className="pl-2 relative mt-2 bg-zp-white border border-zp-light-gray rounded-zp-radius-btn">
+              <div className="pl-2 relative mt-2 bg-zp-white border  border-zp-light-gray rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="현장 주소"
                   inputType="textArea"
                   width="100%"
                   height={2.375}
+                  className="border border-zp-sub-color rounded-zp-radius-btn p-[10px] pr-[40px]"
+                  fontSize="xs"
+                  radius="btn"
                   value={address}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setAddress(e.target.value)
                   }
+                  onClick={() => setIsPostcodeOpen(true)}
+                />
+                <CiSearch
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                   onClick={() => setIsPostcodeOpen(true)}
                 />
               </div>
@@ -264,6 +317,9 @@ export default function HousePostCreate() {
                   inputType="textArea"
                   width="100%"
                   height={2.375}
+                  className=""
+                  fontSize="xs"
+                  radius="btn"
                   value={addressDetail}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setAddressDetail(e.target.value)
@@ -278,16 +334,76 @@ export default function HousePostCreate() {
             </div>
           </div>
 
+          <div className="mt-6 font-bold flex flex-col items-center justify-center relative">
+            <div className="text-left w-full">
+              <div className="mb-2">스케줄</div>
+              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2 relative">
+                <div className="flex justify-end items-center">
+                  <Input
+                    type="text"
+                    placeholder="스케줄을 선택해주세요."
+                    inputType="textArea"
+                    width="100%"
+                    height={2.375}
+                    className=""
+                    fontSize="xs"
+                    radius="btn"
+                    value={schedule}
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      setSchedule(e.target.value)
+                    } // onChange 핸들러 추가
+                  />
+
+                  {isDropdownOpen ? (
+                    <IoMdArrowDropup
+                      size={40}
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="cursor-pointer"
+                    />
+                  ) : (
+                    <IoMdArrowDropdown
+                      size={40}
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="cursor-pointer"
+                    />
+                  )}
+                </div>
+              </div>
+              {isDropdownOpen && (
+                <div className="absolute top-full mt-2 w-full bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
+                  {['스케줄1', '스케줄2', '스케줄3'].map((item) => (
+                    <button
+                      key={item}
+                      onClick={() => handleScheduleSelect(item)}
+                      className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm"
+                    >
+                      {item}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {errors.schedule && (
+                <div className="text-zp-red text-zp-xs mt-1">
+                  {errors.schedule}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">자랑해주세요</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
+              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn  pl-2">
                 <Input
                   type="text"
                   placeholder="집에서 자랑하고 싶은 내용을 입력해주세요."
                   inputType="textArea"
                   width="100%"
                   height={10}
+                  className=""
+                  fontSize="xs"
+                  radius="btn"
                   value={workDetail}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     setWorkDetail(e.target.value)
@@ -302,15 +418,47 @@ export default function HousePostCreate() {
             </div>
           </div>
 
+          <div className="mt-6 font-bold flex flex-col items-center justify-center">
+            <div className="text-left w-full">
+              <div className="">함께한 시공업자들</div>
+              <div className="text-zp-xs text-zp-light-gray">
+                + 버튼을 클릭하여 함께한 시공업자들을 추가해주세요
+              </div>
+              <div className="py-24 flex justify-center">
+                <CiCirclePlus
+                  style={{ color: 'gray' }}
+                  size={40}
+                  onClick={() => setIsWorkerModalOpen(true)}
+                  className="cursor-pointer"
+                />
+              </div>
+              {selectedWorkers.length > 0 && (
+                <div className="mt-2 grid grid-cols-2 gap-4">
+                  {selectedWorkers.map((worker) => (
+                    <WorkerInfoListItem
+                      key={worker.portfolio_serial}
+                      worker={worker}
+                    />
+                  ))}
+                </div>
+              )}
+              {errors.workDetail && (
+                <div className="text-zp-red text-zp-xs mt-1">
+                  {errors.workDetail}
+                </div>
+              )}
+            </div>
+          </div>
+
           <div className="mt-6 mb-12 font-bold h-20 flex items-center justify-center">
             <Button
               children="확인"
               buttonType="second"
               width="full"
               height={2.375}
-              onClick={handleConfirm}
               fontSize="xl"
-              radius="big"
+              radius="btn"
+              onClick={handleConfirm}
             />
           </div>
         </div>
@@ -326,6 +474,80 @@ export default function HousePostCreate() {
             >
               닫기
             </button>
+          </div>
+        </div>
+      )}
+
+      {isWorkerModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50 overflow-y-auto">
+          <div className="bg-zp-white p-6 rounded-zp-radius-big w-3/4">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold">
+                시공업자 선택
+              </h2>
+            </div>
+
+            <div className="mt-6 font-bold">
+              시공업자의 이름을 검색하여 추가하고 확인 버튼을 눌러주세요
+            </div>
+
+            <div className="mt-6 font-bold flex justify-center items-center relative">
+              <Input
+                type="text"
+                placeholder="시공업자의 이름을 입력해주세요"
+                inputType="textArea"
+                width="14rem"
+                height={2.375}
+                className="mb-4 pr-10"
+                fontSize="xs"
+                radius="btn"
+                // 검색 기능 추가 필요
+              />
+              <HiMagnifyingGlass className="absolute right-2 top-1/2 transform -translate-y-1/2" />
+            </div>
+
+            <div className="mt-2 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+              {workerInfoList.map((worker) => (
+                <div key={worker.portfolio_serial} className="relative">
+                  <WorkerInfoListItem worker={worker} />
+                  <div
+                    className="absolute top-2 right-2 cursor-pointer"
+                    onClick={() => handleWorkerSelect(worker)}
+                  >
+                    {tempSelectedWorkers.includes(worker) ? (
+                      <FaRegCircleCheck size={24} className="text-green-500" />
+                    ) : (
+                      <FaRegCircle size={24} className="text-gray-500" />
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-6 flex justify-center space-x-2">
+              <div className="font-bold">
+                <Button
+                  children="취소"
+                  buttonType="light"
+                  width="7rem"
+                  height={2}
+                  fontSize="2xs"
+                  radius="full"
+                  onClick={() => setIsWorkerModalOpen(false)}
+                />
+              </div>
+              <div className="font-bold">
+                <Button
+                  children="확인"
+                  buttonType="second"
+                  width="7rem"
+                  height={2}
+                  fontSize="2xs"
+                  radius="full"
+                  onClick={handleWorkerModalConfirm}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
