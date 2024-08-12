@@ -1,11 +1,11 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { CiImageOn } from 'react-icons/ci';
-import { FaFileContract, FaFolderOpen } from 'react-icons/fa';
+import { FaFolderOpen } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
 import { TbWood } from 'react-icons/tb';
 
 import AfterService from '@components/chat/AfterService';
-import Contract from '@components/chat/Contract';
+// import Contract from '@components/chat/Contract';
 import Material from '@components/chat/Material';
 import FullModal from '@components/common/FullModal';
 import { useLoginUserStore } from '@stores/loginUserStore';
@@ -43,7 +43,7 @@ export default function ToggleChatMenu({
   const sendMessage = webSocketContext?.sendMessage;
 
   const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
-  const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+  // const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
@@ -89,9 +89,9 @@ export default function ToggleChatMenu({
     setIsAfterServiceModalOpen(true);
   };
 
-  const handleContract = () => {
-    setIsContractModalOpen(true);
-  };
+  // const handleContract = () => {
+  //   setIsContractModalOpen(true);
+  // };
 
   const handleMaterial = () => {
     setIsMaterialModalOpen(true);
@@ -102,9 +102,9 @@ export default function ToggleChatMenu({
     setIsConfirmationModalOpen(true);
   };
 
-  const closeContractModal = () => {
-    setIsContractModalOpen(false);
-  };
+  // const closeContractModal = () => {
+  //   setIsContractModalOpen(false);
+  // };
 
   const closeMaterialModal = () => {
     setIsMaterialModalOpen(false);
@@ -137,16 +137,16 @@ export default function ToggleChatMenu({
       role: ['customer', 'worker'],
       onClick: handleFileUpload,
     },
+    // {
+    //   id: 3,
+    //   icon: FaFileContract,
+    //   label: '계약서',
+    //   bgColor: '#FF9500',
+    //   role: 'worker',
+    //   onClick: handleContract,
+    // },
     {
       id: 3,
-      icon: FaFileContract,
-      label: '계약서',
-      bgColor: '#FF9500',
-      role: 'worker',
-      onClick: handleContract,
-    },
-    {
-      id: 4,
       icon: FiTool,
       label: 'A/S 신청',
       bgColor: '#FC7FF0',
@@ -154,10 +154,10 @@ export default function ToggleChatMenu({
       onClick: handleAfterService,
     },
     {
-      id: 5,
+      id: 4,
       icon: TbWood,
       label: '자재 관리',
-      bgColor: '#A2845E',
+      bgColor: '#FF9500',
       role: ['customer', 'worker'],
       onClick: handleMaterial,
     },
@@ -221,7 +221,7 @@ export default function ToggleChatMenu({
         />
       </FullModal>
 
-      {name && (
+      {/* {name && (
         <FullModal
           isOpen={isContractModalOpen}
           onRequestClose={closeContractModal}
@@ -234,7 +234,7 @@ export default function ToggleChatMenu({
             name={name}
           />
         </FullModal>
-      )}
+      )} */}
 
       <FullModal
         isOpen={isMaterialModalOpen}

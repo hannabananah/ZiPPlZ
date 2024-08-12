@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { Material } from '@/types';
@@ -12,13 +13,12 @@ import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
 import { formatDateWithTime } from '@utils/formatDateWithTime';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
+import axios from 'axios';
 
 interface ContractProps {
   closeContractModal: () => void;
-  chatroomSerial: number;
   name: string;
 }
-
 interface Field {
   label: string;
   value: string;
@@ -27,11 +27,9 @@ interface Field {
   editable: boolean;
 }
 
-export default function Contract({
-  closeContractModal,
-  chatroomSerial,
-  name,
-}: ContractProps) {
+const base_url = import.meta.env.VITE_APP_BASE_URL;
+
+export default function Contract({ closeContractModal, name }: ContractProps) {
   const contractInfo: Field[] = [
     {
       label: '고객 이름',
@@ -88,6 +86,9 @@ export default function Contract({
   const { loginUser } = useLoginUserStore();
   const userSerial: number | undefined = loginUser?.userSerial;
   const userName: string | undefined = loginUser?.userName;
+  const { chatroomSerial } = useParams<{
+    chatroomSerial?: string | undefined;
+  }>();
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -136,20 +137,32 @@ export default function Contract({
     };
 
     try {
-      await postContract(chatroomSerial, requestData);
-      const formattedMessage = `
-                ✨ 계약서 초안 작성 완료! ✨
-  👷‍♂️ 시공자: ${userName}
-  👩‍🦰 고객: ${name}
-  👏 요청 일자: ${formatDateWithTime(new Date().toISOString())}
-  💵 작업 가격: ${formatNumberWithCommas(workPrice)}원
-  🏠 출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
-  📅 작업 기간: ${startDate}~${endDate}(${totalDuration}일)
-  🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
-  `;
+      const response = await axios.get(
+        `${base_url}chatroom/${chatroomSerial}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }
+      );
 
-      sendMessage(formattedMessage, userSerial as number);
-      closeContractModal();
+      if (response.status === 200 && response.data) {
+        const otherUserName = response.data.data;
+
+        await postContract(Number(chatroomSerial), requestData);
+        const formattedMessage = `
+          ✨ 계약서 초안 작성 완료! ✨
+          👷‍♂️ 시공자: ${userName}
+          👩‍🦰 고객: ${otherUserName}
+          👏 요청 일자: ${formatDateWithTime(new Date().toISOString())}
+          💵 작업 가격: ${formatNumberWithCommas(workPrice)}원
+          🏠 출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
+          📅 작업 기간: ${startDate}~${endDate}(${totalDuration}일)
+          🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
+        `;
+        sendMessage(formattedMessage, userSerial as number);
+        closeContractModal();
+      } else {
+        throw new Error('Unexpected response from the server');
+      }
     } catch (error) {
       console.error('계약서 초안 작성 실패:', error);
     }
