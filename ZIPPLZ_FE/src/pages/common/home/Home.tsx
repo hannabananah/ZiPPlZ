@@ -69,7 +69,7 @@ const hotWorkerList = [
 interface Work {
   starDate: string;
   endDate: string;
-  fiield: string;
+  field: string;
 }
 
 export default function Home() {
@@ -136,8 +136,9 @@ export default function Home() {
       <div className="grid w-full grid-cols-6 gap-4 ">
         {fields.map((item) => (
           <FieldListItem
+            key={item}
             field={item}
-            handlClickField={() => handleClickField(item)}
+            handleClickField={() => handleClickField(item)}
           />
         ))}
       </div>
@@ -145,7 +146,7 @@ export default function Home() {
       <div className="flex w-full overflow-x-auto">
         <div className="flex justify-between w-full h-[8rem] ">
           {hotWorkerList.map((worker) => (
-            <WorkerCard worker={worker} />
+            <WorkerCard key={worker.field_id} worker={worker} />
           ))}
         </div>
       </div>
