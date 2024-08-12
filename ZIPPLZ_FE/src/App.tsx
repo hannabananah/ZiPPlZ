@@ -1,5 +1,6 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
+import Resign from '@/pages/common/mypage/resignpage/Resign';
 // import MyFindWorkerScrapList from '@/pages/common/mypage/scrappage/MyFindWorkerScrapList';
 import Layout from '@components/layout/Layout';
 // 공통 컴포넌트
@@ -14,7 +15,6 @@ import MyPage from '@pages/common/mypage/MyPage';
 import MyPasswordModify from '@pages/common/mypage/MyPasswordModify';
 import MyScrapList from '@pages/common/mypage/MyScrapList';
 import Policy from '@pages/common/mypage/Policy';
-import Resign from '@/pages/common/mypage/resignpage/Resign';
 import Version from '@pages/common/mypage/Version';
 import WishWorkerList from '@pages/common/mypage/WishWorkerList';
 // import MyFindWorkerList from '@pages/common/mypage/postpage/MyFindWorkerList';
@@ -92,20 +92,20 @@ export default function App() {
         />
 
         {/* 마이페이지 */}
-        // <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} />
+        {/* <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} /> */}
         <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
         <Route
           path="mypage/Myquestionpostlist"
           element={<MyQuestionPostList />}
         />
-        // <Route
-        //   path="mypage/myfindworkerscraplist"
-        //   element={<MyFindWorkerScrapList />}
+        <Route
+          path="mypage/myfindworkerscraplist"
+          // element={<MyFindWorkerScrapList />}
         />
-        // <Route
-        //   path="mypage/Myhousepostscraplist"
-        //   element={<MyHousePostScrapList />}
-        // />
+        {/* <Route
+          path="mypage/Myhousepostscraplist"
+          element={<MyHousePostScrapList />}
+        /> */}
         <Route
           path="mypage/Myquestionpostscraplist"
           element={<MyQuestionPostScrapList />}
