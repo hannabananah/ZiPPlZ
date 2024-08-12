@@ -6,12 +6,14 @@ public class PortfolioViewDTO{
     private int portfolio_serial;
     private int worker;
     private String user_name;
+    private int user_serial;
     private Integer birth_date;
     private double temperature;
     private int field_id;
     private String field_name;
     private double career;
     private int certificated_badge;
+    private String save_file;
     private List<String> locations;
     private String img;
 
@@ -22,12 +24,14 @@ public class PortfolioViewDTO{
         this.portfolio_serial = pjDTO.getPortfolio_serial();
         this.worker = pjDTO.getWorker();
         this.user_name = pjDTO.getUser_name();
+        this.user_serial = pjDTO.getUser_serial();
         this.birth_date = pjDTO.getBirth_date();
         this.temperature = pjDTO.getTemperature();
         this.field_id = pjDTO.getField_id();
         this.field_name = pjDTO.getField_name();
         this.career = pjDTO.getCareer();
         this.certificated_badge = pjDTO.getCertificated_badge();
+        this.save_file = pjDTO.getSaveFile();
         this.locations = locations;
         this.img = img;
     }
@@ -54,6 +58,14 @@ public class PortfolioViewDTO{
 
     public void setUser_name(String user_name) {
         this.user_name = user_name;
+    }
+
+    public int getUser_serial() {
+        return user_serial;
+    }
+
+    public void setUser_serial(int user_serial) {
+        this.user_serial = user_serial;
     }
 
     public Integer getBirth_date() {
@@ -104,6 +116,14 @@ public class PortfolioViewDTO{
         this.certificated_badge = certificated_badge;
     }
 
+    public String getSave_file() {
+        return save_file;
+    }
+
+    public void setSave_file(String save_file) {
+        this.save_file = save_file;
+    }
+
     public List<String> getLocations() {
         return locations;
     }
@@ -126,12 +146,14 @@ public class PortfolioViewDTO{
                 "portfolio_serial=" + portfolio_serial +
                 ", worker=" + worker +
                 ", user_name='" + user_name + '\'' +
+                ", user_serial=" + user_serial +
                 ", birth_date=" + birth_date +
                 ", temperature=" + temperature +
                 ", field_id=" + field_id +
                 ", field_name='" + field_name + '\'' +
                 ", career=" + career +
                 ", certificated_badge=" + certificated_badge +
+                ", save_file='" + save_file + '\'' +
                 ", locations=" + locations +
                 ", img='" + img + '\'' +
                 '}';
