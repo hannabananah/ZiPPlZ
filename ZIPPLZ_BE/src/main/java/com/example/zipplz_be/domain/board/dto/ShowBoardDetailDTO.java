@@ -1,6 +1,5 @@
 package com.example.zipplz_be.domain.board.dto;
 
-import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 
 import java.util.List;
@@ -8,10 +7,10 @@ import java.util.List;
 public class ShowBoardDetailDTO {
     BoardJoinDTO board;
     List<BoardFileDTO> board_images;
-    List<PortfolioJoinDTO> tags;
+    List<PortfolioViewDTO> tags;
     List<CommentViewDTO> comments;
 
-    public ShowBoardDetailDTO(BoardJoinDTO board, List<BoardFileDTO> board_images, List<PortfolioJoinDTO> tags, List<CommentViewDTO> comments) {
+    public ShowBoardDetailDTO(BoardJoinDTO board, List<BoardFileDTO> board_images, List<PortfolioViewDTO> tags, List<CommentViewDTO> comments) {
         this.board = board;
         this.board_images = board_images;
         this.tags = tags;
@@ -34,11 +33,11 @@ public class ShowBoardDetailDTO {
         this.board_images = board_images;
     }
 
-    public List<PortfolioJoinDTO> getTags() {
+    public List<PortfolioViewDTO> getTags() {
         return tags;
     }
 
-    public void setTags(List<PortfolioJoinDTO> tags) {
+    public void setTags(List<PortfolioViewDTO> tags) {
         this.tags = tags;
     }
 
