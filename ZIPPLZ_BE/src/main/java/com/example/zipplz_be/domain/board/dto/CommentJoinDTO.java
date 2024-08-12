@@ -11,4 +11,6 @@ public interface CommentJoinDTO {
     int getParentCommentSerial();
     int getOrderNumber();
     int getIsDeleted();
+    String getNickName();
+    String getUserName();
 }
