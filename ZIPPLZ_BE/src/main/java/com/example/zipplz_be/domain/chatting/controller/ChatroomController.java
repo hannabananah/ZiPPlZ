@@ -90,7 +90,7 @@ public class ChatroomController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    @GetMapping("/{chatroomSerial}")
+    @PostMapping("/{chatroomSerial}")
     public ResponseEntity getOtherUserName(Authentication authentication, @PathVariable int chatroomSerial) {
         ResponseDTO responseDTO;
         HttpStatus status;
@@ -124,6 +124,7 @@ public class ChatroomController {
 
         return new ResponseEntity<>(responseDTO, status);
     }
+
 
     public int getUserSerial(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
