@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -17,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.View;
 
 import java.util.Map;
 
@@ -25,11 +27,13 @@ import java.util.Map;
 @RequestMapping("/openvidu")
 public class OpenviduController {
     private final OpenviduService openviduService;
+    private final View error;
     JWTUtil jwtUtil;
 
-    public OpenviduController(OpenviduService openviduService, JWTUtil jwtUtil) {
+    public OpenviduController(OpenviduService openviduService, JWTUtil jwtUtil, View error) {
         this.openviduService = openviduService;
         this.jwtUtil = jwtUtil;
+        this.error = error;
     }
 
 
@@ -205,21 +209,37 @@ public class OpenviduController {
         HttpStatus status = HttpStatus.ACCEPTED;
         try {
             Session session = openvidu.getActiveSession((String) params.get("sessionId"));
+
+            System.out.println("세션 개수: " + session.getConnections().size());
+            for(Connection connection: session.getConnections()) {
+                System.out.println(connection.getConnectionId());
+            }
+
+            System.out.println("세션 아이디: " + session.getSessionId());
             if (session == null) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "그런 세션은 없습니다.");
             } else {
-                String recordingFileName = session.getSessionId() +
-                        LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+                //String recordingFileName = session.getSessionId() +
+                       // LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
                 //video, audio 둘 다 녹음, composed로, best-fit으로 디폴트 설정됨
                 RecordingProperties recordingProperties = new RecordingProperties.Builder()
                         .hasAudio(true)
                         .hasVideo(true)
-                        .name(recordingFileName)
+                        .name("nsdjifnisndfisjndfj")
+                       // .name(recordingFileName)
                         .build();
 
+                System.out.println("녹음 파일 객체 만들어짐!!" + recordingProperties.name());
+
+                Timestamp curDate = new Timestamp(System.currentTimeMillis());
+
+                System.out.println("현재 시간: " + curDate);
                 Recording recording = openvidu.startRecording(session.getSessionId(), recordingProperties);
+
+
+                System.out.println("녹화 시작 확인: " + recording.getCreatedAt());
 
                 //시작 시 채팅방 연번과 recording_id, 시작시간 모두 넣어두기
                 openviduService.insertRecordingFile(recording, (String) params.get("sessionId"));
@@ -228,6 +248,8 @@ public class OpenviduController {
                 responseDTO = new ResponseDTO<>(status.value(), "녹화 시작 완료", recording);
             }
         } catch (Exception e) {
+            System.out.println(e.getMessage());
+
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
