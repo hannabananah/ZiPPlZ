@@ -24,7 +24,7 @@ export default function HousePost() {
   }, [fetchHousePosts]);
 
   const handleWritePost = () => {
-    navigate('/HousePostDetailCreate');
+    navigate('/housepostcreate');
   };
 
   const toggleDropdown = () => {
@@ -114,7 +114,7 @@ export default function HousePost() {
               />
             </div>
           </div>
-          {/* 시공업자의 이름을 입력하세요. */}
+          {/* 글의 제목이나 작성자 이름을 입력하세요. */}
           <div className="w-full relative flex justify-center items-center">
             <HiMagnifyingGlass className="relative left-4" />
             <Input

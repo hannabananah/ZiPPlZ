@@ -33,6 +33,7 @@ import Portfolio from '@pages/worker/Portfolio';
 
 import Contract from './pages/common/Contract';
 import HousePost from './pages/common/community/HousePost';
+import HousePostCreate from './pages/common/community/HousePostCreate';
 import HousePostDetail from './pages/common/community/HousePostDetail';
 import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
 import QuestionPost from './pages/common/community/QuestionPost';
@@ -80,10 +81,12 @@ export default function App() {
         <Route path="questionpost" element={<QuestionPost />} />
         <Route path="questionpost/:id" element={<QuestionPostDetail />} />
         {/* 수정된 부분 */}
+        <Route path="housepostcreate" element={<HousePostCreate />} />
         <Route
           path="housepostdetailcreate"
           element={<HousePostDetailCreate />}
         />
+
         <Route path="questionpostupdate" element={<QuestionPostUpdate />} />
         <Route path="questionpostcreate" element={<QuestionPostCreate />} />
         {/* 마이페이지 */}
