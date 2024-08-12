@@ -82,10 +82,10 @@ export default function App() {
         <Route path="housepostdetail" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
         <Route path="questionpostdetail" element={<QuestionPostDetail />} />
-        // <Route
-        //   path="housepostdetailcreate"
-        //   element={<HousePostDetailCreate />}
-        // />
+        <Route
+          path="housepostdetailcreate"
+          element={<HousePostDetailCreate />}
+        />
         <Route
           path="questionpostdetailcreate"
           element={<QuestionPostDetailCreate />}
@@ -93,15 +93,15 @@ export default function App() {
 
         {/* 마이페이지 */}
         {/* <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} /> */}
-        // <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
+        {/*<Route path="mypage/myhousepostlist" element={<MyHousePostList />} />*/}
         <Route
           path="mypage/Myquestionpostlist"
           element={<MyQuestionPostList />}
         />
-        <Route
+        {/*<Route
           path="mypage/myfindworkerscraplist"
-          // element={<MyFindWorkerScrapList />}
-        />
+          element={<MyFindWorkerScrapList />}
+        />*/}
         {/* <Route
           path="mypage/Myhousepostscraplist"
           element={<MyHousePostScrapList />}
