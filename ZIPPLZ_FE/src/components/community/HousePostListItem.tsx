@@ -1,3 +1,4 @@
+import { CgProfile } from 'react-icons/cg';
 import { FaRegBookmark, FaRegComment, FaRegEye } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
@@ -54,7 +55,7 @@ export default function HousePostListItem({
             className="h-6 w-6 rounded-full"
           />
         ) : (
-          <div className="h-6 w-6 bg-gray-200 rounded-full" />
+          <CgProfile className="h-6 w-6 text-gray-400" />
         )}
         <div className="ml-2 text-zp-sm">{nickname}</div>
       </div>

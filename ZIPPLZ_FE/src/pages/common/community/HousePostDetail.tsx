@@ -1,27 +1,42 @@
 import { useEffect, useState } from 'react';
+import { BsThreeDotsVertical } from 'react-icons/bs';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
-import { IoMdArrowDropdown } from 'react-icons/io';
-import { IoBookmarkOutline } from 'react-icons/io5';
-import { IoBookmark } from 'react-icons/io5';
+import { IoIosArrowDown, IoIosArrowUp } from 'react-icons/io';
+import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import WorkerCard from '@/components/home/WorkerCard';
-import Photos from '@/components/worker/detail/overView/Photos';
 import { useHousePostStore } from '@/stores/housePostStore';
 
-export default function HousePostDetail() {
+export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isBookmarked, setIsBookmarked] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
   const [commentContent, setCommentContent] = useState('');
-
-  const { fetchPostDetails, postDetails, deletePost } = useHousePostStore();
+  const [replyContent, setReplyContent] = useState('');
+  const [expandedComments, setExpandedComments] = useState<{
+    [key: number]: boolean;
+  }>({});
+  const [isCommentActive, setIsCommentActive] = useState(false);
+  const [activeReplyComment, setActiveReplyComment] = useState<number | null>(
+    null
+  );
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
+  const {
+    fetchPostDetails,
+    postDetails,
+    deletePost,
+    addComment,
+    addReply,
+    toggleBookmark,
+  } = useHousePostStore();
 
   useEffect(() => {
     if (id) {
@@ -30,19 +45,31 @@ export default function HousePostDetail() {
   }, [id, fetchPostDetails]);
 
   if (!postDetails) {
-    return <div>Loading...</div>; // 데이터 로딩 중일 때 표시할 UI
+    return <div>Loading...</div>;
   }
 
   const handleGoBack = () => {
     navigate('/housepost');
   };
 
-  const handleBookmarkClick = () => {
-    setIsBookmarked((prev) => !prev);
+  const handleBookmarkClick = async () => {
+    const newBookmarkState = !isBookmarked;
+    setIsBookmarked(newBookmarkState);
+
+    const result = await toggleBookmark(Number(id), newBookmarkState);
+
+    if (result.success) {
+      onBookmarkChange(Number(id), newBookmarkState);
+    } else {
+      alert('북마크 업데이트에 실패했습니다.');
+      setIsBookmarked(!newBookmarkState);
+    }
   };
 
   const handleEditClick = () => {
-    navigate(`/HousePostDetailCreate/${id}`);
+    navigate('/HousePostUpdate', {
+      state: { post: postDetails, isEditMode: true },
+    });
   };
 
   const handleDeleteClick = () => {
@@ -81,9 +108,81 @@ export default function HousePostDetail() {
     if (code === 200) {
       alert('댓글이 성공적으로 저장되었습니다.');
       setCommentContent('');
+      setIsCommentActive(false);
+      fetchPostDetails(Number(id));
     } else {
       alert(`댓글 저장에 실패했습니다: ${message}`);
     }
+  };
+
+  const handleReplySubmit = async (parentCommentSerial: number) => {
+    const token = `Bearer ${localStorage.getItem('token')}`;
+    const reply = {
+      board_serial: Number(id),
+      comment_content: replyContent,
+      parent_comment_serial: parentCommentSerial,
+      order_number: 1,
+    };
+
+    const { code, message } = await addReply(token, reply);
+
+    if (code === 200) {
+      alert('대댓글이 성공적으로 저장되었습니다.');
+      setReplyContent('');
+      setActiveReplyComment(null);
+      fetchPostDetails(Number(id));
+    } else {
+      alert(`대댓글 저장에 실패했습니다: ${message}`);
+    }
+  };
+
+  const toggleCommentExpand = (commentSerial: number) => {
+    setExpandedComments((prev) => ({
+      ...prev,
+      [commentSerial]: !prev[commentSerial],
+    }));
+  };
+
+  const isAuthor = (userSerial: number) => {
+    const currentUserSerial = Number(localStorage.getItem('userSerial'));
+    return userSerial === currentUserSerial;
+  };
+
+  const handleCommentClick = () => {
+    setIsCommentActive(true);
+  };
+
+  const handleCancelComment = () => {
+    setIsCommentActive(false);
+    setCommentContent('');
+  };
+
+  const handleReplyClick = (commentSerial: number) => {
+    setActiveReplyComment(commentSerial);
+  };
+
+  const handleCancelReply = () => {
+    setActiveReplyComment(null);
+    setReplyContent('');
+  };
+
+  const handleToggleDropdown = (commentSerial: number) => {
+    setDropdownOpen((prev) => (prev === commentSerial ? null : commentSerial));
+  };
+
+  const handleEditComment = (commentSerial: number) => {
+    setEditingCommentId(commentSerial);
+    setDropdownOpen(null);
+  };
+
+  const handleDeleteComment = () => {
+    setIsDeleteModalOpen(true);
+    setDropdownOpen(null);
+  };
+
+  const handleSaveEditedComment = async (commentSerial: number) => {
+    setEditingCommentId(null);
+    fetchPostDetails(Number(id));
   };
 
   return (
@@ -122,8 +221,8 @@ export default function HousePostDetail() {
           </div>
 
           <div className="mt-6 flex justify-start items-center">
-            <div className="">
-              <CgProfile />
+            <div>
+              <CgProfile size={40} />
             </div>
             <div className="text-zp-md text-zp-gray">
               {postDetails.nickname}
@@ -133,12 +232,12 @@ export default function HousePostDetail() {
             </div>
           </div>
           <div className="mt-4 flex justify-center">
-            {postDetails.board_images && postDetails.board_images.length > 0 ? (
-              postDetails.board_images.map((image) => (
+            {postDetails.images && postDetails.images.length > 0 ? (
+              postDetails.images.map((image, index) => (
                 <img
-                  key={image.saveFile}
+                  key={index}
                   src={image.saveFile}
-                  alt="post image"
+                  alt={`post image ${index + 1}`}
                   className="rounded-lg shadow-md"
                 />
               ))
@@ -147,15 +246,12 @@ export default function HousePostDetail() {
             )}
           </div>
 
-          {/* 글 내용 */}
           <div className="mt-6 text-zp-sm font-bold">
             {postDetails.boardContent}
           </div>
 
-          {/* 이분들과 함께 했어요 text */}
           <div className="mt-6 text-zp-xl font-bold">이 분들과 함께 했어요</div>
 
-          {/* workercard 나열 */}
           <div className="flex w-full overflow-x-auto mt-4">
             <div className="flex justify-between w-full h-[8rem] ">
               {postDetails.tags && postDetails.tags.length > 0 ? (
@@ -168,44 +264,57 @@ export default function HousePostDetail() {
             </div>
           </div>
 
-          {/* 댓글 수 */}
           <div className="mt-6 text-zp-xl font-bold">
             댓글 {postDetails.comments ? postDetails.comments.length : 0}개
           </div>
 
-          {/* 댓글 작성 */}
-          <div className="mt-6 w-full flex space-x-2">
-            <div className="flex justify-start items-center">
+          <div className="mb-12 mt-6 w-full flex space-x-2">
+            <div className="flex justify-start items-start">
               <CgProfile size={40} />
             </div>
 
-            <Input
-              placeholder="리뷰 작성하기"
-              inputType="signup"
-              type="text"
-              width="100%"
-              height={2.5}
-              fontSize="xs"
-              radius="none"
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-              additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
-            />
-            <Button
-              children="댓글 추가"
-              buttonType="second"
-              width={8}
-              height={2.5}
-              fontSize="xs"
-              radius="full"
-              onClick={handleCommentSubmit}
-            />
+            <div className="w-full">
+              <Input
+                placeholder="리뷰 작성하기"
+                inputType="signup"
+                type="text"
+                width="100%"
+                height={2.5}
+                fontSize="xs"
+                radius="none"
+                value={commentContent}
+                onClick={handleCommentClick}
+                onChange={(e) => setCommentContent(e.target.value)}
+                additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
+              />
+              {isCommentActive && (
+                <div className="flex justify-end mt-2 space-x-2">
+                  <Button
+                    children="취소"
+                    buttonType="light"
+                    width={8}
+                    height={2.5}
+                    fontSize="xs"
+                    radius="full"
+                    onClick={handleCancelComment}
+                  />
+                  <Button
+                    children="댓글"
+                    buttonType="second"
+                    width={8}
+                    height={2.5}
+                    fontSize="xs"
+                    radius="full"
+                    onClick={handleCommentSubmit}
+                  />
+                </div>
+              )}
+            </div>
           </div>
 
-          {/* 댓글 표시 */}
           {postDetails.comments && postDetails.comments.length > 0 ? (
             postDetails.comments.map((comment, index) => (
-              <div key={index} className="mt-6 flex flex-col">
+              <div key={index} className="mb-12 mt-6 flex flex-col">
                 <div className="flex items-center">
                   <CgProfile size={40} />
                   <div className="px-2 text-zp-xs font-bold">
@@ -217,28 +326,225 @@ export default function HousePostDetail() {
                       comment.parent_comment.commentDate
                     ).toLocaleDateString()}
                   </div>
+                  {isAuthor(comment.parent_comment.userSerial) && (
+                    <div className="ml-auto cursor-pointer relative">
+                      <BsThreeDotsVertical
+                        size={20}
+                        onClick={() =>
+                          handleToggleDropdown(
+                            comment.parent_comment.commentSerial
+                          )
+                        }
+                      />
+                      {dropdownOpen ===
+                        comment.parent_comment.commentSerial && (
+                        <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-300 shadow-lg">
+                          <div
+                            className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                            onClick={() =>
+                              handleEditComment(
+                                comment.parent_comment.commentSerial
+                              )
+                            }
+                          >
+                            수정
+                          </div>
+                          <div
+                            className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                            onClick={handleDeleteComment}
+                          >
+                            삭제
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
                 <div className="ml-12 text-zp-xs font-bold text-zp-gray">
-                  {comment.parent_comment.commentContent}
+                  {editingCommentId === comment.parent_comment.commentSerial ? (
+                    <div className="flex items-center">
+                      <Input
+                        placeholder="댓글 수정하기"
+                        inputType="signup"
+                        type="text"
+                        width="100%"
+                        height={2.5}
+                        fontSize="xs"
+                        radius="none"
+                        value={commentContent}
+                        onChange={(e) => setCommentContent(e.target.value)}
+                        additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
+                      />
+                      <Button
+                        children="저장"
+                        buttonType="second"
+                        width={8}
+                        height={2.5}
+                        fontSize="xs"
+                        radius="full"
+                        onClick={() =>
+                          handleSaveEditedComment(
+                            comment.parent_comment.commentSerial
+                          )
+                        }
+                      />
+                    </div>
+                  ) : (
+                    comment.parent_comment.commentContent
+                  )}
+                </div>
+                <div className="flex justify-start ml-12 mt-2">
+                  <div
+                    className="cursor-pointer"
+                    onClick={() =>
+                      toggleCommentExpand(comment.parent_comment.commentSerial)
+                    }
+                  >
+                    {expandedComments[comment.parent_comment.commentSerial] ? (
+                      <IoIosArrowUp size={20} />
+                    ) : (
+                      <IoIosArrowDown size={20} />
+                    )}
+                  </div>
+                  <div className="text-zp-xs text-zp-main-color font-bold ml-2">
+                    답글 {comment.child_comments.length}개
+                  </div>
                 </div>
 
-                {/* 답글 표시 */}
-                {comment.child_comments &&
-                  comment.child_comments.length > 0 &&
-                  comment.child_comments.map((child, childIndex) => (
-                    <div
-                      key={childIndex}
-                      className="ml-12 mt-2 flex justify-start items-center"
-                    >
+                {expandedComments[comment.parent_comment.commentSerial] && (
+                  <>
+                    <div className="ml-12 mt-4 flex space-x-2 items-start">
                       <CgProfile size={40} />
-                      <div className="ml-2 text-zp-xs font-bold">
-                        {child.nickName}
-                      </div>
-                      <div className="ml-2 text-zp-xs font-bold text-zp-gray">
-                        · {new Date(child.commentDate).toLocaleDateString()}
+                      <div className="w-full">
+                        <Input
+                          placeholder="답글"
+                          inputType="signup"
+                          type="text"
+                          width="100%"
+                          height={2.5}
+                          fontSize="xs"
+                          radius="none"
+                          value={replyContent}
+                          onClick={() =>
+                            handleReplyClick(
+                              comment.parent_comment.commentSerial
+                            )
+                          }
+                          onChange={(e) => setReplyContent(e.target.value)}
+                          additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
+                        />
+                        {activeReplyComment ===
+                          comment.parent_comment.commentSerial && (
+                          <div className="flex justify-end mt-2 space-x-2">
+                            <Button
+                              children="취소"
+                              buttonType="light"
+                              width={8}
+                              height={2.5}
+                              fontSize="xs"
+                              radius="full"
+                              onClick={handleCancelReply}
+                            />
+                            <Button
+                              children="대댓글 추가"
+                              buttonType="second"
+                              width={8}
+                              height={2.5}
+                              fontSize="xs"
+                              radius="full"
+                              onClick={() =>
+                                handleReplySubmit(
+                                  comment.parent_comment.commentSerial
+                                )
+                              }
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
-                  ))}
+
+                    {comment.child_comments &&
+                      comment.child_comments.length > 0 &&
+                      comment.child_comments.map((child, childIndex) => (
+                        <div
+                          key={childIndex}
+                          className="ml-12 mt-2 flex flex-col"
+                        >
+                          <div className="flex items-center">
+                            <CgProfile size={40} />
+                            <div className="px-2 text-zp-xs font-bold">
+                              {child.nickName}
+                            </div>
+                            <div className="text-zp-xs text-zp-gray font-bold">
+                              ·{' '}
+                              {new Date(child.commentDate).toLocaleDateString()}
+                            </div>
+                            {isAuthor(child.userSerial) && (
+                              <div className="ml-auto cursor-pointer relative">
+                                <BsThreeDotsVertical
+                                  size={20}
+                                  onClick={() =>
+                                    handleToggleDropdown(child.commentSerial)
+                                  }
+                                />
+                                {dropdownOpen === child.commentSerial && (
+                                  <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-300 shadow-lg">
+                                    <div
+                                      className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                                      onClick={() =>
+                                        handleEditComment(child.commentSerial)
+                                      }
+                                    >
+                                      수정
+                                    </div>
+                                    <div
+                                      className="px-4 py-2 cursor-pointer hover:bg-gray-200"
+                                      onClick={handleDeleteComment}
+                                    >
+                                      삭제
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                          <div className="ml-12 text-zp-xs font-bold text-zp-gray">
+                            {editingCommentId === child.commentSerial ? (
+                              <div className="flex items-center">
+                                <Input
+                                  placeholder="답글 수정하기"
+                                  inputType="signup"
+                                  type="text"
+                                  width="100%"
+                                  height={2.5}
+                                  fontSize="xs"
+                                  radius="none"
+                                  value={replyContent}
+                                  onChange={(e) =>
+                                    setReplyContent(e.target.value)
+                                  }
+                                  additionalStyle="bg-zp-light-beige border-b-2 font-bold text-zp-gray"
+                                />
+                                <Button
+                                  children="저장"
+                                  buttonType="second"
+                                  width={8}
+                                  height={2.5}
+                                  fontSize="xs"
+                                  radius="full"
+                                  onClick={() =>
+                                    handleSaveEditedComment(child.commentSerial)
+                                  }
+                                />
+                              </div>
+                            ) : (
+                              child.commentContent
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                  </>
+                )}
               </div>
             ))
           ) : (

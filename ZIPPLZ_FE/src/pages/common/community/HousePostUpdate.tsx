@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { CiCirclePlus, CiSearch } from 'react-icons/ci';
 import { FaCamera, FaRegCircle } from 'react-icons/fa';
@@ -7,78 +7,83 @@ import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useLoginUserStore } from '@/stores/loginUserStore';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 import { useHousePostStore } from '@stores/housePostStore';
-import 'swiper/css';
-import 'swiper/css/navigation';
-
-// Zustand 스토어 import
+import axios from 'axios';
 
 export default function HousePostUpdate() {
-  type Image = string;
-  const { loginUser } = useLoginUserStore();
+  type Image = File | string;
   const [images, setImages] = useState<Image[]>([]);
+  const [title, setTitle] = useState<string>('');
+  const [boardContent, setBoardContent] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [addressDetail, setAddressDetail] = useState<string>('');
-  const [workDetail, setWorkDetail] = useState<string>('');
   const [schedule, setSchedule] = useState<string>('');
-  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState<WorkerInfo[]>([]);
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
+  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
+  const [workerInfoList, setWorkerInfoList] = useState<WorkerInfo[]>([]);
 
+  const [postId, setPostId] = useState<number | null>(null);
+  const [isEditMode, setIsEditMode] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
+  const location = useLocation();
   const maxImages = 10;
-
   const schedules = ['스케줄1', '스케줄2', '스케줄3'];
 
-  const { title, setTitle, boardContent, setBoardContent, createPost } =
-    useHousePostStore();
+  const { updatePost, createPost } = useHousePostStore();
 
-  // 여기에 임시 workers 데이터를 추가합니다.
-  const workers: WorkerInfo[] = [
-    {
-      user_serial: 1,
-      portfolio_serial: 1,
-      name: '김현태',
-      birth_date: 1990,
-      temp: 36.5,
-      field_id: 1,
-      field_name: '전기',
-      career: 3,
-      certificated_badge: 1,
-      locations: ['서울 강남구'],
-      img: '/',
-    },
-    {
-      user_serial: 2,
-      portfolio_serial: 1,
-      name: '이영수',
-      birth_date: 1985,
-      temp: 37.2,
-      field_id: 2,
-      field_name: '설비',
-      career: 5,
-      certificated_badge: 1,
-      locations: ['서울 서초구'],
-      img: '/',
-    },
-    // 더미 데이터를 추가하거나 필요한 만큼 추가합니다.
-  ];
+  useEffect(() => {
+    if (location.state) {
+      const { post, isEditMode } = location.state;
+      setTitle(post.title);
+      setBoardContent(post.boardContent);
+      setImages(post.images || []);
+      setAddress(post.address || '');
+      setAddressDetail(post.addressDetail || '');
+      setSchedule(post.schedule || '');
+      setSelectedWorkers(post.selectedWorkers || []);
+      setIsEditMode(isEditMode);
+      setPostId(post.boardSerial);
+    }
+    fetchWorkerInfoList();
+  }, [location.state]);
+
+  const fetchWorkerInfoList = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/workerlist/portfolios'
+      );
+      if (response.data.proc.code === 200) {
+        setWorkerInfoList(response.data.data);
+      } else {
+        console.error(
+          'Failed to fetch worker info list:',
+          response.data.proc.message
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching worker info list:', error);
+    }
+  };
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    // 이미지 업로드 함수
+    const files = Array.from(event.target.files || []);
+    setImages((prevImages) => [
+      ...prevImages,
+      ...files.slice(0, maxImages - prevImages.length),
+    ]);
   };
 
   const handleImageRemove = (index: number) => {
@@ -93,27 +98,55 @@ export default function HousePostUpdate() {
     if (!addressDetail)
       newErrors.addressDetail = '상세 주소가 입력되지 않았습니다';
     if (!schedule) newErrors.schedule = '스케줄이 선택되지 않았습니다';
-    if (!workDetail) newErrors.workDetail = '내용이 입력되지 않았습니다';
+    if (!boardContent) newErrors.boardContent = '내용이 입력되지 않았습니다';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    setBoardContent(workDetail); // 상태에 workDetail 저장
+    const postData = {
+      title,
+      board_content: boardContent,
+      address,
+      addressDetail,
+      schedule,
+      selectedWorkers: selectedWorkers.map((worker) => ({
+        portfolio_serial: worker.portfolio_serial,
+        worker: worker.user_serial,
+      })),
+    };
 
     const token = `Bearer ${localStorage.getItem('token')}`;
-    const { code, message } = await createPost(token);
 
-    if (code === 200) {
-      alert('자랑글이 성공적으로 등록되었습니다.');
-      navigate('/housepost');
+    if (isEditMode && postId) {
+      const { code, message } = await updatePost(token, postId, postData);
+      if (code === 200) {
+        alert('자랑글이 성공적으로 수정되었습니다.');
+        navigate('/housepost');
+      } else {
+        alert(`자랑글 수정에 실패했습니다: ${message}`);
+      }
     } else {
-      alert(`자랑글 등록에 실패했습니다: ${message}`);
+      const formData = new FormData();
+      formData.append('params', JSON.stringify(postData));
+
+      images.forEach((image) => {
+        if (image instanceof File) {
+          formData.append('images', image);
+        }
+      });
+
+      const { code, message } = await createPost(token, formData);
+      if (code === 200) {
+        alert('자랑글이 성공적으로 등록되었습니다.');
+        navigate('/housepost');
+      } else {
+        alert(`자랑글 등록에 실패했습니다: ${message}`);
+      }
     }
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/housepost');
   };
@@ -209,10 +242,11 @@ export default function HousePostUpdate() {
                   className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
                 >
                   <img
-                    src={image}
+                    src={
+                      image instanceof File ? URL.createObjectURL(image) : image
+                    }
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded-zp-radius-btn"
-                    onClick={() => handleImageRemove(index)}
                   />
                   <button
                     onClick={() => handleImageRemove(index)}
@@ -271,10 +305,6 @@ export default function HousePostUpdate() {
                   }
                   onClick={() => setIsPostcodeOpen(true)}
                 />
-                <CiSearch
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => setIsPostcodeOpen(true)}
-                />
               </div>
               {errors.address && (
                 <div className="text-zp-red text-zp-xs mt-1">
@@ -326,11 +356,12 @@ export default function HousePostUpdate() {
                     fontSize="xs"
                     radius="btn"
                     value={schedule}
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                     onChange={(e: ChangeEvent<HTMLInputElement>) =>
                       setSchedule(e.target.value)
                     }
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                   />
+
                   {isDropdownOpen ? (
                     <IoMdArrowDropup
                       size={40}
@@ -370,7 +401,7 @@ export default function HousePostUpdate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">자랑해주세요</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn  pl-2">
+              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
                 <Input
                   type="text"
                   placeholder="집에서 자랑하고 싶은 내용을 입력해주세요."
@@ -380,15 +411,15 @@ export default function HousePostUpdate() {
                   className=""
                   fontSize="xs"
                   radius="btn"
-                  value={workDetail}
+                  value={boardContent}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setWorkDetail(e.target.value)
+                    setBoardContent(e.target.value)
                   }
                 />
               </div>
-              {errors.workDetail && (
+              {errors.boardContent && (
                 <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.workDetail}
+                  {errors.boardContent}
                 </div>
               )}
             </div>
@@ -411,15 +442,11 @@ export default function HousePostUpdate() {
               {selectedWorkers.length > 0 && (
                 <div className="mt-2 grid grid-cols-2 gap-4">
                   {selectedWorkers.map((worker) => (
-                    <div key={worker.user_serial}>
-                      <WorkerInfoListItem worker={worker} />
-                    </div>
+                    <WorkerInfoListItem
+                      key={worker.portfolio_serial}
+                      worker={worker}
+                    />
                   ))}
-                </div>
-              )}
-              {errors.workDetail && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.workDetail}
                 </div>
               )}
             </div>
@@ -427,7 +454,7 @@ export default function HousePostUpdate() {
 
           <div className="mt-6 mb-12 font-bold h-20 flex items-center justify-center">
             <Button
-              children="확인"
+              children={isEditMode ? '수정하기' : '확인'}
               buttonType="second"
               width="full"
               height={2.375}
@@ -476,15 +503,14 @@ export default function HousePostUpdate() {
                 className="mb-4 pr-10"
                 fontSize="xs"
                 radius="btn"
-                // 여기에 onChange 핸들러 추가
                 onChange={() => {}}
               />
               <HiMagnifyingGlass className="absolute right-2 top-1/2 transform -translate-y-1/2" />
             </div>
 
             <div className="mt-2 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-              {workers.map((worker) => (
-                <div key={worker.user_serial} className="relative">
+              {workerInfoList.map((worker) => (
+                <div key={worker.portfolio_serial} className="relative">
                   <WorkerInfoListItem worker={worker} />
                   <div
                     className="absolute top-2 right-2 cursor-pointer"

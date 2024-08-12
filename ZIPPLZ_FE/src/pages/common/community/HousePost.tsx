@@ -9,12 +9,17 @@ import Selectbar from '@components/common/Selectbar';
 import HousePostListItem from '@components/community/HousePostListItem';
 import { useHousePostStore } from '@stores/housePostStore';
 
+import HousePostDetail from './HousePostDetail';
+
 type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function HousePost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
+  const [bookmarkCounts, setBookmarkCounts] = useState<{
+    [key: number]: number;
+  }>({}); // 각 포스트의 북마크 수를 저장하는 상태
 
   const navigate = useNavigate();
   const { housePosts, fetchHousePosts } = useHousePostStore();
@@ -47,6 +52,13 @@ export default function HousePost() {
     setInputValue(e.target.value);
   };
 
+  const handleBookmarkChange = (postId: number, isBookmarked: boolean) => {
+    setBookmarkCounts((prev) => ({
+      ...prev,
+      [postId]: (prev[postId] || 0) + (isBookmarked ? 1 : -1),
+    }));
+  };
+
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6">
@@ -61,7 +73,9 @@ export default function HousePost() {
                 집들이
               </div>
               <IoMdArrowDropdown
-                className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+                className={`transition-transform ${
+                  isDropdownOpen ? 'rotate-180' : ''
+                }`}
                 size={24}
               />
             </div>
@@ -139,11 +153,15 @@ export default function HousePost() {
                   post_serial={post.board_serial}
                   post_image={post.img}
                   title={post.title}
-                  profile_image={post.img || 'https://via.placeholder.com/50'} // 기본 이미지 사용
+                  profile_image={null} // 기본 이미지 사용
                   nickname={post.nickname}
                   upload_date={new Date(post.board_date)}
                   view_cnt={post.hit}
-                  bookmark_cnt={post.wish_cnt}
+                  bookmark_cnt={
+                    bookmarkCounts[post.board_serial] !== undefined
+                      ? bookmarkCounts[post.board_serial]
+                      : post.wish_cnt
+                  }
                   comment_cnt={post.comment_cnt}
                 />
               ))
@@ -155,6 +173,8 @@ export default function HousePost() {
           </div>
         </div>
       </div>
+      {/* HousePostDetail를 사용해 북마크 변경 시 이벤트 전달 */}
+      <HousePostDetail onBookmarkChange={handleBookmarkChange} />
     </>
   );
 }
