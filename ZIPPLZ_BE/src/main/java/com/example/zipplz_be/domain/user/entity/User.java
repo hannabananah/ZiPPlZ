@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.user.entity;
 
 import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.file.repository.FileRepository;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -68,6 +69,10 @@ public class User {
         // java.util.Date를 java.sql.Date로 변환
         Date birthDateSql = new Date(utilDate.getTime());
         this.birthDate = birthDateSql;
+    }
+
+    public void setFile(File file) {
+        this.fileSerial = file;
     }
 
     @Override

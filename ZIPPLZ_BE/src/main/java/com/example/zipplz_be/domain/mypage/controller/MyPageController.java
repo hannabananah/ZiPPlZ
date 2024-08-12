@@ -304,6 +304,22 @@ public class MyPageController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    // 회원 탈퇴
+    @DeleteMapping("/delete")
+    public ResponseEntity<ResponseDTO> deleteAccount(Authentication authentication) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            myPageService.deleteAccount(this.getUserSerial(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "회원 탈퇴 완료");
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
 
     public int getUserSerial(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();

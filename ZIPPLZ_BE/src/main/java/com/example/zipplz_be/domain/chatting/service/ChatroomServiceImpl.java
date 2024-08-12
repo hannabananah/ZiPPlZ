@@ -192,6 +192,16 @@ public class ChatroomServiceImpl implements ChatroomService {
     }
 
     @Override
+    public String getOtherUserName(int chatroomSerial, int userSerial) {
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
+
+        User otherUser =
+                userSerial == chatroom.getWuser().getUserSerial()? chatroom.getCuser() : chatroom.getWuser();
+
+        return otherUser.getUserName();
+    }
+
+    @Override
     public List<ChatMessageResponseDTO> getPreviousMessage(int chatroomSerial, int userSerial) {
         if (!chatroomRepository.existsByChatroomSerialAndStatus(chatroomSerial, Status.ACTIVE)) {
             throw new ChatroomNotFoundException("해당 채팅방이 존재하지 않습니다.");

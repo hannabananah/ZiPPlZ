@@ -6,7 +6,10 @@ import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -43,7 +46,7 @@ public class WorkerListController {
     }
 
     @GetMapping("/portfolios/field/{field_code}")
-    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListByField(@PathVariable("field_code") int field_code) {
+    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListByField(@Path.Variable("field_code") int field_code) {
         ResponseDTO<List<PortfolioViewDTO>> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 

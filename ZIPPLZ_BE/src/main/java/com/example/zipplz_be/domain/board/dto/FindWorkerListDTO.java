@@ -21,6 +21,7 @@ public class FindWorkerListDTO {
     int hit;
     String nickname;
     String user_name;
+    String save_file;
     int comment_cnt;
     int wish_cnt;
 
@@ -34,6 +35,7 @@ public class FindWorkerListDTO {
         this.hit = bjd.getHit();
         this.nickname = bjd.getNickname();
         this.user_name = bjd.getUserName();
+        this.save_file = bjd.getSaveFile();
         this.comment_cnt = comment_cnt;
         this.wish_cnt = wish_cnt;
     }

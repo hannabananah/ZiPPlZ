@@ -12,4 +12,5 @@ public interface BoardJoinDTO {
     int getHit();
     String getNickname();
     String getUserName();
+    String getSaveFile();
 }

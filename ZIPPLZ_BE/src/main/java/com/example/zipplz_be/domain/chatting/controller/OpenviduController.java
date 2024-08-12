@@ -210,12 +210,6 @@ public class OpenviduController {
         try {
             Session session = openvidu.getActiveSession((String) params.get("sessionId"));
 
-            System.out.println("세션 개수: " + session.getConnections().size());
-            for(Connection connection: session.getConnections()) {
-                System.out.println(connection.getConnectionId());
-            }
-
-            System.out.println("세션 아이디: " + session.getSessionId());
             if (session == null) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "그런 세션은 없습니다.");
@@ -231,11 +225,7 @@ public class OpenviduController {
                        // .name(recordingFileName)
                         .build();
 
-                System.out.println("녹음 파일 객체 만들어짐!!" + recordingProperties.name());
 
-                Timestamp curDate = new Timestamp(System.currentTimeMillis());
-
-                System.out.println("현재 시간: " + curDate);
                 Recording recording = openvidu.startRecording(session.getSessionId(), recordingProperties);
 
 

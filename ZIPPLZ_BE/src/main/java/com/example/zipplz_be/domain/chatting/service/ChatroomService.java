@@ -18,6 +18,8 @@ public interface ChatroomService {
 
     ChatroomDetailDTO getChatroomDetail(int chatroomSerial, int userSerial);
 
+    String getOtherUserName(int chatroomSerial, int userSerial);
+
     List<ChatMessageResponseDTO> getPreviousMessage(int chatroomSerial, int userSerial);
 
     void deleteChatroom(int chatroomSerial, int userSerial);

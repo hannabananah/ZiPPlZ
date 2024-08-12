@@ -11,7 +11,9 @@ import com.example.zipplz_be.domain.board.repository.CommentRepository;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
+import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.mypage.repository.WishRepository;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioFileDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioJoinDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
@@ -43,17 +45,19 @@ public class BoardServiceImpl implements BoardService {
     private final WishRepository wishRepository;
     private final FileRepository fileRepository;
     private final PortfolioRepository portfolioRepository;
+    private final LocalRepository localRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
-    public BoardServiceImpl(AmazonS3 amazonS3, BoardRepository boardRepository, CommentRepository commentRepository, WishRepository wishRepository, FileRepository fileRepository, PortfolioRepository portfolioRepository, EntityManager entityManager) {
+    public BoardServiceImpl(AmazonS3 amazonS3, BoardRepository boardRepository, CommentRepository commentRepository, WishRepository wishRepository, FileRepository fileRepository, PortfolioRepository portfolioRepository, LocalRepository localRepository, EntityManager entityManager) {
         this.amazonS3 = amazonS3;
         this.boardRepository = boardRepository;
         this.commentRepository = commentRepository;
         this.wishRepository = wishRepository;
         this.fileRepository = fileRepository;
         this.portfolioRepository = portfolioRepository;
+        this.localRepository = localRepository;
         this.entityManager = entityManager;
     }
 
@@ -83,6 +87,11 @@ public class BoardServiceImpl implements BoardService {
         boardRepository.deleteBoardToPortfolio(boardSerial);
         boardRepository.deleteBoardFileRelation(boardSerial);
         return boardRepository.deleteBoard(boardSerial);
+    }
+
+    @Override
+    public void updateboardhit(int boardSerial) {
+        boardRepository.updateboardhit(boardSerial);
     }
 
     @Override
@@ -117,6 +126,19 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public List<QuestionListDTO> findQuestionsByContent(int boardType, String searchContent) {
+        List<QuestionListDTO> views = new ArrayList<>();
+        List<BoardJoinDTO> boards = boardRepository.findBoardsByContent(boardType, searchContent);
+        for (BoardJoinDTO board : boards) {
+            int comment_cnt = commentRepository.getComment(board.getBoardSerial(), -1).size();
+            int wish_cnt = wishRepository.getWishCnt(board.getBoardSerial());
+            QuestionListDTO view = new QuestionListDTO(board, comment_cnt, wish_cnt);
+            views.add(view);
+        }
+        return views;
+    }
+
+    @Override
     public List<ShowBoardListDTO> getShowBoards(int boardType) {
         List<ShowBoardListDTO> views = new ArrayList<>();
         List<BoardJoinDTO> boards = boardRepository.getBoards(boardType);
@@ -138,8 +160,19 @@ public class BoardServiceImpl implements BoardService {
     public ShowBoardDetailDTO getShowBoard(int boardSerial) {
         BoardJoinDTO board = boardRepository.getBoard(boardSerial);
         List<BoardFileDTO> files = fileRepository.getBoardImg(boardSerial);
-        List<PortfolioJoinDTO> tags = portfolioRepository.getPortfolioTags(boardSerial);
-        
+        List<PortfolioViewDTO> tags = new ArrayList<>();
+        List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioTags(boardSerial);
+        for (PortfolioJoinDTO portfolio : portfolios) {
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
+            List<PortfolioFileDTO> portfolio_files = fileRepository.getImg(portfolio.getPortfolio_serial());
+            String img = null;
+            if (!portfolio_files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
+            tags.add(portfolioView);
+        }
+
         List<CommentJoinDTO> parent_comments = commentRepository.getComment(boardSerial, -1);
         List<CommentViewDTO> comments = new ArrayList<>();
         for (CommentJoinDTO parent_comment : parent_comments) {
@@ -152,6 +185,24 @@ public class BoardServiceImpl implements BoardService {
         }
         ShowBoardDetailDTO showboard = new ShowBoardDetailDTO(board, files, tags, comments);
         return showboard;
+    }
+
+    @Override
+    public List<ShowBoardListDTO> findShowBoardByContent(int boardType, String searchContent) {
+        List<ShowBoardListDTO> views = new ArrayList<>();
+        List<BoardJoinDTO> boards = boardRepository.findBoardsByContent(boardType, searchContent);
+        for (BoardJoinDTO board : boards) {
+            List<BoardFileDTO> files = fileRepository.getBoardImg(board.getBoardSerial());
+            String img = null;
+            if (!files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            int comment_cnt = commentRepository.getComment(board.getBoardSerial(), -1).size();
+            int wish_cnt = wishRepository.getWishCnt(board.getBoardSerial());
+            ShowBoardListDTO view = new ShowBoardListDTO(board, img, comment_cnt, wish_cnt);
+            views.add(view);
+        }
+        return views;
     }
 
     @Override
@@ -183,6 +234,19 @@ public class BoardServiceImpl implements BoardService {
         }
         FindWorkerDetailDTO findworker = new FindWorkerDetailDTO(board, files, comments);
         return findworker;
+    }
+
+    @Override
+    public List<FindWorkerListDTO> findFindWorkerByContent(int boardType, String searchContent) {
+        List<FindWorkerListDTO> views = new ArrayList<>();
+        List<BoardJoinDTO> boards = boardRepository.findBoardsByContent(boardType, searchContent);
+        for (BoardJoinDTO board : boards) {
+            int comment_cnt = commentRepository.getComment(board.getBoardSerial(), -1).size();
+            int wish_cnt = wishRepository.getWishCnt(board.getBoardSerial());
+            FindWorkerListDTO view = new FindWorkerListDTO(board, comment_cnt, wish_cnt);
+            views.add(view);
+        }
+        return views;
     }
 
     @Override

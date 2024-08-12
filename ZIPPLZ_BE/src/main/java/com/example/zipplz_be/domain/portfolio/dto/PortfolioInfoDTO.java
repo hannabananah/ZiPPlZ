@@ -19,6 +19,7 @@ import java.util.*;
 @Setter
 public class PortfolioInfoDTO {
     // 어필내용, 경력, A/S 기간, 누적 시공수
+    int portfolioSerial;
     String publicRelation;
     double career;
     int asPeriod;
@@ -40,8 +41,9 @@ public class PortfolioInfoDTO {
     private List<PortfolioFileDTO> imageList;
 
     @Builder
-    PortfolioInfoDTO(String publicRelation,double career, int asPeriod, int workCount,
+    PortfolioInfoDTO(int portfolioSerial, String publicRelation,double career, int asPeriod, int workCount,
                      PortfolioUserDTO user, PortfolioWorkerDTO worker, List<String> localList, File userProfile, List<PortfolioFileDTO> imageList) {
+        this.portfolioSerial = portfolioSerial;
         this.user = user;
         this.worker = worker;
         this.localList = localList;
