@@ -27,15 +27,15 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   const [activeReplyComment, setActiveReplyComment] = useState<number | null>(
     null
   );
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
-  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // 댓글 또는 답글 수정 상태
+  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null); // 드롭다운 상태
   const {
     fetchPostDetails,
     postDetails,
     deletePost,
     addComment,
     addReply,
-    toggleBookmark,
+    toggleBookmark, // 북마크 토글 함수 추가
   } = useHousePostStore();
 
   useEffect(() => {
@@ -109,7 +109,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
       alert('댓글이 성공적으로 저장되었습니다.');
       setCommentContent('');
       setIsCommentActive(false);
-      fetchPostDetails(Number(id));
+      fetchPostDetails(Number(id)); // 댓글 추가 후 게시글 새로고침
     } else {
       alert(`댓글 저장에 실패했습니다: ${message}`);
     }
@@ -130,7 +130,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
       alert('대댓글이 성공적으로 저장되었습니다.');
       setReplyContent('');
       setActiveReplyComment(null);
-      fetchPostDetails(Number(id));
+      fetchPostDetails(Number(id)); // 대댓글 추가 후 게시글 새로고침
     } else {
       alert(`대댓글 저장에 실패했습니다: ${message}`);
     }
@@ -172,17 +172,18 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
   const handleEditComment = (commentSerial: number) => {
     setEditingCommentId(commentSerial);
-    setDropdownOpen(null);
+    setDropdownOpen(null); // 드롭다운 닫기
   };
 
   const handleDeleteComment = () => {
     setIsDeleteModalOpen(true);
-    setDropdownOpen(null);
+    setDropdownOpen(null); // 드롭다운 닫기
   };
 
   const handleSaveEditedComment = async (commentSerial: number) => {
+    // 여기서 수정된 댓글 내용을 서버에 저장하는 로직을 추가할 수 있습니다.
     setEditingCommentId(null);
-    fetchPostDetails(Number(id));
+    fetchPostDetails(Number(id)); // 새로고침
   };
 
   return (
@@ -406,7 +407,12 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                       <IoIosArrowDown size={20} />
                     )}
                   </div>
-                  <div className="text-zp-xs text-zp-main-color font-bold ml-2">
+                  <div
+                    className="cursor-pointer text-zp-xs text-zp-main-color font-bold ml-2"
+                    onClick={() =>
+                      toggleCommentExpand(comment.parent_comment.commentSerial)
+                    }
+                  >
                     답글 {comment.child_comments.length}개
                   </div>
                 </div>
