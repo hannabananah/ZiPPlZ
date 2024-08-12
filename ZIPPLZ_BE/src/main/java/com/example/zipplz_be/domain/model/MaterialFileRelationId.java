@@ -21,7 +21,7 @@ public class MaterialFileRelationId implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         MaterialFileRelationId that = (MaterialFileRelationId) o;
-        return materialSerial == that.materialSerial && fileSerial == that.materialSerial;
+        return materialSerial == that.materialSerial && fileSerial == that.fileSerial;
     }
 
     @Override

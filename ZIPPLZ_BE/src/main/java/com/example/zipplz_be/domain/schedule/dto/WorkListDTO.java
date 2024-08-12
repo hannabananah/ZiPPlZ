@@ -12,6 +12,7 @@ public class WorkListDTO {
     String endDate;
     String field;
 
+
     @Builder
     public WorkListDTO(String startDate, String endDate, String field) {
         this.startDate = startDate;

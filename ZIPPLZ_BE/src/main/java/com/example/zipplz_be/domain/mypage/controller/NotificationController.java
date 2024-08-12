@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.*;
 
-@CrossOrigin(origins = "* ")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/notification")
 public class NotificationController {

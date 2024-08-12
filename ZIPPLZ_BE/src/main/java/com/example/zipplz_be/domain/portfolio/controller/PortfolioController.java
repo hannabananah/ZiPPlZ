@@ -9,10 +9,12 @@ import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserExceptio
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestClientException;
 
 import java.util.List;
 import java.util.Map;
@@ -36,12 +38,12 @@ public class PortfolioController {
         try {
             List<PortfolioListDTO> portfolioList = portfolioService.getPortfolioListService(userSerial);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioList);
         } catch (UserNotFoundException e) {
             status = HttpStatus.BAD_REQUEST;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -58,12 +60,12 @@ public class PortfolioController {
         try {
             PortfolioInfoDTO portfolioInfoDTO = portfolioService.getPortfolioInfoService(portfolioSerial);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioInfoDTO);
-        } catch(PortfolioNotFoundException e) {
+        } catch (PortfolioNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -81,12 +83,12 @@ public class PortfolioController {
         try {
             List<PortfolioWorkListDTO> portfolioWorkListDTOList = portfolioService.getWorkerScheduleService(workerSerial);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioWorkListDTOList);
-        } catch(UserNotFoundException e) {
+        } catch (UserNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -104,17 +106,15 @@ public class PortfolioController {
             PortfolioWorkDetailDTO portfolioWorkDetailDTO =
                     portfolioService.getWorkerScheduleInfoService(portfolioService.getUserSerial(authentication), workerSerial, workSerial);
 
-            status= HttpStatus.OK;
-            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!",portfolioWorkDetailDTO);
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioWorkDetailDTO);
         } catch (UnauthorizedUserException e) {
             status = HttpStatus.UNAUTHORIZED;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        catch (UserNotFoundException e) {
+        } catch (UserNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -131,12 +131,12 @@ public class PortfolioController {
         try {
             PortfolioReviewDTO portfolioReviewDTO = portfolioService.getPortfolioReviewService(portfolioSerial);
 
-            status= HttpStatus.OK;
-            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!",portfolioReviewDTO);
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", portfolioReviewDTO);
         } catch (PortfolioNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -153,7 +153,7 @@ public class PortfolioController {
         try {
             portfolioService.insertReviewCommentService(portfolioService.getUserSerial(authentication), customerReviewSerial, params);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "작성 성공!");
         } catch (UnauthorizedUserException e) {
             status = HttpStatus.UNAUTHORIZED;
@@ -161,7 +161,7 @@ public class PortfolioController {
         } catch (CustomerReviewException e) {
             status = HttpStatus.BAD_REQUEST;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -178,15 +178,15 @@ public class PortfolioController {
         try {
             portfolioService.modifyPortfolioService(portfolioService.getUserSerial(authentication), portfolioSerial, params);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 성공!");
         } catch (PortfolioNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(UnauthorizedUserException e ) {
+        } catch (UnauthorizedUserException e) {
             status = HttpStatus.UNAUTHORIZED;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -203,15 +203,15 @@ public class PortfolioController {
         try {
             portfolioService.deletePortfolioService(portfolioService.getUserSerial(authentication), portfolioSerial);
 
-            status= HttpStatus.OK;
+            status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
-        }catch (PortfolioNotFoundException e) {
+        } catch (PortfolioNotFoundException e) {
             status = HttpStatus.NOT_FOUND;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(UnauthorizedUserException e ) {
+        } catch (UnauthorizedUserException e) {
             status = HttpStatus.UNAUTHORIZED;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch(Exception e) {
+        } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         }
@@ -219,7 +219,28 @@ public class PortfolioController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    //지피티로 프롬프트 보내서 요약하기
+    //지피티로 프롬프트 보내서 요약
+    @GetMapping("/review/{portfolioSerial}/chatgpt")
+    public ResponseEntity<?> summarizeReview(@PathVariable int portfolioSerial) {
+        //좋은리뷰, 나쁜리뷰 각각 가져와서 리턴
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            ReviewSummarizeDTO reviewSummarizeDTO = portfolioService.summarizeReviewService(portfolioSerial);
+
+            status= HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "요약 성공!", reviewSummarizeDTO);
+        } catch (RestClientException e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
 
 
+    }
 }

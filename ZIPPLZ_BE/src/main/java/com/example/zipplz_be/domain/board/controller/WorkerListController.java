@@ -45,24 +45,66 @@ public class WorkerListController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-//    @GetMapping("/portfolios/{field}")
-//    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListByField() {
-//        ResponseDTO<List<PortfolioViewDTO>> responseDTO;
-//        HttpStatus status = HttpStatus.ACCEPTED;
-//
-//        try {
-//            List<PortfolioViewDTO> workers = workerListService.getWorkListByField();
-//            if (workers == null) {
-//                status = HttpStatus.NOT_FOUND;
-//                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
-//            } else {
-//                status = HttpStatus.OK;
-//                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", workers);
-//            }
-//        } catch(Exception e) {
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-//        }
-//        return new ResponseEntity<>(responseDTO, status);
-//    }
+    @GetMapping("/portfolios/field/{field_code}")
+    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListByField(@PathVariable("field_code") int field_code) {
+        ResponseDTO<List<PortfolioViewDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            List<PortfolioViewDTO> workers = workerListService.getWorkListByField(field_code);
+            if (workers == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", workers);
+            }
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    @GetMapping("/portfolios/name/{name}")
+    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListByName(@PathVariable("name") String name) {
+        ResponseDTO<List<PortfolioViewDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            List<PortfolioViewDTO> workers = workerListService.getWorkListByName(name);
+            if (workers == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", workers);
+            }
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    @GetMapping("/portfolios/top")
+    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListTop() {
+        ResponseDTO<List<PortfolioViewDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            List<PortfolioViewDTO> workers = workerListService.getWorkListTop();
+            if (workers == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", workers);
+            }
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
 }

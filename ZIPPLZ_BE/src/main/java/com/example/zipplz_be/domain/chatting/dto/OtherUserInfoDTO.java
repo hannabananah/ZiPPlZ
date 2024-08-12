@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OtherUserInfoDTO {
+    private int userSerial;
     private String name;
     private String location;
     private String fieldName;

@@ -1,6 +1,9 @@
 package com.example.zipplz_be.domain.user.service;
 
+import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.entity.Field;
+import com.example.zipplz_be.domain.model.entity.Local;
+import com.example.zipplz_be.domain.model.repository.LocalRepository;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
 import com.example.zipplz_be.domain.portfolio.repository.PortfolioRepository;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
@@ -28,14 +31,18 @@ public class JoinService {
     private final WorkerRepository workerRepository;
     private final PortfolioService portfolioService;
     private final PortfolioRepository portfolioRepository;
+    private final LocalRepository localRepository;
+    private final FileRepository fileRepository;
 
-    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, WorkerRepository workerRepository, PortfolioService portfolioService, PortfolioRepository portfolioRepository) {
+    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder, CustomerRepository customerRepository, WorkerRepository workerRepository, PortfolioService portfolioService, PortfolioRepository portfolioRepository, LocalRepository localRepository, FileRepository fileRepository) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.customerRepository = customerRepository;
         this.workerRepository = workerRepository;
         this.portfolioService = portfolioService;
         this.portfolioRepository = portfolioRepository;
+        this.localRepository = localRepository;
+        this.fileRepository = fileRepository;
     }
 
     public boolean isEmailAlreadyExist(String email) {
@@ -54,7 +61,11 @@ public class JoinService {
 
         String password = joinRequestDTO.getPassword();
         joinRequestDTO.setPassword(bCryptPasswordEncoder.encode(password));
-        User user = userRepository.save(joinRequestDTO.toEntity());
+        User user = joinRequestDTO.toEntity();
+        user.setFile(fileRepository.findByFileSerial(0));
+
+        userRepository.save(user);
+
         System.out.println(user.getUserSerial());
 
         return user.getUserSerial();
@@ -118,10 +129,24 @@ public class JoinService {
         Worker savedWorker = workerRepository.save(worker);
 
         List<WorkerLocationDTO> locationList = insertWorkerDTO.getLocationList();
+        if (locationList != null) {
+            List<Local> localList = insertWorkerDTO.getLocationList().stream()
+                    .map(location ->
+                            Local.builder()
+                            .userSerial(user)
+                            .sidoCode(location.getSidoCode())
+                            .gugunCode(location.getGugunCode())
+                            .localName(location.getLocalName()).build())
+                    .collect(Collectors.toList());
+            localRepository.saveAll(localList);
+        }
+
         List<Field> fieldList = insertWorkerDTO.getFieldList();
         if (fieldList == null) {
             throw new FieldListNullException("전문 분야가 없습니다.");
         }
-        portfolioService.createPortfolio(savedWorker, fieldList.getFirst());
+        fieldList.stream()
+                .map(field -> portfolioService.createPortfolio(savedWorker, field))
+                .forEach(System.out::println);
     }
 }
