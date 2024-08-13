@@ -125,6 +125,7 @@ public class ChatroomController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+
     public int getUserSerial(Authentication authentication) {
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         return customUserDetails.getUserSerial();
