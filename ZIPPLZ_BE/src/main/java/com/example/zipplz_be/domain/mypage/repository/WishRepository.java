@@ -35,7 +35,7 @@ public interface WishRepository extends JpaRepository<Wish, Integer> {
             "LEFT JOIN Material m on m.material_serial = w.wish_serial;", nativeQuery = true)
     List<MaterialDTO> getMaterialWishList(@Param("wish_type") int wishType, @Param("user_serial") int userSerial);
 
-    List<Wish> findByUserSerialAndWishType(User user, int wishType);
+    List<Wish> findAllByUserSerialAndWishType(User user, int wishType);
 
     boolean existsByUserSerialAndWishTypeAndWishSerial(User user, int wishType, int wishSerial);
 

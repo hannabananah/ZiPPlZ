@@ -1,159 +1,222 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { BsPencilSquare } from 'react-icons/bs';
 import { CgProfile } from 'react-icons/cg';
 import { CiLocationOn } from 'react-icons/ci';
+import { FaTrashAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import {
-  IoBookmark,
+  // IoBookmark,
   IoBookmarkOutline,
   IoChatbubblesOutline,
 } from 'react-icons/io5';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { writeReview } from '@/apis/board/reviewApi';
+import {
+  deleteFindWorker,
+  getFIndWorkerDetail,
+} from '@/apis/worker/WorkerListApi';
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import Button from '@components/common/Button';
+import Input from '@components/common/Input';
+import ModalComponent from '@components/common/Modal';
+import Review from '@components/common/review/Review';
+import { useModalActions } from '@stores/modalStore';
+import { useWorkerListStore } from '@stores/workerListStore';
 
 // FindWorkerDetail 컴포넌트 정의
-const FindWorkerDetail: React.FC = () => {
+export default function FindWorkerDetai() {
+  const { id } = useParams<{ id: string }>();
+  const boardSerial: number = id ? parseInt(id) : 0;
+  const { loginUser } = useLoginUserStore();
+  const { findWorker, setFindWorker } = useWorkerListStore();
+  const [review, setReview] = useState<string>('');
   const navigate = useNavigate();
-
-  // 페이지 돌아가기 핸들러
-  const handleGoBack = () => {
-    navigate('/FindWorkerList');
+  const { openModal, closeModal } = useModalActions();
+  const fetchFindWorker = async (boardSerial: number) => {
+    const response = await getFIndWorkerDetail(boardSerial);
+    setFindWorker(response.data.data);
   };
-
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false);
-
-  // 찜하기 버튼 클릭 핸들러
-  const handleButtonClick = () => {
-    setIsBookmarked((prev) => !prev); // 상태를 토글하여 버튼 유형 변경
+  const handleClickRegistReview = async (
+    boardSerial: number,
+    review: string
+  ) => {
+    setReview('');
+    return await writeReview({
+      board_serial: boardSerial,
+      comment_content: review,
+      parent_comment_serial: -1,
+      order_number: 0,
+    });
   };
-
+  const removeBoard = async (boardSerial: number) => {
+    return await deleteFindWorker(boardSerial);
+  };
+  useEffect(() => {
+    if (boardSerial > 0) fetchFindWorker(boardSerial);
+  }, []);
   return (
-    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-      <div className="w-full">
-        {/* 나가기 버튼, 구인 글쓰기 text */}
-        <div className="w-full flex items-center justify-between relative">
-          <div className="flex items-center">
-            <GoArrowLeft
-              className="mr-6 cursor-pointer"
-              onClick={handleGoBack}
-            />
-          </div>
-          <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold text-center">
-            시공자 찾기
-          </div>
-        </div>
-
-        {/* 사진 */}
-        <div className="mt-4 flex justify-center">
-          <img
-            src="https://via.placeholder.com/600x400"
-            alt="placeholder"
-            className="rounded-lg shadow-md"
-          />
-        </div>
-
-        {/* 글 제목 */}
-        <div className="pt-6 text-zp-xl font-bold">
-          깔끔하고 하자 없는 장판 시공 해주실분 구합니다.
-        </div>
-
-        {/* 글쓴이 프로필 사진, 닉네임, 주소 */}
-        <div className="pt-6 pb-2 flex items-center space-x-2">
-          <div>
-            {/* API 연동 후 사용자 프로필 사진으로 변경 필요 */}
-            <CgProfile />
-          </div>
-          <div className="text-zp-xs font-bold">눈누난냐</div>
-        </div>
-
-        <div className="rounded-zp-radius-big border-zp-main-color bg-zp-white p-4 border border-gray-300 rounded-lg">
-          <div className="flex items-center space-x-2 mb-2">
-            <div>
-              <CiLocationOn size={20} />
+    <>
+      {findWorker ? (
+        <>
+          <div className="w-full relative flex flex-col mt-[3rem] mb-[9rem] p-6 gap-6 overflow-auto">
+            {/* 나가기 버튼, 구인 글쓰기 text */}
+            <div className="flex items-center justify-between w-full">
+              <GoArrowLeft
+                className="cursor-pointer"
+                size={24}
+                onClick={() => navigate(-1)}
+              />
+              <p className="font-bold text-center align-text-top text-zp-xl">
+                시공자 찾기
+              </p>
+              {loginUser?.userSerial === findWorker.board?.userSerial && (
+                <div className="flex gap-2">
+                  <BsPencilSquare
+                    size={12}
+                    className="cursor-pointer"
+                    onClick={() => {
+                      if (findWorker)
+                        navigate(
+                          `/workers/findworker/update/${findWorker.board?.boardSerial}`
+                        );
+                    }}
+                  />
+                  <FaTrashAlt
+                    size={12}
+                    className="cursor-pointer"
+                    onClick={() => openModal('select')}
+                  />
+                </div>
+              )}
             </div>
-            <div className="text-zp-2xs">Location</div>
-          </div>
-          <div className="text-zp-xs font-bold">
-            인천광역시 부평구 부평문화로 37 (부평동, 부평동아이파트)
-          </div>
-        </div>
+            {/* 사진 */}
+            <div className="flex w-full h-[220px] md:h-[300px]">
+              <img
+                src="/src/assets/data/cake.jpg"
+                className="w-full h-full rounded-zp-radius-big"
+              />
+            </div>
 
-        {/* 작업내용 */}
-        <div className="w-full h-1/2">
-          <div className="pt-6 pb-2 text-zp-lg font-bold">작업내용</div>
-          <div className="w-full h-1/2 text-zp-xs font-bold text-zp-gray">
-            모던하면서도 너무 밋밋하지 않은 디자인의 장판으로 바닥을 한번 싹다
-            바꿔볼까하는데 잘 해주시는 분 찾고 있습니다. 시공쪽을 잘 몰라서
-            친절하게 알려주실 분 계신가요? 모던하면서도 너무 밋밋하지 않은
-            디자인의 장판으로 바닥을 한번 싹다 바꿔볼까하는데 잘 해주시는 분
-            찾고 있습니다. 음하 모던하면서도 너무 밋밋하지 않은 디자인의
-            장판으로 바닥을 한번 싹다 바꿔볼까하는데 잘 해주시는 분 찾고
-            있습니다. 시공쪽을 잘 몰라서 친절하게 알려주실 분 계신가요?
-            모던하면서도 너무 밋밋하지 않은 디자인의 장판으로 바닥을 한번 싹다
-            바꿔볼까하는데 잘 해주시는 분 찾고 있습니다. 음하 모던하면서도 너무
-            밋밋하지 않은 디자인의 장판으로 바닥을 한번 싹다 바꿔볼까하는데 잘
-            해주시는 분 찾고 있습니다. 시공쪽을 잘 몰라서 친절하게 알려주실 분
-            계신가요? 모던하면서도 너무 밋밋하지 않은 디자인의 장판으로 바닥을
-            한번 싹다 바꿔볼까하는데 잘 해주시는 분 찾고 있습니다. 음나냐~
-          </div>
-        </div>
+            <div className="flex flex-col w-full gap-2">
+              {/* 글 제목 */}
+              <p className="font-bold text-zp-lg text-wrap">
+                {findWorker.board?.title}
+              </p>
 
-        <hr className="mt-6" />
-
-        <div className="font-bold flex items-center space-x-4">
-          {/* 찜하기 버튼 */}
-          {/* className="flex items-center justify-center w-full" */}
-          <div className="flex-grow sm:flex-grow-0 flex justify-center items-center space-x-2 my-4">
-            <div className="relative border border-zp-sub-color rounded-zp-radius-btn w-full">
-              <div className="w-full border border-zp-sub-color rounded-zp-radius-btn">
-                <Button
-                  buttonType={isBookmarked ? 'normal' : 'light'}
-                  width="full"
-                  height={3}
-                  fontSize="xl"
-                  radius="btn"
-                  onClick={handleButtonClick}
-                >
-                  {isBookmarked ? (
-                    <IoBookmark size={24} className="mr-2 text-zp-main-color" />
-                  ) : (
-                    <IoBookmarkOutline
-                      size={24}
-                      className="mr-2 text-gray-500"
-                    />
-                  )}
-                  찜하기
-                </Button>
+              {/* 글쓴이 프로필 사진, 닉네임, 주소 */}
+              <div className="flex items-center">
+                <CgProfile />
+                <p className="font-bold text-zp-xs">
+                  {findWorker.board?.nickname}
+                </p>
               </div>
             </div>
+            <div className="flex flex-col gap-2 p-4 border rounded-zp-radius-big border-zp-main-color bg-zp-white">
+              <div className="flex items-center gap-2">
+                <CiLocationOn size={20} />
+                <p className="text-zp-2xs">Location</p>
+              </div>
+
+              <p className="font-bold text-zp-xs text-wrap">
+                인천광역시 부평구 부평문화로 37 (부평동, 부평동아이파트)
+              </p>
+            </div>
+
+            {/* 작업내용 */}
+            <div className="flex flex-col gap-2">
+              <p className="font-bold text-zp-lg">작업내용</p>
+              <p className="w-full font-bold text-zp-xs text-zp-gray text-wrap">
+                {findWorker.board?.boardContent}
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <p className="font-bold text-zp-lg">리뷰</p>
+              <div className="relative flex w-full gap-4">
+                <Input
+                  inputType="search"
+                  type="text"
+                  width="full"
+                  height={2}
+                  placeholder="리뷰 작성하기"
+                  radius="big"
+                  fontSize="xs"
+                  value={review}
+                  onChange={(e: React.ChangeEvent) =>
+                    setReview((e.target as HTMLInputElement).value)
+                  }
+                />
+                <Button
+                  buttonType="second"
+                  children="등록"
+                  fontSize="xs"
+                  height={2}
+                  width={4}
+                  radius="btn"
+                  onClick={() => {
+                    handleClickRegistReview(boardSerial, review);
+                    navigate(0);
+                  }}
+                />
+                <IoChatbubblesOutline
+                  size={16}
+                  className="absolute top-2 left-4"
+                />
+              </div>
+              {findWorker.comments &&
+                findWorker.comments.length > 0 &&
+                findWorker.comments.map((comment) => (
+                  <Review
+                    comment={comment.parent_comment || undefined} // null을 undefined로 변환
+                    childComments={comment.child_comments || undefined} // null을 undefined로 변환
+                    key={comment.parent_comment?.commentSerial}
+                  />
+                ))}
+            </div>
           </div>
-
-          {/* className="flex items-center justify-center w-full" */}
-
-          {/* 채팅하기 버튼 */}
-          <div className="flex-grow sm:flex-grow-0 flex justify-center items-center">
-            <div className="w-full max-w-[250px]">
+          <div
+            className="fixed flex flex-col w-full gap-4 px-4 bg-zp-light-beige"
+            style={{ bottom: '3.6rem', left: 0 }}
+          >
+            <hr className="w-full text-zp-light-gray" />
+            <div className="flex grid items-center w-full grid-cols-2 gap-4 mb-4">
+              <Button
+                buttonType="normal"
+                width="full"
+                height={3}
+                fontSize="lg"
+                radius="btn"
+              >
+                <IoBookmarkOutline size={24} />
+                <span className="font-bold"> 찜하기</span>
+              </Button>
               <Button
                 buttonType="second"
                 width="full"
                 height={3}
-                fontSize="xl"
+                fontSize="lg"
                 radius="btn"
-                onClick={() =>
-                  alert(
-                    '현재 화면의 채팅하기 버튼을 누르면 해당 글쓴이와의 채팅방이 열립니다'
-                  )
-                }
               >
-                <IoChatbubblesOutline size={24} className="mr-2" />
-                채팅하기
+                <IoChatbubblesOutline size={24} />
+                <span className="font-bold">채팅하기</span>
               </Button>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
+          <ModalComponent
+            type="select"
+            title="게시글 삭제"
+            message="해당 게시글을 삭제하시겠습니까?"
+            onConfirm={() => {
+              removeBoard(boardSerial);
+              closeModal('select');
+              navigate('/workers/findworker');
+            }}
+          />
+        </>
+      ) : (
+        <div>is Loading</div>
+      )}
+    </>
   );
-};
-
-export default FindWorkerDetail;
+}

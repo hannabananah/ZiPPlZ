@@ -11,4 +11,6 @@ public interface BoardJoinDTO {
     LocalDateTime getBoardDate();
     int getHit();
     String getNickname();
+    String getUserName();
+    String getSaveFile();
 }

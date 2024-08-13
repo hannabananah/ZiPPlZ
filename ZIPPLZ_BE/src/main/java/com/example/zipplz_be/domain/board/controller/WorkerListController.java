@@ -6,7 +6,10 @@ import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.*;
 
@@ -42,7 +45,28 @@ public class WorkerListController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    @GetMapping("/portfolios/{name}")
+    @GetMapping("/portfolios/field/{field_code}")
+    public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListByField(@PathVariable("field_code") int field_code) {
+        ResponseDTO<List<PortfolioViewDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            List<PortfolioViewDTO> workers = workerListService.getWorkListByField(field_code);
+            if (workers == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", workers);
+            }
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    @GetMapping("/portfolios/name/{name}")
     public ResponseEntity<ResponseDTO<List<PortfolioViewDTO>>> getWorkListByName(@PathVariable("name") String name) {
         ResponseDTO<List<PortfolioViewDTO>> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;

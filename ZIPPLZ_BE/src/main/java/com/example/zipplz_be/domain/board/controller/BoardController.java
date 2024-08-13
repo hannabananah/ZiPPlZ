@@ -2,15 +2,23 @@ package com.example.zipplz_be.domain.board.controller;
 
 import com.example.zipplz_be.domain.board.dto.*;
 import com.example.zipplz_be.domain.board.service.BoardService;
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -23,29 +31,71 @@ public class BoardController {
         this.boardService = boardService;
     }
 
+    @PostMapping("/user")
+    public ResponseEntity<ResponseDTO<Integer>> getBoardUser(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
+        ResponseDTO<Integer> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = params.get("board_type");
+            int board_serial = params.get("board_serial");
+            int result = boardService.getBoardUser(board_type, board_serial);
+            if (result == 0) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", result);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
     // 질문글 추가하기
+    @Transactional
     @PostMapping("/question/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addQuestion(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addQuestion(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("title") String title, @RequestPart("board_content") String board_content) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+//            Map<String, Object> paramsMap = objectMapper.readValue(params, Map.class);
+
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             int user_serial = customUserDetails.getUserSerial();
             int board_type = 1;
-            String title = (String) params.get("title");
-            String board_content = (String) params.get("board_content");
+//            String title = (String) paramsMap.get("title");
+//            String board_content = (String) paramsMap.get("board_content");
             LocalDateTime board_date = LocalDateTime.now();
             int hit = 0;
 
             int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
+            int board_serial = boardService.getLastInsertId();
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 실패 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "질문글 삽입 실패 없음");
             } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                    int file_result = boardService.uploadImageService(images, board_serial);
+                    if (file_result == 0) {
+                        status = HttpStatus.NOT_FOUND;
+                        responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                    } else {
+                        status = HttpStatus.OK;
+                        responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                    }
+                } else {
+                    status = HttpStatus.OK;
+                    responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                }
             }
+        } catch (S3Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
@@ -79,11 +129,12 @@ public class BoardController {
 
     // 질문글 가져오기
     @PostMapping("/question/list/{boardSerial}")
-    public ResponseEntity<ResponseDTO<QuestionDetailDTO>> getQuestion(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+    public ResponseEntity<ResponseDTO<QuestionDetailDTO>> getQuestion(@PathVariable(value = "boardSerial") int boardSerial) {
         ResponseDTO<QuestionDetailDTO> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             QuestionDetailDTO question= boardService.getQuestion(boardSerial);
 
             if (question == null) {
@@ -126,28 +177,72 @@ public class BoardController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    // 질문글 검색
+    @GetMapping("/find/question/{search_content}")
+    public ResponseEntity<ResponseDTO<List<QuestionListDTO>>> findQuestionByContent(Authentication authentication, @PathVariable(value = "search_content") String search_content) {
+        ResponseDTO<List<QuestionListDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = 1;
+            List<QuestionListDTO> questions = boardService.findQuestionsByContent(board_type, search_content);
+
+            if (questions == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", questions);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
     // 자랑글 추가하기
+    @Transactional
     @PostMapping("/showoff/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addShowBoard(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addShowBoard(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("title") String title, @RequestPart("board_content") String board_content, @RequestPart("selected_portfolio") String viewsJson) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            List<PortfolioViewDTO> views = objectMapper.readValue(viewsJson, new TypeReference<List<PortfolioViewDTO>>(){});
+
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             int user_serial = customUserDetails.getUserSerial();
             int board_type = 2;
-            String title = (String) params.get("title");
-            String board_content = (String) params.get("board_content");
             LocalDateTime board_date = LocalDateTime.now();
             int hit = 0;
+            int addBoard_result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
+            int board_serial = boardService.getLastInsertId();
 
-            int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
-            if (result == 0) {
+            if (addBoard_result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 실패 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "자랑글 삽입 실패");
             } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                int addWorkToPortfolio_result = boardService.addBoardToPortfolio(board_serial, views);
+                if (addWorkToPortfolio_result == 0) {
+                    status = HttpStatus.NOT_FOUND;
+                    responseDTO = new ResponseDTO<>(status.value(), "관계 시공자 삽입 실패");
+                } else {
+                    if (!images.isEmpty() && images.getFirst().getSize() != 0) {
+                        int file_result = boardService.uploadImageService(images, board_serial);
+                        if (file_result == 0) {
+                            status = HttpStatus.NOT_FOUND;
+                            responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                        } else {
+                            status = HttpStatus.OK;
+                            responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                        }
+                    } else {
+                        status = HttpStatus.OK;
+                        responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                    }
+                }
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -182,11 +277,12 @@ public class BoardController {
 
     // 자랑글 가져오기
     @PostMapping("/showoff/list/{boardSerial}")
-    public ResponseEntity<ResponseDTO<ShowBoardDetailDTO>> getShowBoard(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+    public ResponseEntity<ResponseDTO<ShowBoardDetailDTO>> getShowBoard(@PathVariable(value = "boardSerial") int boardSerial) {
         ResponseDTO<ShowBoardDetailDTO> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             ShowBoardDetailDTO question= boardService.getShowBoard(boardSerial);
 
             if (question == null) {
@@ -229,28 +325,65 @@ public class BoardController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    // 질문글 검색
+    @GetMapping("/find/showboard/{search_content}")
+    public ResponseEntity<ResponseDTO<List<ShowBoardListDTO>>> findShowBoardByContent(Authentication authentication, @PathVariable(value = "search_content") String search_content) {
+        ResponseDTO<List<ShowBoardListDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = 2;
+            List<ShowBoardListDTO> showboards = boardService.findShowBoardByContent(board_type, search_content);
+
+            if (showboards == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", showboards);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
     // 구인구직글 추가하기
+    @Transactional
     @PostMapping("/findworker/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestBody(required = false) Map<String, Object> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("title") String title, @RequestPart("board_content") String board_content) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            ObjectMapper objectMapper = new ObjectMapper();
+
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
             int user_serial = customUserDetails.getUserSerial();
             int board_type = 3;
-            String title = (String) params.get("title");
-            String board_content = (String) params.get("board_content");
             LocalDateTime board_date = LocalDateTime.now();
             int hit = 0;
 
             int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
+            int board_serial = boardService.getLastInsertId();
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 실패 없음");
+                responseDTO = new ResponseDTO<>(status.value(), "구인구직글 삽입 실패 없음");
             } else {
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                    int file_result = boardService.uploadImageService(images, board_serial);
+                    if (file_result == 0) {
+                        status = HttpStatus.NOT_FOUND;
+                        responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                    } else {
+                        status = HttpStatus.OK;
+                        responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                    }
+                } else {
+                    status = HttpStatus.OK;
+                    responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                }
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -285,11 +418,12 @@ public class BoardController {
 
     // 구인구직글 가져오기
     @PostMapping("/findworker/list/{boardSerial}")
-    public ResponseEntity<ResponseDTO<FindWorkerDetailDTO>> getFindWorker(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+    public ResponseEntity<ResponseDTO<FindWorkerDetailDTO>> getFindWorker(@PathVariable(value = "boardSerial") int boardSerial) {
         ResponseDTO<FindWorkerDetailDTO> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
+            boardService.updateboardhit(boardSerial);
             FindWorkerDetailDTO findworker= boardService.getFindWorker(boardSerial);
 
             if (findworker == null) {
@@ -324,6 +458,52 @@ public class BoardController {
             } else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "수정 성공", true);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 구인구직글 검색
+    @GetMapping("/find/findworker/{search_content}")
+    public ResponseEntity<ResponseDTO<List<FindWorkerListDTO>>> findFindWorkerByContent(Authentication authentication, @PathVariable(value = "search_content") String search_content) {
+        ResponseDTO<List<FindWorkerListDTO>> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int board_type = 3;
+            List<FindWorkerListDTO> findworkers = boardService.findFindWorkerByContent(board_type, search_content);
+
+            if (findworkers == null) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", findworkers);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    // 게시글 삭제하기
+    @DeleteMapping("/delete/{boardSerial}")
+    public ResponseEntity<ResponseDTO<Boolean>> deleteBoard(Authentication authentication, @PathVariable(value = "boardSerial") int boardSerial) {
+        ResponseDTO<Boolean> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int result= boardService.deleteBoard(boardSerial);
+            if (result == 0) {
+                status = HttpStatus.NOT_FOUND;
+                responseDTO = new ResponseDTO<>(status.value(), "삭제 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "삭제 성공", true);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;

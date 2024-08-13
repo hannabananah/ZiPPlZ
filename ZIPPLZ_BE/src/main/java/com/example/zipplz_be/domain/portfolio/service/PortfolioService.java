@@ -1,5 +1,5 @@
 package com.example.zipplz_be.domain.portfolio.service;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.PlanFileRelation;
@@ -26,10 +26,17 @@ import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.example.zipplz_be.domain.user.repository.CustomerRepository;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
+import com.example.zipplz_be.global.config.AppConfig;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.*;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.format.DateTimeFormatter;
@@ -39,10 +46,18 @@ import java.util.Map;
 import java.util.OptionalDouble;
 
 import com.example.zipplz_be.domain.user.entity.Worker;
-
+import org.springframework.http.HttpHeaders;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class PortfolioService {
+    @Value("${openai.api.key}")
+    private String apiKey;
+    private final AppConfig appConfig;
+
+    private final RestTemplate restTemplate;
+
     private final CustomerReviewService customerReviewService;
 
     private final PortfolioRepository portfolioRepository;
@@ -56,7 +71,9 @@ public class PortfolioService {
     private final PlanFileRelationRepository planFileRelationRepository;
     private final CustomerReviewRepository customerReviewRepository;
 
-    PortfolioService(CustomerReviewRepository customerReviewRepository, CustomerReviewService customerReviewService, PlanFileRelationRepository planFileRelationRepository,CustomerRepository customerRepository,PlanRepository planRepository,WorkRepository workRepository, LocalRepository localRepository, FileRepository fileRepository,UserRepository userRepository, PortfolioRepository portfolioRepository, WorkerRepository workerRepository) {
+    PortfolioService(AppConfig appConfig, RestTemplate restTemplate, CustomerReviewRepository customerReviewRepository, CustomerReviewService customerReviewService, PlanFileRelationRepository planFileRelationRepository,CustomerRepository customerRepository,PlanRepository planRepository,WorkRepository workRepository, LocalRepository localRepository, FileRepository fileRepository,UserRepository userRepository, PortfolioRepository portfolioRepository, WorkerRepository workerRepository) {
+        this.appConfig = appConfig;
+        this.restTemplate = restTemplate;
         this.customerReviewRepository = customerReviewRepository;
         this.customerReviewService = customerReviewService;
         this.planFileRelationRepository = planFileRelationRepository;
@@ -113,6 +130,13 @@ public class PortfolioService {
             throw new PortfolioNotFoundException("해당 포트폴리오는 존재하지 않습니다.");
         }
 
+        //누적 시공 수 업데이트
+        //완료된 공종들 중 portfolio의 (worker, fieldName)과 겹치는 공종의 수로 업뎃
+        int workCount = workRepository.getWorkCount(portfolio.getWorker().getWorkerSerial(), portfolio.getFieldId().getFieldCode());
+        portfolio.setWorkCount(workCount);
+        portfolioRepository.save(portfolio);
+
+
         Worker worker = portfolio.getWorker();
         PortfolioWorkerDTO portfolioWorkerDTO = PortfolioWorkerDTO.builder()
                 .workerSerial(worker.getWorkerSerial())
@@ -139,6 +163,7 @@ public class PortfolioService {
 
         //포트폴리오 번호로 포트폴리오에서 필요한 정보들 찾고 DTO 리턴
         PortfolioInfoDTO portfolioInfoDTO = PortfolioInfoDTO.builder()
+                .portfolioSerial(portfolio.getPortfolioSerial())
                 .asPeriod(portfolio.getAsPeriod())
                 .career(portfolio.getCareer())
                 .workCount(portfolio.getWorkCount())
@@ -163,6 +188,8 @@ public class PortfolioService {
         List<PortfolioWorkListDTO> portfolioWorkListDTOList = new ArrayList<>();
 
         for(Work work: workList) {
+            if(!work.getStatus().equals("confirmed")) continue;
+
             PortfolioWorkListDTO portfolioWorkListDTO = PortfolioWorkListDTO.builder()
                     .workSerial(work.getWorkSerial())
                     .endDate(convertTimestamp(work.getEndDate()))
@@ -400,4 +427,105 @@ public class PortfolioService {
 
         portfolioRepository.delete(portfolio);
     }
+
+    @Transactional
+    public ReviewSummarizeDTO summarizeReviewService(int portfolioSerial)  {
+        Portfolio portfolio = portfolioRepository.findByPortfolioSerial(portfolioSerial);
+        StringBuilder goodReviewComment = new StringBuilder();
+        StringBuilder badReviewComment = new StringBuilder();
+
+        List<CustomerReview> customerReviews = customerReviewRepository.findAllByPortfolioSerial(portfolio);
+
+        System.out.println(customerReviews.size());
+
+        for(CustomerReview customerReview: customerReviews) {
+            double average = (double)(customerReview.getProfessionalStar() + customerReview.getAttitudeStar()
+                    + customerReview.getQualityStar() + customerReview.getCommunicationStar()) /4;
+
+            if(average >= 4) {
+                goodReviewComment.append(customerReview.getCustomerReviewContent());
+            }
+            else if (average <= 2){
+                badReviewComment.append(customerReview.getCustomerReviewContent());
+            }
+        }
+
+        String good = " ";
+        String bad = " ";
+
+        //지피티에 보내서 요약
+        if(!goodReviewComment.isEmpty()) {
+            good = getChatGPTResponse(goodReviewComment.toString() + " \n이것들을 한 문장으로 요약해줘.");
+        }
+        if(!badReviewComment.isEmpty()) {
+            bad = getChatGPTResponse(badReviewComment.toString() + " \n이것들을 한 문장으로 요약해줘.");
+        }
+
+        //리턴 온 내용 DTO에 넣기
+        ReviewSummarizeDTO reviewSummarizeDTO = ReviewSummarizeDTO.builder()
+                .badReview(bad)
+                .goodReview(good)
+                .build();
+
+        //리턴 온 내용 DTO에 넣기
+        return reviewSummarizeDTO;
+    }
+
+    public String getChatGPTResponse(String prompt) {
+        HttpHeaders headers = appConfig.httpHeaders();
+
+        // JSON 객체를 생성하여 직렬화
+        ObjectMapper om = new ObjectMapper();
+        Map<String, Object> requestBodyMap = new HashMap<>();
+        requestBodyMap.put("model", "gpt-4o-mini");
+        //requestBodyMap.put("messages", prompt);
+        requestBodyMap.put("max_tokens", 1000);  // max_tokens는 정수여야 합니다
+
+        // messages 필드를 올바르게 설정
+        List<Map<String, String>> messages = new ArrayList<>();
+        Map<String, String> systemMessage = new HashMap<>();
+        systemMessage.put("role", "system");
+        systemMessage.put("content", prompt);
+        messages.add(systemMessage);
+
+        requestBodyMap.put("messages", messages);
+
+        System.out.println(requestBodyMap);
+        try {
+            String requestBody = om.writeValueAsString(requestBodyMap);
+
+            // HttpEntity에 명시적으로 String 타입 지정
+            HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
+
+            // POST 요청 실행
+            ResponseEntity<String> response = appConfig.restTemplate().exchange(
+                    "https://api.openai.com/v1/chat/completions",
+                    HttpMethod.POST,
+                    request,
+                    String.class
+            );
+
+            return parsingJSON(response.getBody());
+        } catch (JsonProcessingException | RestClientException e) {
+            throw new CustomerReviewException("GPT 요약 도중 에러가 발생했습니다.");
+        }
+    }
+
+    public String parsingJSON(String jsonResponse) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode rootNode = objectMapper.readTree(jsonResponse);
+
+        // 'choices' 배열 가져오기
+        JsonNode choicesNode = rootNode.path("choices");
+
+        // message 노드 가져오기
+        JsonNode messageNode = choicesNode.get(0).path("message");
+
+        // 'content' 값을 추출
+        String content = messageNode.path("content").asText();
+
+        return content;
+    }
+
+
 }

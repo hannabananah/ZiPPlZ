@@ -99,6 +99,7 @@ public class ContractService {
         }
 
         List<Work> confirmWorkList = workRepository.findByPlanSerialAndFieldNameAndStatus(plan, fieldName, "confirmed");
+        System.out.println(confirmWorkList.size());
 
         if(!confirmWorkList.isEmpty()) {
             throw new DuplicateContractException("임시 확정된 계약서가 존재합니다. 수정 요청을 해주세요!");

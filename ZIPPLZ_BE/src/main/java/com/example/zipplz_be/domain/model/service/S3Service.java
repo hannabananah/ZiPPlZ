@@ -12,4 +12,6 @@ public interface S3Service {
     String uploadImage(MultipartFile image);
 
     String uploadToS3(MultipartFile image) throws IOException;
+
+    void deleteS3(String fileName) throws IOException;
 }

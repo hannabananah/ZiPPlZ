@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.model.service;
 
+import com.amazonaws.SdkClientException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
@@ -8,6 +9,7 @@ import com.amazonaws.util.IOUtils;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.schedule.exception.S3Exception;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -150,5 +152,15 @@ public class S3ServiceImpl implements S3Service {
             throw new S3Exception("유효하지 않은 파일 형식입니다.");
         }
 
+    }
+
+    @Override
+    @Transactional
+    public void deleteS3(String fileName) throws IOException {
+        try {
+            amazonS3.deleteObject(bucketName, fileName);
+        } catch(SdkClientException e) {
+            throw new IOException("Error Deleting file in S3", e);
+        }
     }
 }

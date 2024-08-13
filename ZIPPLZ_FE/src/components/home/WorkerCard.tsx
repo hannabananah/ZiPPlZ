@@ -24,11 +24,19 @@ export default function WorkerCard({ worker }: Props) {
           navigate('/workers/1/portfolio?tab=overview');
         }}
       >
-        <div className="bg-zp-main-color profile-img absolute top-[-25%] w-[60%]" />
+        <div className="profile-img absolute top-[-25%] w-[60%]">
+          <img
+            className="w-full h-full  border rounded-zp-radius-full object-cover"
+            src={worker.img}
+          />
+        </div>
         <p className="md:mt-[30%] mt-[50%] font-bold text-zp-2xs">
           {worker.user_name || '이름 없음'}
         </p>
-        <p className="text-zp-3xs">{location}</p>
+        <p className="text-zp-3xs">{worker.locations[0]}</p>
+        {worker.locations.length > 1 && (
+          <p className="text-zp-3xs">{worker.locations[1]}</p>
+        )}
         <div className="flex justify-center gap-2">
           <p className="text-zp-3xs">{fieldName}</p>
           <p className="text-zp-3xs">|</p>

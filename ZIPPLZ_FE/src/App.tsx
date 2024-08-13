@@ -24,10 +24,6 @@ import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
 // 워커 찾기
 import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
 import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
-import FindWorkerList from '@pages/common/workerinfo/FindWorkerList';
-import WorkerInfoDateDetail from '@pages/common/workerinfo/WorkerInfoDateDetail';
-import WorkerInfoList from '@pages/common/workerinfo/WorkerInfoList';
-import WorkerInfoLocationDetail from '@pages/common/workerinfo/WorkerInfoLocationDetail';
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
 
@@ -49,6 +45,8 @@ import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
 import MyHousePostScrapList from './pages/common/mypage/scrappage/MyHousePostScrapList';
 import MyQuestionPostScrapList from './pages/common/mypage/scrappage/MyQuestionPostScrapList';
 import SignUp from './pages/common/signup/SignUp';
+import UpdateFindWorker from './pages/common/workerinfo/UpdateFindWorker';
+import Workers from './pages/common/workerinfo/Workers';
 
 export default function App() {
   return (
@@ -65,15 +63,18 @@ export default function App() {
         <Route path="image-change/:userSerial" element={<ImageChangePage />} />
         <Route path="404" element={<Custom404 />} />
         <Route path="*" element={<Navigate to="/404" replace />} />
-        <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
-        <Route path="workerinfodatedetail" element={<WorkerInfoDateDetail />} />
+
+        {/* 시공자 리스트 */}
+        <Route path="workers/:category" element={<Workers />} />
         <Route
-          path="workerinfolocationdetail"
-          element={<WorkerInfoLocationDetail />}
+          path="workers/findworker/write"
+          element={<FindWorkerDetailCreate />}
         />
-        <Route path="findworkers" element={<FindWorkerList />} />
-        <Route path="findworkers/:id" element={<FindWorkerDetail />} />
-        <Route path="workers" element={<WorkerInfoList />} />
+        <Route
+          path="workers/findworker/update/:boardSerial"
+          element={<UpdateFindWorker />}
+        />
+        <Route path="workers/findworker/:id" element={<FindWorkerDetail />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
         {/* 커뮤니티 */}
         <Route path="housepost" element={<HousePost />} />

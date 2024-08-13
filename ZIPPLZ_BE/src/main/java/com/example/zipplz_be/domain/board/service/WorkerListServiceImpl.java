@@ -41,6 +41,23 @@ public class WorkerListServiceImpl implements WorkerListService {
     }
 
     @Override
+    public List<PortfolioViewDTO> getWorkListByField(int fieldCode) {
+        List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
+        List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoinsByField(fieldCode);
+        for (PortfolioJoinDTO portfolio : portfolios) {
+            List<String> locations = localRepository.getLocalNames(portfolio.getWorker());
+            List<PortfolioFileDTO> files = fileRepository.getImg(portfolio.getPortfolio_serial());
+            String img = null;
+            if (!files.isEmpty()) {
+                img = files.getFirst().getSaveFile();
+            }
+            PortfolioViewDTO portfolioView = new PortfolioViewDTO(portfolio, locations, img);
+            portfolioViews.add(portfolioView);
+        }
+        return portfolioViews;
+    }
+
+    @Override
     public List<PortfolioViewDTO> getWorkListByName(String name) {
         List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
         List<PortfolioJoinDTO> portfolios = portfolioRepository.getPortfolioJoinsByName(name);

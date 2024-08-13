@@ -7,12 +7,10 @@ import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
+import { WorkerInfo } from '@/components/worker/workerinfolist/WorkerInfoList';
+import WorkerInfoListItem from '@/components/worker/workerinfolist/WorkerInfoListItem';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
-import { useHousePostStore } from '@stores/housePostStore';
-import axios from 'axios';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
