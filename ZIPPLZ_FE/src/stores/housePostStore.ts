@@ -79,7 +79,7 @@ interface HousePostState {
   setBoardContent: (content: string) => void;
   setImages: (images: File[]) => void;
   fetchHousePosts: () => Promise<void>;
-  fetchPostDetails: (id: number) => Promise<void>;
+  fetchPostDetails: (id: number) => Promise<HousePostDetails | null>;
   createPost: (
     token: string,
     formData: FormData
@@ -105,15 +105,6 @@ interface HousePostState {
     token: string,
     commentSerial: number
   ) => Promise<{ code: number; message: string }>;
-  updateComment: (
-    token: string,
-    commentSerial: number,
-    updatedContent: string
-  ) => Promise<{ code: number; message: string }>;
-  toggleBookmark: (
-    id: number,
-    isBookmarked: boolean
-  ) => Promise<{ success: boolean }>;
 }
 
 export const useHousePostStore = create<HousePostState>((set, get) => ({
@@ -194,15 +185,21 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
           })),
         };
 
-        set({ postDetails });
+        // Store images as URLs in the state
+        const imageUrls = data.board_images.map((img: any) => img.saveFile);
+
+        set({ postDetails, images: imageUrls });
+        return postDetails;
       } else {
         console.error(
           'Failed to fetch post details:',
           response.data.proc.message
         );
+        return null;
       }
     } catch (error) {
       console.error('Error fetching post details:', error);
+      return null;
     }
   },
 
@@ -250,17 +247,22 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
         }
       );
 
+      // 올바른 `code`와 `message` 참조
       const { code, message } = response.data.proc;
+
       if (code === 200) {
         await get().fetchHousePosts();
+        return { code, message };
+      } else {
+        console.error(`Update failed: ${message}`);
+        return { code, message };
       }
-      return { code, message };
     } catch (error) {
       if (axios.isAxiosError(error)) {
         console.error('Failed to update post:', error);
         console.error('Response data:', error.response?.data);
       }
-      return { code, message: '수정 실패' };
+      return { code: 500, message: '수정 실패' };
     }
   },
 
@@ -357,52 +359,6 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
         console.error('Response data:', error.response?.data);
       }
       return { code: 500, message: '댓글 삭제 실패' };
-    }
-  },
-
-  updateComment: async (
-    token: string,
-    commentSerial: number,
-    updatedContent: string
-  ) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:5000/comment/update/${commentSerial}`,
-        { comment_content: updatedContent },
-        {
-          headers: {
-            Authorization: token,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const { code, message } = response.data.proc;
-      return { code, message };
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error('Failed to update comment:', error);
-        console.error('Response data:', error.response?.data);
-      }
-      return { code: 500, message: '댓글 수정 실패' };
-    }
-  },
-
-  toggleBookmark: async (id: number, isBookmarked: boolean) => {
-    try {
-      const response = await axios.post(
-        `http://localhost:5000/board/showoff/bookmark`,
-        { boardSerial: id, bookmark: isBookmarked }
-      );
-
-      if (response.data.proc.code === 200) {
-        return { success: true };
-      } else {
-        return { success: false };
-      }
-    } catch (error) {
-      console.error('Failed to toggle bookmark:', error);
-      return { success: false };
     }
   },
 }));

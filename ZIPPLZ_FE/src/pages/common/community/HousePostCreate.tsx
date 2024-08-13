@@ -3,6 +3,7 @@ import { CiCirclePlus } from 'react-icons/ci';
 import { FaCamera, FaRegCircle } from 'react-icons/fa';
 import { FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
@@ -79,47 +80,52 @@ export default function HousePostDetailCreate() {
 
     const formData = new FormData();
 
-    formData.append(
-      'params',
-      JSON.stringify({
-        title,
-        board_content: workDetail,
-        selected_portfolio: selectedWorkers.map((worker) => ({
-          portfolio_serial: worker.portfolio_serial,
-          worker: worker.user_serial,
-          user_name: worker.name,
-          birth_date: worker.birth_date,
-          temperature: worker.temp,
-          field_id: worker.field_id,
-          field_name: worker.field_name,
-          career: worker.career,
-          certificated_badge: worker.certificated_badge,
-          locations: worker.locations,
-          img: worker.img,
-        })),
-      })
-    );
+    // 기본 필드들을 FormData에 추가
+    formData.append('title', title);
+    formData.append('board_content', workDetail);
 
-    if (images.length > 0) {
-      images.forEach((image) => {
-        formData.append('images', image);
-      });
-    }
+    // selected_portfolio 배열을 JSON 문자열로 변환하여 FormData에 추가
+    const selectedPortfolioJson = JSON.stringify(
+      selectedWorkers.map((worker) => ({
+        portfolio_serial: worker.portfolio_serial,
+        worker: worker.user_serial,
+        user_name: worker.name,
+        birth_date: worker.birth_date,
+        temperature: worker.temp,
+        field_id: worker.field_id,
+        field_name: worker.field_name,
+        career: worker.career,
+        certificated_badge: worker.certificated_badge,
+        locations: worker.locations,
+        img: worker.img,
+      }))
+    );
+    formData.append('selected_portfolio', selectedPortfolioJson);
+
+    // 이미지 파일들을 FormData에 추가
+    images.forEach((image) => {
+      formData.append('images', image);
+    });
 
     try {
       const token = `Bearer ${localStorage.getItem('token')}`;
-      const { code, message } = await createPost(token, formData);
+      const response = await createPost(token, formData);
 
-      if (code === 200) {
+      if (response.code === 200) {
         alert('자랑글이 성공적으로 등록되었습니다.');
         navigate('/housepost');
       } else {
-        alert(`자랑글 등록에 실패했습니다: ${message}`);
+        alert(`자랑글 등록에 실패했습니다: ${response.message}`);
       }
     } catch (error) {
       console.error('Failed to create post:', error);
       if (error.response) {
         console.error('Response data:', error.response.data);
+        alert(
+          `서버 오류 발생: ${error.response.data.message || '알 수 없는 오류'}`
+        );
+      } else {
+        alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
       }
     }
   };

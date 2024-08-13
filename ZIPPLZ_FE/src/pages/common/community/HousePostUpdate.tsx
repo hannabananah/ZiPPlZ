@@ -1,11 +1,7 @@
 import { ChangeEvent, useEffect, useState } from 'react';
-import DaumPostcode from 'react-daum-postcode';
-import { CiCirclePlus, CiSearch } from 'react-icons/ci';
-import { FaCamera, FaRegCircle } from 'react-icons/fa';
-import { FaRegCircleCheck } from 'react-icons/fa6';
+import { CiCirclePlus } from 'react-icons/ci';
+import { FaCamera } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
-import { HiMagnifyingGlass } from 'react-icons/hi2';
-import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 
@@ -21,15 +17,10 @@ export default function HousePostUpdate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
   const [boardContent, setBoardContent] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [addressDetail, setAddressDetail] = useState<string>('');
-  const [schedule, setSchedule] = useState<string>('');
   const [selectedWorkers, setSelectedWorkers] = useState<WorkerInfo[]>([]);
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
-  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
   const [workerInfoList, setWorkerInfoList] = useState<WorkerInfo[]>([]);
 
@@ -40,19 +31,15 @@ export default function HousePostUpdate() {
   const navigate = useNavigate();
   const location = useLocation();
   const maxImages = 10;
-  const schedules = ['스케줄1', '스케줄2', '스케줄3'];
 
-  const { updatePost, createPost } = useHousePostStore();
+  const { updatePost, createPost, postDetails } = useHousePostStore();
 
   useEffect(() => {
     if (location.state) {
       const { post, isEditMode } = location.state;
       setTitle(post.title);
       setBoardContent(post.boardContent);
-      setImages(post.images || []);
-      setAddress(post.address || '');
-      setAddressDetail(post.addressDetail || '');
-      setSchedule(post.schedule || '');
+      setImages(post.images.map((img: any) => img.saveFile) || []); // Set images as URLs
       setSelectedWorkers(post.selectedWorkers || []);
       setIsEditMode(isEditMode);
       setPostId(post.boardSerial);
@@ -94,10 +81,6 @@ export default function HousePostUpdate() {
     const newErrors: { [key: string]: string } = {};
 
     if (!title) newErrors.title = '제목이 입력되지 않았습니다';
-    if (!address) newErrors.address = '현장 주소가 입력되지 않았습니다';
-    if (!addressDetail)
-      newErrors.addressDetail = '상세 주소가 입력되지 않았습니다';
-    if (!schedule) newErrors.schedule = '스케줄이 선택되지 않았습니다';
     if (!boardContent) newErrors.boardContent = '내용이 입력되지 않았습니다';
 
     if (Object.keys(newErrors).length > 0) {
@@ -108,9 +91,6 @@ export default function HousePostUpdate() {
     const postData = {
       title,
       board_content: boardContent,
-      address,
-      addressDetail,
-      schedule,
       selectedWorkers: selectedWorkers.map((worker) => ({
         portfolio_serial: worker.portfolio_serial,
         worker: worker.user_serial,
@@ -119,59 +99,41 @@ export default function HousePostUpdate() {
 
     const token = `Bearer ${localStorage.getItem('token')}`;
 
-    if (isEditMode && postId) {
-      const { code, message } = await updatePost(token, postId, postData);
-      if (code === 200) {
-        alert('자랑글이 성공적으로 수정되었습니다.');
-        navigate('/housepost');
-      } else {
-        alert(`자랑글 수정에 실패했습니다: ${message}`);
-      }
-    } else {
-      const formData = new FormData();
-      formData.append('params', JSON.stringify(postData));
-
-      images.forEach((image) => {
-        if (image instanceof File) {
-          formData.append('images', image);
+    try {
+      if (isEditMode && postId) {
+        const { code, message } = await updatePost(token, postId, postData);
+        if (code === 200) {
+          alert('자랑글이 성공적으로 수정되었습니다.');
+          navigate('/housepost');
+        } else {
+          alert(`자랑글 수정에 실패했습니다: ${message}`);
         }
-      });
-
-      const { code, message } = await createPost(token, formData);
-      if (code === 200) {
-        alert('자랑글이 성공적으로 등록되었습니다.');
-        navigate('/housepost');
       } else {
-        alert(`자랑글 등록에 실패했습니다: ${message}`);
+        const formData = new FormData();
+        formData.append('params', JSON.stringify(postData));
+
+        images.forEach((image) => {
+          if (image instanceof File) {
+            formData.append('images', image);
+          }
+        });
+
+        const { code, message } = await createPost(token, formData);
+        if (code === 200) {
+          alert('자랑글이 성공적으로 등록되었습니다.');
+          navigate('/housepost');
+        } else {
+          alert(`자랑글 등록에 실패했습니다: ${message}`);
+        }
       }
+    } catch (error) {
+      console.error('Error submitting post:', error);
+      alert('오류가 발생했습니다. 다시 시도해 주세요.');
     }
   };
 
   const handleGoBack = () => {
     navigate('/housepost');
-  };
-
-  const handleComplete = (data: any) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
-
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== '') {
-        extraAddress += (extraAddress !== '' ? ', ' : '') + data.buildingName;
-      }
-      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
-    }
-
-    setAddress(fullAddress);
-    setIsPostcodeOpen(false);
-  };
-
-  const handleScheduleSelect = (schedule: string) => {
-    setSchedule(schedule);
-    setIsDropdownOpen(false);
   };
 
   const handleWorkerSelect = (worker: WorkerInfo) => {
@@ -239,7 +201,9 @@ export default function HousePostUpdate() {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
+                  className={`relative w-24 h-24 flex-shrink-0 ${
+                    index === 0 ? 'ml-4' : ''
+                  }`}
                 >
                   <img
                     src={
@@ -281,118 +245,6 @@ export default function HousePostUpdate() {
               {errors.title && (
                 <div className="text-zp-red text-zp-xs mt-1">
                   {errors.title}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
-              <div className="mb-2">현장 주소</div>
-              <div className="pl-2 relative mt-2 bg-zp-white border  border-zp-light-gray rounded-zp-radius-btn">
-                <Input
-                  type="text"
-                  placeholder="현장 주소"
-                  inputType="textArea"
-                  width="100%"
-                  height={2.375}
-                  className="border border-zp-sub-color rounded-zp-radius-btn p-[10px] pr-[40px]"
-                  fontSize="xs"
-                  radius="btn"
-                  value={address}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setAddress(e.target.value)
-                  }
-                  onClick={() => setIsPostcodeOpen(true)}
-                />
-              </div>
-              {errors.address && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.address}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
-              <div className="mb-2">상세 주소</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
-                <Input
-                  type="text"
-                  placeholder="상세 주소"
-                  inputType="textArea"
-                  width="100%"
-                  height={2.375}
-                  className=""
-                  fontSize="xs"
-                  radius="btn"
-                  value={addressDetail}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setAddressDetail(e.target.value)
-                  }
-                />
-              </div>
-              {errors.addressDetail && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.addressDetail}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 font-bold flex flex-col items-center justify-center relative">
-            <div className="text-left w-full">
-              <div className="mb-2">스케줄</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2 relative">
-                <div className="flex justify-end items-center">
-                  <Input
-                    type="text"
-                    placeholder="스케줄을 선택해주세요."
-                    inputType="textArea"
-                    width="100%"
-                    height={2.375}
-                    className=""
-                    fontSize="xs"
-                    radius="btn"
-                    value={schedule}
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                      setSchedule(e.target.value)
-                    }
-                  />
-
-                  {isDropdownOpen ? (
-                    <IoMdArrowDropup
-                      size={40}
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="cursor-pointer"
-                    />
-                  ) : (
-                    <IoMdArrowDropdown
-                      size={40}
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="cursor-pointer"
-                    />
-                  )}
-                </div>
-              </div>
-              {isDropdownOpen && (
-                <div className="absolute top-full mt-2 w-full bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
-                  {schedules.map((item) => (
-                    <button
-                      key={item}
-                      onClick={() => handleScheduleSelect(item)}
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm"
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {errors.schedule && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.schedule}
                 </div>
               )}
             </div>
@@ -465,20 +317,6 @@ export default function HousePostUpdate() {
           </div>
         </div>
       </div>
-
-      {isPostcodeOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
-          <div className="bg-zp-white p-4 rounded-zp-radius-big">
-            <DaumPostcode onComplete={handleComplete} />
-            <button
-              className="mt-2 w-full bg-zp-sub-color rounded-zp-radius-big font-bold p-2"
-              onClick={() => setIsPostcodeOpen(false)}
-            >
-              닫기
-            </button>
-          </div>
-        </div>
-      )}
 
       {isWorkerModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50 overflow-y-auto">
