@@ -208,10 +208,24 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
           })),
         };
 
-        // Store images as URLs in the state
-        const imageUrls = data.board_images.map((img: any) => img.saveFile);
-
-        set({ postDetails, images: imageUrls });
+        // Worker 정보가 postDetails.tags에 포함되어 있으므로 이를 selectedWorkers 상태로 설정
+        set({
+          postDetails,
+          images: data.board_images.map((img: any) => img.saveFile),
+          selectedWorkers: data.tags.map((tag: any) => ({
+            portfolio_serial: tag.portfolio_serial,
+            worker: tag.worker,
+            user_name: tag.user_name,
+            birth_date: tag.birth_date,
+            temperature: tag.temperature,
+            field_id: tag.field_id,
+            field_name: tag.field_name,
+            career: tag.career,
+            certificated_badge: tag.certificated_badge,
+            locations: [], // 필요에 따라 location 데이터를 추가
+            img: null, // 필요에 따라 이미지 데이터를 추가
+          })),
+        });
         return postDetails;
       } else {
         console.error(
@@ -225,7 +239,6 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
       return null;
     }
   },
-
   createPost: async (token: string, formData: FormData) => {
     try {
       const response = await axios.post(

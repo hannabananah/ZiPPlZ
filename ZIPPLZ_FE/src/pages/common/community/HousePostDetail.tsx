@@ -45,12 +45,12 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
     if (id) {
       fetchPostDetails(Number(id)).then((data) => {
         setIsBookmarked(data?.wish_cnt > 0);
-        if (location.state && location.state.updatedWorkers) {
-          setSelectedWorkers(location.state.updatedWorkers);
+        if (data && data.tags) {
+          setSelectedWorkers(data.tags); // fetchPostDetails에서 이미 설정된 selectedWorkers 사용
         }
       });
     }
-  }, [id, fetchPostDetails, location.state, setSelectedWorkers]);
+  }, [id, fetchPostDetails, setSelectedWorkers]);
 
   if (!postDetails) {
     return <div>Loading...</div>;
