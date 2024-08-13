@@ -17,7 +17,7 @@ public class ChatMessageResponseDTO {
     private int userSerial;
     private String userName;
     private String chatMessageContent;
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private MessageType fileType;
     private File file;
@@ -27,7 +27,7 @@ public class ChatMessageResponseDTO {
         this.userName = request.getUserName();
         this.chatMessageContent = request.getChatMessageContent();
         this.fileType = request.getType();
-        this.createdAt = LocalDateTime.now().plusHours(12);;
+        this.createdAt = LocalDateTime.now();
         this.file = null;
     }
 
@@ -35,7 +35,7 @@ public class ChatMessageResponseDTO {
         this.userSerial = chatMessage.getUserSerial();
         this.userName = chatMessage.getUserName();
         this.chatMessageContent = chatMessage.getChatMessageContent();
-        this.createdAt = chatMessage.getCreatedAt().plusHours(12);;
+        this.createdAt = chatMessage.getCreatedAt();
         this.fileType = chatMessage.getFileType();
         this.file = chatMessage.getFile();
     }
