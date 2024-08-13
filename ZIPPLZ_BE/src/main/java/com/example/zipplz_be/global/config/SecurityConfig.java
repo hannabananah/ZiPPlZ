@@ -74,8 +74,8 @@ public class SecurityConfig {
         // CORS 설정
         http.cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173", "https://zipplz.site"));
-            configuration.setAllowedMethods(Collections.singletonList("*"));
+            configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "http://zipplz.site"));
+            configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
             configuration.setAllowCredentials(true);
             configuration.setAllowedHeaders(Collections.singletonList("*"));
             configuration.setMaxAge(3600L);
