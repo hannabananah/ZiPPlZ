@@ -44,6 +44,8 @@ export default function Options({
   publishVideo,
   handleCloseVideo,
 }: OptionsProps) {
+  const { startScreenShare } = useOpenVidu();
+
   const [isMuted, setIsMuted] = useState(false);
   const [isHided, setIsHided] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(false);
@@ -127,6 +129,8 @@ export default function Options({
   };
 
   const handleSharingContract = () => {
+    console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
+    // startScreenShare();
     setIsContractModalOpen(true);
   };
 

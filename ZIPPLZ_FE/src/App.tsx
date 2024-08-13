@@ -53,10 +53,10 @@ export default function App() {
         <Route path="contract/:workserial" element={<Contract />} />
         <Route path="community" element={<Community />} />
         <Route path="mypage" element={<MyPage />} />
-        <Route
+        {/* <Route
           path="chatrooms/:chatroomSerial/videoroom"
           element={<VideoRoom />}
-        />
+        /> */}
         ​<Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
         <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
         <Route path="workerinfodatedetail" element={<WorkerInfoDateDetail />} />
