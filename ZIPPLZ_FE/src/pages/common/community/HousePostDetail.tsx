@@ -28,8 +28,8 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   const [activeReplyComment, setActiveReplyComment] = useState<number | null>(
     null
   );
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // 댓글 또는 답글 수정 상태
-  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null); // 드롭다운 상태
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
   const {
     fetchPostDetails,
     postDetails,
@@ -37,15 +37,20 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
     addComment,
     addReply,
     deleteComment,
+    selectedWorkers,
+    setSelectedWorkers,
   } = useHousePostStore();
 
   useEffect(() => {
     if (id) {
       fetchPostDetails(Number(id)).then((data) => {
-        setIsBookmarked(data?.wish_cnt > 0); // 서버에서 받은 초기 북마크 상태 설정
+        setIsBookmarked(data?.wish_cnt > 0);
+        if (location.state && location.state.updatedWorkers) {
+          setSelectedWorkers(location.state.updatedWorkers);
+        }
       });
     }
-  }, [id, fetchPostDetails]);
+  }, [id, fetchPostDetails, location.state, setSelectedWorkers]);
 
   if (!postDetails) {
     return <div>Loading...</div>;
@@ -58,17 +63,15 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   const handleBookmarkClick = async () => {
     const newBookmarkState = !isBookmarked;
     setIsBookmarked(newBookmarkState);
-
-    // 북마크 상태 변경 시 콜백 호출
     onBookmarkChange();
-
-    // 실제 API 호출은 생략했지만, 필요시 아래에서 처리
-    // const result = await toggleBookmark(Number(id), newBookmarkState);
   };
 
   const handleEditClick = () => {
     navigate('/HousePostUpdate', {
-      state: { post: postDetails, isEditMode: true },
+      state: {
+        post: { ...postDetails, selectedWorkers },
+        isEditMode: true,
+      },
     });
   };
 
@@ -109,7 +112,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
       alert('댓글이 성공적으로 저장되었습니다.');
       setCommentContent('');
       setIsCommentActive(false);
-      fetchPostDetails(Number(id)); // 댓글 추가 후 게시글 새로고침
+      fetchPostDetails(Number(id));
     } else {
       alert(`댓글 저장에 실패했습니다: ${message}`);
     }
@@ -130,7 +133,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
       alert('대댓글이 성공적으로 저장되었습니다.');
       setReplyContent('');
       setActiveReplyComment(null);
-      fetchPostDetails(Number(id)); // 대댓글 추가 후 게시글 새로고침
+      fetchPostDetails(Number(id));
     } else {
       alert(`대댓글 저장에 실패했습니다: ${message}`);
     }
@@ -152,7 +155,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
       return userSerial === currentUserSerial;
     }
 
-    return false; // 로그인 정보가 없을 경우 false 반환
+    return false;
   };
 
   const handleCommentClick = () => {
@@ -179,7 +182,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
   const handleEditComment = (commentSerial: number) => {
     setEditingCommentId(commentSerial);
-    setDropdownOpen(null); // 드롭다운 닫기
+    setDropdownOpen(null);
   };
 
   const handleDeleteComment = async (commentSerial: number) => {
@@ -190,16 +193,15 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
     if (code === 200) {
       alert('댓글이 성공적으로 삭제되었습니다.');
       setEditingCommentId(null);
-      fetchPostDetails(Number(id)); // 새로고침
+      fetchPostDetails(Number(id));
     } else {
       alert(`댓글 삭제에 실패했습니다: ${message}`);
     }
   };
 
   const handleSaveEditedComment = async () => {
-    // 로컬 상태에서 댓글 수정 후, 게시글을 다시 불러옵니다.
-    setEditingCommentId(null); // 수정 모드 해제
-    fetchPostDetails(Number(id)); // 새로고침
+    setEditingCommentId(null);
+    fetchPostDetails(Number(id));
     alert('댓글이 성공적으로 수정되었습니다.');
   };
 
@@ -272,10 +274,19 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
           <div className="flex w-full overflow-x-auto mt-4">
             <div className="flex justify-between w-full h-[8rem] ">
-              {postDetails.tags && postDetails.tags.length > 0 ? (
-                postDetails.tags.map((worker) => (
-                  <WorkerCard key={worker.portfolio_serial} worker={worker} />
-                ))
+              {selectedWorkers.length > 0 ? (
+                selectedWorkers.map((worker) => {
+                  const safeWorker = {
+                    ...worker,
+                    locations: worker.locations || [],
+                  };
+                  return (
+                    <WorkerCard
+                      key={safeWorker.portfolio_serial}
+                      worker={safeWorker}
+                    />
+                  );
+                })
               ) : (
                 <div>No workers tagged</div>
               )}
@@ -332,7 +343,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
           {postDetails.comments && postDetails.comments.length > 0 ? (
             postDetails.comments.map((comment, index) => (
-              <div key={index} className="mb-12 mt-6 flex flex-col">
+              <div key={index} className="mb-24 mt-6 flex flex-col">
                 <div className="flex items-center">
                   <CgProfile size={40} />
                   <div className="px-2 text-zp-xs font-bold">
@@ -359,7 +370,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                         <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
                           <div className="flex justify-center items-center">
                             <div className="p-2">
-                              <FaRegTrashAlt />
+                              <GoPencil />
                             </div>
                             <div
                               className="p-2 cursor-pointer hover:bg-gray-200"
@@ -375,7 +386,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
                           <div className="flex justify-center items-center">
                             <div className="p-2">
-                              <GoPencil />
+                              <FaRegTrashAlt />
                             </div>
                             <div
                               className="p-2 cursor-pointer hover:bg-gray-200"
@@ -526,22 +537,34 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                                   }
                                 />
                                 {dropdownOpen === child.commentSerial && (
-                                  <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-300 shadow-lg">
-                                    <div
-                                      className="px-4 py-2 cursor-pointer hover:bg-gray-200"
-                                      onClick={() =>
-                                        handleEditComment(child.commentSerial)
-                                      }
-                                    >
-                                      수정
+                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                                    <div className="flex justify-center items-center">
+                                      <div className="p-2">
+                                        <GoPencil />
+                                      </div>
+                                      <div
+                                        className="p-2 cursor-pointer hover:bg-zp-gray"
+                                        onClick={() =>
+                                          handleEditComment(child.commentSerial)
+                                        }
+                                      >
+                                        수정
+                                      </div>
                                     </div>
-                                    <div
-                                      className="px-4 py-2 cursor-pointer hover:bg-gray-200"
-                                      onClick={() =>
-                                        handleDeleteComment(child.commentSerial)
-                                      }
-                                    >
-                                      삭제
+                                    <div className="flex justify-center items-center">
+                                      <div className="p-2">
+                                        <FaRegTrashAlt />
+                                      </div>
+                                      <div
+                                        className="p-2 cursor-pointer hover:bg-zp-gray"
+                                        onClick={() =>
+                                          handleDeleteComment(
+                                            child.commentSerial
+                                          )
+                                        }
+                                      >
+                                        삭제
+                                      </div>
                                     </div>
                                   </div>
                                 )}

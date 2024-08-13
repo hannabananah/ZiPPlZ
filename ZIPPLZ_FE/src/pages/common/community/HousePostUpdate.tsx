@@ -20,7 +20,6 @@ export default function HousePostUpdate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
   const [boardContent, setBoardContent] = useState<string>('');
-  const [selectedWorkers, setSelectedWorkers] = useState<WorkerInfo[]>([]);
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
@@ -35,20 +34,21 @@ export default function HousePostUpdate() {
   const location = useLocation();
   const maxImages = 10;
 
-  const { updatePost, createPost, postDetails } = useHousePostStore();
+  const { updatePost, postDetails, selectedWorkers, setSelectedWorkers } =
+    useHousePostStore();
 
   useEffect(() => {
     if (location.state) {
       const { post, isEditMode } = location.state;
       setTitle(post.title);
       setBoardContent(post.boardContent);
-      setImages(post.images.map((img: any) => img.saveFile) || []); // Set images as URLs
+      setImages(post.images.map((img: any) => img.saveFile) || []);
       setSelectedWorkers(post.selectedWorkers || []);
       setIsEditMode(isEditMode);
       setPostId(post.boardSerial);
     }
     fetchWorkerInfoList();
-  }, [location.state]);
+  }, [location.state, setSelectedWorkers]);
 
   const fetchWorkerInfoList = async () => {
     try {
@@ -94,11 +94,15 @@ export default function HousePostUpdate() {
     const postData = {
       title,
       board_content: boardContent,
-      selectedWorkers: selectedWorkers.map((worker) => ({
-        portfolio_serial: worker.portfolio_serial,
-        worker: worker.user_serial,
-      })),
+      selectedWorkers: JSON.stringify(
+        selectedWorkers.map((worker) => ({
+          portfolio_serial: worker.portfolio_serial,
+          worker: worker.worker,
+        }))
+      ),
     };
+
+    console.log('postData to send:', postData);
 
     const token = `Bearer ${localStorage.getItem('token')}`;
 
@@ -107,26 +111,11 @@ export default function HousePostUpdate() {
         const { code, message } = await updatePost(token, postId, postData);
         if (code === 200) {
           alert('자랑글이 성공적으로 수정되었습니다.');
-          navigate('/housepost');
+          navigate('/housepost', {
+            state: { updatedWorkers: selectedWorkers },
+          });
         } else {
           alert(`자랑글 수정에 실패했습니다: ${message}`);
-        }
-      } else {
-        const formData = new FormData();
-        formData.append('params', JSON.stringify(postData));
-
-        images.forEach((image) => {
-          if (image instanceof File) {
-            formData.append('images', image);
-          }
-        });
-
-        const { code, message } = await createPost(token, formData);
-        if (code === 200) {
-          alert('자랑글이 성공적으로 등록되었습니다.');
-          navigate('/housepost');
-        } else {
-          alert(`자랑글 등록에 실패했습니다: ${message}`);
         }
       }
     } catch (error) {
@@ -151,7 +140,6 @@ export default function HousePostUpdate() {
     setSelectedWorkers(tempSelectedWorkers);
     setIsWorkerModalOpen(false);
   };
-
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6">

@@ -319,7 +319,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
 
           {postDetails.comments && postDetails.comments.length > 0 ? (
             postDetails.comments.map((comment, index) => (
-              <div key={index} className="mb-12 mt-6 flex flex-col">
+              <div key={index} className="mb-24 mt-6 flex flex-col">
                 <div className="flex items-center">
                   <CgProfile size={40} />
                   <div className="px-2 text-zp-xs font-bold">
@@ -346,7 +346,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                         <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
                           <div className="flex justify-center items-center">
                             <div className="p-2">
-                              <FaRegTrashAlt />
+                              <GoPencil />
                             </div>
                             <div
                               className="p-2 cursor-pointer hover:bg-gray-200"
@@ -362,7 +362,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
 
                           <div className="flex justify-center items-center">
                             <div className="p-2">
-                              <GoPencil />
+                              <FaRegTrashAlt />
                             </div>
                             <div
                               className="p-2 cursor-pointer hover:bg-gray-200"
@@ -513,22 +513,34 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                                   }
                                 />
                                 {dropdownOpen === child.commentSerial && (
-                                  <div className="absolute right-0 mt-2 w-24 bg-white border border-gray-300 shadow-lg">
-                                    <div
-                                      className="px-4 py-2 cursor-pointer hover:bg-gray-200"
-                                      onClick={() =>
-                                        handleEditComment(child.commentSerial)
-                                      }
-                                    >
-                                      수정
+                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                                    <div className="flex justify-center items-center">
+                                      <div className="p-2">
+                                        <GoPencil />
+                                      </div>
+                                      <div
+                                        className="p-2 cursor-pointer hover:bg-zp-gray"
+                                        onClick={() =>
+                                          handleEditComment(child.commentSerial)
+                                        }
+                                      >
+                                        수정
+                                      </div>
                                     </div>
-                                    <div
-                                      className="px-4 py-2 cursor-pointer hover:bg-gray-200"
-                                      onClick={() =>
-                                        handleDeleteComment(child.commentSerial)
-                                      }
-                                    >
-                                      삭제
+                                    <div className="flex justify-center items-center">
+                                      <div className="p-2">
+                                        <FaRegTrashAlt />
+                                      </div>
+                                      <div
+                                        className="p-2 cursor-pointer hover:bg-zp-gray"
+                                        onClick={() =>
+                                          handleDeleteComment(
+                                            child.commentSerial
+                                          )
+                                        }
+                                      >
+                                        삭제
+                                      </div>
                                     </div>
                                   </div>
                                 )}

@@ -55,7 +55,7 @@ export default function QuestionPostListItem({
     >
       <div className="p-2 flex items-center space-x-4 w-full">
         {/* 이미지 */}
-        <div className="w-20 h-20 bg-gray-200 rounded overflow-hidden">
+        <div className="">
           {post_image ? (
             <img
               src={post_image}
@@ -63,9 +63,7 @@ export default function QuestionPostListItem({
               className="w-full h-full object-cover"
             />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-500">
-              No Image
-            </div>
+            <div className=""></div>
           )}
         </div>
 

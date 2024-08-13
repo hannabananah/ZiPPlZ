@@ -68,6 +68,21 @@ interface HousePostDetails {
   }[];
 }
 
+// 시공업자 정보 인터페이스
+interface WorkerInfo {
+  portfolio_serial: number;
+  worker: number;
+  user_name: string;
+  birth_date: number;
+  temperature: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string | null;
+}
+
 // 자랑글 상태 인터페이스
 interface HousePostState {
   title: string;
@@ -75,6 +90,8 @@ interface HousePostState {
   images: File[];
   housePosts: HousePost[];
   postDetails: HousePostDetails | null;
+  selectedWorkers: WorkerInfo[]; // 추가된 전역 상태
+  setSelectedWorkers: (workers: WorkerInfo[]) => void; // 전역 상태 업데이트 함수
   setTitle: (title: string) => void;
   setBoardContent: (content: string) => void;
   setImages: (images: File[]) => void;
@@ -87,7 +104,11 @@ interface HousePostState {
   updatePost: (
     token: string,
     id: number,
-    postData: { title: string; board_content: string }
+    postData: {
+      title: string;
+      board_content: string;
+      selectedWorkers?: { portfolio_serial: number; worker: number }[];
+    }
   ) => Promise<{ code: number; message: string }>;
   deletePost: (
     token: string,
@@ -113,7 +134,8 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   images: [],
   housePosts: [],
   postDetails: null,
-  toggleBookmark: '',
+  selectedWorkers: [], // 초기값 설정
+  setSelectedWorkers: (workers) => set({ selectedWorkers: workers }), // 상태 업데이트 함수
 
   setTitle: (title) => set({ title }),
   setBoardContent: (boardContent) => set({ boardContent }),
@@ -234,7 +256,11 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   updatePost: async (
     token: string,
     id: number,
-    postData: { title: string; board_content: string }
+    postData: {
+      title: string;
+      board_content: string;
+      selectedWorkers?: { portfolio_serial: number; worker: number }[]; // optional 필드로 지정
+    }
   ) => {
     try {
       const response = await axios.patch(
@@ -248,7 +274,6 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
         }
       );
 
-      // 올바른 `code`와 `message` 참조
       const { code, message } = response.data.proc;
 
       if (code === 200) {
