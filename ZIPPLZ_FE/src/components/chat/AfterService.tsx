@@ -9,6 +9,8 @@ import TextArea from '@components/common/TextArea';
 interface AfterServiceProps {
   closeAfterServiceModal: () => void;
   name: string | undefined;
+  submit: boolean;
+  setSubmit: (isSubmit: boolean) => void;
 }
 
 interface Field {
@@ -21,6 +23,8 @@ interface Field {
 export default function AfterService({
   closeAfterServiceModal,
   name,
+  submit,
+  setSubmit,
 }: AfterServiceProps) {
   const defaultFields: Field[] = [
     {
@@ -50,7 +54,6 @@ export default function AfterService({
   ];
 
   const [fields, setFields] = useState<Field[]>(defaultFields);
-  const [submit, setSubmit] = useState<boolean>(false);
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
 
   const handleFieldChange = (index: number, key: 'value', value: string) => {

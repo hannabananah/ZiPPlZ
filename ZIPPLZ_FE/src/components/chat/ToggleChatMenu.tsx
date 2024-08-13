@@ -37,11 +37,10 @@ export default function ToggleChatMenu({
 
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
+  const [submit, setSubmit] = useState<boolean>(false);
   const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
-
   const handleImageUpload = () => {
     imageInputRef.current?.click();
   };
@@ -90,7 +89,9 @@ export default function ToggleChatMenu({
 
   const closeAfterServiceModal = () => {
     setIsAfterServiceModalOpen(false);
-    setIsConfirmationModalOpen(true);
+    if (submit) {
+      setIsConfirmationModalOpen(true);
+    }
   };
 
   const closeMaterialModal = () => {
@@ -172,8 +173,8 @@ export default function ToggleChatMenu({
                 <menu.icon
                   size={26}
                   style={{
-                    stroke: menu.id >= 4 ? 'white' : undefined,
-                    fill: menu.id < 4 ? 'white' : undefined,
+                    stroke: menu.id >= 3 ? 'white' : undefined,
+                    fill: menu.id < 3 ? 'white' : undefined,
                   }}
                 />
               </div>
@@ -205,6 +206,8 @@ export default function ToggleChatMenu({
         <AfterService
           closeAfterServiceModal={closeAfterServiceModal}
           name={name}
+          submit={submit}
+          setSubmit={setSubmit}
         />
       </FullModal>
 
