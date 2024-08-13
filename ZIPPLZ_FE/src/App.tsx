@@ -8,7 +8,7 @@ import Layout from '@components/layout/Layout';
 import Custom404 from '@pages/common/404';
 import ChatRoom from '@pages/common/chat/ChatRoom';
 import VideoRoom from '@pages/common/chat/VideoRoom';
-import Community from '@pages/common/community/HousePostList';
+import Community from '@pages/common/community/HousePost';
 import Home from '@pages/common/home/Home';
 import MyInformationModify from '@pages/common/mypage/MyInformationModify';
 import MyPage from '@pages/common/mypage/MyPage';
@@ -29,11 +29,13 @@ import Portfolio from '@pages/worker/Portfolio';
 
 import Contract from './pages/common/Contract';
 import HousePost from './pages/common/community/HousePost';
+import HousePostCreate from './pages/common/community/HousePostCreate';
 import HousePostDetail from './pages/common/community/HousePostDetail';
-import HousePostDetailCreate from './pages/common/community/HousePostDetailCreate';
+import HousePostUpdate from './pages/common/community/HousePostUpdate';
 import QuestionPost from './pages/common/community/QuestionPost';
+import QuestionPostCreate from './pages/common/community/QuestionPostCreate';
 import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
-import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
+import QuestionPostUpdate from './pages/common/community/QuestionPostUpdate';
 import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
@@ -54,9 +56,7 @@ export default function App() {
         {/* 스케줄 & 계약서 */}
         <Route path="schedule" element={<Schedule />} />
         <Route path="contract/:workserial" element={<Contract />} />
-
         <Route path="community" element={<Community />} />
-
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
         <Route path="chatrooms/:roomId" element={<ChatRoom />} />
@@ -76,21 +76,17 @@ export default function App() {
         />
         <Route path="workers/findworker/:id" element={<FindWorkerDetail />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
-
         {/* 커뮤니티 */}
         <Route path="housepost" element={<HousePost />} />
-        <Route path="housepostdetail" element={<HousePostDetail />} />
+        <Route path="housepost/:id" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
-        <Route path="questionpostdetail" element={<QuestionPostDetail />} />
-        <Route
-          path="housepostdetailcreate"
-          element={<HousePostDetailCreate />}
-        />
-        <Route
-          path="questionpostdetailcreate"
-          element={<QuestionPostDetailCreate />}
-        />
+        <Route path="questionpost/:id" element={<QuestionPostDetail />} />
+        {/* 수정된 부분 */}
+        <Route path="housepostcreate" element={<HousePostCreate />} />
+        <Route path="housepostupdate" element={<HousePostUpdate />} />
 
+        <Route path="questionpostupdate" element={<QuestionPostUpdate />} />
+        <Route path="questionpostcreate" element={<QuestionPostCreate />} />
         {/* 마이페이지 */}
         {/* <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} /> */}
         <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />

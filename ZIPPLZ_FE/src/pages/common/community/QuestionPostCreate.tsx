@@ -1,89 +1,103 @@
-import { ChangeEvent, useState } from 'react';
-// import { CiSearch } from 'react-icons/ci';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
+import { useQuestionPostStore } from '@stores/QuestionPostStore';
 
-// 이미지 상태의 타입 정의
-type Image = string;
-
-export default function QuestionPostDetailCreate() {
-  const [images, setImages] = useState<Image[]>([]);
+export default function QuestionPostCreate() {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState<string>('');
-  const [address] = useState<string>('');
-  const [addressDetail] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [postId, setPostId] = useState<number | null>(null);
 
+  const { createPost, updatePost } = useQuestionPostStore();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
-  const navigate = useNavigate();
   const maxImages = 10;
 
-  // 이미지 업로드 핸들러
+  useEffect(() => {
+    if (location.state) {
+      const { post, isEditMode } = location.state;
+      setTitle(post.title);
+      setWorkDetail(post.board_content);
+      setImages(post.images || []);
+      setIsEditMode(isEditMode);
+      setPostId(post.board_serial);
+    }
+  }, [location.state]);
+
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const readerPromises = files.map((file) => {
-      const reader = new FileReader();
-      return new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-    });
+    const validFiles = files.slice(0, maxImages - images.length);
 
-    Promise.all(readerPromises).then((results) => {
-      setImages((prevImages) => [
-        ...prevImages,
-        ...results.slice(0, maxImages - prevImages.length),
-      ]);
-    });
+    setImages((prevImages) => [...prevImages, ...validFiles]);
   };
 
-  // 이미지 삭제 핸들러
   const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // 확인 버튼 핸들러
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!title) newErrors.title = '제목이 입력되지 않았습니다';
-    if (!address) newErrors.address = '현장 주소가 입력되지 않았습니다';
-    if (!addressDetail)
-      newErrors.addressDetail = '상세 주소가 입력되지 않았습니다';
-    if (!workDetail) newErrors.workDetail = '작업내용이 입력되지 않았습니다';
+    if (!workDetail) newErrors.workDetail = '질문 내용이 입력되지 않았습니다';
 
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
     }
 
-    navigate('/FindWorkerList', {
-      state: {
-        newPost: {
-          title,
-          address,
-          addressDetail,
-          workDetail,
-        },
-      },
+    const token = `Bearer ${localStorage.getItem('token')}`;
+    const formData = new FormData();
+
+    formData.append('title', title);
+    formData.append('board_content', workDetail);
+
+    images.forEach((image) => {
+      formData.append('images', image);
     });
+
+    try {
+      let response;
+      if (isEditMode && postId) {
+        response = await updatePost(token, postId, formData);
+      } else {
+        response = await createPost(token, formData);
+      }
+
+      const { code, message } = response;
+      if (code === 200) {
+        alert(
+          isEditMode
+            ? '질문글이 성공적으로 수정되었습니다.'
+            : '질문글이 성공적으로 등록되었습니다.'
+        );
+        navigate('/QuestionPost');
+      } else {
+        alert(`질문글 처리에 실패했습니다: ${message}`);
+      }
+    } catch (error) {
+      console.error('Failed to create/update post:', error);
+      alert('오류가 발생했습니다. 나중에 다시 시도해 주세요.');
+    }
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
-    navigate('/FindWorkerList');
+    navigate('/QuestionPost');
   };
 
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
         <div className="w-full">
-          {/* 나가기 버튼, 구인 글쓰기 text */}
           <div className="mt-12 flex items-center justify-between w-full">
             <div className="flex items-center">
               <GoArrowLeft
@@ -96,18 +110,15 @@ export default function QuestionPostDetailCreate() {
             </div>
           </div>
 
-          {/* 게시판 가이드 */}
           <div className="mt-6 font-bold flex items-center justify-start">
             <div className="text-left">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
               <div className="text-zp-xs text-zp-light-gray">
-                사진을 첨부하면 시공자가 작업내용에 대해 보다 상세하게 파악할 수
-                있어요.
+                사진을 첨부하면 질문에 대한 보다 상세한 답변을 받을 수 있어요.
               </div>
             </div>
           </div>
 
-          {/* 사진 첨부 버튼 */}
           <div className="flex items-start mt-6 space-x-4">
             <div className="w-1/6">
               <div className="relative">
@@ -130,19 +141,21 @@ export default function QuestionPostDetailCreate() {
                 />
               </div>
             </div>
-            {/* 사진 미리보기 */}
+
             <div className="flex-1 flex overflow-x-auto space-x-4">
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
+                  className={`relative w-24 h-24 flex-shrink-0 ${
+                    index === 0 ? 'ml-4' : ''
+                  }`}
                 >
                   <img
-                    src={image}
+                    src={URL.createObjectURL(image)}
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded-zp-radius-btn"
-                    onClick={() => handleImageRemove(index)}
                   />
+
                   <button
                     onClick={() => handleImageRemove(index)}
                     className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
@@ -154,7 +167,6 @@ export default function QuestionPostDetailCreate() {
             </div>
           </div>
 
-          {/* 제목 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">제목</div>
@@ -182,17 +194,16 @@ export default function QuestionPostDetailCreate() {
             </div>
           </div>
 
-          {/* 작업 내용 input */}
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">질문</div>
-              <div className="bg-zp-white border rounded-zp-radius-btn  pl-2">
+              <div className="bg-zp-white border rounded-zp-radius-btn pl-2">
                 <Input
                   type="text"
-                  placeholder="질문 작성"
+                  placeholder="질문 내용을 입력하세요."
                   inputType="textArea"
                   width="100%"
-                  height={2.375}
+                  height={15}
                   className=""
                   fontSize="xs"
                   radius="btn"
@@ -210,9 +221,9 @@ export default function QuestionPostDetailCreate() {
             </div>
           </div>
 
-          <div className="mt-6 font-bold h-20 flex items-center justify-center">
+          <div className="mb-12 mt-6 font-bold h-20 flex items-center justify-center">
             <Button
-              children="확인"
+              children={isEditMode ? '수정하기' : '작성하기'}
               buttonType="second"
               width="full"
               height={2.375}
