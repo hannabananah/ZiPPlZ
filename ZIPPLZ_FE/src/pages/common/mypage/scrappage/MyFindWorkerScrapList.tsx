@@ -84,7 +84,6 @@ export default function MyFindWorkerList() {
     setSelectedValue(sortOption as SortOption);
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/mypage');
   };
@@ -95,7 +94,7 @@ export default function MyFindWorkerList() {
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+    setIsDropdownOpen(false);
   };
 
   const toggleAllSelected = () => {
@@ -134,13 +133,12 @@ export default function MyFindWorkerList() {
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
-              size={20} // 아이콘 크기 조정
+              size={20}
             />
             <div className="flex items-center space-x-2">
               <span className="text-zp-lg font-bold">스크랩 글 목록</span>
@@ -184,7 +182,7 @@ export default function MyFindWorkerList() {
             </div>
           )}
         </div>
-        {/* 검색 input */}
+
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -201,7 +199,6 @@ export default function MyFindWorkerList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
           <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
@@ -220,12 +217,11 @@ export default function MyFindWorkerList() {
             </div>
           </div>
         </div>
-        {/* 전체 게시글 수 표시 부분 */}
+
         <div className="text-zp-xl font-bold text-zp-gray">
           전체 {list.length}
         </div>
 
-        {/* 선택하기-삭제하기 버튼 */}
         <div className="w-full flex justify-between items-center text-zp-2xs">
           {isSelecting && (
             <div
@@ -264,10 +260,8 @@ export default function MyFindWorkerList() {
             </button>
           </div>
         </div>
-        {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* FindWorkerListItem 컴포넌트 */}
         <div className="w-full mt-2 grid grid-cols-1 gap-4">
           {list.map((worker) => (
             <div
@@ -299,14 +293,13 @@ export default function MyFindWorkerList() {
                 }`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                <FindWorkerListItem />
+                <FindWorkerListItem worker={worker} />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">

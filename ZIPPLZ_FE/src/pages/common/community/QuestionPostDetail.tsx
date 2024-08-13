@@ -36,14 +36,14 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
     deletePost,
     addComment,
     addReply,
-    toggleBookmark,
+    // toggleBookmark,
     deleteComment,
   } = useQuestionPostStore();
 
   useEffect(() => {
     if (id) {
-      fetchPostDetails(Number(id)).then((data) => {
-        setIsBookmarked(data?.wish_cnt > 0); // 서버에서 받은 초기 북마크 상태 설정
+      fetchPostDetails(Number(id)).then(() => {
+        // setIsBookmarked(data?.wish_cnt > 0); // 서버에서 받은 초기 북마크 상태 설정
       });
     }
   }, [id, fetchPostDetails]);
@@ -402,11 +402,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                         height={2.5}
                         fontSize="xs"
                         radius="full"
-                        onClick={() =>
-                          handleSaveEditedComment(
-                            comment.parent_comment.commentSerial
-                          )
-                        }
+                        onClick={() => handleSaveEditedComment()}
                       />
                     </div>
                   ) : (
@@ -571,9 +567,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                                   height={2.5}
                                   fontSize="xs"
                                   radius="full"
-                                  onClick={() =>
-                                    handleSaveEditedComment(child.commentSerial)
-                                  }
+                                  onClick={() => handleSaveEditedComment()}
                                 />
                               </div>
                             ) : (

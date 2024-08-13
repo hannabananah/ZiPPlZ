@@ -272,8 +272,11 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
           <div className="mt-6 text-zp-xl font-bold">이 분들과 함께 했어요</div>
 
+          {/* WorkerCard 표시 부분 */}
+          {/* x축으로 움직이면서 열람 가능 */}
           <div className="flex w-full overflow-x-auto mt-4">
             <div className="flex justify-between w-full h-[8rem] ">
+              {/* 선택 시공업자 있으면 */}
               {selectedWorkers.length > 0 ? (
                 selectedWorkers.map((worker) => {
                   const safeWorker = {
@@ -288,11 +291,13 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                   );
                 })
               ) : (
-                <div>No workers tagged</div>
+                // 선택 시공업자 없으면
+                <div>함께한 시공업자가 없습니다.</div>
               )}
             </div>
           </div>
 
+          {/* 댓글 n개 */}
           <div className="mt-6 text-zp-xl font-bold">
             댓글 {postDetails.comments ? postDetails.comments.length : 0}개
           </div>
@@ -341,6 +346,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
             </div>
           </div>
 
+          {/* 댓글 부분 */}
           {postDetails.comments && postDetails.comments.length > 0 ? (
             postDetails.comments.map((comment, index) => (
               <div key={index} className="mb-24 mt-6 flex flex-col">
@@ -367,7 +373,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                       />
                       {dropdownOpen ===
                         comment.parent_comment.commentSerial && (
-                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
                           <div className="flex justify-center items-center">
                             <div className="p-2">
                               <GoPencil />
@@ -426,11 +432,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                         height={2.5}
                         fontSize="xs"
                         radius="full"
-                        onClick={() =>
-                          handleSaveEditedComment(
-                            comment.parent_comment.commentSerial
-                          )
-                        }
+                        onClick={() => handleSaveEditedComment()}
                       />
                     </div>
                   ) : (
@@ -537,7 +539,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                                   }
                                 />
                                 {dropdownOpen === child.commentSerial && (
-                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
                                     <div className="flex justify-center items-center">
                                       <div className="p-2">
                                         <GoPencil />
@@ -595,9 +597,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                                   height={2.5}
                                   fontSize="xs"
                                   radius="full"
-                                  onClick={() =>
-                                    handleSaveEditedComment(child.commentSerial)
-                                  }
+                                  onClick={() => handleSaveEditedComment()}
                                 />
                               </div>
                             ) : (
