@@ -40,14 +40,6 @@ export default function ChatRoomHeader({
     }
   };
 
-  const handleClickOpenMenu = () => {
-    openModal('mini');
-  };
-
-  const handleCloseModal = () => {
-    closeModal('mini');
-  };
-
   return (
     <div className="sticky top-0 flex items-center justify-between h-20 px-4 align-middle bg-zp-transparent">
       <div className="flex justify-start gap-x-2">
@@ -76,23 +68,22 @@ export default function ChatRoomHeader({
             </span>
           </div>
         </div>
-      </div>
-      <div className="relative flex gap-3">
-        <button onClick={handleClickVideo}>
-          <IoVideocamOutline size={20} />
-        </button>
-        <button onClick={handleClickOpenMenu}>
-          <CiMenuKebab size={20} />
-        </button>
         <Modal
-          isOpen={currentModals.includes('mini')}
-          className="absolute right-0 overflow-hidden top-10 max-w-40 shadow-zp-deep rounded-zp-radius-big"
-          overlayClassName="bg-transparent bg-opacity-none fixed inset-0"
+          isOpen={currentModals.includes('select')}
+          onRequestClose={() => closeModal('select')}
+          className="absolute right-0 overflow-hidden top-11 max-w-40 shadow-zp-deep rounded-zp-radius-big"
+          style={{
+            overlay: {
+              backgroundColor: 'transparent',
+              maxWidth: '600px',
+              margin: '0 auto',
+            },
+          }}
         >
           <div className="w-full p-3 text-zp-2xs">
             <button
               onClick={() => {
-                handleCloseModal();
+                closeModal('select');
                 navigate('/');
               }}
               className="flex items-center w-full p-1 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-yellow bg-zp-white border-zp-sub-color text-zp-3xs"
@@ -102,7 +93,7 @@ export default function ChatRoomHeader({
             </button>
             <button
               onClick={() => {
-                handleCloseModal();
+                closeModal('select');
                 navigate(`/workers/${otherUserSerial}/portfolio`);
               }}
               className="flex items-center w-full p-1 border rounded-zp-radius-btn text-zp-gray hover:bg-zp-light-yellow bg-zp-white border-zp-sub-color text-zp-3xs"
@@ -112,6 +103,18 @@ export default function ChatRoomHeader({
             </button>
           </div>
         </Modal>
+      </div>
+      <div className="relative flex gap-3">
+        <button onClick={handleClickVideo}>
+          <IoVideocamOutline size={20} />
+        </button>
+        <button
+          onClick={() => {
+            openModal('select');
+          }}
+        >
+          <CiMenuKebab size={20} />
+        </button>
       </div>
     </div>
   );
