@@ -61,7 +61,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
     setIsBookmarked(newBookmarkState);
 
     // 북마크 상태 변경 시 콜백 호출
-    onBookmarkChange(Number(id), newBookmarkState);
+    onBookmarkChange();
 
     // 실제 API 호출은 생략했지만, 필요시 아래에서 처리
     // const result = await toggleBookmark(Number(id), newBookmarkState);
@@ -197,7 +197,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
     }
   };
 
-  const handleSaveEditedComment = async (commentSerial: number) => {
+  const handleSaveEditedComment = async () => {
     // 로컬 상태에서 댓글 수정 후, 게시글을 다시 불러옵니다.
     setEditingCommentId(null); // 수정 모드 해제
     fetchPostDetails(Number(id)); // 새로고침

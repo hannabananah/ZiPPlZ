@@ -24,6 +24,7 @@ const list = [
     view_cnt: 123,
     bookmark_cnt: 12,
     comment_cnt: 5,
+    post_image: null,
   },
   {
     post_serial: 2,
@@ -36,6 +37,7 @@ const list = [
     view_cnt: 98,
     bookmark_cnt: 8,
     comment_cnt: 3,
+    post_image: null,
   },
   // 다른 질문글 정보 추가
 ];

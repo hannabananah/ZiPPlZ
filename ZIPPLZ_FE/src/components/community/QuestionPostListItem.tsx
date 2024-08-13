@@ -1,3 +1,4 @@
+// QuestionPostListItem.tsx
 import { useState } from 'react';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { CgProfile } from 'react-icons/cg';
@@ -17,9 +18,9 @@ interface QuestionPost {
   view_cnt: number;
   bookmark_cnt: number;
   comment_cnt: number;
-  isBookmarked: boolean; // 북마크 상태 추가
-  onBookmarkToggle: (post_serial: number, isBookmarked: boolean) => void; // 북마크 토글 함수 추가
-  post_image: string; // 이 줄을 추가하여 post_image 속성 포함
+  isBookmarked: boolean;
+  onBookmarkToggle: (post_serial: number, isBookmarked: boolean) => void;
+  post_image?: string | null; // 선택적 속성으로 변경
 }
 
 export default function QuestionPostListItem({
@@ -35,7 +36,7 @@ export default function QuestionPostListItem({
   comment_cnt,
   isBookmarked,
   onBookmarkToggle,
-  post_image, // 이 속성도 추가
+  post_image,
 }: QuestionPost) {
   const navigate = useNavigate();
   const [bookmarked, setBookmarked] = useState(isBookmarked);
@@ -55,12 +56,16 @@ export default function QuestionPostListItem({
       <div className="p-2 flex items-center space-x-4 w-full">
         {/* 이미지 */}
         <div className="w-20 h-20 bg-gray-200 rounded overflow-hidden">
-          {post_image && (
+          {post_image ? (
             <img
               src={post_image}
               alt="Post"
               className="w-full h-full object-cover"
             />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-500">
+              No Image
+            </div>
           )}
         </div>
 
