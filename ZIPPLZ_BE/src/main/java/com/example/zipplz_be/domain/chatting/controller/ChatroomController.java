@@ -90,7 +90,7 @@ public class ChatroomController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    @GetMapping("/{chatroomSerial}")
+    @GetMapping("/{chatroomSerial}/name")
     public ResponseEntity getOtherUserName(Authentication authentication, @PathVariable int chatroomSerial) {
         ResponseDTO responseDTO;
         HttpStatus status;
