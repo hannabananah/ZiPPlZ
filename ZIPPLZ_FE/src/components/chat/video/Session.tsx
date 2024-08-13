@@ -25,11 +25,13 @@ export default function Session({
 
   return (
     <div className="relative flex flex-col items-center justify-center h-full p-4 space-y-4">
-      <div className={`relative basis-1/2 ${subscriber ? '' : 'blur'}`}>
+      <div
+        className={`relative basis-1/3 flex items-start ${subscriber ? '' : 'blur'}`}
+      >
         <Video streamManager={publisher} ref={publisherRef} />
       </div>
       {subscriber ? (
-        <div className="relative basis-1/2">
+        <div className="relative flex items-start basis-2/3">
           <Video streamManager={subscriber} ref={subscriberRef} />
         </div>
       ) : (

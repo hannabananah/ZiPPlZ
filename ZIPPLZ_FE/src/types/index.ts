@@ -59,6 +59,7 @@ export interface ChatRoomDetails {
     location: string;
     fieldName: string;
     certificated: boolean;
+    userSerial: number;
     image: {
       fileSerial: number;
       saveFolder: string;

@@ -6,6 +6,8 @@ import ChatRoomHeader from '@components/chat/ChatRoomHeader';
 import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
 import ToggleChatMenu from '@components/chat/ToggleChatMenu';
+import VideoModal from '@components/chat/video/VideoModal';
+import FullModal from '@components/common/FullModal';
 import { useChatStore } from '@stores/chatStore';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import {
@@ -32,7 +34,11 @@ function ChatRoomContent() {
   const userSerial = loginUser?.userSerial;
 
   const { messages } = useContext(WebSocketContext) || { messages: [] };
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
+  const handleClickVideo = () => {
+    setIsVideoModalOpen(!isVideoModalOpen);
+  };
   const fetchChatRoomDetails = async (
     chatroomSerial: number
   ): Promise<ChatRoomDetails> => {
@@ -95,6 +101,7 @@ function ChatRoomContent() {
           fieldName={selectedChatRoom.otherUser.fieldName}
           imageUrl={selectedChatRoom.otherUser.image?.saveFile || ''}
           otherUserSerial={selectedChatRoom.otherUser.userSerial}
+          handleClickVideo={handleClickVideo}
         />
       )}
       <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
@@ -137,6 +144,14 @@ function ChatRoomContent() {
           <p className="py-4 text-center bg-gray-300">Invalid room ID</p>
         )}
       </div>
+      <FullModal
+        isOpen={isVideoModalOpen}
+        onRequestClose={() => setIsVideoModalOpen(false)}
+        height="96%"
+        maxWidth="580px"
+      >
+        <VideoModal handleCloseVideo={() => setIsVideoModalOpen(false)} />
+      </FullModal>
     </div>
   );
 }

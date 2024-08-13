@@ -4,10 +4,8 @@ import { IoExitOutline, IoVideocamOutline } from 'react-icons/io5';
 import { TiBusinessCard } from 'react-icons/ti';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
-import { useParams } from 'react-router-dom';
 
 import Badge from '@assets/certified-icon.svg?react';
-import { useChatStore } from '@stores/chatStore';
 import { useCurrentModals, useModalActions } from '@stores/modalStore';
 
 type ChatRoomHeaderProps = {
@@ -17,6 +15,7 @@ type ChatRoomHeaderProps = {
   fieldName: string;
   imageUrl?: string;
   otherUserSerial: number;
+  handleClickVideo: () => void;
 };
 
 export default function ChatRoomHeader({
@@ -26,30 +25,22 @@ export default function ChatRoomHeader({
   fieldName,
   imageUrl,
   otherUserSerial,
+  handleClickVideo,
 }: ChatRoomHeaderProps) {
-  const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
-
   const navigate = useNavigate();
-  const selectedChatRoom = useChatStore((state) => state.selectedChatRoom);
   const currentModals = useCurrentModals();
   const { closeModal, openModal } = useModalActions();
 
-  const handleClickVideo = () => {
-    if (selectedChatRoom) {
-      navigate(`/chatrooms/${chatroomSerial}/videoroom`);
-    }
-  };
-
   return (
-    <div className="sticky top-0 flex items-center justify-between h-20 px-4 align-middle bg-zp-transparent">
-      <div className="flex justify-start gap-x-2">
-        <button onClick={() => navigate('/')}>
+    <div className="sticky top-0 flex items-center justify-between h-20 px-4 bg-zp-transparent">
+      <div className="flex items-center gap-x-2">
+        <button onClick={() => navigate('/')} aria-label="Back">
           <IoIosArrowBack size={16} fill="#111" />
         </button>
         <img
           src={imageUrl || 'path/to/placeholder-image.png'}
-          alt="profile image"
-          className="w-12 h-12 rounded-zp-radius-full"
+          alt="profile"
+          className="w-12 h-12 rounded-full"
         />
         <div className="flex flex-col flex-1">
           <div className="flex items-center gap-1">
@@ -58,14 +49,9 @@ export default function ChatRoomHeader({
             </span>
             {certificated && <Badge />}
           </div>
-          <div className="flex gap-2 text-sm text-zp-gray">
-            <span className="flex items-center truncate max-w-20 text-zp-xs">
-              {fieldName}
-            </span>
-            |
-            <span className="flex items-center truncate max-w-20 text-zp-xs">
-              {location}
-            </span>
+          <div className="flex gap-2 text-zp-gray text-zp-2xs">
+            <span className="truncate max-w-20">{fieldName}</span>|
+            <span className="truncate max-w-30">{location}</span>
           </div>
         </div>
         <Modal
@@ -105,14 +91,10 @@ export default function ChatRoomHeader({
         </Modal>
       </div>
       <div className="relative flex gap-3">
-        <button onClick={handleClickVideo}>
+        <button onClick={handleClickVideo} aria-label="Video Call">
           <IoVideocamOutline size={20} />
         </button>
-        <button
-          onClick={() => {
-            openModal('select');
-          }}
-        >
+        <button onClick={() => openModal('select')} aria-label="Options">
           <CiMenuKebab size={20} />
         </button>
       </div>

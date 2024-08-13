@@ -145,18 +145,18 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
       );
 
       if (response.status === 200 && response.data) {
-        const otherUserName = response.data.data;
-
+        const otherUserName = response.data.data.otherUser.name;
         await postContract(Number(chatroomSerial), requestData);
         const formattedMessage = `
-          ✨ 계약서 초안 작성 완료! ✨
-          👷‍♂️ 시공자: ${userName}
-          👩‍🦰 고객: ${otherUserName}
-          👏 요청 일자: ${formatDateWithTime(new Date().toISOString())}
-          💵 작업 가격: ${formatNumberWithCommas(workPrice)}원
-          🏠 출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
-          📅 작업 기간: ${startDate}~${endDate}(${totalDuration}일)
-          🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
+                ✨ 계약서 초안 작성 완료! ✨
+                
+    👷‍♂️ 시공자: ${userName}
+    👩‍🦰 고객: ${otherUserName}
+    👏 요청 일자: ${formatDateWithTime(new Date().toISOString())}
+    💵 작업 가격: ${formatNumberWithCommas(workPrice)}원
+    🏠 출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
+    📅 작업 기간: ${startDate}~${endDate}(${totalDuration}일)
+    🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
         `;
         if (sendMessage) {
           sendMessage(formattedMessage, userSerial as number);

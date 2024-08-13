@@ -3,7 +3,6 @@ import { useParams } from 'react-router-dom';
 
 import type { ChatMessageData } from '@/types';
 import { Client, IMessage } from '@stomp/stompjs';
-import { useLoginUserStore } from '@stores/loginUserStore';
 import axios from 'axios';
 
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
@@ -26,8 +25,6 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
-  const { loginUser } = useLoginUserStore();
-  const userSerial: number | undefined = loginUser?.userSerial;
 
   useEffect(() => {
     const fetchInitialMessages = async () => {
