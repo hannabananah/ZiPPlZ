@@ -104,7 +104,7 @@ export default function SignUpWorkerRegion({
         작업 가능한 지역을 모두 선택해주세요.
       </p>
       <div className="grid w-full grid-cols-4 gap-4">
-        {sidoList.length > 0 ? (
+        {sidoList && sidoList.length > 0 ? (
           sidoList.map((item) => (
             <Button
               buttonType={
