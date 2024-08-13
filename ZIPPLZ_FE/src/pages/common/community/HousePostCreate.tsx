@@ -9,17 +9,16 @@ import { useNavigate } from 'react-router-dom';
 
 import { WorkerInfo } from '@/components/worker/workerinfolist/WorkerInfoList';
 import WorkerInfoListItem from '@/components/worker/workerinfolist/WorkerInfoListItem';
+import { useHousePostStore } from '@/stores/housePostStore';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import 'swiper/css';
-import 'swiper/css/navigation';
+import axios from 'axios';
 
 export default function HousePostDetailCreate() {
   const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
   const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
-  const [selectedWorkers, setSelectedWorkers] = useState<WorkerInfo[]>([]);
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
@@ -30,7 +29,8 @@ export default function HousePostDetailCreate() {
   const navigate = useNavigate();
   const maxImages = 10;
 
-  const { createPost } = useHousePostStore();
+  const { createPost, selectedWorkers, setSelectedWorkers } =
+    useHousePostStore();
 
   useEffect(() => {
     fetchWorkerInfoList();
