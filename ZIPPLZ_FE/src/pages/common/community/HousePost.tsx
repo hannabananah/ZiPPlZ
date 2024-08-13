@@ -174,7 +174,7 @@ export default function HousePost() {
         </div>
       </div>
       {/* HousePostDetail를 사용해 북마크 변경 시 이벤트 전달 */}
-      <HousePostDetail onBookmarkChange={handleBookmarkChange} />
+      {/* <HousePostDetail onBookmarkChange={handleBookmarkChange} /> */}
     </>
   );
 }
