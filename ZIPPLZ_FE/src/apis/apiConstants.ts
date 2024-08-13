@@ -1,4 +1,4 @@
-export const BASE_URL: string = 'https://localhost:5000/';
+export const BASE_URL: string = '/';
 
 export const END_POINT = {
   //로그인 회원가입
