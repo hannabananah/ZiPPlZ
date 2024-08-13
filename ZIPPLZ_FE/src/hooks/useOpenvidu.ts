@@ -19,9 +19,9 @@ export default function useOpenVidu() {
   const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
-  const [recordingId, setRecordingId] = useState<string | null>(null);
-  const [participants, setParticipants] = useState<number>(0);
-  const [isRecording, setIsRecording] = useState(false);
+  // const [recordingId, setRecordingId] = useState<string | null>(null);
+  // const [participants, setParticipants] = useState<number>(0);
+  // const [isRecording, setIsRecording] = useState(false);
   const navigate = useNavigate();
 
   const joinSession = useCallback(() => {
@@ -37,28 +37,28 @@ export default function useOpenVidu() {
     }
   }, [chatroomSerial, joinSession]);
 
-  const stopRecording = async () => {
-    if (recordingId && participants < 2) {
-      try {
-        await axios.post(
-          `${base_url}/openvidu/api/sessions/recording/stop`,
-          { recordingId },
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
-        console.log('녹화가 성공적으로 중지되었습니다');
-        setRecordingId(null);
-      } catch (error) {
-        console.error('녹화 중지 오류:', error);
-      }
-    } else {
-      console.error('녹화 ID가 없거나 참여자가 2명 이상입니다');
-    }
-  };
+  // const stopRecording = async () => {
+  //   if (recordingId && participants < 2) {
+  //     try {
+  //       await axios.post(
+  //         `${base_url}/openvidu/api/sessions/recording/stop`,
+  //         { recordingId },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         }
+  //       );
+  //       console.log('녹화가 성공적으로 중지되었습니다');
+  //       setRecordingId(null);
+  //     } catch (error) {
+  //       console.error('녹화 중지 오류:', error);
+  //     }
+  //   } else {
+  //     console.error('녹화 ID가 없거나 참여자가 2명 이상입니다');
+  //   }
+  // };
 
   const leaveSession = useCallback(async () => {
     if (sessionId) {
@@ -74,8 +74,8 @@ export default function useOpenVidu() {
       setSessionId('');
       setSubscriber(null);
       setPublisher(null);
-      setRecordingId(null);
-      setParticipants(0);
+      // setRecordingId(null);
+      // setParticipants(0);
       navigate(`/chatrooms/${chatroomSerial}`);
       console.log('세션이 성공적으로 종료되었습니다');
     }
@@ -89,56 +89,56 @@ export default function useOpenVidu() {
     };
   }, [leaveSession]);
 
-  const startRecording = async () => {
-    if (!sessionId) {
-      console.error('세션 ID가 없습니다');
-      return;
-    }
+  // const startRecording = async () => {
+  //   if (!sessionId) {
+  //     console.error('세션 ID가 없습니다');
+  //     return;
+  //   }
 
-    if (participants < 2) {
-      console.error('녹화를 시작하기에 충분한 참여자가 없습니다');
-      return;
-    }
+  //   if (participants < 2) {
+  //     console.error('녹화를 시작하기에 충분한 참여자가 없습니다');
+  //     return;
+  //   }
 
-    if (publisher && publisher.stream) {
-      try {
-        console.log('녹화 시작 시도...');
-        const response = await axios.post(
-          `${base_url}/openvidu/api/sessions/recording`,
-          JSON.stringify({ sessionId }),
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem('token')}`,
-              'Content-Type': 'application/json',
-            },
-            timeout: 60000,
-          }
-        );
-        setRecordingId(response.data.recordingId);
-        console.log('녹화가 성공적으로 시작되었습니다');
-      } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error('오류 상태:', error.response?.status);
-          console.error('오류 데이터:', error.response?.data);
-          console.error('오류 메시지:', error.message);
-          if (error.response?.status === 409) {
-            console.log(
-              '녹화 요청 충돌 발생. 세션이 이미 녹화 중이거나 세션 ID가 올바르지 않을 수 있습니다.'
-            );
-          } else {
-            console.error(
-              '기타 Axios 오류:',
-              error.response?.data || error.message
-            );
-          }
-        } else {
-          console.error('예상치 못한 오류:', error);
-        }
-      }
-    } else {
-      console.error('퍼블리셔 또는 퍼블리셔 스트림이 없습니다');
-    }
-  };
+  //   if (publisher && publisher.stream) {
+  //     try {
+  //       console.log('녹화 시작 시도...');
+  //       const response = await axios.post(
+  //         `${base_url}/openvidu/api/sessions/recording`,
+  //         JSON.stringify({ sessionId }),
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //           // timeout: 60000,
+  //         }
+  //       );
+  //       setRecordingId(response.data.recordingId);
+  //       console.log('녹화가 성공적으로 시작되었습니다');
+  //     } catch (error) {
+  //       if (axios.isAxiosError(error)) {
+  //         console.error('오류 상태:', error.response?.status);
+  //         console.error('오류 데이터:', error.response?.data);
+  //         console.error('오류 메시지:', error.message);
+  //         if (error.response?.status === 409) {
+  //           console.log(
+  //             '녹화 요청 충돌 발생. 세션이 이미 녹화 중이거나 세션 ID가 올바르지 않을 수 있습니다.'
+  //           );
+  //         } else {
+  //           console.error(
+  //             '기타 Axios 오류:',
+  //             error.response?.data || error.message
+  //           );
+  //         }
+  //       } else {
+  //         console.error('예상치 못한 오류:', error);
+  //       }
+  //     }
+  //   } else {
+  //     console.error('퍼블리셔 또는 퍼블리셔 스트림이 없습니다');
+  //   }
+  // };
 
   useEffect(() => {
     if (!session) return;
@@ -285,8 +285,8 @@ export default function useOpenVidu() {
               },
             }
           );
-          const participantsCount = response.data.data.connections.length;
-          setParticipants(participantsCount);
+          // const participantsCount = response.data.data.connections.length;
+          // setParticipants(participantsCount);
         } catch (error) {
           if (axios.isAxiosError(error)) {
             console.error('오류 상태:', error.response?.status);
@@ -335,15 +335,15 @@ export default function useOpenVidu() {
     }
   };
 
-  useEffect(() => {
-    if (participants >= 2 && !isRecording && publisher) {
-      startRecording();
-      setIsRecording(true);
-    } else if (participants < 2 && isRecording) {
-      stopRecording();
-      setIsRecording(false);
-    }
-  }, [participants, publisher, isRecording, startRecording, stopRecording]);
+  // useEffect(() => {
+  //   if (participants >= 2 && !isRecording && publisher) {
+  //     startRecording();
+  //     setIsRecording(true);
+  //   } else if (participants < 2 && isRecording) {
+  //     stopRecording();
+  //     setIsRecording(false);
+  //   }
+  // }, [participants, publisher, isRecording, startRecording, stopRecording]);
 
   return {
     session,
