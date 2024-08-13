@@ -35,6 +35,9 @@ export const END_POINT = {
 
   //리뷰
   COMMENT: 'comment',
+
+  //찜
+  WISH: 'wish',
 } as const;
 
 export const HTTP_STATUS_CODE = {

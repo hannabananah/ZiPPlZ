@@ -8,6 +8,8 @@ import InactiveCommunity from '@assets/inactive-community-icon.svg?react';
 import InactiveWorker from '@assets/inactive-worker-icon.svg?react';
 import { useLoginUserStore } from '@stores/loginUserStore';
 
+import OverView from './../../pages/worker/tabs/OverView';
+
 export default function BottomTab() {
   const location = useLocation();
   const { loginUser } = useLoginUserStore();
@@ -32,7 +34,7 @@ export default function BottomTab() {
       role: ['customer', ''],
     },
     {
-      path: '/portfolio',
+      path: `workers/${loginUser?.userSerial}/portfolio?tab=overview`,
       icon: <TiBusinessCard size={30} />,
       label: '포트폴리오',
       role: ['worker'],

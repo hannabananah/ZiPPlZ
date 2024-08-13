@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import Resign from '@/pages/common/mypage/resignpage/Resign';
-import MyFindWorkerScrapList from '@/pages/common/mypage/scrappage/MyFindWorkerScrapList';
+// import MyFindWorkerScrapList from '@/pages/common/mypage/scrappage/MyFindWorkerScrapList';
 import Layout from '@components/layout/Layout';
 // 공통 컴포넌트
 // 구인 게시물 컴포넌트, 시공자 컴포넌트
@@ -17,7 +17,7 @@ import MyScrapList from '@pages/common/mypage/MyScrapList';
 import Policy from '@pages/common/mypage/Policy';
 import Version from '@pages/common/mypage/Version';
 import WishWorkerList from '@pages/common/mypage/WishWorkerList';
-import MyFindWorkerList from '@pages/common/mypage/postpage/MyFindWorkerList';
+// import MyFindWorkerList from '@pages/common/mypage/postpage/MyFindWorkerList';
 import BeforeResign from '@pages/common/mypage/resignpage/BeforeResign';
 import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
 import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
@@ -42,7 +42,7 @@ import FindIdPw from './pages/common/login/find/FindIdPw';
 import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
 import MyQuestionPostList from './pages/common/mypage/postpage/MyQuestionPostList';
 import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
-import MyHousePostScrapList from './pages/common/mypage/scrappage/MyHousePostScrapList';
+// import MyHousePostScrapList from './pages/common/mypage/scrappage/MyHousePostScrapList';
 import MyQuestionPostScrapList from './pages/common/mypage/scrappage/MyQuestionPostScrapList';
 import SignUp from './pages/common/signup/SignUp';
 import UpdateFindWorker from './pages/common/workerinfo/UpdateFindWorker';
@@ -88,7 +88,7 @@ export default function App() {
         <Route path="questionpostupdate" element={<QuestionPostUpdate />} />
         <Route path="questionpostcreate" element={<QuestionPostCreate />} />
         {/* 마이페이지 */}
-        <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} />
+        {/* <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} /> */}
         <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
         <Route
           path="mypage/Myquestionpostlist"
@@ -96,12 +96,12 @@ export default function App() {
         />
         <Route
           path="mypage/myfindworkerscraplist"
-          element={<MyFindWorkerScrapList />}
+          // element={<MyFindWorkerScrapList />}
         />
-        <Route
+        {/* <Route
           path="mypage/Myhousepostscraplist"
           element={<MyHousePostScrapList />}
-        />
+        /> */}
         <Route
           path="mypage/Myquestionpostscraplist"
           element={<MyQuestionPostScrapList />}

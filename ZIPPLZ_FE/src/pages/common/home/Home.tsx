@@ -45,7 +45,7 @@ export default function Home() {
     setScheduleList(response.data.data);
   };
   const handleClickField = (field: string) => {
-    navigate(`/workers?field=${field}`);
+    navigate(`/workers/portfolios?type=${field}`);
   };
   const fetchHotWorkers = async () => {
     const response = await getTopWorkerList();
