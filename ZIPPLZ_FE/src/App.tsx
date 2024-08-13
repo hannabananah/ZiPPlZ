@@ -96,12 +96,10 @@ export default function App() {
         <Route path="mypage/dontusezipplz" element={<DontUseZIPPLZ />} />
         <Route path="mypage/wishworkerlist" element={<WishWorkerList />} />
       </Route>
-
       {/* 로그인 회원가입 */}
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
       <Route path="/member/login" element={<Login />} />
       <Route path="/member/find" element={<FindIdPw />} />
-
       <Route path="404" element={<Custom404 />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
