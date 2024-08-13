@@ -1,67 +1,72 @@
-import { IoHammerOutline } from 'react-icons/io5';
+import { FaHammer } from 'react-icons/fa';
 
-// 분야별 매너 온도 데이터의 타입 정의
-interface Manners {
-  기술: number;
-  커뮤니케이션: number;
-  작업완성도: number;
-  추천의사: number;
+interface Props {
+  scores: number[];
 }
 
-// 매너 온도 데이터
-const manners: Manners = {
-  기술: 5.0,
-  커뮤니케이션: 4.0,
-  작업완성도: 4.1,
-  추천의사: 3.2,
-};
-
-export default function MannerTemperature() {
-  // 전체 매너 온도를 계산합니다.
-  // const totalScore: = 56.5; // 예시로 제공된 값
-
+export default function MannerTemperature({ scores }: Props) {
   return (
     <>
-      <div className="mt-6 font-bold text-zp-xs">매너 온도</div>
-      <div className="mt-2 font-bold text-zp-xs flex items-center space-x-4 mb-8">
-        <div className="p-2">
-          <IoHammerOutline size={30} />
-        </div>
+      <div className="flex flex-col w-full gap-6">
+        <div className="flex flex-col w-full gap-2 font-bold text-zp-xs">
+          <p>매너 온도</p>
+          <div className="flex items-center w-full gap-2">
+            <FaHammer size={30} color="#00B3FF" />
 
-        {/* 매너 온도 bar */}
-        <div className="relative w-full h-6 bg-zp-sub-color rounded-zp-radius-big">
-          <div
-            className="h-full bg-zp-main-color rounded-zp-radius-big"
-            style={{ width: `56.5%` }} // 56.5도 기준
-          ></div>
-          <span className="absolute inset-0 flex items-center justify-center text-zp-xs text-zp-white">
-            56.5°C
-          </span>
-        </div>
-      </div>
-
-      <div className="font-bold text-zp-xs mb-4">분야별 매너 온도</div>
-
-      {/* 분야별 매너 온도 bar들 */}
-      <div className="flex flex-col space-y-4">
-        {Object.entries(manners).map(([category, score]) => (
-          <div
-            key={category}
-            className="bg-zp-light-beige p-2 rounded-zp-radius-big flex items-center"
-          >
-            <div className="text-zp-2xs flex-shrink-0 w-24">{category}</div>
-            {/* progress bar 기본색, 채움색, bar 채우기 수식 */}
-            <div className="flex-1 relative w-full h-4 bg-zp-sub-color rounded-zp-radius-big mx-2">
+            <div className="w-full h-5 bg-zp-sub-color rounded-zp-radius-big">
               <div
-                className="absolute top-0 left-0 h-full bg-zp-yellow rounded-zp-radius-big"
-                style={{ width: `${(score / 5.0) * 100}%` }} // 별점 5.0 기준
-              ></div>
-            </div>
-            <div className="text-zp-2xs font-bold w-12 text-right">
-              {score.toFixed(1)}
+                className="flex items-center justify-end h-full bg-zp-main-color rounded-zp-radius-big"
+                style={{ width: `${scores[0]}%` }} // 퍼센트 단위로 설정
+              >
+                <span className="text-zp-xs text-zp-white">{scores[0]}%</span>{' '}
+                {/* 퍼센트 값 표시 */}
+              </div>
             </div>
           </div>
-        ))}
+        </div>
+
+        <div className="flex flex-col w-full gap-2 p-4 font-bold shadow-lg text-zp-2xs bg-zp-light-beige rounded-zp-radius-big">
+          <div className="flex items-center w-full gap-2">
+            <p className="basis-1/5">기술</p>
+            <div className="h-5 basis-3/4 rounded-zp-radius-big">
+              <div
+                className="h-full bg-zp-yellow rounded-zp-radius-big"
+                style={{ width: `${scores[1] * 20}%` }}
+              />
+            </div>
+            <p className="basis-1/12 ">{scores[1]}</p>
+          </div>
+          <div className="flex items-center w-full gap-2">
+            <p className="basis-1/5">커뮤니케이션</p>
+            <div className="h-5 basis-3/4 rounded-zp-radius-big">
+              <div
+                className="h-full bg-zp-yellow rounded-zp-radius-big"
+                style={{ width: `${scores[2] * 20}%` }}
+              />
+            </div>
+            <p className="basis-1/12 text-">{scores[2]}</p>
+          </div>
+          <div className="flex items-center w-full gap-2">
+            <p className="basis-1/5">작업완성도</p>
+            <div className="h-5 basis-3/4 rounded-zp-radius-big">
+              <div
+                className="h-full bg-zp-yellow rounded-zp-radius-big"
+                style={{ width: `${scores[3] * 20}%` }}
+              />
+            </div>
+            <p className="basis-1/12 text-">{scores[3]}</p>
+          </div>
+          <div className="flex items-center w-full gap-2">
+            <p className="basis-1/5">태도</p>
+            <div className="h-5 basis-3/4 rounded-zp-radius-big">
+              <div
+                className="h-full bg-zp-yellow rounded-zp-radius-big"
+                style={{ width: `${scores[4] * 20}%` }}
+              />
+            </div>
+            <p className="basis-1/12 text-">{scores[4]}</p>
+          </div>
+        </div>
       </div>
     </>
   );
