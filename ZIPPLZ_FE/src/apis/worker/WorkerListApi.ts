@@ -18,11 +18,11 @@ export const getWorkerList = async () => {
 };
 //분야별 시공자 목록 가져오기
 export const getWorkerListByField = async (field: number) => {
-  return await axiosInstance.get(END_POINT.WORKER_LIST + `/${field}`);
+  return await axiosInstance.get(END_POINT.WORKER_LIST + `/field/${field}`);
 };
 //시공자 검색
 export const searchWorkerList = async (data: string) => {
-  return await axiosInstance.post(END_POINT.WORKER_LIST_SEARCH(data));
+  return await axiosInstance.get(END_POINT.WORKER_LIST + `/name/${data}`);
 };
 //인기시공자 가져오기
 export const getTopWorkerList = async () => {

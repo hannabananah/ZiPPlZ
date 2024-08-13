@@ -55,6 +55,7 @@ export interface FindWorkerDetail {
 export interface WorkerList {
   portfolio_serial: number;
   worker: number;
+  user_serial: number;
   user_name: string;
   birth_date: number;
   temperature: number;
