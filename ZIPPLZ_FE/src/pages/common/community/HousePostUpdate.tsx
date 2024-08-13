@@ -1,7 +1,10 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { CiCirclePlus } from 'react-icons/ci';
+import { FaRegCircle } from 'react-icons/fa';
 import { FaCamera } from 'react-icons/fa6';
+import { FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { MdClose } from 'react-icons/md';
 import { useLocation, useNavigate } from 'react-router-dom';
 

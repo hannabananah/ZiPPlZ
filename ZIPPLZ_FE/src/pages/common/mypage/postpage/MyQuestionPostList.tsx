@@ -49,6 +49,7 @@ export default function MyQuestionPostList() {
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([]); // 북마크된 게시물 상태 추가
 
   const handleSortSelect = (sortOption: string) => {
     console.log(`Selected sort option: ${sortOption}`);
@@ -99,6 +100,14 @@ export default function MyQuestionPostList() {
 
   const handleWorkerClick = (post_serial: number) => {
     navigate(`/QuestionPostDetail/${post_serial}`);
+  };
+
+  const handleBookmarkToggle = (post_serial: number, isBookmarked: boolean) => {
+    if (isBookmarked) {
+      setBookmarkedPosts([...bookmarkedPosts, post_serial]);
+    } else {
+      setBookmarkedPosts(bookmarkedPosts.filter((id) => id !== post_serial));
+    }
   };
 
   return (
@@ -187,7 +196,9 @@ export default function MyQuestionPostList() {
           </div>
         </div>
 
-        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {list.length}
+        </div>
 
         <div className="w-full flex justify-between items-center text-zp-2xs">
           {isSelecting && (
@@ -261,7 +272,11 @@ export default function MyQuestionPostList() {
                 }`}
                 onClick={() => handleWorkerClick(post.post_serial)}
               >
-                <QuestionPostListItem {...post} />
+                <QuestionPostListItem
+                  {...post}
+                  isBookmarked={bookmarkedPosts.includes(post.post_serial)}
+                  onBookmarkToggle={handleBookmarkToggle}
+                />
               </div>
             </div>
           ))}
@@ -272,7 +287,9 @@ export default function MyQuestionPostList() {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">
             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
-            <div className="mb-4 font-bold">선택한 항목을 삭제하시겠습니까?</div>
+            <div className="mb-4 font-bold">
+              선택한 항목을 삭제하시겠습니까?
+            </div>
             <div className="flex justify-end space-x-2">
               <button
                 className="w-full font-bold px-4 py-2 bg-zp-light-beige rounded-zp-radius-big"

@@ -113,6 +113,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   images: [],
   housePosts: [],
   postDetails: null,
+  toggleBookmark: '',
 
   setTitle: (title) => set({ title }),
   setBoardContent: (boardContent) => set({ boardContent }),

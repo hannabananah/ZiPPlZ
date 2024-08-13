@@ -17,8 +17,7 @@ export default function QuestionPostCreate() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [postId, setPostId] = useState<number | null>(null);
 
-  const { createPost, fetchQuestionPosts, setBoardContent, updatePost } =
-    useQuestionPostStore();
+  const { createPost, updatePost } = useQuestionPostStore();
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const maxImages = 10;
@@ -27,19 +26,18 @@ export default function QuestionPostCreate() {
     if (location.state) {
       const { post, isEditMode } = location.state;
       setTitle(post.title);
-      setWorkDetail(post.boardContent);
+      setWorkDetail(post.board_content);
       setImages(post.images || []);
       setIsEditMode(isEditMode);
-      setPostId(post.boardSerial);
+      setPostId(post.board_serial);
     }
   }, [location.state]);
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    setImages((prevImages) => [
-      ...prevImages,
-      ...files.slice(0, maxImages - prevImages.length),
-    ]);
+    const validFiles = files.slice(0, maxImages - images.length);
+
+    setImages((prevImages) => [...prevImages, ...validFiles]);
   };
 
   const handleImageRemove = (index: number) => {
@@ -57,20 +55,12 @@ export default function QuestionPostCreate() {
       return;
     }
 
-    setBoardContent(workDetail);
-
     const token = `Bearer ${localStorage.getItem('token')}`;
-
     const formData = new FormData();
 
-    // 'params' 필드를 JSON으로 추가
-    const params = {
-      title: title,
-      board_content: workDetail,
-    };
-    formData.append('params', JSON.stringify(params));
+    formData.append('title', title);
+    formData.append('board_content', workDetail);
 
-    // 이미지 추가
     images.forEach((image) => {
       formData.append('images', image);
     });
@@ -96,13 +86,12 @@ export default function QuestionPostCreate() {
       }
     } catch (error) {
       console.error('Failed to create/update post:', error);
-      console.error('Response data:', error.response?.data);
       alert('오류가 발생했습니다. 나중에 다시 시도해 주세요.');
     }
   };
 
   const handleGoBack = () => {
-    navigate('/questionpost');
+    navigate('/QuestionPost');
   };
 
   return (
@@ -125,8 +114,7 @@ export default function QuestionPostCreate() {
             <div className="text-left">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
               <div className="text-zp-xs text-zp-light-gray">
-                사진을 첨부하면 시공자가 작업내용에 대해 보다 상세하게 파악할 수
-                있어요.
+                사진을 첨부하면 질문에 대한 보다 상세한 답변을 받을 수 있어요.
               </div>
             </div>
           </div>
@@ -158,12 +146,12 @@ export default function QuestionPostCreate() {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
+                  className={`relative w-24 h-24 flex-shrink-0 ${
+                    index === 0 ? 'ml-4' : ''
+                  }`}
                 >
                   <img
-                    src={
-                      image instanceof File ? URL.createObjectURL(image) : image
-                    }
+                    src={URL.createObjectURL(image)}
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded-zp-radius-btn"
                   />
@@ -212,7 +200,7 @@ export default function QuestionPostCreate() {
               <div className="bg-zp-white border rounded-zp-radius-btn pl-2">
                 <Input
                   type="text"
-                  placeholder="질문 작성"
+                  placeholder="질문 내용을 입력하세요."
                   inputType="textArea"
                   width="100%"
                   height={15}
@@ -233,7 +221,6 @@ export default function QuestionPostCreate() {
             </div>
           </div>
 
-          {/* 확인 버튼 추가 */}
           <div className="mb-12 mt-6 font-bold h-20 flex items-center justify-center">
             <Button
               children={isEditMode ? '수정하기' : '작성하기'}

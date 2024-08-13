@@ -1,7 +1,8 @@
+import { useState } from 'react';
 import { AiOutlineMessage } from 'react-icons/ai';
 import { CgProfile } from 'react-icons/cg';
 import { FaRegCalendarAlt } from 'react-icons/fa';
-import { IoBookmarkOutline } from 'react-icons/io5';
+import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { PiEyeLight } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,6 +17,9 @@ interface QuestionPost {
   view_cnt: number;
   bookmark_cnt: number;
   comment_cnt: number;
+  isBookmarked: boolean; // 북마크 상태 추가
+  onBookmarkToggle: (post_serial: number, isBookmarked: boolean) => void; // 북마크 토글 함수 추가
+  post_image: string; // 이 줄을 추가하여 post_image 속성 포함
 }
 
 export default function QuestionPostListItem({
@@ -29,8 +33,19 @@ export default function QuestionPostListItem({
   view_cnt,
   bookmark_cnt,
   comment_cnt,
+  isBookmarked,
+  onBookmarkToggle,
+  post_image, // 이 속성도 추가
 }: QuestionPost) {
   const navigate = useNavigate();
+  const [bookmarked, setBookmarked] = useState(isBookmarked);
+
+  const handleBookmarkClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // 북마크 클릭 시 페이지 이동 방지
+    const newBookmarkState = !bookmarked;
+    setBookmarked(newBookmarkState);
+    onBookmarkToggle(post_serial, newBookmarkState); // 부모 컴포넌트에 상태 변경 전달
+  };
 
   return (
     <div
@@ -38,6 +53,17 @@ export default function QuestionPostListItem({
       onClick={() => navigate(`/questionpost/${post_serial}`)}
     >
       <div className="p-2 flex items-center space-x-4 w-full">
+        {/* 이미지 */}
+        <div className="w-20 h-20 bg-gray-200 rounded overflow-hidden">
+          {post_image && (
+            <img
+              src={post_image}
+              alt="Post"
+              className="w-full h-full object-cover"
+            />
+          )}
+        </div>
+
         {/* 제목 + 내용 */}
         <div className="h-20 flex flex-col border-r px-6 basis-3/5">
           <div className="text-zp-xs font-bold text-left">{title}</div>
@@ -84,7 +110,13 @@ export default function QuestionPostListItem({
               <div className="text-zp-2xs">{view_cnt}</div>
             </div>
             <div className="ml-1 flex justify-start space-x-1 items-center">
-              <IoBookmarkOutline size={14} />
+              <div onClick={handleBookmarkClick} className="cursor-pointer">
+                {bookmarked ? (
+                  <IoBookmark size={14} />
+                ) : (
+                  <IoBookmarkOutline size={14} />
+                )}
+              </div>
               <div className="text-zp-2xs">{bookmark_cnt}</div>
             </div>
             <div className="ml-1 flex justify-start space-x-1 items-center">
