@@ -1,7 +1,7 @@
 import Options from '@components/chat/video/Options';
 import Session from '@components/chat/video/Session';
 import useOpenVidu from '@hooks/useOpenvidu';
-import { Publisher, Subscriber } from 'openvidu-browser';
+import { Publisher } from 'openvidu-browser';
 
 interface VideoModalProps {
   handleCloseVideo: () => void;
@@ -17,6 +17,10 @@ export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
     setPublisher,
     OV,
   } = useOpenVidu();
+
+  const singleSubscriber = Array.isArray(subscriber)
+    ? subscriber[0] // If it's an array, take the first subscriber
+    : subscriber; // Otherwise, use the single subscriber or null
 
   const publishAudio = (enabled: boolean) => {
     if (publisher) {
@@ -36,7 +40,7 @@ export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
         {session && (
           <Session
             publisher={publisher as Publisher}
-            subscriber={subscriber as Subscriber}
+            subscriber={subscriber ? [singleSubscriber] : []}
             setSubscriber={setSubscriber}
           />
         )}
@@ -44,7 +48,7 @@ export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
       <Options
         leaveSession={leaveSession}
         publisher={publisher as Publisher}
-        subscriber={subscriber as Subscriber}
+        subscriber={singleSubscriber}
         session={session}
         OV={OV}
         setPublisher={setPublisher}

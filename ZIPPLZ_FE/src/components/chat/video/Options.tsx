@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 
 import Contract from '@components/chat/Contract';
 import FullModal from '@components/common/FullModal';
-import useOpenVidu from '@hooks/useOpenvidu';
+// import useOpenVidu from '@hooks/useOpenvidu';
 import axios from 'axios';
 import {
   Session as OVSession,
@@ -44,7 +44,7 @@ export default function Options({
   publishVideo,
   handleCloseVideo,
 }: OptionsProps) {
-  const { startScreenShare } = useOpenVidu();
+  // const { startScreenShare } = useOpenVidu();
 
   const [isMuted, setIsMuted] = useState(false);
   const [isHided, setIsHided] = useState(false);
@@ -130,7 +130,6 @@ export default function Options({
 
   const handleSharingContract = () => {
     console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
-    // startScreenShare();
     setIsContractModalOpen(true);
   };
 
