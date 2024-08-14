@@ -75,7 +75,7 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         // CORS 설정
-        http.cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()));
+        http.cors(cors -> cors.configurationSource(corsConfig.corsFilter()));
         // http.cors(cors -> cors.configurationSource(request -> {
         //     CorsConfiguration configuration = new CorsConfiguration();
         //     configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://zipplz.site"));
