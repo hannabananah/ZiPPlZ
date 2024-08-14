@@ -30,7 +30,7 @@ const fields: string[] = [
 interface Work {
   starDate: string;
   endDate: string;
-  fiield: string;
+  field: string;
 }
 
 export default function Home() {
@@ -57,9 +57,7 @@ export default function Home() {
       fetchWorks();
     }
   }, []);
-  useEffect(() => {
-    console.log(workerList);
-  }, [workerList]);
+  useEffect(() => {}, [workerList]);
   return (
     <div className="relative flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       <div className="w-full p-4 rounded-zp-radius-big bg-zp-white">
@@ -106,15 +104,18 @@ export default function Home() {
       <div className="grid w-full grid-cols-6 gap-4 ">
         {fields.map((item) => (
           <FieldListItem
+            key={item}
             field={item}
-            handlClickField={() => handleClickField(item)}
+            handleClickField={() => handleClickField(item)}
           />
         ))}
       </div>
       <p className="font-extrabold text-zp-xl">HOT한 시공업자</p>
       <div className="flex w-full overflow-x-auto">
         <div className="flex justify-between w-full h-[8rem] ">
-          {workerList?.map((worker) => <WorkerCard worker={worker} />)}
+          {workerList?.map((worker) => (
+            <WorkerCard key={worker.field_id} worker={worker} />
+          ))}
         </div>
       </div>
     </div>

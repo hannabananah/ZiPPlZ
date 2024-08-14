@@ -146,7 +146,6 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
       const response = await axios.post(
         'http://localhost:5000/board/showoff/list'
       );
-      console.log('Fetched house posts:', response.data.data);
       set({ housePosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch house posts:', error);

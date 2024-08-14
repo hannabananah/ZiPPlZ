@@ -122,7 +122,8 @@ public class ChatroomServiceImpl implements ChatroomService {
     private ChatroomListDTO createChatroomListDto(Chatroom chatroom, int userSerial) {
         int chatroomSerial = chatroom.getChatroomSerial();
         String roomSerial = Integer.toString(chatroomSerial);
-        int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomSerial, userSerial);
+        // int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomSerial, userSerial);
+        int unReadMessageCount = 0;
 
         Optional<ChatMessage> lastMessageOpt = chatMessageRepository
                 .findFirstByChatroomSerialOrderByCreatedAtDesc(chatroomSerial);
@@ -188,6 +189,16 @@ public class ChatroomServiceImpl implements ChatroomService {
         return ChatroomDetailDTO.builder()
                         .otherUser(otherUserInfo)
                         .chatMessages(getPreviousMessage(chatroomSerial, userSerial)).build();
+    }
+
+    @Override
+    public String getOtherUserName(int chatroomSerial, int userSerial) {
+        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
+
+        User otherUser =
+                userSerial == chatroom.getWuser().getUserSerial()? chatroom.getCuser() : chatroom.getWuser();
+
+        return otherUser.getUserName();
     }
 
     @Override

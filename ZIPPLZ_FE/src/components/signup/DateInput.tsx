@@ -4,12 +4,23 @@ interface DateInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
+  inputType?:
+    | 'search'
+    | 'login'
+    | 'signup'
+    | 'normal'
+    | 'textArea'
+    | 'file'
+    | 'error';
+  radius?: string;
 }
 
 const DateInput: React.FC<DateInputProps> = ({
   value,
   onChange,
   placeholder,
+  inputType = 'signup',
+  radius = 'none',
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let inputValue = e.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
@@ -32,14 +43,14 @@ const DateInput: React.FC<DateInputProps> = ({
   return (
     <Input
       type="text"
-      inputType="signup"
+      inputType={inputType}
       value={value}
       onChange={handleChange}
       placeholder={placeholder}
       width="full"
       height={2}
       fontSize="xl"
-      radius="none"
+      radius={radius}
     />
   );
 };

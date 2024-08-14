@@ -17,7 +17,7 @@ public class ChatMessageResponseDTO {
     private int userSerial;
     private String userName;
     private String chatMessageContent;
-    @JsonFormat(pattern = "yyyy-MM-dd hh:mm", timezone = "Asia/Seoul")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm", timezone = "Asia/Seoul")
     private LocalDateTime createdAt;
     private MessageType fileType;
     private File file;

@@ -24,7 +24,7 @@ public class WishController {
     }
 
     @PostMapping("/addWish")
-    public ResponseEntity<ResponseDTO<Boolean>> addWorker(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
+    public ResponseEntity<ResponseDTO<Boolean>> addWish(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
@@ -40,6 +40,28 @@ public class WishController {
             } else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+            }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    @DeleteMapping("/deleteWish")
+    public ResponseEntity<ResponseDTO<Boolean>> deleteWish(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
+        ResponseDTO<Boolean> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int wish_serial = params.get("wish_serial");
+            int result = wishService.deleteWish(wish_serial);
+            if (result == 0) {
+                status = HttpStatus.BAD_REQUEST;
+                responseDTO = new ResponseDTO<>(status.value(), "삭제 실패 없음");
+            } else {
+                status = HttpStatus.OK;
+                responseDTO = new ResponseDTO<>(status.value(), "삭제 성공", true);
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -72,27 +94,22 @@ public class WishController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-//    @PostMapping("/materiallist")
-//    public ResponseEntity<ResponseDTO<List<MaterialViewDTO>>> getMaterialWishList(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
-//        ResponseDTO<List<MaterialViewDTO>> responseDTO;
-//        HttpStatus status = HttpStatus.ACCEPTED;
-//
-//        try {
-//            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-//            int user_serial = customUserDetails.getUserSerial();
-//            int wish_type = 2;
-//            List<MaterialViewDTO> materials = wishService.getMaterialWishList(wish_type, user_serial);
-//            if (materials == null) {
-//                status = HttpStatus.NOT_FOUND;
-//                responseDTO = new ResponseDTO<>(status.value(), "세션 결과 없음");
-//            } else {
-//                status = HttpStatus.OK;
-//                responseDTO = new ResponseDTO<>(status.value(), "조회 성공", materials);
-//            }
-//        } catch (Exception e) {
-//            status = HttpStatus.INTERNAL_SERVER_ERROR;
-//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-//        }
-//        return new ResponseEntity<>(responseDTO, status);
-//    }
+    @PostMapping("/searchWish")
+    public ResponseEntity<ResponseDTO<Integer>> searchWish(Authentication authentication, @RequestBody(required = false) Map<String, Integer> params) {
+        ResponseDTO<Integer> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            int user_serial = customUserDetails.getUserSerial();
+            int wish_serial = params.get("wish_serial");
+            int result = wishService.searchWish(user_serial, wish_serial);
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "조회 성공", result);
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
 }

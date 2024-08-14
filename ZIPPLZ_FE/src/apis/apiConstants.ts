@@ -16,16 +16,13 @@ export const END_POINT = {
   WORK_SERIAL: (planSerial: number, workSerial: number) =>
     `schedule/plans/${planSerial}/works/${workSerial}`,
   WORKS_USERS: 'schedule/users/works',
-  //시공자 리스트
   WORKER_LIST: 'workerlist/portfolios',
   WORKER_LIST_SEARCH: (name: string) => `workerlist/portfolios/${name}`,
 
-  //구인구직글
   FIND_WORKER_LIST: 'board/findworker',
   FIND_WORKER_BOARD: (boardSerial: number) =>
     `board/findworker/list/${boardSerial}`,
 
-  //포트폴리오
   PORTFOLIO: (serial: number) => `portfolio/${serial}`,
   PORTFOLIO_LIST: (serial: number) => `portfolio/list/${serial}`,
   PORTFOLIO_SERIAL: (portfolioSerial: number) => `portfolio/${portfolioSerial}`,
@@ -33,11 +30,12 @@ export const END_POINT = {
     `portfolio/schedule/${workerSerial}`,
   PORTFOLIO_REVIEW: (serial: number) => `portfolio/review/${serial}`,
 
-  //리뷰
   COMMENT: 'comment',
 
-  //찜
   WISH: 'wish',
+  MATERIAL: 'materials?category=',
+  CONTRACT: 'contract',
+  AFTERSERVICE: 'afterservice',
 } as const;
 
 export const HTTP_STATUS_CODE = {

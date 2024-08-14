@@ -10,7 +10,7 @@ interface Work {
   workSerial?: number;
   starDate: string;
   endDate: string;
-  fiield: string;
+  field: string;
 }
 // 더미 데이터 타입 정의
 interface Event {

@@ -7,7 +7,6 @@ import Layout from '@components/layout/Layout';
 // 구인 게시물 컴포넌트, 시공자 컴포넌트
 import Custom404 from '@pages/common/404';
 import ChatRoom from '@pages/common/chat/ChatRoom';
-import VideoRoom from '@pages/common/chat/VideoRoom';
 import Community from '@pages/common/community/HousePost';
 import Home from '@pages/common/home/Home';
 import MyInformationModify from '@pages/common/mypage/MyInformationModify';
@@ -58,13 +57,9 @@ export default function App() {
         <Route path="contract/:workserial" element={<Contract />} />
         <Route path="community" element={<Community />} />
         <Route path="mypage" element={<MyPage />} />
-        <Route path="chatrooms/:roomId/videoroom" element={<VideoRoom />} />
-        <Route path="chatrooms/:roomId" element={<ChatRoom />} />
+        <Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
         <Route path="image-change/:userSerial" element={<ImageChangePage />} />
-        <Route path="404" element={<Custom404 />} />
-        <Route path="*" element={<Navigate to="/404" replace />} />
-
-        {/* 시공자 리스트 */}
+        <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
         <Route path="workers/:category" element={<Workers />} />
         <Route
           path="workers/findworker/write"
@@ -76,12 +71,10 @@ export default function App() {
         />
         <Route path="workers/findworker/:id" element={<FindWorkerDetail />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
-        {/* 커뮤니티 */}
         <Route path="housepost" element={<HousePost />} />
         <Route path="housepost/:id" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
         <Route path="questionpost/:id" element={<QuestionPostDetail />} />
-        {/* 수정된 부분 */}
         <Route path="housepostcreate" element={<HousePostCreate />} />
         <Route path="housepostupdate" element={<HousePostUpdate />} />
 
@@ -94,14 +87,8 @@ export default function App() {
           path="mypage/Myquestionpostlist"
           element={<MyQuestionPostList />}
         />
-        <Route
-          path="mypage/myfindworkerscraplist"
-          // element={<MyFindWorkerScrapList />}
-        />
-        {/* <Route
-          path="mypage/Myhousepostscraplist"
-          element={<MyHousePostScrapList />}
-        /> */}
+        <Route path="mypage/myfindworkerscraplist" />
+
         <Route
           path="mypage/Myquestionpostscraplist"
           element={<MyQuestionPostScrapList />}
@@ -121,12 +108,10 @@ export default function App() {
         <Route path="mypage/wishworkerlist" element={<WishWorkerList />} />
         <Route path="mypage/roughworker" element={<RoughWorker />} />
       </Route>
-
       {/* 로그인 회원가입 */}
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
       <Route path="/member/login" element={<Login />} />
       <Route path="/member/find" element={<FindIdPw />} />
-
       <Route path="404" element={<Custom404 />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
     </Routes>
