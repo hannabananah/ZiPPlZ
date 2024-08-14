@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { addWork } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
@@ -14,6 +15,7 @@ export default function PrivateScheduleModal({
   closeModal,
   planSerial,
 }: Props) {
+  const navigate = useNavigate();
   const [start, setStart] = useState<string>('');
   const [end, setEnd] = useState<string>('');
   const [cost, setCost] = useState<number>(0);
@@ -30,6 +32,7 @@ export default function PrivateScheduleModal({
         endDate: endDate,
         workPrice: workPrice,
       });
+      navigate(0);
       closeModal();
     }
   };

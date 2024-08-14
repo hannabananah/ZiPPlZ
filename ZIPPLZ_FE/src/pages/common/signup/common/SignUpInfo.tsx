@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 
-import { User } from '@apis/member/MemberApi';
+import Button from '@/components/common/Button';
+import { User, checkEmail } from '@apis/member/MemberApi';
 import Input from '@components/common/Input';
 import DateInput from '@components/signup/DateInput';
 import PhoneInput from '@components/signup/PhoneInput';
@@ -20,14 +21,19 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
   const [checkPassword, setCheckPassword] = useState<string>('');
   const [birthDate, setBirthDate] = useState<string>('');
   const [phone, setPhone] = useState<string>('');
-
+  const [isUniqueEmail, setIsUniqueEmail] = useState<boolean>(true);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
   const handleCickEye = function () {
     setShowPassword(!showPassword);
   };
   const handleCickCheckEye = function () {
     setShowCheckPassword(!showCheckPassword);
   };
-
+  const handleClickEmailCheck = async (email: string) => {
+    const response = await checkEmail({ email: email });
+    setIsUniqueEmail(response.data.data);
+    if (!isOpen) setIsOpen(true);
+  };
   function validatePassword(password: string): boolean {
     if (!password) return true;
     var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$/;
@@ -56,7 +62,8 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
       validatePassword(password) &&
       validateCheckPassword(password, checkPassword) &&
       birthDate.length === 10 &&
-      phone.length === 13
+      phone.length === 13 &&
+      !isUniqueEmail
     ) {
       setLink('/member/join/common/2/type');
       return true;
@@ -81,6 +88,9 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
       tel: phone,
     }));
   }, [phone]);
+  useEffect(() => {
+    console.log(isUniqueEmail);
+  }, [isUniqueEmail]);
   return (
     <div className="relative flex flex-col bg-zp-white w-full p-4 gap-4 overflow-auto mb-[9rem]">
       <p className="text-xl font-bold">이름</p>
@@ -91,6 +101,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
         placeholder="이름을 입력하세요"
         width="full"
         height={2}
+        value={name}
         onChange={(e: React.ChangeEvent) => {
           setUser((prev: User) => ({
             ...prev,
@@ -104,28 +115,57 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
       />
       <div>
         <p className="text-xl font-bold">이메일</p>
-        <Input
-          type="email"
-          inputType="signup"
-          placeholder="이메일을 입력하세요"
-          width="full"
-          height={2}
-          onChange={(e: React.ChangeEvent) => {
-            setUser((prev: User) => ({
-              ...prev,
-              email: (e.target as HTMLInputElement).value,
-            }));
-            setEmail((e.target as HTMLInputElement).value);
-          }}
-          fontSize="xl"
-          className="p-1"
-          radius="none"
-        />
+        <div className="flex gap-2">
+          <Input
+            type="email"
+            inputType="signup"
+            placeholder="이메일을 입력하세요"
+            width="full"
+            height={2}
+            value={email}
+            onChange={(e: React.ChangeEvent) => {
+              if (isOpen) setIsOpen(false);
+              setUser((prev: User) => ({
+                ...prev,
+                email: (e.target as HTMLInputElement).value,
+              }));
+              setEmail((e.target as HTMLInputElement).value);
+            }}
+            fontSize="xl"
+            className="p-1"
+            radius="none"
+            disabled={!isUniqueEmail && isUniqueEmail !== null}
+          />
+          <Button
+            buttonType={
+              !validateEmail(email) || !isUniqueEmail || email.length === 0
+                ? 'light'
+                : 'primary'
+            }
+            children="중복 체크"
+            fontSize="xs"
+            width={5}
+            height={2}
+            radius="btn"
+            onClick={() => handleClickEmailCheck(email)}
+            disabled={
+              !validateEmail(email) || !isUniqueEmail || email.length === 0
+            }
+          />
+        </div>
         {!validateEmail(email) && (
           <p className="text-zp-2xs text-zp-red">
             이메일 형식이 올바르지 않습니다.
           </p>
         )}
+        {isOpen &&
+          (!isUniqueEmail ? (
+            <p className="text-zp-2xs text-zp-main-color">
+              사용 가능한 이메일입니다.
+            </p>
+          ) : (
+            <p className="text-zp-2xs text-zp-red">중복된 이메일입니다.</p>
+          ))}
       </div>
       <p className="text-xl font-bold">비밀번호</p>
       <div className="relative">
@@ -137,6 +177,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
           placeholder="비밀번호를 입력하세요"
           width="full"
           height={2}
+          value={password}
           onChange={(e: React.ChangeEvent) => {
             setPassword((e.target as HTMLInputElement).value);
           }}
@@ -170,6 +211,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
           placeholder="비밀번호를 한번 더 입력하세요"
           width="full"
           height={2}
+          value={checkPassword}
           onChange={(e: React.ChangeEvent) => {
             setUser((prev: User) => ({
               ...prev,
