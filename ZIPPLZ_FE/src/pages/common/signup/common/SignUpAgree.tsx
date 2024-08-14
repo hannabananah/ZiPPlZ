@@ -43,48 +43,60 @@ export default function SignUpAgree({ setNext, setLink, phrase }: Props) {
 
   return (
     <div className="overflow-y-auto max-h-screen p-4 overflow-auto mb-[6rem]">
-      <pre className="font-extrabold text-zp-3xl">
-        서비스 이용을 위한{'\n'}동의 안내
-      </pre>
-
-      <pre className="mt-4 font-extrabold text-zp-xl text-wrap">
-        서비스 이용에 꼭 필요한 사항입니다.{'\n'}정책 및 약관을 클릭해 모든
-        내용을 확인해주세요.
+      <pre className="font-extrabold text-zp-xl">
+        서비스 이용을 위한 동의 안내
       </pre>
 
       <div className="flex flex-col items-center justify-center w-full gap-4 mt-4">
-        {showDetail && <div className="w-full h-[300px] bg-zp-gray" />}
+        {showDetail && (
+          <div className="w-full overflow-auto">
+            <p className="text-zp-xs font-bold">서비스 이용약관</p>
+            <pre className="text-zp-xs text-zp-gray text-wrap">
+              1. 서비스 가입 시 본 약관에 동의한 것으로 간주됩니다.{'\n'}2.
+              사용자는 정확한 정보를 제공해야 하며, 허위 정보 제공 시 이용이
+              제한될 수 있습니다.{'\n'}3. 사용자는 법을 준수하고, 비윤리적
+              행위를 하지 않아야 합니다.{'\n'}4. 개인정보는 법에 따라 보호되며,
+              서비스 이용 중 발생한 문제는 사용자가 책임집니다.
+            </pre>
+          </div>
+        )}
         <p
           className="cursor-pointer text-zp-lg text-zp-light-gray"
           onClick={() => setShowDetail(!showDetail)}
         >
-          {showDetail ? '접기' : '펼치기'}
+          {showDetail ? '접기' : '약관 보기'}
         </p>
       </div>
-
-      <div className="flex items-center justify-between w-full">
-        <p className="font-bold text-zp-2xl">전체 동의</p>
-        <Checkbox
-          checked={privateAgree && serviceAgree && marketingAgree}
-          onChange={handleAllChange}
-        />
-      </div>
-
-      <hr className="my-4 text-zp-light-gray" />
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 w-full fixed left-0 bottom-[7rem] px-6">
         <div className="flex items-center justify-between w-full">
-          <p className="font-bold text-zp-xl">[필수] 개인정보 처리방침</p>
-          <Checkbox checked={privateAgree} onChange={handlePrivateChange} />
+          <p className="font-bold text-zp-2xl">전체 동의</p>
+          <Checkbox
+            checked={privateAgree && serviceAgree && marketingAgree}
+            onChange={handleAllChange}
+          />
         </div>
 
-        <div className="flex items-center justify-between w-full">
-          <p className="font-bold text-zp-xl">[필수] Zip-plz 서비스 이용약관</p>
-          <Checkbox checked={serviceAgree} onChange={handleServiceChange} />
-        </div>
+        <hr className="my-4 text-zp-light-gray" />
+        <div className=" flex flex-col gap-4">
+          <div className="flex items-center justify-between w-full">
+            <p className="font-bold text-zp-xl">[필수] 개인정보 처리방침</p>
+            <Checkbox checked={privateAgree} onChange={handlePrivateChange} />
+          </div>
 
-        <div className="flex items-center justify-between w-full">
-          <p className="font-bold text-zp-xl">[선택] 마케팅 정보 수신 동의</p>
-          <Checkbox checked={marketingAgree} onChange={handleMarketingChange} />
+          <div className="flex items-center justify-between w-full">
+            <p className="font-bold text-zp-xl">
+              [필수] Zip-plz 서비스 이용약관
+            </p>
+            <Checkbox checked={serviceAgree} onChange={handleServiceChange} />
+          </div>
+
+          <div className="flex items-center justify-between w-full">
+            <p className="font-bold text-zp-xl">[선택] 마케팅 정보 수신 동의</p>
+            <Checkbox
+              checked={marketingAgree}
+              onChange={handleMarketingChange}
+            />
+          </div>
         </div>
       </div>
     </div>
