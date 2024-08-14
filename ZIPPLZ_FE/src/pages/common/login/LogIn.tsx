@@ -79,7 +79,7 @@ export default function Login() {
       <div
         className="z-10 flex flex-col min-h-screen gap-6 px-4"
         style={{
-          backgroundImage: "url('/src/assets/landing-cover1.svg')",
+          backgroundImage: "url('/svg/landing-cover1.svg')",
           backgroundSize: '130%',
           backgroundPosition: '50% top',
         }}
@@ -193,7 +193,7 @@ export default function Login() {
                 console.log(GOOGLE_LOGIN_URL);
               }}
               style={{
-                backgroundImage: "url('/src/assets/login/GoogleLogin.svg')",
+                backgroundImage: "url('/svg/login/GoogleLogin.svg')",
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center center',
               }}
@@ -203,7 +203,7 @@ export default function Login() {
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
               style={{
-                backgroundImage: "url('/src/assets/login/KakaoLogin.svg')",
+                backgroundImage: "url('/svg/login/KakaoLogin.svg')",
                 backgroundRepeat: 'no-repeat',
                 backgroundPosition: 'center center',
               }}
