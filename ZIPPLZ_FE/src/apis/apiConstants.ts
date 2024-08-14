@@ -36,6 +36,7 @@ export const END_POINT = {
   MATERIAL: 'materials?category=',
   CONTRACT: 'contract',
   AFTERSERVICE: 'afterservice',
+  NOTIFICATION: 'notification',
 } as const;
 
 export const HTTP_STATUS_CODE = {
