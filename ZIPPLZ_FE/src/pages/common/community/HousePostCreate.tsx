@@ -7,18 +7,32 @@ import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import { WorkerInfo } from '@/components/worker/workerinfolist/WorkerInfoList';
 import WorkerInfoListItem from '@/components/worker/workerinfolist/WorkerInfoListItem';
 import { useHousePostStore } from '@/stores/housePostStore';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import axios from 'axios';
 
+interface WorkerInfo {
+  user_serial: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
+
 export default function HousePostDetailCreate() {
   const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
   const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
+  // 시공업자 리스트 임시 저장
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
@@ -38,9 +52,7 @@ export default function HousePostDetailCreate() {
 
   const fetchWorkerInfoList = async () => {
     try {
-      const response = await axios.get(
-        'http://localhost:5000/workerlist/portfolios'
-      );
+      const response = await axios.get('/api/workerlist/portfolios');
       if (response.data.proc.code === 200) {
         setWorkerInfoList(response.data.data);
       } else {
@@ -86,10 +98,10 @@ export default function HousePostDetailCreate() {
     const selectedPortfolioJson = JSON.stringify(
       selectedWorkers.map((worker) => ({
         portfolio_serial: worker.portfolio_serial,
-        worker: worker.user_serial,
-        user_name: worker.name,
+        // worker: worker.user_serial,
+        // user_name: worker.name,
         birth_date: worker.birth_date,
-        temperature: worker.temp,
+        // temperature: worker.temp,
         field_id: worker.field_id,
         field_name: worker.field_name,
         career: worker.career,
@@ -117,14 +129,14 @@ export default function HousePostDetailCreate() {
       }
     } catch (error) {
       console.error('Failed to create post:', error);
-      if (error.response) {
-        console.error('Response data:', error.response.data);
-        alert(
-          `서버 오류 발생: ${error.response.data.message || '알 수 없는 오류'}`
-        );
-      } else {
-        alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
-      }
+      // if (error.response) {
+      //   console.error('Response data:', error.response.data);
+      //   alert(
+      //     `서버 오류 발생: ${error.response.data.message || '알 수 없는 오류'}`
+      //   );
+      // } else {
+      //   alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+      // }
     }
   };
 
@@ -141,7 +153,13 @@ export default function HousePostDetailCreate() {
   };
 
   const handleWorkerModalConfirm = () => {
-    setSelectedWorkers(tempSelectedWorkers);
+    const cleanedWorkers = tempSelectedWorkers.map((worker) => ({
+      ...worker,
+      worker: 0, // 기본값 할당
+      user_name: '김현태', // 기본값 할당
+      temperature: 36.5, // 기본값 할당
+    }));
+    setSelectedWorkers(cleanedWorkers);
     setIsWorkerModalOpen(false);
   };
 
