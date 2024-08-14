@@ -16,6 +16,7 @@ interface Props {
   fontSize: string;
   radius: string;
   value?: string | number;
+  disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
@@ -53,6 +54,7 @@ export default function Input({
   onKeyDown,
   onClick,
   additionalStyle,
+  disabled = false,
 }: Props) {
   const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} bg-zp-transparent  `;
 
@@ -95,6 +97,7 @@ export default function Input({
         width: width === 'full' ? '100%' : widthStyle,
         height: height === 'full' ? '100%' : heightStyle,
       }}
+      disabled={disabled}
       value={value}
       onChange={onChange}
       onKeyDown={onKeyDown}
