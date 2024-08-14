@@ -39,16 +39,20 @@ public class ChatMessage extends BaseTimeEntity implements Comparable<ChatMessag
     @JsonProperty("file")
     private File file;
 
+    @JsonProperty("is_contract")
+    private boolean isContract;
+
     // 시간은 BaseTimeEntity에서 자동으로 컬럼 생성됨
 
     @Builder
-    public ChatMessage(int chatroomSerial, int userSerial, String userName, String chatMessageContent, MessageType fileType, File file) {
+    public ChatMessage(int chatroomSerial, int userSerial, String userName, String chatMessageContent, MessageType fileType, File file, boolean isContract) {
         this.chatroomSerial = chatroomSerial;
         this.userSerial = userSerial;
         this.userName = userName;
         this.chatMessageContent = chatMessageContent;
         this.fileType = fileType;
         this.file = file;
+        this.isContract = isContract;
     }
 
     @Override
