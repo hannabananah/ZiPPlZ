@@ -8,9 +8,21 @@ import { useNavigate } from 'react-router-dom';
 
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
-// import FindWorkerListItem from '@components/worker/WorkerInfoListItem';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
+// import FindWorkerListItem from '@components/worker/WorkerInfoListItem';
+interface WorkerInfo {
+  user_serial: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
 type SortOption = '평점순' | '최신순' | '과거순';
 
 const list: WorkerInfo[] = [

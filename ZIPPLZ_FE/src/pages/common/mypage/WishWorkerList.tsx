@@ -121,7 +121,7 @@ export default function WishWorkerList() {
             <FieldListItem
               key={item}
               field={item}
-              handlClickField={() => handleFieldClick(item)}
+              handleClickField={() => handleFieldClick(item)}
             />
           ))}
         </div>

@@ -9,7 +9,20 @@ import { useNavigate } from 'react-router-dom';
 import Selectbar from '@/components/common/Selectbar';
 import HousePostListItem from '@/components/community/HousePostListItem';
 import Input from '@components/common/Input';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
+
+interface WorkerInfo {
+  user_serial: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
@@ -217,7 +230,9 @@ export default function MyHousePostList() {
           </div>
         </div>
         {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {list.length}
+        </div>
 
         {/* 선택하기-삭제하기 버튼 */}
         <div className="w-full flex justify-between items-center text-zp-2xs">
@@ -290,15 +305,15 @@ export default function MyHousePostList() {
                 </div>
               )}
               <HousePostListItem
-                post_serial={worker.user_serial} 
-                post_image={worker.img} 
-                title={worker.field_name} 
-                profile_image={null} 
-                nickname={worker.name} 
-                upload_date={new Date()} 
-                view_cnt={100} 
-                bookmark_cnt={50} 
-                comment_cnt={10} 
+                post_serial={worker.user_serial}
+                post_image={worker.img}
+                title={worker.field_name}
+                profile_image={null}
+                nickname={worker.name}
+                upload_date={new Date()}
+                view_cnt={100}
+                bookmark_cnt={50}
+                comment_cnt={10}
               />
             </div>
           ))}
