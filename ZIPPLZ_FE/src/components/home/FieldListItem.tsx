@@ -3,7 +3,7 @@ interface Props {
   handlClickField: () => void;
 }
 export default function FieldListItem({ field, handlClickField }: Props) {
-  const imageSrc = `/svg/mainpage/가구.svg`;
+  const imageSrc = `/svg/mainpage/${field}.svg`;
   console.log(`${field}`);
 
   return (
