@@ -4,7 +4,7 @@ interface Props {
 }
 export default function FieldListItem({ field, handlClickField }: Props) {
   const imageSrc = `/svg/mainpage/가구.svg`;
-  console.log(${field});
+  console.log(`${field}`);
 
   return (
     <>
