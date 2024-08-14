@@ -1,6 +1,19 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
+interface FindWorker {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+}
+
 interface MyPageState {
   profileImg: string | null;
   name: string;
@@ -15,7 +28,8 @@ interface MyPageState {
   ) => Promise<void>;
   uploadProfileImage: (file: File | string) => Promise<void>;
   deleteProfileImage: () => Promise<void>;
-  changePassword: (newPassword: string) => Promise<void>; // 비밀번호 변경 함수 추가
+  changePassword: (newPassword: string) => Promise<void>;
+  fetchMyFindWorkerList: () => Promise<FindWorker[]>; // 구인구직글 목록 가져오기 함수 추가
 }
 
 export const useMyPageStore = create<MyPageState>((set) => ({
@@ -167,6 +181,36 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       }
     } catch (error) {
       console.error('비밀번호 변경 중 오류 발생:', error);
+    }
+  },
+
+  fetchMyFindWorkerList: async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/mypage/findworkers',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        return response.data.data;
+      } else {
+        console.error(
+          '구인구직글 목록을 가져오는데 실패했습니다:',
+          response.data.proc.message
+        );
+        return [];
+      }
+    } catch (error) {
+      console.error(
+        '구인구직글 목록을 가져오는 중 오류가 발생했습니다:',
+        error
+      );
+      return [];
     }
   },
 }));

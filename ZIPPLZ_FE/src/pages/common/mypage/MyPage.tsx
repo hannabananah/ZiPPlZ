@@ -261,9 +261,7 @@ export default function MyPage() {
         {role === 'customer' && (
           <>
             <div className="mt-6 flex items-center justify-between w-full">
-              <div className="text-zp-lg">
-                관심있는 시공업자 / 찜한 자재 목록
-              </div>
+              <div className="text-zp-lg">관심있는 시공업자 목록</div>
               <div>
                 <HiChevronRight
                   className="cursor-pointer"
