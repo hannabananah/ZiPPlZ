@@ -3,6 +3,7 @@ package com.example.zipplz_be.global.config;
 import com.example.zipplz_be.domain.user.jwt.JWTFilter;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import com.example.zipplz_be.domain.user.jwt.LoginFilter;
+import com.example.zipplz_be.global.config.CorsConfig;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.service.CustomOAuth2UserService;
 import com.example.zipplz_be.global.handler.OAuth2SuccessHandler;
@@ -33,7 +34,8 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final CorsConfig corsConfig;
     
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomOAuth2UserService oAuth2UserService, OAuth2SuccessHandler oAuth2SuccessHandler) {
+    public SecurityConfig(CorsConfig corsConfig, AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomOAuth2UserService oAuth2UserService, OAuth2SuccessHandler oAuth2SuccessHandler) {
+        this.corsConfig = corsConfig;
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.oAuth2UserService = oAuth2UserService;
