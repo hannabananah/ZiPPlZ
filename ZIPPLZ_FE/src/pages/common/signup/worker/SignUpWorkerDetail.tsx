@@ -6,7 +6,6 @@ import { Worker, checkBusiness } from '@apis/member/MemberApi';
 import Input from '@components/common/Input';
 
 // import RegistrationInput from '@components/signup/RegistrationInput';
-import value from './../../../../../svg.d';
 
 interface Props {
   setNext: React.Dispatch<React.SetStateAction<boolean>>;

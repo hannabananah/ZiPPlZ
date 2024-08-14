@@ -1,12 +1,14 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { CiImageOn } from 'react-icons/ci';
-import { FaFileContract, FaFolderOpen } from 'react-icons/fa';
+import { FaFolderOpen } from 'react-icons/fa';
 import { FiTool } from 'react-icons/fi';
 import { TbWood } from 'react-icons/tb';
 
-import Contract from '@components/chat/Contract';
+import AfterService from '@components/chat/AfterService';
+// import Contract from '@components/chat/Contract';
+import Material from '@components/chat/Material';
 import FullModal from '@components/common/FullModal';
-import { useUserStore } from '@stores/userStore';
+import { useLoginUserStore } from '@stores/loginUserStore';
 
 interface MenuItem {
   id: number;
@@ -17,15 +19,46 @@ interface MenuItem {
   onClick?: () => void;
 }
 
-export default function ToggleChatMenu() {
-  const { userType } = useUserStore();
+interface ToggleChatMenuProps {
+  setImagePreview: React.Dispatch<React.SetStateAction<string | undefined>>;
+  chatroomSerial: number;
+  name: string | undefined;
+  setFileSrc: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
+
+export default function ToggleChatMenu({
+  setImagePreview,
+  chatroomSerial,
+  name,
+  setFileSrc,
+}: ToggleChatMenuProps) {
+  const { loginUser } = useLoginUserStore();
+  const userType = loginUser?.role || '';
+
   const imageInputRef = useRef<HTMLInputElement | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [submit, setSubmit] = useState<boolean>(false);
+  const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
+  const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
+  const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
 
   const handleImageUpload = () => {
     imageInputRef.current?.click();
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files && files[0]) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const imageData = reader.result as string;
+          setImagePreview(imageData);
+        };
+        reader.readAsDataURL(file);
+      }
+    }
   };
 
   const handleFileUpload = () => {
@@ -34,20 +67,47 @@ export default function ToggleChatMenu() {
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
-    if (files) {
+    if (files && files[0]) {
       const file = files[0];
-      console.log('Files selected:', files);
-      console.log('file selected:', file);
+      if (!file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const fileData = reader.result as string;
+          setFileSrc(fileData);
+        };
+        reader.readAsDataURL(file);
+      }
     }
   };
 
-  const handleContract = () => {
-    setIsModalOpen(true);
+  const handleAfterService = () => {
+    setIsAfterServiceModalOpen(true);
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false);
+  const handleMaterial = () => {
+    setIsMaterialModalOpen(true);
   };
+
+  const closeAfterServiceModal = () => {
+    setIsAfterServiceModalOpen(false);
+    if (submit) {
+      setIsConfirmationModalOpen(true);
+    }
+  };
+
+  const closeMaterialModal = () => {
+    setIsMaterialModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (isConfirmationModalOpen) {
+      const timer = setTimeout(() => {
+        setIsConfirmationModalOpen(false);
+      }, 1500);
+
+      return () => clearTimeout(timer);
+    }
+  }, [isConfirmationModalOpen]);
 
   const menus: MenuItem[] = [
     {
@@ -55,7 +115,7 @@ export default function ToggleChatMenu() {
       icon: CiImageOn,
       label: '이미지',
       bgColor: '#75C734',
-      role: ['user', 'worker'],
+      role: ['customer', 'worker'],
       onClick: handleImageUpload,
     },
     {
@@ -63,30 +123,32 @@ export default function ToggleChatMenu() {
       icon: FaFolderOpen,
       label: '파일',
       bgColor: '#0697FF',
-      role: ['user', 'worker'],
+      role: ['customer', 'worker'],
       onClick: handleFileUpload,
     },
+    // {
+    //   id: 3,
+    //   icon: FaFileContract,
+    //   label: '계약서',
+    //   bgColor: '#FF9500',
+    //   role: 'worker',
+    //   onClick: handleContract,
+    // },
     {
       id: 3,
-      icon: FaFileContract,
-      label: '계약서',
-      bgColor: '#FF9500',
-      role: 'worker',
-      onClick: handleContract,
-    },
-    {
-      id: 4,
       icon: FiTool,
       label: 'A/S 신청',
       bgColor: '#FC7FF0',
-      role: 'user',
+      role: 'customer',
+      onClick: handleAfterService,
     },
     {
-      id: 5,
+      id: 4,
       icon: TbWood,
       label: '자재 관리',
-      bgColor: '#A2845E',
-      role: ['user', 'worker'],
+      bgColor: '#FF9500',
+      role: ['customer', 'worker'],
+      onClick: handleMaterial,
     },
   ];
 
@@ -94,12 +156,10 @@ export default function ToggleChatMenu() {
     <div className="sticky bottom-0 content-center w-full h-24 border bg-zp-white border-zp-sub-color rounded-t-zp-radius-big">
       <ul className="flex items-center w-11/12 h-full m-auto bg-zp-white justify-evenly">
         {menus
-          .filter(
-            (menu) =>
-              menu.role === 'both' ||
-              (Array.isArray(menu.role)
-                ? menu.role.includes(userType)
-                : menu.role === userType)
+          .filter((menu) =>
+            Array.isArray(menu.role)
+              ? menu.role.includes(userType)
+              : menu.role === userType
           )
           .map((menu) => (
             <li
@@ -114,8 +174,8 @@ export default function ToggleChatMenu() {
                 <menu.icon
                   size={26}
                   style={{
-                    stroke: menu.id >= 4 ? 'white' : undefined,
-                    fill: menu.id < 4 ? 'white' : undefined,
+                    stroke: menu.id >= 3 ? 'white' : undefined,
+                    fill: menu.id < 3 ? 'white' : undefined,
                   }}
                 />
               </div>
@@ -129,13 +189,7 @@ export default function ToggleChatMenu() {
         type="file"
         accept="image/*"
         style={{ display: 'none' }}
-        onChange={(e) => {
-          const files = e.target.files;
-          if (files && files[0]) {
-            const file = files[0];
-            console.log('Image selected:', file);
-          }
-        }}
+        onChange={handleImageChange}
       />
       <input
         ref={fileInputRef}
@@ -145,12 +199,41 @@ export default function ToggleChatMenu() {
       />
 
       <FullModal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
+        isOpen={isAfterServiceModalOpen}
+        onRequestClose={closeAfterServiceModal}
         height="60%"
         maxWidth="400px"
       >
-        <Contract closeModal={closeModal} />
+        <AfterService
+          closeAfterServiceModal={closeAfterServiceModal}
+          name={name}
+          submit={submit}
+          setSubmit={setSubmit}
+        />
+      </FullModal>
+
+      <FullModal
+        isOpen={isMaterialModalOpen}
+        onRequestClose={closeMaterialModal}
+        height="80%"
+        maxWidth="400px"
+      >
+        <Material
+          closeMaterialModal={closeMaterialModal}
+          chatroomSerial={chatroomSerial}
+        />
+      </FullModal>
+
+      <FullModal
+        isOpen={isConfirmationModalOpen}
+        onRequestClose={() => setIsConfirmationModalOpen(false)}
+        height="20%"
+        maxWidth="300px"
+      >
+        <div className="flex flex-col items-center justify-center w-full h-full gap-6 p-3">
+          <h2 className="font-bold text-center text-zp-2xl">A/S 신청 완료</h2>
+          <p className="text-center text-zp-md">A/S 신청이 완료되었습니다.</p>
+        </div>
       </FullModal>
     </div>
   );

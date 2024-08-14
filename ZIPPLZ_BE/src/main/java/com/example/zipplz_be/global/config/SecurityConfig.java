@@ -74,7 +74,7 @@ public class SecurityConfig {
         // CORS 설정
         http.cors(cors -> cors.configurationSource(request -> {
             CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
+            configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173","http://localhost:5174"));
             configuration.setAllowedMethods(Collections.singletonList("*"));
             configuration.setAllowCredentials(true);
             configuration.setAllowedHeaders(Collections.singletonList("*"));

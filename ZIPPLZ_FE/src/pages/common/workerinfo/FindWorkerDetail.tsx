@@ -4,11 +4,7 @@ import { CgProfile } from 'react-icons/cg';
 import { CiLocationOn } from 'react-icons/ci';
 import { FaTrashAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
-import {
-  IoBookmark, // IoBookmark,
-  IoBookmarkOutline,
-  IoChatbubblesOutline,
-} from 'react-icons/io5';
+import { IoBookmarkOutline, IoChatbubblesOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { writeReview } from '@/apis/board/reviewApi';

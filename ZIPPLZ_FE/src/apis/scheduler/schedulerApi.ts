@@ -121,7 +121,6 @@ export const modifyWork = async (
 
 //빈 공정 삭제
 export const deleteWork = async (planSerial: number, workSerial: number) => {
-  console.log(planSerial, workSerial);
   return await axiosInstance.delete(
     END_POINT.WORK_SERIAL(planSerial, workSerial),
     {

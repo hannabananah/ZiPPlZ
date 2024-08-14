@@ -151,7 +151,7 @@ export default function Workers() {
                 <FieldListItem
                   key={idx}
                   field={field}
-                  handlClickField={() =>
+                  handleClickField={() =>
                     navigate(`/workers/portfolios?type=${field}`)
                   }
                 />

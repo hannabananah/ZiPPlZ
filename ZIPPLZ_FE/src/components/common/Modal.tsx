@@ -59,7 +59,7 @@ export default function ModalComponent({
       className="flex flex-col px-10 py-6 rounded-zp-radius-big bg-zp-white drop-shadow-zp-normal"
     >
       <h2 className="mb-4 font-bold text-center text-zp-2xl">{title}</h2>
-      <p className="mb-6 text-center">{message}</p>
+      <p className="mb-6 text-center text-zp-sm break-keep">{message}</p>
       <div className="flex flex-col justify-center gap-4 sm:flex-row">
         <button
           onClick={handleRequestClose}

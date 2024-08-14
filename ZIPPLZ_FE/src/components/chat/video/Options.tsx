@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   FaMicrophone,
   FaMicrophoneSlash,
@@ -7,7 +7,12 @@ import {
 } from 'react-icons/fa';
 import { ImPhoneHangUp } from 'react-icons/im';
 import { MdChecklistRtl, MdOutlineCameraswitch } from 'react-icons/md';
+import { useParams } from 'react-router-dom';
 
+import Contract from '@components/chat/Contract';
+import FullModal from '@components/common/FullModal';
+// import useOpenVidu from '@hooks/useOpenvidu';
+import axios from 'axios';
 import {
   Session as OVSession,
   OpenVidu,
@@ -19,12 +24,15 @@ interface OptionsProps {
   leaveSession: () => void;
   subscriber: Subscriber | null;
   publisher: Publisher;
-  session: OVSession | '';
+  session: OVSession | null;
   OV: OpenVidu | null;
   setPublisher: (publisher: Publisher) => void;
   publishAudio: (enabled: boolean) => void;
   publishVideo: (enabled: boolean) => void;
+  handleCloseVideo: (enabled: boolean) => void;
 }
+
+const base_url = import.meta.env.VITE_APP_BASE_URL;
 
 export default function Options({
   leaveSession,
@@ -34,10 +42,16 @@ export default function Options({
   setPublisher,
   publishAudio,
   publishVideo,
+  handleCloseVideo,
 }: OptionsProps) {
+  // const { startScreenShare } = useOpenVidu();
+
   const [isMuted, setIsMuted] = useState(false);
   const [isHided, setIsHided] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(false);
+  const [name, setName] = useState('');
+  const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+  const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
 
   const handleMute = () => {
     const newMuteState = !isMuted;
@@ -51,15 +65,30 @@ export default function Options({
     publishVideo(!newHideState);
   };
 
-  const handleSwitch = async () => {
-    console.log('카메라 전환');
-    console.log('session 확인:', session);
-    console.log('OV instance 확인:', OV);
+  const getOtherUserName = async () => {
+    try {
+      const token = localStorage.getItem('token');
+      const headers = { Authorization: `Bearer ${token}` };
+      const url = `${base_url}/chatroom/${chatroomSerial}/name`;
 
+      const response = await axios.get(url, { headers });
+
+      if (response.status === 200 && response.data) {
+        return response.data.data;
+      } else {
+        throw new Error('Unexpected response from the server');
+      }
+    } catch (error) {
+      const errorMessage =
+        error instanceof Error ? error.message : String(error);
+      throw new Error(`Failed to get other user name: ${errorMessage}`);
+    }
+  };
+
+  const handleSwitch = async () => {
     if (OV && session) {
       try {
         const devices = await OV.getDevices();
-
         const videoDevices = devices.filter(
           (device) => device.kind === 'videoinput'
         );
@@ -74,45 +103,90 @@ export default function Options({
             mirror: isFrontCamera,
           });
 
-          console.log('화면공유 중지');
           await session.unpublish(publisher);
-
           setPublisher(newPublisher);
           await session.publish(newPublisher);
 
           setIsFrontCamera(!isFrontCamera);
         } else {
-          console.warn('캠을 전환할 기기가 없습니다.');
+          console.warn('No camera available to switch.');
         }
       } catch (error) {
-        console.error('캠을 전환할 수 없습니다.:', error);
+        console.error('Failed to switch camera:', error);
       }
     } else {
-      console.warn('세션이나 OpenVidu를 사용할 수 없습니다.');
+      console.warn('No session or OpenVidu instance available.');
     }
+  };
+
+  const closeContractModal = () => {
+    setIsContractModalOpen(false);
   };
 
   const handleExitLive = () => {
     leaveSession();
+    handleCloseVideo(false);
   };
 
+  const handleSharingContract = () => {
+    setIsContractModalOpen(true);
+  };
+
+  const fetchName = async () => {
+    try {
+      const userName = await getOtherUserName();
+      setName(userName);
+    } catch (error) {
+      console.error(
+        error instanceof Error ? error.message : 'An unexpected error occurred'
+      );
+    }
+  };
+
+  useEffect(() => {
+    fetchName();
+  }, [chatroomSerial]);
+
   return (
-    <div className="absolute flex w-10/12 p-2 bg-opacity-50 bottom-3 justify-evenly rounded-zp-radius-big bg-zp-light-yellow">
-      <button className="btn" onClick={handleMute}>
+    <div className="absolute bottom-0 flex w-10/12 pb-3 bg-opacity-50 rounded-zp-radius-big justify-evenly">
+      <button
+        className="drop-shadow-zp-deep btn hover:bg-zp-sub-color"
+        onClick={handleMute}
+      >
         {isMuted ? <FaMicrophoneSlash size={24} /> : <FaMicrophone size={24} />}
       </button>
-      <button className="btn" onClick={handleHide}>
+      <button
+        className="drop-shadow-zp-deep btn hover:bg-zp-sub-color"
+        onClick={handleHide}
+      >
         {isHided ? <FaVideoSlash size={24} /> : <FaVideo size={24} />}
       </button>
-      <button className="btn" onClick={handleSwitch}>
+      <button
+        className="drop-shadow-zp-deep btn hover:bg-zp-sub-color"
+        onClick={handleSwitch}
+      >
         <MdOutlineCameraswitch size={24} />
       </button>
-      <button className="btn">
+      <button
+        className="drop-shadow-zp-deep btn hover:bg-zp-sub-color"
+        onClick={handleSharingContract}
+      >
         <MdChecklistRtl size={28} />
       </button>
-      <button className="btn bg-zp-red" onClick={handleExitLive}>
+      <button
+        className="drop-shadow-zp-deep bg-zp-red btn"
+        onClick={handleExitLive}
+      >
         <ImPhoneHangUp size={28} fill="#fff" />
       </button>
+      <FullModal
+        isOpen={isContractModalOpen}
+        onRequestClose={closeContractModal}
+        height="65%"
+        maxWidth="400px"
+      >
+        <Contract closeContractModal={closeContractModal} name={name} />
+      </FullModal>
     </div>
   );
 }

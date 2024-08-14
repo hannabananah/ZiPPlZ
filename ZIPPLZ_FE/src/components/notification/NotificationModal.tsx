@@ -12,8 +12,8 @@ export default function NotificationModal({
   return (
     <div className="w-full p-4">
       <div className="flex justify-between">
-        <h2 className="text-zp-xl font-bold font-noto">알림</h2>
-        <span onClick={handleCloseNotification}>
+        <h2 className="font-bold text-zp-xl font-noto">알림</h2>
+        <span onClick={handleCloseNotification} className="cursor-pointer">
           <IoIosClose size={30} />
         </span>
       </div>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CiLocationOn } from 'react-icons/ci';
 import { GrTools } from 'react-icons/gr';
-import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
+// import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { IoCallOutline } from 'react-icons/io5';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 

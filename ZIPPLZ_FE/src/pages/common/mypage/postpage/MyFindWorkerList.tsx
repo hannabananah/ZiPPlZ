@@ -6,9 +6,9 @@ import { IoIosClose } from 'react-icons/io';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
-import Selectbar from '@/components/common/Selectbar';
-import FindWorkerListItem from '@/components/worker/FindWorkerListItem';
 import Input from '@components/common/Input';
+import Selectbar from '@components/common/Selectbar';
+import FindWorkerListItem from '@components/worker/WorkerInfoListItem';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
 type SortOption = '평점순' | '최신순' | '과거순';
@@ -220,7 +220,9 @@ export default function MyFindWorkerList() {
           </div>
         </div>
         {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {list.length}
+        </div>
 
         {/* 선택하기-삭제하기 버튼 */}
         <div className="w-full flex justify-between items-center text-zp-2xs">

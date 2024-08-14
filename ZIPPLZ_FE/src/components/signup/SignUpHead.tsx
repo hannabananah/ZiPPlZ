@@ -36,7 +36,6 @@ import { useNavigate } from 'react-router-dom';
 //     zIndex: 1500,
 //   },
 // };
-// Modal.setAppElement('#root');
 export default function SignUpHead() {
   //({ type }: Props) {
   const navigate = useNavigate();
@@ -49,15 +48,15 @@ export default function SignUpHead() {
   // };
   return (
     <>
-      <div className="w-full flex justify-between items-center">
+      <div className="flex items-center justify-between w-full">
         <IoIosArrowRoundBack
           size={27}
-          className="text-zp-gray cursor-pointer"
+          className="cursor-pointer text-zp-gray"
           onClick={() => navigate(-1)}
         />
         {/* {type === 'worker' && (
           <p
-            className="text-zp-light-gray text-zp-2xl cursor-pointer"
+            className="cursor-pointer text-zp-light-gray text-zp-2xl"
             onClick={() => openModal()}
           >
             건너뛰기
@@ -73,11 +72,11 @@ export default function SignUpHead() {
           건너뛰시겠습니까?
         </p>
         <div className="w-full flex flex-col mt-[4rem] items-center gap-6">
-          <div className="w-full flex flex-col items-center ">
-            <p className="text-zp-xl font-bold text-center">
+          <div className="flex flex-col items-center w-full ">
+            <p className="font-bold text-center text-zp-xl">
               포트폴리오를 작성할 때,
             </p>
-            <p className="text-zp-xl font-bold text-center">
+            <p className="font-bold text-center text-zp-xl">
               해당 추가정보를 입력할 수 있습니다.
             </p>
           </div>

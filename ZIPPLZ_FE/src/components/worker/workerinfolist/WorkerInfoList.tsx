@@ -36,7 +36,6 @@ export default function WorkerInfoList({
       else fetchWorkerList();
     }
   }, [field]);
-  console.log(field);
   return (
     <>
       {workerList && workerList.length > 0 ? (

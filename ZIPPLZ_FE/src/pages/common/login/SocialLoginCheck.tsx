@@ -26,6 +26,7 @@ export default function SocialLoginCheck() {
         let decodingInfoJson = JSON.parse(dec);
         setLoginUser({
           userSerial: decodingInfoJson.userSerial,
+          userName: decodingInfoJson.userName,
           email: decodingInfoJson.email,
           role: decodingInfoJson.role,
         });

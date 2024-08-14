@@ -1,7 +1,7 @@
 interface Props {
   className?: string;
   placeholder?: string;
-  type: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel';
+  type: 'text' | 'password' | 'email' | 'number' | 'search' | 'tel' | 'date';
   inputType:
     | 'none'
     | 'login'
@@ -21,6 +21,10 @@ interface Props {
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;
   additionalStyle?: string;
+  name?: string;
+  maxLength?: number;
+  min?: number;
+  editable?: boolean;
 }
 
 const fontSizeClasses: Record<Props['fontSize'], string> = {
@@ -45,18 +49,21 @@ export default function Input({
   placeholder,
   inputType,
   type,
-  width,
+  width = 'full',
   height,
   fontSize,
   radius,
-  value,
+  value = '',
   onChange,
   onKeyDown,
   onClick,
-  additionalStyle,
-  disabled = false,
+  additionalStyle = '',
+  name,
+  maxLength,
+  min,
+  editable,
 }: Props) {
-  const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} bg-zp-transparent  `;
+  const baseStyle: string = `flex justify-center items-center ${fontSizeClasses[fontSize]} ${radiusClasses[radius]} bg-zp-transparent hover:border-zp-main-color`;
 
   let typeStyle = '';
   switch (inputType) {
@@ -97,11 +104,14 @@ export default function Input({
         width: width === 'full' ? '100%' : widthStyle,
         height: height === 'full' ? '100%' : heightStyle,
       }}
-      disabled={disabled}
       value={value}
       onChange={onChange}
       onKeyDown={onKeyDown}
       onClick={onClick}
+      name={name}
+      maxLength={maxLength}
+      min={min}
+      disabled={editable}
     />
   );
 }

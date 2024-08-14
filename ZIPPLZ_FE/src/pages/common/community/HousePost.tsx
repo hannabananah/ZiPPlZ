@@ -1,50 +1,35 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
-import Button from '@/components/common/Button';
-import HousePostListItem from '@/components/community/HousePostListItem';
+import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
+import HousePostListItem from '@components/community/HousePostListItem';
+import { useHousePostStore } from '@stores/housePostStore';
+
+import HousePostDetail from './HousePostDetail';
 
 type SortOption = '평점순' | '최신순' | '과거순';
-
-const HousePosts = [
-  {
-    post_serial: 1,
-    post_image: 'https://via.placeholder.com/150',
-    title: '우리집을 소개합니다',
-    profile_image: 'https://via.placeholder.com/50',
-    nickname: '닉네임1',
-    upload_date: new Date('2024-07-18'),
-    view_cnt: 100,
-    bookmark_cnt: 96,
-    comment_cnt: 5,
-  },
-  {
-    post_serial: 2,
-    post_image: 'https://via.placeholder.com/150',
-    title: '멋진 집들이',
-    profile_image: 'https://via.placeholder.com/50',
-    nickname: '닉네임2',
-    upload_date: new Date('2024-07-17'),
-    view_cnt: 200,
-    bookmark_cnt: 120,
-    comment_cnt: 15,
-  },
-  // 추가 더미 데이터
-];
 
 export default function HousePost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
+  const [bookmarkCounts, setBookmarkCounts] = useState<{
+    [key: number]: number;
+  }>({}); // 각 포스트의 북마크 수를 저장하는 상태
 
   const navigate = useNavigate();
+  const { housePosts, fetchHousePosts } = useHousePostStore();
+
+  useEffect(() => {
+    fetchHousePosts(); // 컴포넌트가 마운트될 때 API에서 데이터 가져오기
+  }, [fetchHousePosts]);
 
   const handleWritePost = () => {
-    navigate('/HousePostDetailCreate'); // FindWorkerDetail 페이지로 이동
+    navigate('/housepostcreate');
   };
 
   const toggleDropdown = () => {
@@ -67,6 +52,13 @@ export default function HousePost() {
     setInputValue(e.target.value);
   };
 
+  const handleBookmarkChange = (postId: number, isBookmarked: boolean) => {
+    setBookmarkCounts((prev) => ({
+      ...prev,
+      [postId]: (prev[postId] || 0) + (isBookmarked ? 1 : -1),
+    }));
+  };
+
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6">
@@ -81,7 +73,9 @@ export default function HousePost() {
                 집들이
               </div>
               <IoMdArrowDropdown
-                className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+                className={`transition-transform ${
+                  isDropdownOpen ? 'rotate-180' : ''
+                }`}
                 size={24}
               />
             </div>
@@ -91,13 +85,13 @@ export default function HousePost() {
               <div className="absolute top-full border border-zp-light-gray rounded-zp-radius-btn font-bold hover:bg-zp-light-beige ">
                 <button
                   onClick={() => handleNavigate('/HousePost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
                 >
                   집들이
                 </button>
                 <button
                   onClick={() => handleNavigate('/QuestionPost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
                 >
                   질문글
                 </button>
@@ -134,7 +128,7 @@ export default function HousePost() {
               />
             </div>
           </div>
-          {/* 시공업자의 이름을 입력하세요. */}
+          {/* 글의 제목이나 작성자 이름을 입력하세요. */}
           <div className="w-full relative flex justify-center items-center">
             <HiMagnifyingGlass className="relative left-4" />
             <Input
@@ -152,12 +146,35 @@ export default function HousePost() {
           </div>
 
           <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {HousePosts.map((post) => (
-              <HousePostListItem key={post.post_serial} {...post} />
-            ))}
+            {housePosts && housePosts.length > 0 ? (
+              housePosts.map((post) => (
+                <HousePostListItem
+                  key={post.board_serial}
+                  post_serial={post.board_serial}
+                  post_image={post.img}
+                  title={post.title}
+                  profile_image={null} // 기본 이미지 사용
+                  nickname={post.nickname}
+                  upload_date={new Date(post.board_date)}
+                  view_cnt={post.hit}
+                  bookmark_cnt={
+                    bookmarkCounts[post.board_serial] !== undefined
+                      ? bookmarkCounts[post.board_serial]
+                      : post.wish_cnt
+                  }
+                  comment_cnt={post.comment_cnt}
+                />
+              ))
+            ) : (
+              <div className="col-span-3 text-center text-zp-gray">
+                게시물이 없습니다.
+              </div>
+            )}
           </div>
         </div>
       </div>
+      {/* HousePostDetail를 사용해 북마크 변경 시 이벤트 전달 */}
+      {/* <HousePostDetail onBookmarkChange={handleBookmarkChange} /> */}
     </>
   );
 }

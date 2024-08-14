@@ -101,6 +101,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
         placeholder="이름을 입력하세요"
         width="full"
         height={2}
+        value={name}
         onChange={(e: React.ChangeEvent) => {
           setUser((prev: User) => ({
             ...prev,
@@ -121,6 +122,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
             placeholder="이메일을 입력하세요"
             width="full"
             height={2}
+            value={email}
             onChange={(e: React.ChangeEvent) => {
               if (isOpen) setIsOpen(false);
               setUser((prev: User) => ({
@@ -175,6 +177,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
           placeholder="비밀번호를 입력하세요"
           width="full"
           height={2}
+          value={password}
           onChange={(e: React.ChangeEvent) => {
             setPassword((e.target as HTMLInputElement).value);
           }}
@@ -208,6 +211,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
           placeholder="비밀번호를 한번 더 입력하세요"
           width="full"
           height={2}
+          value={checkPassword}
           onChange={(e: React.ChangeEvent) => {
             setUser((prev: User) => ({
               ...prev,

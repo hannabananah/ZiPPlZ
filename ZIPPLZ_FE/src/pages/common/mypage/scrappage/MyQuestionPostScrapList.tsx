@@ -24,6 +24,7 @@ const list = [
     view_cnt: 123,
     bookmark_cnt: 12,
     comment_cnt: 5,
+    post_image: null, // post_image를 선택적으로 설정
   },
   {
     post_serial: 2,
@@ -36,6 +37,7 @@ const list = [
     view_cnt: 98,
     bookmark_cnt: 8,
     comment_cnt: 3,
+    post_image: null, // post_image를 선택적으로 설정
   },
   // 다른 질문글 정보 추가
 ];
@@ -49,6 +51,7 @@ export default function MyQuestionPostScrapList() {
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([]);
 
   const handleSortSelect = (sortOption: string) => {
     console.log(`Selected sort option: ${sortOption}`);
@@ -99,6 +102,14 @@ export default function MyQuestionPostScrapList() {
 
   const handleWorkerClick = (post_serial: number) => {
     navigate(`/questionpost/${post_serial}`);
+  };
+
+  const handleBookmarkToggle = (post_serial: number, isBookmarked: boolean) => {
+    if (isBookmarked) {
+      setBookmarkedPosts([...bookmarkedPosts, post_serial]);
+    } else {
+      setBookmarkedPosts(bookmarkedPosts.filter((id) => id !== post_serial));
+    }
   };
 
   return (
@@ -190,7 +201,9 @@ export default function MyQuestionPostScrapList() {
           </div>
         </div>
 
-        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {list.length}
+        </div>
 
         <div className="w-full flex justify-between items-center text-zp-2xs">
           {isSelecting && (
@@ -264,7 +277,11 @@ export default function MyQuestionPostScrapList() {
                 }`}
                 onClick={() => handleWorkerClick(post.post_serial)}
               >
-                <QuestionPostListItem {...post} />
+                <QuestionPostListItem
+                  {...post}
+                  isBookmarked={bookmarkedPosts.includes(post.post_serial)}
+                  onBookmarkToggle={handleBookmarkToggle}
+                />
               </div>
             </div>
           ))}
