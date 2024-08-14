@@ -15,12 +15,15 @@ public class CorsConfig {
     @Bean
     public CorsFilter corsFilter() {
         CorsConfiguration configuration = new CorsConfiguration();
-         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://zipplz.site"));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        //configuration.setAllowedOrigins(List.of("http://localhost:5173", "https://zipplz.site"));
+        configuration.setAllowedOriginPatterns(List.of("*"));
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedHeaders(Collections.singletonList("*"));
+        //configuration.setAllowedHeaders(Collections.singletonList("*"));
         configuration.setMaxAge(3600L);
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
+        //configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
