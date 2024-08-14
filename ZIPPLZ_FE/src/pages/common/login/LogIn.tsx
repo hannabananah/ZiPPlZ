@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
+import { IoHomeOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
 
@@ -7,7 +8,6 @@ import { requestLogin } from '@/apis/member/MemberApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import { useLoginUserStore } from '@stores/loginUserStore';
-import { isAxiosError } from 'axios';
 import base64 from 'base-64';
 
 export default function Login() {
@@ -15,7 +15,7 @@ export default function Login() {
   const GOOGLE_LOGIN_URL: string = import.meta.env.VITE_GOOGLE_LOGIN_URL;
   const KAKAO_LOGIN_URL: string = import.meta.env.VITE_KAKAO_LOGIN_URL;
   const navigate = useNavigate();
-
+  const [isNoUser, setIsNoUser] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [password, setPassword] = useState<string>('');
@@ -53,19 +53,12 @@ export default function Login() {
         alert('로그인 실패: 서버 응답에 문제가 있습니다.');
       }
     } catch (error) {
-      if (isAxiosError(error)) {
-        console.log(error);
-      }
-      console.error('Login request failed:', error);
-      alert('로그인 중 오류가 발생했습니다.');
+      setIsNoUser(true);
     }
   };
-
-  function validateEmail(email: string): boolean {
-    let regex = new RegExp('[a-z0-9]+@[a-z]+.[a-z]{2,3}');
-    if (!email) return true;
-    return regex.test(email);
-  }
+  useEffect(() => {
+    if (isNoUser) setIsNoUser(false);
+  }, [email]);
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       <div
@@ -76,6 +69,13 @@ export default function Login() {
           backgroundPosition: '50% top',
         }}
       >
+        <div className="z-50 flex items-end justify-end">
+          <IoHomeOutline
+            size={24}
+            className="mt-4 cursor-pointer"
+            onClick={() => navigate('/')}
+          />
+        </div>
         <div className="absolute inset-0 z-20 bg-zp-white bg-opacity-20"></div>
         <div className="flex flex-col items-center gap-6 mt-[25%] z-30">
           <p className="font-bodoni text-zp-3xl">Zip plz</p>
@@ -103,9 +103,9 @@ export default function Login() {
             fontSize="xl"
             radius="none"
           />
-          {!validateEmail(email) && (
+          {isNoUser && (
             <p className="text-zp-2xs text-zp-red">
-              이메일 형식이 올바르지 않습니다.
+              이메일 또는 비밀번호를 확인해주세요.
             </p>
           )}
         </div>

@@ -36,6 +36,7 @@ import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
 import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
 import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
+import SocialLoginCheck from './pages/common/login/SocialLoginCheck';
 import FindIdPw from './pages/common/login/find/FindIdPw';
 import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
 import MyQuestionPostList from './pages/common/mypage/postpage/MyQuestionPostList';
@@ -133,6 +134,7 @@ export default function App() {
 
       <Route path="404" element={<Custom404 />} />
       <Route path="*" element={<Navigate to="/404" replace />} />
+      <Route path="success" element={<SocialLoginCheck />} />
     </Routes>
   );
 }

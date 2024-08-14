@@ -8,6 +8,8 @@ export interface User {
   userName: string;
   birthDate: string;
   tel: string;
+  del_yn?: number;
+  file_serial?: number;
 }
 
 export interface Customer {
@@ -57,7 +59,12 @@ export const signUpCustomer = async (data: Customer) => {
 export const signUpWorker = async (data: Worker) => {
   return await axiosInstance.post(END_POINT.SIGNUP + '/worker', data);
 };
-const businessCheckKey: string = import.meta.env.VITE_CHECK_BUSINESS_KEY;
+//이메일 중복 체크
+export const checkEmail = async (data: { email: string }) => {
+  return await axiosInstance.post(END_POINT.USERS + '/check-email', data);
+};
+const businessCheckKey: string =
+  'FYe5VJ5eQCYFtTp8mfxpiyh3hycdocxUJ92AoOdMqcJCgoLrIh0WPw4LYUM7ZaCMIerxnC58Lh1DZa7915kXOQ==';
 export const checkBusiness = async (data: string) => {
   return await axios.post(
     'https://api.odcloud.kr/api/nts-businessman/v1/status?serviceKey=' +
@@ -85,7 +92,11 @@ export const requestLogin = async (email: string, pw: string) => {
   );
   return response;
 };
-
+export const requestSocialLogin = async () => {
+  return await axiosInstance.get(END_POINT.USERS + '/callback', {
+    withCredentials: true,
+  });
+};
 //Default
 export const getSido = async () => {
   return await axiosInstance.get(END_POINT.SIDO);
