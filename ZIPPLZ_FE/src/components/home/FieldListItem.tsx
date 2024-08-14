@@ -2,7 +2,7 @@ interface Props {
   field: string;
   handleClickField: () => void;
 }
-export default function FieldListItem({ field, handlClickField }: Props) {
+export default function FieldListItem({ field, handleClickField }: Props) {
   const imageSrc = `/svg/mainpage/${field}.svg`;
   console.log(`${field}`);
 

@@ -6,23 +6,23 @@
 // import { IoMdArrowDropdown } from 'react-icons/io';
 // import { useNavigate } from 'react-router-dom';
 
-import Selectbar from '@/components/common/Selectbar';
-import HousePostListItem from '@/components/community/HousePostListItem';
-import Input from '@components/common/Input';
+// import Selectbar from '@/components/common/Selectbar';
+// import HousePostListItem from '@/components/community/HousePostListItem';
+// import Input from '@components/common/Input';
 
-interface WorkerInfo {
-  user_serial: number;
-  portfolio_serial: number;
-  name: string;
-  birth_date: number;
-  temp: number;
-  field_id: number;
-  field_name: string;
-  career: number;
-  certificated_badge: number;
-  locations: string[];
-  img: string;
-}
+// interface WorkerInfo {
+//   user_serial: number;
+//   portfolio_serial: number;
+//   name: string;
+//   birth_date: number;
+//   temp: number;
+//   field_id: number;
+//   field_name: string;
+//   career: number;
+//   certificated_badge: number;
+//   locations: string[];
+//   img: string;
+// }
 
 // type SortOption = '평점순' | '최신순' | '과거순';
 
@@ -143,21 +143,21 @@ interface WorkerInfo {
 //   };
 
 //   return (
-//     <>
-//       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-//         {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
-//         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
-//           <div className="flex w-full items-center justify-center gap-2">
-//             <GoArrowLeft
-//               className="absolute left-0 cursor-pointer"
-//               onClick={handleGoBack}
-//               size={20} // 아이콘 크기 조정
-//             />
-//             <div className="flex items-center space-x-2">
-//               <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
-//             </div>
-//           </div>
-//         </div>
+{
+  /*   <>
+      <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
+        <div className="mt-16 h-10 flex items-center justify-between w-full relative">
+          <div className="flex w-full items-center justify-center gap-2">
+            <GoArrowLeft
+              className="absolute left-0 cursor-pointer"
+              onClick={handleGoBack}
+              size={20} // 아이콘 크기 조정
+            />
+            <div className="flex items-center space-x-2">
+              <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
+            </div>
+          </div>
+        </div>
 
         <div className="flex justify-center space-x-2 w-full relative">
           <span className="text-zp-lg font-bold">집들이</span>
@@ -193,7 +193,6 @@ interface WorkerInfo {
             </div>
           )}
         </div>
-        {/* 검색 input */}
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -210,7 +209,6 @@ interface WorkerInfo {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
           <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
@@ -229,55 +227,50 @@ interface WorkerInfo {
             </div>
           </div>
         </div>
-        {/* 전체 게시글 수 표시 부분 */}
         <div className="text-zp-xl font-bold text-zp-gray">
           전체 {list.length}
         </div>
 
-//         {/* 선택하기-삭제하기 버튼 */}
-//         <div className="w-full flex justify-between items-center text-zp-2xs">
-//           {isSelecting && (
-//             <div
-//               className="flex items-center space-x-2 cursor-pointer"
-//               onClick={toggleAllSelected}
-//             >
-//               {isAllSelected ? (
-//                 <FaRegCircleCheck size={20} />
-//               ) : (
-//                 <FaRegCircle size={20} />
-//               )}
-//               <span>전체 선택</span>
-//             </div>
-//           )}
-//           <div className="ml-auto">
-//             <button
-//               className="rounded-zp-radius-big p-2 px-3 bg-zp-light-gray flex items-center space-x-2"
-//               onClick={
-//                 isSelecting && selectedWorkers.length > 0
-//                   ? handleDeleteConfirmation
-//                   : toggleSelecting
-//               }
-//             >
-//               {isSelecting ? (
-//                 selectedWorkers.length === 0 ? (
-//                   <span>선택 취소</span>
-//                 ) : (
-//                   <>
-//                     <IoIosClose size={14} />
-//                     <span>삭제</span>
-//                   </>
-//                 )
-//               ) : (
-//                 <span>선택하기</span>
-//               )}
-//             </button>
-//           </div>
-//         </div>
-//         {/* 가로선 */}
-//         <hr className="w-full border-zp-main-color" />
+       <div className="w-full flex justify-between items-center text-zp-2xs">
+         {isSelecting && (
+            <div
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={toggleAllSelected}
+            >
+              {isAllSelected ? (
+                <FaRegCircleCheck size={20} />
+              ) : (
+                <FaRegCircle size={20} />
+              )}
+              <span>전체 선택</span>
+            </div>
+          )}
+          <div className="ml-auto">
+            <button
+              className="rounded-zp-radius-big p-2 px-3 bg-zp-light-gray flex items-center space-x-2"
+              onClick={
+                isSelecting && selectedWorkers.length > 0
+                  ? handleDeleteConfirmation
+                  : toggleSelecting
+              }
+            >
+              {isSelecting ? (
+                selectedWorkers.length === 0 ? (
+                  <span>선택 취소</span>
+                ) : (
+                  <>
+                    <IoIosClose size={14} />
+                    <span>삭제</span>
+                  </>
+                )
+              ) : (
+                <span>선택하기</span>
+              )}
+            </button>
+          </div>
+        </div>
+        <hr className="w-full border-zp-main-color" />
 
-        {/* workerInfoListitem 컴포넌트 */}
-        {/* 화면 width 따라 grid 개수 변화 */}
         <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {list.map((worker) => (
             <div
@@ -319,36 +312,35 @@ interface WorkerInfo {
           ))}
         </div>
       </div>
-
-//       {/* 모달 */}
-//       {isModalOpen && (
-//         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-//           <div className="bg-zp-white rounded-zp-radius-big p-6">
-//             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
-//             <div className="mb-4 font-bold">
-//               선택한 항목을 삭제하시겠습니까?
-//             </div>
-//             <div className="flex justify-end space-x-2">
-//               <button
-//                 className="w-full font-bold px-4 py-2 bg-zp-light-beige rounded-zp-radius-big"
-//                 onClick={() => setIsModalOpen(false)}
-//               >
-//                 취소
-//               </button>
-//               <button
-//                 className="w-full font-bold px-4 py-2 bg-zp-sub-color rounded-zp-radius-big"
-//                 onClick={() => {
-//                   setSelectedWorkers([]);
-//                   setIsSelecting(false);
-//                   setIsModalOpen(false);
-//                 }}
-//               >
-//                 확인
-//               </button>
-//             </div>
-//           </div>
-//         </div>
-//       )}
-//     </>
-//   );
-// }
+    {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-zp-white rounded-zp-radius-big p-6">
+            <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
+            <div className="mb-4 font-bold">
+              선택한 항목을 삭제하시겠습니까?
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button
+                className="w-full font-bold px-4 py-2 bg-zp-light-beige rounded-zp-radius-big"
+                onClick={() => setIsModalOpen(false)}
+              >
+                취소
+              </button>
+              <button
+                className="w-full font-bold px-4 py-2 bg-zp-sub-color rounded-zp-radius-big"
+                onClick={() => {
+                  setSelectedWorkers([]);
+                  setIsSelecting(false);
+                  setIsModalOpen(false);
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+}*/
+}
