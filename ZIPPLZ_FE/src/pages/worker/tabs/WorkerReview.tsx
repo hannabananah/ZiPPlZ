@@ -1,23 +1,83 @@
-import HateWorkers from '@components/worker/detail/review/HateWorkers';
-import LikeWorkers from '@components/worker/detail/review/LikeWorkers';
+import { useEffect, useState } from 'react';
+import { FaRegSadTear, FaRegSmile } from 'react-icons/fa';
+
+import { getGPTReview, getPortfolioReview } from '@/apis/worker/PortfolioApi';
+import PortfolioReview from '@/components/worker/detail/review/PortfolioReview';
+import { PortfolitDetail, usePortfolioStore } from '@/stores/portfolioStore';
 import MannerTemperature from '@components/worker/detail/review/MannerTemperature';
-import ReviewComments from '@components/worker/detail/review/ReviewComments';
 
-// import Portfolio from '@pages/worker/Portfolio';
+interface Props {
+  portfolio: PortfolitDetail;
+}
+export default function WorkerReview({ portfolio }: Props) {
+  const [goodReview, setGoodReview] = useState<string>('');
+  const [badReview, setBadReview] = useState<string>('');
+  const { portfolioReview, setPortfolioReview } = usePortfolioStore();
+  const fetchPortfolioReview = async (portfolioSerial: number) => {
+    const response = await getPortfolioReview(portfolioSerial);
+    setPortfolioReview(response.data.data);
+  };
+  const fetchGptReview = async (portfolioSerial: number) => {
+    const response = await getGPTReview(portfolioSerial);
+    setGoodReview(response.data.data.goodReview);
+    setBadReview(response.data.data.badReview);
+  };
 
-export default function WorkerReview() {
+  useEffect(() => {
+    if (portfolio) {
+      fetchPortfolioReview(portfolio.portfolioSerial);
+      fetchGptReview(portfolio.portfolioSerial);
+    }
+  }, []);
   return (
     <>
-      <div className="flex flex-col justify-center items-center min-h-screen p-6 bg-gray-100">
-        <div className="w-full">
-          {/* 매너 온도 + 분야별 매너 온도 */}
-          <MannerTemperature />
-          {/* [시공업자 이름]님은 이래서 좋아요 */}
-          <LikeWorkers />
-          {/* [시공업자 이름]님의 이런 모습이 고쳐졌으면 좋겠어요 */}
-          <HateWorkers />
-          <ReviewComments />
-        </div>
+      <div className="flex flex-col h-full gap-6 py-4 overflow-scroll">
+        {portfolioReview ? (
+          <>
+            <MannerTemperature
+              scores={[
+                portfolioReview?.workerTemperature,
+                portfolioReview?.averageProfessionalStar,
+                portfolioReview?.averageCommunicationStar,
+                portfolioReview?.averageQualityStar,
+                portfolioReview?.averageAttitudeStar,
+              ]}
+            />
+            <div className="flex flex-col w-full gap-2">
+              <div className="flex items-center gap-4 font-bold text-zp-xs">
+                <FaRegSmile size={16} />
+                <p className="font-bold text-zp-sm">
+                  시공업자 이름 님은 이래서 좋아요.
+                </p>
+              </div>
+              <div className="flex items-center w-full p-6 shadow-lg bg-zp-light-beige rounded-zp-radius-big">
+                <p className="font-bold text-zp-xs text-wrap">{goodReview}</p>
+              </div>
+            </div>
+            <div className="flex flex-col w-full gap-2">
+              <div className="flex items-center gap-4 font-bold text-zp-xs">
+                <FaRegSadTear size={16} />
+                <p className="font-bold text-zp-sm">
+                  시공업자 이름 님 이건 고쳐주세요.
+                </p>
+              </div>
+              <div className="flex items-center w-full p-6 shadow-lg bg-zp-light-beige rounded-zp-radius-big">
+                <p className="font-bold text-zp-xs text-wrap">{badReview}</p>
+              </div>
+            </div>
+            <div className="flex flex-col w-full gap2">
+              <p className="font-bold text-zp-sm">리뷰</p>
+              {portfolioReview?.reviewList &&
+                portfolioReview.reviewList.map((review) => (
+                  <PortfolioReview review={review} />
+                ))}
+            </div>
+          </>
+        ) : (
+          <p className="w-full text-center">
+            시공업자의 후기가 존재하지 않습니다.
+          </p>
+        )}
       </div>
     </>
   );

@@ -1,11 +1,15 @@
 import { useEffect, useState } from 'react';
-import { CgProfile } from 'react-icons/cg';
 import { CiLocationOn } from 'react-icons/ci';
 import { GrTools } from 'react-icons/gr';
 import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { IoCallOutline } from 'react-icons/io5';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import {
+  getPortfolioDetail,
+  getPortfolioList,
+} from '@/apis/worker/PortfolioApi';
+import { usePortfolioStore } from '@/stores/portfolioStore';
 import Button from '@components/common/Button';
 
 import OverView from './tabs/OverView';
@@ -13,11 +17,27 @@ import WorkerReview from './tabs/WorkerReview';
 import WorkerSchedule from './tabs/WorkerSchedule';
 
 export default function Portfolio() {
+  const {
+    portfolioList,
+    portfolioOverview,
+    setPortfolioList,
+    setPortfolioOverview,
+  } = usePortfolioStore();
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('overview');
+  const [nowField, setNowField] = useState<string>('');
   const [isBookmarked, setIsBookmarked] = useState<boolean>(false); // 북마크 상태 추가
-
+  //데이터 fetch
+  const fetchPortfolioList = async (userSerial: number) => {
+    const response = await getPortfolioList(userSerial);
+    setPortfolioList(response.data.data);
+  };
+  const fetchPortFolioOverView = async (portfolioSerial: number) => {
+    const response = await getPortfolioDetail(portfolioSerial);
+    setPortfolioOverview(response.data.data);
+  };
   // URL 쿼리 파라미터에서 activeTab 읽기
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -29,158 +49,159 @@ export default function Portfolio() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    if (id) fetchPortfolioList(parseInt(id));
+  }, [id]);
+  useEffect(() => {
+    if (portfolioList.length > 0) {
+      fetchPortFolioOverView(portfolioList[0].portfolioSerial);
+      setNowField(portfolioList[0].fieldId.fieldName);
+    }
+  }, [portfolioList, id]);
 
   const overviewClick = () => {
-    setActiveTab('overview');
-    navigate('/workers/1/portfolio?tab=overview');
+    if (id) {
+      setActiveTab('overview');
+      navigate(`/workers/${parseInt(id)}/portfolio?tab=overview`);
+    }
   };
 
   const workerScheduleClick = () => {
     setActiveTab('workerschedule');
-    navigate('/workers/1/portfolio?tab=workerschedule');
+    if (id) navigate(`/workers/${parseInt(id)}/portfolio?tab=workerschedule`);
   };
 
   const reviewClick = () => {
     setActiveTab('review');
-    navigate('/workers/1/portfolio?tab=review');
+    if (id) navigate(`/workers/${parseInt(id)}/portfolio?tab=review`);
   };
 
   const toggleBookmark = () => {
     setIsBookmarked(!isBookmarked); // 북마크 상태 토글
   };
 
-  let area: string = '서울, 경기';
-  let tel: string = '010-9909-8322';
-  let skills: string[] = ['도배', '타일', '벽지'];
-
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
-        <div className="w-full">
-          {/* 북마크 이미지 */}
-          <div className="w-full flex justify-end">
-            {isBookmarked ? (
-              <IoBookmark
-                size={24}
-                className="cursor-pointer"
-                onClick={toggleBookmark}
+      <div className="flex flex-col w-full gap-2 min-h-screen p-6 mt-[4rem]">
+        <div className="relative flex items-start w-full gap-6 font-bold">
+          {/* 사진, 이름 */}
+          <div className="flex flex-col items-center">
+            <div className="w-[100px] h-[100px] rounded-zp-radius-full ">
+              <img
+                className="object-cover w-full h-full rounded-zp-radius-full"
+                src={portfolioOverview?.userProfile.saveFile}
               />
-            ) : (
-              <IoBookmarkOutline
-                size={24}
-                className="cursor-pointer"
-                onClick={toggleBookmark}
-              />
-            )}
+            </div>
+            <p className="font-bold text-zp-lg">
+              {portfolioOverview?.user.userName}
+            </p>
           </div>
 
-          <div className="w-full font-bold flex items-start space-x-8 p-2">
-            {/* 사진, 이름 */}
-            <div>
-              <div className="grid w-32 h-32 place-items-center">
-                <CgProfile size={120} />
-              </div>
-              <div className="grid w-32 h-8 place-items-center text-zp-xl text-zp-black">
-                강신구
-              </div>
+          {/* 지역, 전화번호, 분야 */}
+          <div className="flex flex-col mt-4 font-bold text-zp-xs">
+            <div className="flex items-center gap-2">
+              <CiLocationOn />
+              {portfolioOverview?.localList.map((local) => <p>{local}</p>)}
             </div>
+            <div className="flex items-center gap-2">
+              <IoCallOutline />
+              <p>{portfolioOverview?.user.tel}</p>
+            </div>
+            <div className="flex flex-col gap-2">
+              <div className="flex items-center gap-2">
+                <GrTools />
+                <p>Skills</p>
+              </div>
 
-            {/* 지역, 전화번호, 분야 */}
-            <div className="w-full flex flex-col text-zp-xs text-zp-black">
-              <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
-                <div>
-                  <CiLocationOn />
-                </div>
-                <div className="flex-4 h-4">Area</div>
-                <div className="flex-1 h-4">{area}</div>
-              </div>
-              <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
-                <div>
-                  <IoCallOutline />
-                </div>
-                <div className="flex-4 h-4">Phone</div>
-                <div className="flex-1 h-4">{tel}</div>
-              </div>
-              <div className="w-full h-4 flex flex-wrap gap-2">
-                <div className="w-full font-bold text-zp-xs flex items-center justify-start space-x-1">
-                  <div>
-                    <GrTools />
-                  </div>
-                  <div className="w-full h-4">Skills</div>
-                </div>
-                {/* Skills as buttons */}
-                {skills.map((skill, index) => (
-                  <button
+              {/* Skills as buttons */}
+              <div className="grid grid-cols-3 gap-4">
+                {portfolioList.map((item, index) => (
+                  <Button
+                    buttonType={
+                      nowField === item.fieldId.fieldName ? 'primary' : 'second'
+                    }
+                    disabled={nowField === item.fieldId.fieldName}
+                    width={4}
+                    height={2}
+                    fontSize="xs"
+                    radius="big"
                     key={index}
-                    className="flex-1 min-w-[100px] h-8 px-2 py-1 bg-zp-sub-color rounded-zp-radius-big"
+                    onClick={() => {
+                      fetchPortFolioOverView(item.portfolioSerial);
+                      setNowField(item.fieldId.fieldName);
+                    }}
                   >
-                    {skill}
-                  </button>
+                    {item.fieldId.fieldName}
+                  </Button>
                 ))}
               </div>
             </div>
           </div>
+          {/* 북마크 이미지 */}
+          {isBookmarked ? (
+            <IoBookmark
+              size={24}
+              className="absolute cursor-pointer right-4"
+              color="#73744a"
+              onClick={toggleBookmark}
+            />
+          ) : (
+            <IoBookmarkOutline
+              size={24}
+              className="absolute cursor-pointer right-4"
+              color="#73744a"
+              onClick={toggleBookmark}
+            />
+          )}
+        </div>
+        {/* 버튼 섹션 */}
+        <div className="grid w-full grid-cols-3 font-bold text-zp-sm">
+          <div
+            className={`p-2 cursor-pointer ${
+              activeTab === 'overview'
+                ? 'rounded-t-zp-radius-big border-x-2 border-t-2 border-zp-main-color'
+                : 'rounded-b-lg border-b-2 border-zp-main-color'
+            }`}
+          >
+            <p className="text-center" onClick={overviewClick}>
+              종합정보
+            </p>
+          </div>
+          <div
+            className={`p-2 cursor-pointer ${
+              activeTab === 'workerschedule'
+                ? 'rounded-t-zp-radius-big border-x-2 border-t-2 border-zp-main-color'
+                : 'rounded-b-lg border-b-2 border-zp-main-color'
+            }`}
+          >
+            <p className="text-center" onClick={workerScheduleClick}>
+              시공자 일정
+            </p>
+          </div>
 
-          {/* 버튼 섹션 */}
-          <div className="font-bold w-full flex ">
-            <div
-              className={`flex-1 ${
-                activeTab === 'overview'
-                  ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-                  : 'rounded-b-lg border-b-2 border-zp-main-color'
-              }`}
-            >
-              <Button
-                children="종합 정보"
-                buttonType="light"
-                width="100%" // 퍼센트 너비로 설정
-                height={2}
-                fontSize="xs"
-                radius="btn"
-                onClick={overviewClick}
-              />
-            </div>
-            <div
-              className={`flex-1 ${
-                activeTab === 'workerschedule'
-                  ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-                  : 'rounded-b-lg border-b-2 border-zp-main-color'
-              }`}
-            >
-              <Button
-                children="시공자 일정"
-                buttonType="light"
-                width="100%" // 퍼센트 너비로 설정
-                height={2}
-                fontSize="xs"
-                radius="btn"
-                onClick={workerScheduleClick}
-              />
-            </div>
-            <div
-              className={`flex-1 ${
-                activeTab === 'review'
-                  ? 'rounded-t-zp-radius-btn border-x-2 border-t-2 border-zp-main-color'
-                  : 'rounded-b-lg border-b-2 border-zp-main-color'
-              }`}
-            >
-              <Button
-                children="후기"
-                buttonType="light"
-                width="100%" // 퍼센트 너비로 설정
-                height={2}
-                fontSize="xs"
-                radius="btn"
-                onClick={reviewClick}
-              />
-            </div>
+          <div
+            className={`p-2 cursor-pointer ${
+              activeTab === 'review'
+                ? 'rounded-t-zp-radius-big border-x-2 border-t-2 border-zp-main-color'
+                : 'rounded-b-lg border-b-2 border-zp-main-color'
+            }`}
+          >
+            <p className="text-center" onClick={reviewClick}>
+              후기
+            </p>
           </div>
-          <div className="mb-10">
-            {activeTab === 'overview' && <OverView />}
-            {activeTab === 'workerschedule' && <WorkerSchedule />}
-            {activeTab === 'review' && <WorkerReview />}
-          </div>
+        </div>
+        <div className="mb-[4rem]">
+          {activeTab === 'overview' && portfolioOverview && (
+            <OverView portfolio={portfolioOverview} />
+          )}
+          {activeTab === 'workerschedule' && (
+            <WorkerSchedule
+              workerSerial={portfolioOverview?.worker.workerSerial}
+            />
+          )}
+          {activeTab === 'review' && portfolioOverview && (
+            <WorkerReview portfolio={portfolioOverview} />
+          )}
         </div>
       </div>
     </>

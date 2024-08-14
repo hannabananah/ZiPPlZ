@@ -1,144 +1,74 @@
-import { ChangeEvent, useState } from 'react';
-import DaumPostcode from 'react-daum-postcode';
-import { CiCirclePlus, CiSearch } from 'react-icons/ci';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { CiCirclePlus } from 'react-icons/ci';
 import { FaCamera, FaRegCircle } from 'react-icons/fa';
 import { FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
-import { IoMdArrowDropdown, IoMdArrowDropup } from 'react-icons/io';
 import { MdClose } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
+import { WorkerInfo } from '@/components/worker/workerinfolist/WorkerInfoList';
+import WorkerInfoListItem from '@/components/worker/workerinfolist/WorkerInfoListItem';
+import { useHousePostStore } from '@/stores/housePostStore';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
-import 'swiper/css';
-import 'swiper/css/navigation';
-
-type Image = string;
-
-const workers: WorkerInfo[] = [
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자1',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자2',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자3',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자4',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '시공자5',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  // 다른 worker 정보 추가
-];
+import axios from 'axios';
 
 export default function HousePostDetailCreate() {
-  const [images, setImages] = useState<Image[]>([]);
+  const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState<string>('');
-  const [address, setAddress] = useState<string>('');
-  const [addressDetail, setAddressDetail] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
-  const [schedule, setSchedule] = useState<string>('');
-  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
-  const [selectedWorkers, setSelectedWorkers] = useState<WorkerInfo[]>([]);
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
+  const [workerInfoList, setWorkerInfoList] = useState<WorkerInfo[]>([]);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
   const maxImages = 10;
 
-  const schedules = ['스케줄1', '스케줄2', '스케줄3'];
+  const { createPost, selectedWorkers, setSelectedWorkers } =
+    useHousePostStore();
+
+  useEffect(() => {
+    fetchWorkerInfoList();
+  }, []);
+
+  const fetchWorkerInfoList = async () => {
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/workerlist/portfolios'
+      );
+      if (response.data.proc.code === 200) {
+        setWorkerInfoList(response.data.data);
+      } else {
+        console.error(
+          'Failed to fetch worker info list:',
+          response.data.proc.message
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching worker info list:', error);
+    }
+  };
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
-    const readerPromises = files.map((file) => {
-      const reader = new FileReader();
-      return new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
-      });
-    });
+    const validFiles = files.slice(0, maxImages - images.length);
 
-    Promise.all(readerPromises).then((results) => {
-      setImages((prevImages) => [
-        ...prevImages,
-        ...results.slice(0, maxImages - prevImages.length),
-      ]);
-    });
+    setImages((prevImages) => [...prevImages, ...validFiles]);
   };
 
   const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  const handleConfirm = () => {
+  const handleConfirm = async () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!title) newErrors.title = '제목이 입력되지 않았습니다';
-    if (!address) newErrors.address = '현장 주소가 입력되지 않았습니다';
-    if (!addressDetail)
-      newErrors.addressDetail = '상세 주소가 입력되지 않았습니다';
-    if (!schedule) newErrors.schedule = '스케줄이 선택되지 않았습니다';
     if (!workDetail) newErrors.workDetail = '내용이 입력되지 않았습니다';
 
     if (Object.keys(newErrors).length > 0) {
@@ -146,44 +76,60 @@ export default function HousePostDetailCreate() {
       return;
     }
 
-    navigate('/FindWorkerList', {
-      state: {
-        newPost: {
-          title,
-          address,
-          addressDetail,
-          workDetail,
-          schedule,
-        },
-      },
+    const formData = new FormData();
+
+    // 기본 필드들을 FormData에 추가
+    formData.append('title', title);
+    formData.append('board_content', workDetail);
+
+    // selected_portfolio 배열을 JSON 문자열로 변환하여 FormData에 추가
+    const selectedPortfolioJson = JSON.stringify(
+      selectedWorkers.map((worker) => ({
+        portfolio_serial: worker.portfolio_serial,
+        worker: worker.user_serial,
+        user_name: worker.name,
+        birth_date: worker.birth_date,
+        temperature: worker.temp,
+        field_id: worker.field_id,
+        field_name: worker.field_name,
+        career: worker.career,
+        certificated_badge: worker.certificated_badge,
+        locations: worker.locations,
+        img: worker.img,
+      }))
+    );
+    formData.append('selected_portfolio', selectedPortfolioJson);
+
+    // 이미지 파일들을 FormData에 추가
+    images.forEach((image) => {
+      formData.append('images', image);
     });
+
+    try {
+      const token = `Bearer ${localStorage.getItem('token')}`;
+      const response = await createPost(token, formData);
+
+      if (response.code === 200) {
+        alert('자랑글이 성공적으로 등록되었습니다.');
+        navigate('/housepost');
+      } else {
+        alert(`자랑글 등록에 실패했습니다: ${response.message}`);
+      }
+    } catch (error) {
+      console.error('Failed to create post:', error);
+      if (error.response) {
+        console.error('Response data:', error.response.data);
+        alert(
+          `서버 오류 발생: ${error.response.data.message || '알 수 없는 오류'}`
+        );
+      } else {
+        alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
+      }
+    }
   };
 
   const handleGoBack = () => {
-    navigate('/FindWorkerList');
-  };
-
-  const handleComplete = (data: any) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
-
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== '') {
-        extraAddress += (extraAddress !== '' ? ', ' : '') + data.buildingName;
-      }
-      fullAddress += extraAddress !== '' ? ` (${extraAddress})` : '';
-    }
-
-    setAddress(fullAddress);
-    setIsPostcodeOpen(false);
-  };
-
-  const handleScheduleSelect = (schedule: string) => {
-    setSchedule(schedule);
-    setIsDropdownOpen(false);
+    navigate('/housepost');
   };
 
   const handleWorkerSelect = (worker: WorkerInfo) => {
@@ -229,7 +175,7 @@ export default function HousePostDetailCreate() {
             <div className="w-1/6">
               <div className="relative">
                 <label
-                  htmlFor="file-upload"
+                  htmlFor="file-upload-0"
                   className="flex items-center justify-center w-24 h-24 bg-zp-white border border-zp-light-gray rounded-zp-radius-btn p-2 cursor-pointer"
                 >
                   <FaCamera size={36} className="" />
@@ -238,7 +184,7 @@ export default function HousePostDetailCreate() {
                   </div>
                 </label>
                 <input
-                  id="file-upload"
+                  id="file-upload-0"
                   type="file"
                   accept="image/*"
                   onChange={handleImageUpload}
@@ -251,13 +197,14 @@ export default function HousePostDetailCreate() {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative w-24 h-24 flex-shrink-0 ${index === 0 ? 'ml-4' : ''}`}
+                  className={`relative w-24 h-24 flex-shrink-0 ${
+                    index === 0 ? 'ml-4' : ''
+                  }`}
                 >
                   <img
-                    src={image}
+                    src={URL.createObjectURL(image)}
                     alt={`Preview ${index}`}
                     className="w-full h-full object-cover rounded-zp-radius-btn"
-                    onClick={() => handleImageRemove(index)}
                   />
                   <button
                     onClick={() => handleImageRemove(index)}
@@ -292,118 +239,6 @@ export default function HousePostDetailCreate() {
               {errors.title && (
                 <div className="text-zp-red text-zp-xs mt-1">
                   {errors.title}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
-              <div className="mb-2">현장 주소</div>
-              <div className="pl-2 relative mt-2 bg-zp-white border  border-zp-light-gray rounded-zp-radius-btn">
-                <Input
-                  type="text"
-                  placeholder="현장 주소"
-                  inputType="textArea"
-                  width="100%"
-                  height={2.375}
-                  className="border border-zp-sub-color rounded-zp-radius-btn p-[10px] pr-[40px]"
-                  fontSize="xs"
-                  radius="btn"
-                  value={address}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setAddress(e.target.value)
-                  }
-                  onClick={() => setIsPostcodeOpen(true)}
-                />
-                <CiSearch
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => setIsPostcodeOpen(true)}
-                />
-              </div>
-              {errors.address && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.address}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
-              <div className="mb-2">상세 주소</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
-                <Input
-                  type="text"
-                  placeholder="상세 주소"
-                  inputType="textArea"
-                  width="100%"
-                  height={2.375}
-                  className=""
-                  fontSize="xs"
-                  radius="btn"
-                  value={addressDetail}
-                  onChange={(e: ChangeEvent<HTMLInputElement>) =>
-                    setAddressDetail(e.target.value)
-                  }
-                />
-              </div>
-              {errors.addressDetail && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.addressDetail}
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="mt-6 font-bold flex flex-col items-center justify-center relative">
-            <div className="text-left w-full">
-              <div className="mb-2">스케줄</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2 relative">
-                <div className="flex justify-end items-center">
-                  <Input
-                    type="text"
-                    placeholder="스케줄을 선택해주세요."
-                    inputType="textArea"
-                    width="100%"
-                    height={2.375}
-                    className=""
-                    fontSize="xs"
-                    radius="btn"
-                    value={schedule}
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  />
-                  {isDropdownOpen ? (
-                    <IoMdArrowDropup
-                      size={40}
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="cursor-pointer"
-                    />
-                  ) : (
-                    <IoMdArrowDropdown
-                      size={40}
-                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                      className="cursor-pointer"
-                    />
-                  )}
-                </div>
-              </div>
-              {isDropdownOpen && (
-                <div className="absolute top-full mt-2 w-full bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
-                  {schedules.map((item) => (
-                    <button
-                      key={item}
-                      onClick={() => handleScheduleSelect(item)}
-                      className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm"
-                    >
-                      {item}
-                    </button>
-                  ))}
-                </div>
-              )}
-              {errors.schedule && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.schedule}
                 </div>
               )}
             </div>
@@ -453,15 +288,11 @@ export default function HousePostDetailCreate() {
               {selectedWorkers.length > 0 && (
                 <div className="mt-2 grid grid-cols-2 gap-4">
                   {selectedWorkers.map((worker) => (
-                    <div key={worker.user_serial}>
-                      <WorkerInfoListItem worker={worker} />
-                    </div>
+                    <WorkerInfoListItem
+                      key={worker.portfolio_serial}
+                      worker={worker}
+                    />
                   ))}
-                </div>
-              )}
-              {errors.workDetail && (
-                <div className="text-zp-red text-zp-xs mt-1">
-                  {errors.workDetail}
                 </div>
               )}
             </div>
@@ -480,20 +311,6 @@ export default function HousePostDetailCreate() {
           </div>
         </div>
       </div>
-
-      {isPostcodeOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
-          <div className="bg-zp-white p-4 rounded-zp-radius-big">
-            <DaumPostcode onComplete={handleComplete} />
-            <button
-              className="mt-2 w-full bg-zp-sub-color rounded-zp-radius-big font-bold p-2"
-              onClick={() => setIsPostcodeOpen(false)}
-            >
-              닫기
-            </button>
-          </div>
-        </div>
-      )}
 
       {isWorkerModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50 overflow-y-auto">
@@ -524,8 +341,8 @@ export default function HousePostDetailCreate() {
             </div>
 
             <div className="mt-2 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-              {workers.map((worker) => (
-                <div key={worker.user_serial} className="relative">
+              {workerInfoList.map((worker) => (
+                <div key={worker.portfolio_serial} className="relative">
                   <WorkerInfoListItem worker={worker} />
                   <div
                     className="absolute top-2 right-2 cursor-pointer"

@@ -1,132 +1,297 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { FaImage } from 'react-icons/fa';
+import { HiOutlineUser } from 'react-icons/hi2';
 import { PiNotePencil } from 'react-icons/pi';
+import { RiMessage2Line } from 'react-icons/ri';
+import { TbBuildingCommunity } from 'react-icons/tb';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import AboutMe from '@components/worker/detail/overView/AboutMe';
-import CareerAndCertificate from '@components/worker/detail/overView/CareerAndCertificate';
-import Photos from '@components/worker/detail/overView/Photos';
-import WantToTalk from '@components/worker/detail/overView/WantToTalk';
+import { updatePortfolio } from '@/apis/worker/PortfolioApi';
+import Button from '@/components/common/Button';
+import Input from '@/components/common/Input';
+import { useLoginUserStore } from '@/stores/loginUserStore';
+import { PortfolitDetail } from '@/stores/portfolioStore';
 
-export default function OverView() {
+interface data {
+  publicRelation: string;
+  career: number;
+  asPeriod: number;
+  company: string;
+  companyAddress: string;
+  businessNumber: string;
+}
+interface Props {
+  portfolio: PortfolitDetail;
+}
+export default function OverView({ portfolio }: Props) {
+  const { id } = useParams<{ id: string }>();
+  const { loginUser } = useLoginUserStore();
+  const navigate = useNavigate();
+  const modifyPortfolio = async (data: data) => {
+    return await updatePortfolio(portfolio.portfolioSerial, data);
+  };
   // 모달 열림, 한줄 소개 입력 값, 임시 값 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [introduce, setIntroduce] =
-    useState<string>('한줄 소개가 여기에 들어갑니다.');
-  const [asPeriod, setAsPeriod] = useState<string>('1개월 이하');
-  const [tempIntroduce, setTempIntroduce] = useState<string>(introduce);
-  const [tempAsPeriod, setTempAsPeriod] = useState<string>(asPeriod);
+  const [asPeriod, setAsPeriod] = useState<number>(portfolio.asPeriod);
+  const [career, setCareer] = useState<number>(portfolio.career);
+  const [company, setCompany] = useState<string>(portfolio.worker.company);
+  const [companyAddress, setCompanyAddress] = useState<string>(
+    portfolio.worker.companyAddress
+  );
+  const [businessNumber, setBusinessNumber] = useState<string>(
+    portfolio.worker.businessNumber
+  );
+  const [publicRelation, setPublicRelation] = useState<string>(
+    portfolio.publicRelation
+  );
 
   // 모달 열기
   const handleOpenModal = () => {
-    setTempIntroduce(introduce);
-    setTempAsPeriod(asPeriod);
     setIsModalOpen(true);
   };
 
   // 모달 닫기
   const handleCloseModal = () => {
+    setPublicRelation(portfolio.publicRelation);
+    setAsPeriod(portfolio.asPeriod);
+    setCareer(portfolio.career);
+    setCompany(portfolio.worker.company);
+    setCompanyAddress(portfolio.worker.companyAddress);
+    setBusinessNumber(portfolio.worker.businessNumber);
     setIsModalOpen(false);
   };
 
   // 저장 버튼
   const handleSave = () => {
-    setIntroduce(tempIntroduce);
-    setAsPeriod(tempAsPeriod);
+    modifyPortfolio({
+      publicRelation,
+      career,
+      asPeriod,
+      company,
+      companyAddress,
+      businessNumber,
+    });
     handleCloseModal();
+    navigate(0);
   };
 
   return (
     <>
-      {/* 수정 버튼: 우측 상단에 글쓰기 버튼 누르면, 한줄 소개와 A/S 기간을 선택할 수 있는 modal 창 */}
-      <div className="mt-6 flex justify-end">
-        <PiNotePencil
-          onClick={handleOpenModal}
-          className="cursor-pointer"
-          size={24}
-        />
-      </div>
+      <div className="flex flex-col w-full gap-4">
+        {id && loginUser?.userSerial === parseInt(id) && (
+          <div className="flex justify-end">
+            <PiNotePencil
+              onClick={handleOpenModal}
+              className="cursor-pointer"
+              size={24}
+            />
+          </div>
+        )}
+        <div className="flex flex-col">
+          <div className="flex items-center gap-1">
+            <HiOutlineUser size={16} />
+            <p className="font-bold text-zp-sm">About Me</p>
+          </div>
+          <div className="flex w-full gap-4 pl-4 mt-4">
+            <div className="flex flex-col gap-2 pr-6 font-bold border-r text-zp-gray text-zp-xs border-r-zp-sub-color">
+              <p>나이</p>
+              <p>E-Mail</p>
+              <p>경력</p>
+              <p>A/S 기간</p>
+            </div>
+            <div className="flex flex-col gap-2 font-bold text-zp-gray text-zp-xs ">
+              <p>
+                {2024 - parseInt(portfolio.user.birthDate.split('-')[0])} 세
+              </p>
+              <p>{portfolio.user.email}</p>
+              <p>{portfolio.career} 년</p>
+              <p>{portfolio.asPeriod} 년</p>
+            </div>
+          </div>
+        </div>
+        <hr className="w-full text-zp-main-color" />
+        {/* 사진 표시 컴포넌트 */}
+        <div
+          className="flex w-full gap-4 overflow-x-auto"
+          style={{
+            scrollbarWidth: 'none',
+            msOverflowStyle: 'none',
+          }}
+        >
+          {portfolio && portfolio.imageList.length > 0 ? (
+            portfolio.imageList.map((image) => (
+              <img
+                className="flex-shrink-0 w-[25%] aspect-square border"
+                src={image.saveFile}
+              />
+            ))
+          ) : (
+            <div className="flex flex-col items-center w-full gap-4">
+              <label className="flex flex-col items-center justify-center w-full">
+                <FaImage size={50} />
+                <p className="w-full font-bold text-center">
+                  포트폴리오 이미지를 넣어주세요.
+                </p>
+                <input type="file" className="hidden" />
+              </label>
+            </div>
+          )}
+        </div>
 
+        <hr className="w-full text-zp-main-color" />
+
+        {/* 소속업체 */}
+        <div className="flex items-center gap-1">
+          <TbBuildingCommunity size={16} />
+          <p className="font-bold text-zp-sm">소속업체</p>
+        </div>
+        <div className="flex w-full gap-4 pl-4">
+          <div className="flex flex-col gap-2 pr-6 font-bold border-r text-zp-gray text-zp-xs border-r-zp-sub-color">
+            <p>업체명</p>
+            <p>업체 주소</p>
+            <p>사업자등록번호</p>
+          </div>
+          <div className="flex flex-col gap-2 font-bold text-zp-gray text-zp-xs">
+            <p>{portfolio.worker.company}</p>
+            <p>{portfolio.worker.companyAddress}</p>
+            <p>{portfolio.worker.businessNumber}</p>
+          </div>
+        </div>
+        <hr className="w-full text-zp-main-color" />
+
+        {/* 하고 싶은 말 */}
+        <div className="flex items-center gap-1">
+          <RiMessage2Line size={16} />
+          <p className="font-bold text-zp-sm">하고 싶은 말</p>
+        </div>
+        <p className="pl-4 font-bold text-zp-xs">{portfolio.publicRelation}</p>
+      </div>
       {/* 수정 모달 창 */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          {/* 배경 오버레이 */}
-          <div
-            className="absolute inset-0 bg-black bg-opacity-50"
-            onClick={handleCloseModal}
-          ></div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center ">
           {/* 모달 창 */}
-          <div className="border border-zp-main-color rounded-zp-radius-big bg-zp-white p-6 shadow-lg w-[300px]">
-            <div className="text-lg font-bold mb-4">
-              A/S 보증 기간 수정 및 한줄소개
-            </div>
-
-            <div className="mb-4">
-              <label className="block mb-1">A/S 기간</label>
-              <select
-                value={tempAsPeriod}
-                onChange={(e) => setTempAsPeriod(e.target.value)}
-                className="border border-gray-300 p-2 w-full"
-              >
-                <option value="" disabled>
-                  A/S 기간을 선택해주세요
-                </option>
-                <option value="1개월 이하">1개월 이하</option>
-                <option value="1~3개월">1~3개월</option>
-                <option value="3~6개월">3~6개월</option>
-                <option value="6~12개월">6~12개월</option>
-                <option value="1년 이상">1년 이상</option>
-              </select>
-            </div>
-
-            <div className="mb-4">
-              <label className="block mb-1">하고 싶은 말</label>
-              <input
-                type="text"
-                value={tempIntroduce}
-                onChange={(e) => setTempIntroduce(e.target.value)}
-                className="border border-gray-300 p-2 w-full"
+          <div className="border flex flex-col border-zp-main-color rounded-zp-radius-big bg-zp-white p-6 shadow-lg w-[90%] gap-2">
+            <p className="font-bold text-center text-zp-md">정보 수정</p>
+            <div className="flex flex-col text-zp-xs">
+              <p className="font-bold">경력</p>
+              <Input
+                inputType="normal"
+                type="number"
+                placeholder="경력"
+                width={5}
+                height={1.5}
+                radius="btn"
+                fontSize="xs"
+                value={career}
+                onChange={(e: React.ChangeEvent) =>
+                  setCareer(parseInt((e.target as HTMLInputElement).value))
+                }
               />
             </div>
-            <div className="flex justify-end">
-              <button
+            <div className="flex flex-col text-zp-xs">
+              <p className="font-bold">A/S 기간</p>
+              <Input
+                inputType="normal"
+                type="number"
+                placeholder="A/S기간"
+                width={5}
+                height={1.5}
+                radius="btn"
+                fontSize="xs"
+                value={asPeriod}
+                onChange={(e: React.ChangeEvent) =>
+                  setAsPeriod(parseInt((e.target as HTMLInputElement).value))
+                }
+              />
+            </div>
+            <div className="flex flex-col text-zp-xs">
+              <p className="font-bold">업체명</p>
+              <Input
+                inputType="normal"
+                type="text"
+                placeholder="업체명을 입력해주세요."
+                width="full"
+                height={1.5}
+                radius="btn"
+                fontSize="xs"
+                value={company}
+                onChange={(e: React.ChangeEvent) =>
+                  setCompany((e.target as HTMLInputElement).value)
+                }
+              />
+            </div>
+            <div className="flex flex-col text-zp-xs">
+              <p className="font-bold">업체 주소</p>
+              <Input
+                inputType="normal"
+                type="text"
+                placeholder="업체 주소를 입력해주세요."
+                width="full"
+                height={1.5}
+                radius="btn"
+                fontSize="xs"
+                value={companyAddress}
+                onChange={(e: React.ChangeEvent) =>
+                  setCompanyAddress((e.target as HTMLInputElement).value)
+                }
+              />
+            </div>
+            <div className="flex flex-col text-zp-xs">
+              <p className="font-bold">사업자 번호</p>
+              <Input
+                inputType="normal"
+                type="text"
+                placeholder="숫자 10자리를 입력해주세요."
+                width="full"
+                height={1.5}
+                radius="btn"
+                fontSize="xs"
+                value={businessNumber}
+                onChange={(e: React.ChangeEvent) =>
+                  setBusinessNumber((e.target as HTMLInputElement).value)
+                }
+              />
+            </div>
+            <div className="flex flex-col text-zp-xs">
+              <p className="font-bold">한줄 소개</p>
+              <Input
+                inputType="normal"
+                type="text"
+                placeholder="한 줄로 자기를 소개해주세요."
+                width="full"
+                height={1.5}
+                radius="btn"
+                fontSize="xs"
+                value={publicRelation}
+                onChange={(e: React.ChangeEvent) =>
+                  setPublicRelation((e.target as HTMLInputElement).value)
+                }
+              />
+            </div>
+
+            <div className="flex justify-center gap-4">
+              <Button
+                children="취소"
+                buttonType="second"
+                radius="btn"
+                width={6}
+                height={2}
+                fontSize="xs"
                 onClick={handleCloseModal}
-                className="bg-gray-300 text-black px-4 py-2 rounded mr-2"
-              >
-                취소
-              </button>
-              <button
+              />
+              <Button
+                children="저장"
+                buttonType="primary"
+                radius="btn"
+                width={6}
+                height={2}
+                fontSize="xs"
                 onClick={handleSave}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
-              >
-                저장
-              </button>
+              />
             </div>
           </div>
         </div>
       )}
-
-      {/* About Me 컴포넌트 */}
-      <AboutMe />
-
-      <div className="py-6">
-        <hr className="border-t-2 border-zp-light-gray" />
-      </div>
-
-      {/* 사진 표시 컴포넌트 */}
-      <Photos />
-
-      <div className="py-6">
-        <hr className="border-t-2 border-zp-light-gray" />
-      </div>
-
-      {/* 소속업체 */}
-      <CareerAndCertificate />
-
-      <div className="py-6">
-        <hr className="border-t-2 border-zp-light-gray" />
-      </div>
-
-      {/* 하고 싶은 말 */}
-      <WantToTalk />
     </>
   );
 }
