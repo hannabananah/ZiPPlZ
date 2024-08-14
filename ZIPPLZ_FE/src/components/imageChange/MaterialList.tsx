@@ -25,7 +25,7 @@ export default function MaterialList({ type }: Props) {
   const fetchItems = async () => {
     if (type === '바닥') {
       const response = await axios.get(
-        'http://localhost:5000/materials?category=floor',{
+        'https://zipplz.site/api/materials?category=floor',{
           withCredentials: true
         }
       );
@@ -34,7 +34,7 @@ export default function MaterialList({ type }: Props) {
       setItems(images);
     } else {
       const response = await axios.get(
-        'http://localhost:5000/materials?category=wall',{
+        'https://zipplz.site/api/materials?category=wall',{
           withCredentials: true
         }
       );
