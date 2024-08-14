@@ -23,14 +23,17 @@ export default function WorkerCard({ worker }: Props) {
         <p className="md:mt-[30%] mt-[50%] font-bold text-zp-2xs">
           {worker.user_name}
         </p>
-        <p className="text-zp-3xs">{worker.locations[0]}</p>
+        <p className="text-zp-3xs text-nowrap">{worker.locations[0]}</p>
         {worker.locations.length > 1 && (
-          <p className="text-zp-3xs">{worker.locations[1]}</p>
+          <>
+            <p className="text-zp-3xs text-nowrap">{worker.locations[1]}</p>
+            {worker.locations.length > 2 && <p className="text-zp-3xs">...</p>}
+          </>
         )}
         <div className="flex justify-center gap-2">
-          <p className="text-zp-3xs">{worker.field_name}</p>
+          <p className="text-zp-3xs text-nowrap">{worker.field_name}</p>
           <p className="text-zp-3xs">|</p>
-          <p className="text-zp-3xs">{worker.temperature}</p>
+          <p className="text-zp-3xs text-nowrap">{worker.temperature}</p>
         </div>
       </div>
     </div>
