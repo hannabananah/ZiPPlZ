@@ -13,7 +13,7 @@ interface MyPageState {
     nickname: string,
     currentAddress: string
   ) => Promise<void>;
-  uploadProfileImage: (file: File) => Promise<void>;
+  uploadProfileImage: (file: File | string) => Promise<void>; // 수정된 부분
   deleteProfileImage: () => Promise<void>;
 }
 
@@ -38,8 +38,8 @@ export const useMyPageStore = create<MyPageState>((set) => ({
           profileImg: data.profileImg?.saveFile || null,
           name: data.name,
           role: data.role,
-          phoneNumber: data.tel, // 전화번호 가져오기
-          address: data.currentAddress, // 주소 가져오기
+          phoneNumber: data.tel,
+          address: data.currentAddress,
         });
       } else {
         console.error(
@@ -75,7 +75,6 @@ export const useMyPageStore = create<MyPageState>((set) => ({
 
       if (response.data.proc.code === 200) {
         console.log('고객 정보가 성공적으로 업데이트되었습니다.');
-        // 업데이트된 정보를 상태에 반영합니다.
         set({ name: nickname, phoneNumber: tel, address: currentAddress });
       } else {
         console.error('고객 정보 업데이트 실패:', response.data.proc.message);
@@ -85,9 +84,17 @@ export const useMyPageStore = create<MyPageState>((set) => ({
     }
   },
 
-  uploadProfileImage: async (file: File) => {
-    const formData = new FormData();
-    formData.append('image', file);
+  uploadProfileImage: async (file: File | string) => {
+    // 수정된 부분
+    let formData;
+
+    if (typeof file === 'string') {
+      formData = new FormData();
+      formData.append('icon', file); // 아이콘 텍스트를 서버에 전송
+    } else {
+      formData = new FormData();
+      formData.append('image', file);
+    }
 
     const token = localStorage.getItem('token');
 
@@ -105,7 +112,6 @@ export const useMyPageStore = create<MyPageState>((set) => ({
 
       if (response.data.proc.code === 200) {
         console.log('프로필 이미지가 성공적으로 업로드되었습니다.');
-        // 서버에 저장된 이미지 URL을 상태로 업데이트
         const newProfileImgUrl = response.data.data?.profileImg?.saveFile || '';
         set({ profileImg: newProfileImgUrl });
       } else {
@@ -131,7 +137,7 @@ export const useMyPageStore = create<MyPageState>((set) => ({
 
       if (response.data.proc.code === 200) {
         console.log('프로필 이미지가 성공적으로 삭제되었습니다.');
-        set({ profileImg: null }); // 프로필 이미지를 초기화
+        set({ profileImg: null });
       } else {
         console.error('프로필 이미지 삭제 실패:', response.data.proc.message);
       }

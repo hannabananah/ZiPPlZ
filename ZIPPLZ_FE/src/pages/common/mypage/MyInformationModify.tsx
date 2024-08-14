@@ -16,9 +16,9 @@ export default function MyInformationModify() {
   const [userType] = useState<'customer' | 'worker'>('customer');
 
   // 각 입력 필드의 상태를 관리합니다.
-  const [nickname, setNickname] = useState(name);
-  const [phone, setPhone] = useState(phoneNumber);
-  const [addr, setAddr] = useState(address);
+  const [nickname, setNickname] = useState(name || '');
+  const [phone, setPhone] = useState(phoneNumber || '');
+  const [addr, setAddr] = useState(address || '');
   const [businessNumber, setBusinessNumber] = useState('');
   const [locationDetails, setLocationDetails] = useState<string[]>([]);
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
@@ -31,9 +31,9 @@ export default function MyInformationModify() {
   // 페이지 초기 로드 시 기존 정보 가져오기
   useEffect(() => {
     fetchMyPageData();
-    setNickname(name);
-    setPhone(phoneNumber);
-    setAddr(address);
+    setNickname(name || '');
+    setPhone(phoneNumber || '');
+    setAddr(address || '');
   }, [fetchMyPageData, name, phoneNumber, address]);
 
   // 페이지 돌아가기 핸들러

@@ -44,15 +44,11 @@ export default function MyPage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImg, setPreviewImg] = useState<string | null>(null); // 이미지 미리보기용 상태
+  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null); // 아이콘 선택 상태
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      navigate('/'); // 로그인이 안 되어있다면 홈으로 리디렉션
-    } else {
-      fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
-    }
-  }, [fetchMyPageData, navigate, name, profileImg, role, phoneNumber, address]); // 의존성 배열에 추가
+    fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
+  }, [fetchMyPageData]);
 
   const handleGoBack = () => {
     navigate('-1');
@@ -120,9 +116,22 @@ export default function MyPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImg(reader.result as string);
+        setSelectedIcon(null); // 이미지 파일이 선택되면 아이콘 선택을 초기화
       };
       reader.readAsDataURL(file);
     }
+  };
+
+  const convertIconToBlob = async (IconComponent: JSX.Element) => {
+    const svgElement = document.createElement('div');
+    svgElement.innerHTML = React.createElement(
+      IconComponent.type
+    ).props.children;
+    const svgString = new XMLSerializer().serializeToString(
+      svgElement.firstChild as Node
+    );
+    const blob = new Blob([svgString], { type: 'image/svg+xml' });
+    return blob;
   };
 
   const handleSaveProfile = async () => {
@@ -130,6 +139,10 @@ export default function MyPage() {
       await uploadProfileImage(selectedFile);
       await fetchMyPageData(); // 프로필 이미지 업데이트 후 다시 불러오기
       setPreviewImg(null); // 미리보기 이미지 초기화
+    } else if (selectedIcon) {
+      const iconBlob = await convertIconToBlob(selectedIcon);
+      await uploadProfileImage(iconBlob); // 아이콘을 이미지로 변환하여 저장
+      await fetchMyPageData();
     }
     setShowProfileModal(false);
   };
@@ -137,6 +150,13 @@ export default function MyPage() {
   const handleClearProfile = async () => {
     await deleteProfileImage(); // 프로필 이미지를 삭제
     setPreviewImg(null); // 미리보기 이미지 초기화
+    setSelectedIcon(null); // 아이콘 선택 초기화
+  };
+
+  const handleIconSelect = (IconComponent: JSX.Element) => {
+    setSelectedIcon(IconComponent);
+    setPreviewImg(null); // 아이콘을 선택하면 미리보기 이미지 초기화
+    setSelectedFile(null); // 아이콘을 선택하면 이미지 파일 선택을 초기화
   };
 
   return (
@@ -165,6 +185,10 @@ export default function MyPage() {
                     alt="Profile"
                     className="w-full h-full object-cover rounded-zp-radius-full"
                   />
+                </div>
+              ) : selectedIcon ? (
+                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+                  {selectedIcon}
                 </div>
               ) : profileImg ? (
                 <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
@@ -339,6 +363,19 @@ export default function MyPage() {
             <h2 className="text-zp-2xl font-bold flex justify-center mb-4">
               프로필 이미지 선택
             </h2>
+            {previewImg || selectedIcon ? (
+              <div className="w-24 h-24 mx-auto mb-4 rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+                {previewImg ? (
+                  <img
+                    src={previewImg}
+                    alt="Selected Profile"
+                    className="w-full h-full object-cover"
+                  />
+                ) : selectedIcon ? (
+                  selectedIcon
+                ) : null}
+              </div>
+            ) : null}
             <div className="flex justify-center mb-4">
               <div className="grid grid-cols-5 gap-2">
                 <label className="bg-zp-white rounded-zp-radius-full flex items-center justify-center rounded-full w-12 h-12 cursor-pointer">
@@ -363,6 +400,7 @@ export default function MyPage() {
                 ))}
               </div>
             </div>
+
             <div className="mt-6 flex justify-center space-x-2">
               <button
                 className="w-full h-10 bg-zp-main-color rounded-zp-radius-big font-bold"
