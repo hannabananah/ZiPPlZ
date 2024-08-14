@@ -85,15 +85,15 @@ export default function TextInputBox({
           console.error('Error creating file from image preview:', error);
         }
       } else if (fileSrc) {
-        function getExtensionFromMimeType(mimeType) {
-          const mimeTypes = {
+        const getExtensionFromMimeType = (mimeType: string): string => {
+          const mimeTypes: { [key: string]: string } = {
             'text/plain': 'txt',
             'image/jpeg': 'jpg',
             'image/png': 'png',
           };
 
           return mimeTypes[mimeType] || 'bin';
-        }
+        };
 
         try {
           const base64Regex = /^data:(.*);base64,/;

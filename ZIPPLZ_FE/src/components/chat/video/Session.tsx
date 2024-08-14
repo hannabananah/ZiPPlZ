@@ -21,7 +21,7 @@ export default function Session({
     if (subscriber) {
       setSubscriber(subscriber);
     }
-  }, [subscriber]);
+  }, [subscriber, setSubscriber]);
 
   return (
     <div className="relative flex flex-col items-center justify-center h-full p-4 space-y-4">
