@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 
 import Contract from '@components/chat/Contract';
 import FullModal from '@components/common/FullModal';
-// import useOpenVidu from '@hooks/useOpenvidu';
+import useOpenVidu from '@hooks/useOpenvidu';
 import axios from 'axios';
 import {
   Session as OVSession,
@@ -29,7 +29,7 @@ interface OptionsProps {
   setPublisher: (publisher: Publisher) => void;
   publishAudio: (enabled: boolean) => void;
   publishVideo: (enabled: boolean) => void;
-  handleCloseVideo: (enabled: boolean) => void;
+  handleCloseVideo: () => void;
 }
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
@@ -44,8 +44,6 @@ export default function Options({
   publishVideo,
   handleCloseVideo,
 }: OptionsProps) {
-  // const { startScreenShare } = useOpenVidu();
-
   const [isMuted, setIsMuted] = useState(false);
   const [isHided, setIsHided] = useState(false);
   const [isFrontCamera, setIsFrontCamera] = useState(false);
@@ -120,15 +118,17 @@ export default function Options({
   };
 
   const closeContractModal = () => {
+    console.log('녹화 중지 및 계약서 모달 닫기 시도!!!!');
     setIsContractModalOpen(false);
   };
 
   const handleExitLive = () => {
     leaveSession();
-    handleCloseVideo(false);
+    handleCloseVideo();
   };
 
   const handleSharingContract = () => {
+    console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
     setIsContractModalOpen(true);
   };
 

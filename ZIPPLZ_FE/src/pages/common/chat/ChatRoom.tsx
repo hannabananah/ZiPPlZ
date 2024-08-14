@@ -36,8 +36,6 @@ function ChatRoomContent() {
   const { messages } = useContext(WebSocketContext) || { messages: [] };
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
 
-  console.log('입장===========> ', chatroomSerial);
-
   const handleClickVideo = () => {
     setIsVideoModalOpen(!isVideoModalOpen);
   };
