@@ -3,6 +3,7 @@ import { FiPlusCircle } from 'react-icons/fi';
 import { LuMinimize2 } from 'react-icons/lu';
 import ReactModal from 'react-modal';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 import { addWork } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
@@ -54,6 +55,7 @@ const customModalStyles: ReactModal.Styles = {
 };
 export default function ScheduleRegist({ planSerial }: Props) {
   //   const { fieldList, setFieldList } = useScheduleStore();
+  const navigate = useNavigate();
   const [isRegist, setIsRegist] = useState<boolean>(false);
   const [isNormalScehdule, setIsNormalSchedule] = useState<boolean>(false);
   const [isPrivateSchedule, setIsPrivateSchedule] = useState<boolean>(false);
@@ -89,6 +91,7 @@ export default function ScheduleRegist({ planSerial }: Props) {
   useEffect(() => {
     if (selectedValue !== '시공을 선택해주세요.') {
       registMainWork(selectedValue);
+      navigate(0);
     }
     setIsRegist(false);
     setIsNormalSchedule(false);

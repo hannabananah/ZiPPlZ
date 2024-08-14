@@ -16,6 +16,7 @@ interface Props {
   fontSize: string;
   radius: string;
   value?: string | number;
+  disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
   onClick?: () => void;

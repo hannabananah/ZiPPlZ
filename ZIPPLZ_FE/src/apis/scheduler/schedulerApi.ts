@@ -176,3 +176,11 @@ export const getWorksByUser = async () => {
     },
   });
 };
+//유저별 시공중인 공종 조회
+export const getTodayWork = async () => {
+  return await axiosInstance.get('schedule/users/working', {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+};

@@ -9,14 +9,14 @@ interface Props {
 export default function TodaySchedule({ role, work }: Props) {
   return (
     <>
-      {work ? (
+      {work && (
         <div className="relative w-full h-[8.3rem] rounded-zp-radius-big sm: p-4 md:p-6 flex flex-col gap-4 bg-zp-white">
           <div className="flex items-start justify-between md:px-2">
             <div className="flex flex-col ">
               <div className="flex items-center gap-1">
                 <div className="w-4 h-4 bg-zp-main-color rounded-zp-radius-full" />
                 <p className="font-bold text-zp-sm">
-                  {role === 'customer' ? '공정' : work.nickname}
+                  {role === 'customer' ? work.field : work.customer.nickname}
                 </p>
               </div>
               <p className="text-zp-3xs">
@@ -29,8 +29,13 @@ export default function TodaySchedule({ role, work }: Props) {
             </div>
             {role === 'customer' && (
               <div className="flex flex-col items-center gap-1">
-                <div className="bg-zp-main-color w-[80%] aspect-square rounded-zp-radius-full"></div>
-                <p className="text-zp-2xs">시공자 이름</p>
+                <div className="border w-[80%] aspect-square rounded-zp-radius-full">
+                  <img
+                    className="object-cover w-full h-full rounded-zp-radius-full"
+                    src={work.worker.userSerial.fileSerial.saveFile}
+                  />
+                </div>
+                <p className="text-zp-2xs">{work.worker.userName}</p>
               </div>
             )}
           </div>
@@ -52,10 +57,6 @@ export default function TodaySchedule({ role, work }: Props) {
               radius="btn"
             />
           </div>
-        </div>
-      ) : (
-        <div className="relative w-full h-[8.3rem] rounded-zp-radius-big sm: p-4 md:p-6 flex flex-col gap-4 bg-zp-white justify-center items-center">
-          <p className="font-bold">시공이 없습니다.</p>
         </div>
       )}
     </>

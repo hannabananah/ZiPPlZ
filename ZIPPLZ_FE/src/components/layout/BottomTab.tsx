@@ -47,7 +47,7 @@ export default function BottomTab() {
       role: ['customer', 'worker', ''],
     },
     {
-      path: '/mypage',
+      path: loginUser?.role !== '' ? '/mypage' : '/member/login',
       icon: <FaUser size={30} />,
       label: '마이페이지',
       role: ['customer', 'worker', ''],

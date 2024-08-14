@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { CiLocationOn } from 'react-icons/ci';
 import { GrTools } from 'react-icons/gr';
-import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
+// import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { IoCallOutline } from 'react-icons/io5';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+// import { getWish } from '@/apis/board/wishApi';
 import {
   getPortfolioDetail,
   getPortfolioList,
@@ -17,6 +18,11 @@ import WorkerReview from './tabs/WorkerReview';
 import WorkerSchedule from './tabs/WorkerSchedule';
 
 export default function Portfolio() {
+  // const [isWish, setIsWish] = useState<number>(0);
+  // const checkWish = async (portfolioSerial: number) => {
+  //   const response = await getWish(portfolioSerial);
+  //   setIsWish(response.data.data);
+  // };
   const {
     portfolioList,
     portfolioOverview,
@@ -28,7 +34,6 @@ export default function Portfolio() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [nowField, setNowField] = useState<string>('');
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false); // 북마크 상태 추가
   //데이터 fetch
   const fetchPortfolioList = async (userSerial: number) => {
     const response = await getPortfolioList(userSerial);
@@ -73,10 +78,6 @@ export default function Portfolio() {
   const reviewClick = () => {
     setActiveTab('review');
     if (id) navigate(`/workers/${parseInt(id)}/portfolio?tab=review`);
-  };
-
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked); // 북마크 상태 토글
   };
 
   return (
@@ -137,21 +138,21 @@ export default function Portfolio() {
             </div>
           </div>
           {/* 북마크 이미지 */}
-          {isBookmarked ? (
+          {/*{isWish > 0 ? (
             <IoBookmark
               size={24}
               className="absolute cursor-pointer right-4"
               color="#73744a"
-              onClick={toggleBookmark}
+              // onClick={toggleBookmark}
             />
           ) : (
             <IoBookmarkOutline
               size={24}
               className="absolute cursor-pointer right-4"
               color="#73744a"
-              onClick={toggleBookmark}
+              // onClick={toggleBookmark}
             />
-          )}
+          )}*/}
         </div>
         {/* 버튼 섹션 */}
         <div className="grid w-full grid-cols-3 font-bold text-zp-sm">

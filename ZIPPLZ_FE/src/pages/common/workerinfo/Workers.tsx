@@ -31,6 +31,9 @@ const fields: string[] = [
   '기타',
 ];
 export default function Workers() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { setWorkerList } = useWorkerListStore();
   const { category } = useParams<{ category?: string }>();
   const { keyword, setKeyword } = useBoardStore();
@@ -148,7 +151,7 @@ export default function Workers() {
                 <FieldListItem
                   key={idx}
                   field={field}
-                  handlClickField={() =>
+                  handleClickField={() =>
                     navigate(`/workers/portfolios?type=${field}`)
                   }
                 />
