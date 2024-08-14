@@ -6,24 +6,24 @@
 // import { IoMdArrowDropdown } from 'react-icons/io';
 // import { useNavigate } from 'react-router-dom';
 
-import Selectbar from '@/components/common/Selectbar';
+// import Selectbar from '@/components/common/Selectbar';
 // import FindWorkerListItem from '@/components/worker/FindWorkerListItem';
-import Input from '@components/common/Input';
+// import Input from '@components/common/Input';
 
-interface WorkerInfo {
-  user_serial: number;
-  portfolio_serial: number;
-  name: string;
-  birth_date: number;
-  temp: number;
-  field_id: number;
-  field_name: string;
-  career: number;
-  certificated_badge: number;
-  locations: string[];
-  img: string;
-}
-type SortOption = '평점순' | '최신순' | '과거순';
+// interface WorkerInfo {
+//   user_serial: number;
+//   portfolio_serial: number;
+//   name: string;
+//   birth_date: number;
+//   temp: number;
+//   field_id: number;
+//   field_name: string;
+//   career: number;
+//   certificated_badge: number;
+//   locations: string[];
+//   img: string;
+// }
+// type SortOption = '평점순' | '최신순' | '과거순';
 
 // const list: WorkerInfo[] = [
 //   {
@@ -143,10 +143,10 @@ type SortOption = '평점순' | '최신순' | '과거순';
 //     navigate(`/findworkers/${user_serial}`);
 //   };
 
-  return (
+{
+  /* return (
     <>
       <div className="flex flex-col items-start w-full min-h-screen gap-4 px-6 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
         <div className="relative flex items-center justify-between w-full h-10 mt-16">
           <div className="flex items-center justify-center w-full gap-2">
             <GoArrowLeft
@@ -196,7 +196,6 @@ type SortOption = '평점순' | '최신순' | '과거순';
             </div>
           )}
         </div>
-        {/* 검색 input */}
         <div className="relative flex items-center justify-center w-full">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -213,7 +212,6 @@ type SortOption = '평점순' | '최신순' | '과거순';
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
           <div className="relative flex items-center justify-end top-3">
             <div>
               <Selectbar
@@ -232,12 +230,10 @@ type SortOption = '평점순' | '최신순' | '과거순';
             </div>
           </div>
         </div>
-        {/* 전체 게시글 수 표시 부분 */}
         <div className="font-bold text-zp-xl text-zp-gray">
           전체 {list.length}
         </div>
 
-        {/* 선택하기-삭제하기 버튼 */}
         <div className="flex items-center justify-between w-full text-zp-2xs">
           {isSelecting && (
             <div
@@ -276,10 +272,8 @@ type SortOption = '평점순' | '최신순' | '과거순';
             </button>
           </div>
         </div>
-        {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* FindWorkerListItem 컴포넌트 */}
         <div className="grid w-full grid-cols-1 gap-4 mt-2">
           {list.map((worker) => (
             <div
@@ -311,14 +305,13 @@ type SortOption = '평점순' | '최신순' | '과거순';
                 }`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                {/* <FindWorkerListItem /> */}
+                <FindWorkerListItem />
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-zp-white rounded-zp-radius-big">
@@ -349,4 +342,5 @@ type SortOption = '평점순' | '최신순' | '과거순';
       )}
     </>
   );
+}*/
 }
