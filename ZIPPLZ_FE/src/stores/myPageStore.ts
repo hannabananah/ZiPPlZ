@@ -13,8 +13,9 @@ interface MyPageState {
     nickname: string,
     currentAddress: string
   ) => Promise<void>;
-  uploadProfileImage: (file: File | string) => Promise<void>; // 수정된 부분
+  uploadProfileImage: (file: File | string) => Promise<void>;
   deleteProfileImage: () => Promise<void>;
+  changePassword: (newPassword: string) => Promise<void>; // 비밀번호 변경 함수 추가
 }
 
 export const useMyPageStore = create<MyPageState>((set) => ({
@@ -85,12 +86,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   },
 
   uploadProfileImage: async (file: File | string) => {
-    // 수정된 부분
     let formData;
 
     if (typeof file === 'string') {
       formData = new FormData();
-      formData.append('icon', file); // 아이콘 텍스트를 서버에 전송
+      formData.append('icon', file);
     } else {
       formData = new FormData();
       formData.append('image', file);
@@ -143,6 +143,30 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       }
     } catch (error) {
       console.error('프로필 이미지 삭제 중 오류 발생:', error);
+    }
+  },
+
+  changePassword: async (newPassword: string) => {
+    const token = localStorage.getItem('token');
+
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/mypage/change-pw',
+        { password: newPassword },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        console.log('비밀번호가 성공적으로 변경되었습니다.');
+      } else {
+        console.error('비밀번호 변경 실패:', response.data.proc.message);
+      }
+    } catch (error) {
+      console.error('비밀번호 변경 중 오류 발생:', error);
     }
   },
 }));
