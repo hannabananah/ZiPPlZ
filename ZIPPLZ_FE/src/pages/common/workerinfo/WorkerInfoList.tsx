@@ -65,7 +65,6 @@ export default function WorkerInfoList() {
   const fetchWorkerData = async () => {
     try {
       const response = await getPortfolio();
-      console.log(response);
       setWorkerList(response.data.data);
     } catch (error) {
       setError(null);
@@ -87,7 +86,6 @@ export default function WorkerInfoList() {
 
   const handleSortSelect = (sortOption: string) => {
     // 수정된 부분
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption); // 타입 강제 변환
     setIsSortDropdownOpen(false);
   };
@@ -102,7 +100,6 @@ export default function WorkerInfoList() {
   };
 
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
-  console.log(isSortDropdownOpen);
   return (
     <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
       <div className="w-full">

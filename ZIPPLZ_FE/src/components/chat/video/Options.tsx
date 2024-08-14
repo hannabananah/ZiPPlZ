@@ -129,7 +129,6 @@ export default function Options({
   };
 
   const handleSharingContract = () => {
-    console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
     setIsContractModalOpen(true);
   };
 

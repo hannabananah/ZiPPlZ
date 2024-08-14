@@ -56,9 +56,7 @@ export default function ChangeTab() {
         if (MODEL_DIR === undefined) return;
         console.log(`Loading model from: ${MODEL_DIR}`);
         const URL: string = MODEL_DIR;
-        console.log('111111111111111111111');
         const model = await InferenceSession.create(URL);
-        console.log('model-------->', model);
         setModel(model);
       } catch (e) {
         console.log(e);
@@ -89,7 +87,6 @@ export default function ChangeTab() {
     });
     return response;
   };
-  // Handle file input change
   const handleOriginalFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     setIsMainImgUpload(true);

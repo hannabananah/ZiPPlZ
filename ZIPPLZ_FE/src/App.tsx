@@ -57,7 +57,7 @@ export default function App() {
         <Route path="contract/:workserial" element={<Contract />} />
         <Route path="community" element={<Community />} />
         <Route path="mypage" element={<MyPage />} />
-        <Route path="chatrooms/:roomId" element={<ChatRoom />} />
+        <Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
         <Route path="image-change/:userSerial" element={<ImageChangePage />} />
         <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
         <Route path="workers/:category" element={<Workers />} />

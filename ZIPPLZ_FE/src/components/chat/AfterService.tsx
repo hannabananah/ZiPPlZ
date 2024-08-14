@@ -69,7 +69,6 @@ export default function AfterService({
 
     const memoField = fields.find((field) => field.label === '메모');
     const requestContent = memoField ? memoField.value : '';
-    console.log('requestContent', requestContent);
 
     try {
       if (chatroomSerial) {
