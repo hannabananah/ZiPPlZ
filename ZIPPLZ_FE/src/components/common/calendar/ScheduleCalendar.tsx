@@ -42,7 +42,7 @@ const ScheduleCalendar = function ({ workList }: Props) {
       const newEventList: Event[] = workList
         .filter((work: any) => work !== null && work !== undefined)
         .map((work: any) => ({
-          title: isWorkArray ? work.field : work.fieldCode.fieldName,
+          title: isWorkArray ? work.field : work.fieldName,
           start: new Date(work.startDate),
           end: new Date(work.endDate),
           workSerial: work.workSerial,
@@ -96,8 +96,6 @@ const ScheduleCalendar = function ({ workList }: Props) {
               'workSerial',
               event.event.extendedProps.workSerial
             );
-          navigate('/schedule');
-          console.log(event.jsEvent.target);
         }}
       />
     </div>
