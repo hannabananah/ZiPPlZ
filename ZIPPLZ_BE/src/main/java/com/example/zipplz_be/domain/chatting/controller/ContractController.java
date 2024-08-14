@@ -60,19 +60,16 @@ public class ContractController {
      }
 
      //계약서 내용 조회
-    @GetMapping("/{chatroomSerial}")
-    public ResponseEntity<?> getContract(Authentication authentication, @PathVariable int chatroomSerial) {
+    @GetMapping("/{workSerial}")
+    public ResponseEntity<?> getContract(Authentication authentication, @PathVariable int workSerial) {
         ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            ContractDTO contractDTO = contractService.getContractService(portfolioService.getUserSerial(authentication), chatroomSerial);
+            ContractDTO contractDTO = contractService.getContractService(portfolioService.getUserSerial(authentication), workSerial);
 
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", contractDTO);
-        } catch (ContractNotFoundException e) {
-            status = HttpStatus.NOT_FOUND;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch (UnauthorizedUserException e) {
             status = HttpStatus.UNAUTHORIZED;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());

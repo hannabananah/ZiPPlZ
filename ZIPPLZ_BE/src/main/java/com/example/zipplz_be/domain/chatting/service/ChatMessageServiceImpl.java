@@ -65,6 +65,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                     .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                     .fileType(chatMessageRequestDTO.getType())
                     .file(file)
+                    .isContract(chatMessageRequestDTO.isContract())
                     .build();
         } else {
             file = null;
@@ -76,6 +77,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                     .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                     .fileType(chatMessageRequestDTO.getType())
                     .file(file)
+                    .isContract(chatMessageRequestDTO.isContract())
                     .build();
         }
 

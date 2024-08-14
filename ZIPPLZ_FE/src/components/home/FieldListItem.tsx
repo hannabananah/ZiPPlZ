@@ -2,8 +2,10 @@ interface Props {
   field: string;
   handleClickField: () => void;
 }
-export default function FieldListItem({ field, handleClickField }: Props) {
-  const imageSrc = `public/svg/mainpage/${field}.svg`;
+export default function FieldListItem({ field, handlClickField }: Props) {
+  const imageSrc = `/svg/mainpage/${field}.svg`;
+  console.log(`${field}`);
+
   return (
     <>
       <div className="flex flex-col items-center w-full">

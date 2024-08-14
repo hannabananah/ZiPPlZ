@@ -5,14 +5,81 @@
 // import { IoIosClose } from 'react-icons/io';
 // import { IoMdArrowDropdown } from 'react-icons/io';
 // import { useNavigate } from 'react-router-dom';
+// import { useState } from 'react';
+// import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
+// import { GoArrowLeft } from 'react-icons/go';
+// import { HiMagnifyingGlass } from 'react-icons/hi2';
+// import { IoIosClose } from 'react-icons/io';
+// import { IoMdArrowDropdown } from 'react-icons/io';
+// import { useNavigate } from 'react-router-dom';
 
+// import Selectbar from '@/components/common/Selectbar';
+// import HousePostListItem from '@/components/community/HousePostListItem';
+// import Input from '@components/common/Input';
+// import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 // import Selectbar from '@/components/common/Selectbar';
 // import HousePostListItem from '@/components/community/HousePostListItem';
 // import Input from '@components/common/Input';
 // import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
 // type SortOption = '평점순' | '최신순' | '과거순';
+// type SortOption = '평점순' | '최신순' | '과거순';
 
+// const list: WorkerInfo[] = [
+//   {
+//     user_serial: 1,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '전기',
+//     career: 3,
+//     certificated_badge: 1,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   {
+//     user_serial: 2,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '철거',
+//     career: 4,
+//     certificated_badge: 0,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   {
+//     user_serial: 3,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '설비',
+//     career: 5,
+//     certificated_badge: 1,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   {
+//     user_serial: 4,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '타일',
+//     career: 6,
+//     certificated_badge: 0,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   // 다른 worker 정보 추가
+// ];
 // const list: WorkerInfo[] = [
 //   {
 //     user_serial: 1,
@@ -78,7 +145,20 @@
 //   const [isAllSelected, setIsAllSelected] = useState(false);
 //   const [isModalOpen, setIsModalOpen] = useState(false);
 //   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+// export default function MyHousePostScrapList() {
+//   const options: SortOption[] = ['평점순', '최신순', '과거순'];
+//   const navigate = useNavigate();
+//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+//   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+//   const [isSelecting, setIsSelecting] = useState(false);
+//   const [isAllSelected, setIsAllSelected] = useState(false);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
 
+//   const handleSortSelect = (sortOption: string) => {
+//     console.log(`Selected sort option: ${sortOption}`);
+//     setSelectedValue(sortOption as SortOption);
+//   };
 //   const handleSortSelect = (sortOption: string) => {
 //     console.log(`Selected sort option: ${sortOption}`);
 //     setSelectedValue(sortOption as SortOption);
@@ -88,7 +168,14 @@
 //   const handleGoBack = () => {
 //     navigate('/mypage');
 //   };
+//   // 페이지 돌아가기 핸들러
+//   const handleGoBack = () => {
+//     navigate('/mypage');
+//   };
 
+//   const toggleDropdown = () => {
+//     setIsDropdownOpen(!isDropdownOpen);
+//   };
 //   const toggleDropdown = () => {
 //     setIsDropdownOpen(!isDropdownOpen);
 //   };
@@ -97,7 +184,19 @@
 //     navigate(path);
 //     setIsDropdownOpen(false); // 드롭다운을 닫습니다.
 //   };
+//   const handleNavigate = (path: string) => {
+//     navigate(path);
+//     setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+//   };
 
+//   const toggleAllSelected = () => {
+//     if (isAllSelected) {
+//       setSelectedWorkers([]);
+//     } else {
+//       setSelectedWorkers(list.map((worker) => worker.user_serial));
+//     }
+//     setIsAllSelected(!isAllSelected);
+//   };
 //   const toggleAllSelected = () => {
 //     if (isAllSelected) {
 //       setSelectedWorkers([]);
@@ -121,11 +220,31 @@
 //     setIsSelecting(!isSelecting);
 //     setIsAllSelected(false);
 //   };
+//   const handleWorkerSelect = (user_serial: number) => {
+//     if (selectedWorkers.includes(user_serial)) {
+//       setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+//     } else {
+//       setSelectedWorkers([...selectedWorkers, user_serial]);
+//     }
+//   };
+//   const toggleSelecting = () => {
+//     if (isSelecting) {
+//       setSelectedWorkers([]);
+//     }
+//     setIsSelecting(!isSelecting);
+//     setIsAllSelected(false);
+//   };
 
 //   const handleDeleteConfirmation = () => {
 //     setIsModalOpen(true);
 //   };
+//   const handleDeleteConfirmation = () => {
+//     setIsModalOpen(true);
+//   };
 
+//   const handleWorkerClick = (user_serial: number) => {
+//     navigate(`/housepost/${user_serial}`);
+//   };
 //   const handleWorkerClick = (user_serial: number) => {
 //     navigate(`/housepost/${user_serial}`);
 //   };
