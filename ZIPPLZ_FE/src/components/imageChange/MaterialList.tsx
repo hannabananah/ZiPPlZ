@@ -25,17 +25,19 @@ export default function MaterialList({ type }: Props) {
   const fetchItems = async () => {
     if (type === '바닥') {
       const response = await axios.get(
-        'https://zipplz.site/api/materials?category=floor',{
-          withCredentials: true
+        'https://zipplz.site/api/materials?category=floor',
+        {
+          withCredentials: true,
         }
       );
-      const data = await response.json();
+      const data = await response.data.data;
       const images = data.data.map((item: any) => item.img);
       setItems(images);
     } else {
       const response = await axios.get(
-        'https://zipplz.site/api/materials?category=wall',{
-          withCredentials: true
+        'https://zipplz.site/api/materials?category=wall',
+        {
+          withCredentials: true,
         }
       );
       const data = await response.data.data;

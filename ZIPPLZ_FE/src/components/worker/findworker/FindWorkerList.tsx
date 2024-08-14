@@ -15,7 +15,7 @@ export default function FindWorkerList() {
     if (!findWorkerList) fetchFindWorkerList();
   }, []);
   return (
-    <div className="flex flex-col gap-6 mb-[6rem]  h-[34rem] overflow-auto">
+    <div className="flex flex-col gap-6 mb-[6rem] overflow-auto">
       {findWorkerList &&
         findWorkerList.map((item: FindWorker) => (
           <FindWorkerListItem board={item} />

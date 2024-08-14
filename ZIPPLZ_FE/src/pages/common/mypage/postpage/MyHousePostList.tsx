@@ -6,10 +6,23 @@
 // import { IoMdArrowDropdown } from 'react-icons/io';
 // import { useNavigate } from 'react-router-dom';
 
-// import Selectbar from '@/components/common/Selectbar';
-// import HousePostListItem from '@/components/community/HousePostListItem';
-// import Input from '@components/common/Input';
-// import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
+import Selectbar from '@/components/common/Selectbar';
+import HousePostListItem from '@/components/community/HousePostListItem';
+import Input from '@components/common/Input';
+
+interface WorkerInfo {
+  user_serial: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
 
 // type SortOption = '평점순' | '최신순' | '과거순';
 
@@ -146,78 +159,80 @@
 //           </div>
 //         </div>
 
-//         <div className="flex justify-center space-x-2 w-full relative">
-//           <span className="text-zp-lg font-bold">집들이</span>
-//           <div
-//             onClick={toggleDropdown}
-//             className="cursor-pointer flex items-center space-x-2"
-//           >
-//             <IoMdArrowDropdown
-//               className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
-//               size={24}
-//             />
-//           </div>
-//           {isDropdownOpen && (
-//             <div className="absolute top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
-//               <button
-//                 onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
-//                 className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
-//               >
-//                 시공자 구하기
-//               </button>
-//               <button
-//                 onClick={() => handleNavigate('/mypage/MyHousePostList')}
-//                 className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
-//               >
-//                 집들이
-//               </button>
-//               <button
-//                 onClick={() => handleNavigate('/mypage/MyQuestionPostList')}
-//                 className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
-//               >
-//                 질문글
-//               </button>
-//             </div>
-//           )}
-//         </div>
-//         {/* 검색 input */}
-//         <div className="w-full relative flex justify-center items-center">
-//           <HiMagnifyingGlass className="absolute left-[1rem]" />
-//           <Input
-//             type="text"
-//             placeholder="검색어를 입력해주세요."
-//             inputType="search"
-//             width="full"
-//             height={2}
-//             className="pl-8"
-//             fontSize="sm"
-//             radius="big"
-//           />
-//           <IoIosClose
-//             size={30}
-//             className="absolute right-[7rem] cursor-pointer"
-//           />
-//           {/* 정렬 버튼 셀렉트바*/}
-//           <div className="relative top-3 flex justify-end items-center">
-//             <div>
-//               <Selectbar
-//                 backgroundColor="none"
-//                 fontColor="black"
-//                 options={options}
-//                 selectedValue={selectedValue}
-//                 setSelectedValue={handleSortSelect}
-//                 width={6}
-//                 height={2.5}
-//                 fontSize="xs"
-//                 radius="btn"
-//                 border="none"
-//                 hover="light-gray"
-//               />
-//             </div>
-//           </div>
-//         </div>
-//         {/* 전체 게시글 수 표시 부분 */}
-//         <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+        <div className="flex justify-center space-x-2 w-full relative">
+          <span className="text-zp-lg font-bold">집들이</span>
+          <div
+            onClick={toggleDropdown}
+            className="cursor-pointer flex items-center space-x-2"
+          >
+            <IoMdArrowDropdown
+              className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              size={24}
+            />
+          </div>
+          {isDropdownOpen && (
+            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
+              <button
+                onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                시공자 구하기
+              </button>
+              <button
+                onClick={() => handleNavigate('/mypage/MyHousePostList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                집들이
+              </button>
+              <button
+                onClick={() => handleNavigate('/mypage/MyQuestionPostList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                질문글
+              </button>
+            </div>
+          )}
+        </div>
+        {/* 검색 input */}
+        <div className="w-full relative flex justify-center items-center">
+          <HiMagnifyingGlass className="absolute left-[1rem]" />
+          <Input
+            type="text"
+            placeholder="검색어를 입력해주세요."
+            inputType="search"
+            width="full"
+            height={2}
+            className="pl-8"
+            fontSize="sm"
+            radius="big"
+          />
+          <IoIosClose
+            size={30}
+            className="absolute right-[7rem] cursor-pointer"
+          />
+          {/* 정렬 버튼 셀렉트바*/}
+          <div className="relative top-3 flex justify-end items-center">
+            <div>
+              <Selectbar
+                backgroundColor="none"
+                fontColor="black"
+                options={options}
+                selectedValue={selectedValue}
+                setSelectedValue={handleSortSelect}
+                width={6}
+                height={2.5}
+                fontSize="xs"
+                radius="btn"
+                border="none"
+                hover="light-gray"
+              />
+            </div>
+          </div>
+        </div>
+        {/* 전체 게시글 수 표시 부분 */}
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {list.length}
+        </div>
 
 //         {/* 선택하기-삭제하기 버튼 */}
 //         <div className="w-full flex justify-between items-center text-zp-2xs">
@@ -261,49 +276,49 @@
 //         {/* 가로선 */}
 //         <hr className="w-full border-zp-main-color" />
 
-//         {/* workerInfoListitem 컴포넌트 */}
-//         {/* 화면 width 따라 grid 개수 변화 */}
-//         <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
-//           {list.map((worker) => (
-//             <div
-//               key={worker.user_serial}
-//               className={`relative rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
-//                 selectedWorkers.includes(worker.user_serial)
-//                   ? 'bg-zp-light-gray'
-//                   : ''
-//               }`}
-//               onClick={() => handleWorkerClick(worker.user_serial)}
-//             >
-//               {isSelecting && (
-//                 <div
-//                   className="absolute top-2 right-2 z-10"
-//                   onClick={(e) => {
-//                     e.stopPropagation();
-//                     handleWorkerSelect(worker.user_serial);
-//                   }}
-//                 >
-//                   {selectedWorkers.includes(worker.user_serial) ? (
-//                     <FaRegCircleCheck />
-//                   ) : (
-//                     <FaRegCircle />
-//                   )}
-//                 </div>
-//               )}
-//               <HousePostListItem
-//                 post_serial={worker.user_serial} 
-//                 post_image={worker.img} 
-//                 title={worker.field_name} 
-//                 profile_image={null} 
-//                 nickname={worker.name} 
-//                 upload_date={new Date()} 
-//                 view_cnt={100} 
-//                 bookmark_cnt={50} 
-//                 comment_cnt={10} 
-//               />
-//             </div>
-//           ))}
-//         </div>
-//       </div>
+        {/* workerInfoListitem 컴포넌트 */}
+        {/* 화면 width 따라 grid 개수 변화 */}
+        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
+          {list.map((worker) => (
+            <div
+              key={worker.user_serial}
+              className={`relative rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
+                selectedWorkers.includes(worker.user_serial)
+                  ? 'bg-zp-light-gray'
+                  : ''
+              }`}
+              onClick={() => handleWorkerClick(worker.user_serial)}
+            >
+              {isSelecting && (
+                <div
+                  className="absolute top-2 right-2 z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleWorkerSelect(worker.user_serial);
+                  }}
+                >
+                  {selectedWorkers.includes(worker.user_serial) ? (
+                    <FaRegCircleCheck />
+                  ) : (
+                    <FaRegCircle />
+                  )}
+                </div>
+              )}
+              <HousePostListItem
+                post_serial={worker.user_serial}
+                post_image={worker.img}
+                title={worker.field_name}
+                profile_image={null}
+                nickname={worker.name}
+                upload_date={new Date()}
+                view_cnt={100}
+                bookmark_cnt={50}
+                comment_cnt={10}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
 
 //       {/* 모달 */}
 //       {isModalOpen && (

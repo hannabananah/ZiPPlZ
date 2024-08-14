@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
-import { CgProfile } from 'react-icons/cg';
 import { CiLocationOn } from 'react-icons/ci';
 import { GrTools } from 'react-icons/gr';
-import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
+// import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
 import { IoCallOutline } from 'react-icons/io5';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+// import { getWish } from '@/apis/board/wishApi';
+import {
+  getPortfolioDetail,
+  getPortfolioList,
+} from '@/apis/worker/PortfolioApi';
+import { usePortfolioStore } from '@/stores/portfolioStore';
 import Button from '@components/common/Button';
 
 import OverView from './tabs/OverView';
@@ -13,11 +18,31 @@ import WorkerReview from './tabs/WorkerReview';
 import WorkerSchedule from './tabs/WorkerSchedule';
 
 export default function Portfolio() {
+  // const [isWish, setIsWish] = useState<number>(0);
+  // const checkWish = async (portfolioSerial: number) => {
+  //   const response = await getWish(portfolioSerial);
+  //   setIsWish(response.data.data);
+  // };
+  const {
+    portfolioList,
+    portfolioOverview,
+    setPortfolioList,
+    setPortfolioOverview,
+  } = usePortfolioStore();
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('overview');
-  const [isBookmarked, setIsBookmarked] = useState<boolean>(false); // 북마크 상태 추가
-
+  const [nowField, setNowField] = useState<string>('');
+  //데이터 fetch
+  const fetchPortfolioList = async (userSerial: number) => {
+    const response = await getPortfolioList(userSerial);
+    setPortfolioList(response.data.data);
+  };
+  const fetchPortFolioOverView = async (portfolioSerial: number) => {
+    const response = await getPortfolioDetail(portfolioSerial);
+    setPortfolioOverview(response.data.data);
+  };
   // URL 쿼리 파라미터에서 activeTab 읽기
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
@@ -29,30 +54,31 @@ export default function Portfolio() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
-  }, []);
+    if (id) fetchPortfolioList(parseInt(id));
+  }, [id]);
+  useEffect(() => {
+    if (portfolioList.length > 0) {
+      fetchPortFolioOverView(portfolioList[0].portfolioSerial);
+      setNowField(portfolioList[0].fieldId.fieldName);
+    }
+  }, [portfolioList, id]);
 
   const overviewClick = () => {
-    setActiveTab('overview');
-    navigate('/workers/1/portfolio?tab=overview');
+    if (id) {
+      setActiveTab('overview');
+      navigate(`/workers/${parseInt(id)}/portfolio?tab=overview`);
+    }
   };
 
   const workerScheduleClick = () => {
     setActiveTab('workerschedule');
-    navigate('/workers/1/portfolio?tab=workerschedule');
+    if (id) navigate(`/workers/${parseInt(id)}/portfolio?tab=workerschedule`);
   };
 
   const reviewClick = () => {
     setActiveTab('review');
-    navigate('/workers/1/portfolio?tab=review');
+    if (id) navigate(`/workers/${parseInt(id)}/portfolio?tab=review`);
   };
-
-  const toggleBookmark = () => {
-    setIsBookmarked(!isBookmarked); // 북마크 상태 토글
-  };
-
-  let area: string = '서울, 경기';
-  let tel: string = '010-9909-8322';
-  let skills: string[] = ['도배', '타일', '벽지'];
 
   return (
     <>
@@ -60,19 +86,26 @@ export default function Portfolio() {
         <div className="relative flex items-start w-full gap-6 font-bold">
           {/* 사진, 이름 */}
           <div className="flex flex-col items-center">
-            <CgProfile size={100} />
-            <p className="font-bold text-zp-lg">강신구</p>
+            <div className="w-[100px] h-[100px] rounded-zp-radius-full ">
+              <img
+                className="object-cover w-full h-full rounded-zp-radius-full"
+                src={portfolioOverview?.userProfile.saveFile}
+              />
+            </div>
+            <p className="font-bold text-zp-lg">
+              {portfolioOverview?.user.userName}
+            </p>
           </div>
 
           {/* 지역, 전화번호, 분야 */}
           <div className="flex flex-col mt-4 font-bold text-zp-xs">
             <div className="flex items-center gap-2">
               <CiLocationOn />
-              <p>{area}</p>
+              {portfolioOverview?.localList.map((local) => <p>{local}</p>)}
             </div>
             <div className="flex items-center gap-2">
               <IoCallOutline />
-              <p>{tel}</p>
+              <p>{portfolioOverview?.user.tel}</p>
             </div>
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
@@ -82,37 +115,44 @@ export default function Portfolio() {
 
               {/* Skills as buttons */}
               <div className="grid grid-cols-3 gap-4">
-                {skills.map((skill, index) => (
+                {portfolioList.map((item, index) => (
                   <Button
-                    buttonType="second"
+                    buttonType={
+                      nowField === item.fieldId.fieldName ? 'primary' : 'second'
+                    }
+                    disabled={nowField === item.fieldId.fieldName}
                     width={4}
                     height={2}
                     fontSize="xs"
                     radius="big"
                     key={index}
+                    onClick={() => {
+                      fetchPortFolioOverView(item.portfolioSerial);
+                      setNowField(item.fieldId.fieldName);
+                    }}
                   >
-                    {skill}
+                    {item.fieldId.fieldName}
                   </Button>
                 ))}
               </div>
             </div>
           </div>
           {/* 북마크 이미지 */}
-          {isBookmarked ? (
+          {/*{isWish > 0 ? (
             <IoBookmark
               size={24}
               className="absolute cursor-pointer right-4"
               color="#73744a"
-              onClick={toggleBookmark}
+              // onClick={toggleBookmark}
             />
           ) : (
             <IoBookmarkOutline
               size={24}
               className="absolute cursor-pointer right-4"
               color="#73744a"
-              onClick={toggleBookmark}
+              // onClick={toggleBookmark}
             />
-          )}
+          )}*/}
         </div>
         {/* 버튼 섹션 */}
         <div className="grid w-full grid-cols-3 font-bold text-zp-sm">
@@ -152,9 +192,17 @@ export default function Portfolio() {
           </div>
         </div>
         <div className="mb-[4rem]">
-          {activeTab === 'overview' && <OverView />}
-          {activeTab === 'workerschedule' && <WorkerSchedule />}
-          {activeTab === 'review' && <WorkerReview />}
+          {activeTab === 'overview' && portfolioOverview && (
+            <OverView portfolio={portfolioOverview} />
+          )}
+          {activeTab === 'workerschedule' && (
+            <WorkerSchedule
+              workerSerial={portfolioOverview?.worker.workerSerial}
+            />
+          )}
+          {activeTab === 'review' && portfolioOverview && (
+            <WorkerReview portfolio={portfolioOverview} />
+          )}
         </div>
       </div>
     </>

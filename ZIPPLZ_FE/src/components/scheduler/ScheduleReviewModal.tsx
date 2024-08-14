@@ -108,8 +108,8 @@ export default function ScheduleReviewModal() {
       >
         <hr className="absolute top-[1.5rem] w-full border border-zp-sub-color" />
         <div className="flex flex-col gap-[1.5rem] w-full mt-[1.5rem] overflow-auto">
-          <div className="w-full flex flex-col  gap-4">
-            <p className="text-zp-sm font-bold">
+          <div className="flex flex-col w-full gap-4">
+            <p className="font-bold text-zp-sm">
               {question[step - 1].question}
             </p>
             <p className="text-zp-xs text-wrap text-zp-gray">

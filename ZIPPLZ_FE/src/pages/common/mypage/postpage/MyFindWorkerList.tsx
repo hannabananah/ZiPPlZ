@@ -6,12 +6,24 @@
 // import { IoMdArrowDropdown } from 'react-icons/io';
 // import { useNavigate } from 'react-router-dom';
 
-// import Selectbar from '@/components/common/Selectbar';
-// import FindWorkerListItem from '@/components/worker/FindWorkerListItem';
-// import Input from '@components/common/Input';
-// import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
+import Input from '@components/common/Input';
+import Selectbar from '@components/common/Selectbar';
 
-// type SortOption = '평점순' | '최신순' | '과거순';
+// import FindWorkerListItem from '@components/worker/WorkerInfoListItem';
+interface WorkerInfo {
+  user_serial: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
+type SortOption = '평점순' | '최신순' | '과거순';
 
 // const list: WorkerInfo[] = [
 //   {
@@ -183,44 +195,46 @@
 //           )}
 //         </div>
 
-//         {/* 검색 input */}
-//         <div className="w-full relative flex justify-center items-center">
-//           <HiMagnifyingGlass className="absolute left-[1rem]" />
-//           <Input
-//             type="text"
-//             placeholder="검색어를 입력해주세요."
-//             inputType="search"
-//             width="full"
-//             height={2}
-//             className="pl-8"
-//             fontSize="sm"
-//             radius="big"
-//           />
-//           <IoIosClose
-//             size={30}
-//             className="absolute right-[7rem] cursor-pointer"
-//           />
-//           {/* 정렬 버튼 셀렉트바*/}
-//           <div className="relative top-3 flex justify-end items-center">
-//             <div>
-//               <Selectbar
-//                 backgroundColor="none"
-//                 fontColor="black"
-//                 options={options}
-//                 selectedValue={selectedValue}
-//                 setSelectedValue={handleSortSelect}
-//                 width={6}
-//                 height={2.5}
-//                 fontSize="xs"
-//                 radius="btn"
-//                 border="none"
-//                 hover="main"
-//               />
-//             </div>
-//           </div>
-//         </div>
-//         {/* 전체 게시글 수 표시 부분 */}
-//         <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+        {/* 검색 input */}
+        <div className="w-full relative flex justify-center items-center">
+          <HiMagnifyingGlass className="absolute left-[1rem]" />
+          <Input
+            type="text"
+            placeholder="검색어를 입력해주세요."
+            inputType="search"
+            width="full"
+            height={2}
+            className="pl-8"
+            fontSize="sm"
+            radius="big"
+          />
+          <IoIosClose
+            size={30}
+            className="absolute right-[7rem] cursor-pointer"
+          />
+          {/* 정렬 버튼 셀렉트바*/}
+          <div className="relative top-3 flex justify-end items-center">
+            <div>
+              <Selectbar
+                backgroundColor="none"
+                fontColor="black"
+                options={options}
+                selectedValue={selectedValue}
+                setSelectedValue={handleSortSelect}
+                width={6}
+                height={2.5}
+                fontSize="xs"
+                radius="btn"
+                border="none"
+                hover="main"
+              />
+            </div>
+          </div>
+        </div>
+        {/* 전체 게시글 수 표시 부분 */}
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {list.length}
+        </div>
 
 //         {/* 선택하기-삭제하기 버튼 */}
 //         <div className="w-full flex justify-between items-center text-zp-2xs">
@@ -264,42 +278,42 @@
 //         {/* 가로선 */}
 //         <hr className="w-full border-zp-main-color" />
 
-//         {/* FindWorkerListItem 컴포넌트 */}
-//         <div className="w-full mt-2 grid grid-cols-1 gap-4">
-//           {list.map((worker) => (
-//             <div
-//               key={worker.user_serial}
-//               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
-//                 selectedWorkers.includes(worker.user_serial)
-//                   ? 'bg-zp-light-gray'
-//                   : ''
-//               }`}
-//             >
-//               {isSelecting && (
-//                 <div
-//                   className="absolute top-2 right-2 z-10"
-//                   onClick={(e) => {
-//                     e.stopPropagation();
-//                     handleWorkerSelect(worker.user_serial);
-//                   }}
-//                 >
-//                   {selectedWorkers.includes(worker.user_serial) ? (
-//                     <FaRegCircleCheck />
-//                   ) : (
-//                     <FaRegCircle />
-//                   )}
-//                 </div>
-//               )}
-//               <div
-//                 className={`w-full h-full ${isSelecting ? 'pointer-events-none' : ''}`}
-//                 onClick={() => handleWorkerClick(worker.user_serial)}
-//               >
-//                 <FindWorkerListItem />
-//               </div>
-//             </div>
-//           ))}
-//         </div>
-//       </div>
+        {/* FindWorkerListItem 컴포넌트 */}
+        <div className="w-full mt-2 grid grid-cols-1 gap-4">
+          {list.map((worker) => (
+            <div
+              key={worker.user_serial}
+              className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
+                selectedWorkers.includes(worker.user_serial)
+                  ? 'bg-zp-light-gray'
+                  : ''
+              }`}
+            >
+              {isSelecting && (
+                <div
+                  className="absolute top-2 right-2 z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleWorkerSelect(worker.user_serial);
+                  }}
+                >
+                  {selectedWorkers.includes(worker.user_serial) ? (
+                    <FaRegCircleCheck />
+                  ) : (
+                    <FaRegCircle />
+                  )}
+                </div>
+              )}
+              <div
+                className={`w-full h-full ${isSelecting ? 'pointer-events-none' : ''}`}
+                onClick={() => handleWorkerClick(worker.user_serial)}
+              >
+                {/* <FindWorkerListItem /> */}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
 //       {/* 모달 */}
 //       {isModalOpen && (

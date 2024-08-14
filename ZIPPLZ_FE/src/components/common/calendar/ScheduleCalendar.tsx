@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
@@ -7,15 +6,17 @@ import FullCalendar from '@fullcalendar/react';
 import './Calendar.css';
 
 interface Work {
+  workSerial?: number;
   starDate: string;
   endDate: string;
-  fiield: string;
+  field: string;
 }
 // 더미 데이터 타입 정의
 interface Event {
   title: string;
   start: Date;
   end: Date;
+  workSerial?: number;
 }
 interface Props {
   workList: any | Work[];
@@ -29,7 +30,6 @@ const getRandomColor = (): string => {
   return color;
 };
 const ScheduleCalendar = function ({ workList }: Props) {
-  const navigate = useNavigate();
   const [eventList, setEventList] = useState<Event[]>([]);
   useEffect(() => {
     if (Array.isArray(workList)) {
@@ -40,9 +40,10 @@ const ScheduleCalendar = function ({ workList }: Props) {
       const newEventList: Event[] = workList
         .filter((work: any) => work !== null && work !== undefined)
         .map((work: any) => ({
-          title: isWorkArray ? work.field : work.fieldCode.fieldName,
+          title: isWorkArray ? work.field : work.fieldName,
           start: new Date(work.startDate),
           end: new Date(work.endDate),
+          workSerial: work.workSerial,
         }));
       setEventList(newEventList);
     }
@@ -52,12 +53,6 @@ const ScheduleCalendar = function ({ workList }: Props) {
       <FullCalendar
         plugins={[dayGridPlugin]}
         timeZone="UTC"
-        customButtons={{
-          customTitle: {
-            text: 'titl',
-            click: () => navigate('/schedule'),
-          },
-        }}
         headerToolbar={{
           left: 'prev',
           center: 'title',
@@ -78,7 +73,8 @@ const ScheduleCalendar = function ({ workList }: Props) {
             start: event.start.toISOString(),
             end: adjustedEnd.toISOString(),
             extendedProps: {
-              backgroundColor: randomColor, // extendedProps를 사용하여 색상 전달
+              backgroundColor: randomColor, //  extendedProps를 사용하여 색상 전달
+              workSerial: event.workSerial,
             },
           };
         })}
@@ -93,8 +89,11 @@ const ScheduleCalendar = function ({ workList }: Props) {
           </div>
         )}
         eventClick={(event) => {
-          navigate('/schedule');
-          console.log(event.jsEvent.target);
+          if (event.event.extendedProps.workSerial)
+            localStorage.setItem(
+              'workSerial',
+              event.event.extendedProps.workSerial
+            );
         }}
       />
     </div>

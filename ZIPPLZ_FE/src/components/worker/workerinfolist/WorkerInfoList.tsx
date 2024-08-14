@@ -36,13 +36,12 @@ export default function WorkerInfoList({
       else fetchWorkerList();
     }
   }, [field]);
-  console.log(field);
   return (
     <>
       {workerList && workerList.length > 0 ? (
-        <div className="grid w-full grid-cols-3 h-[40rem] overflow-auto gap-4 sm:grid-cols-3 md:grid-cols-4">
+        <div className="grid w-full grid-cols-3 h-[40rem] overflow-auto gap-4 sm:grid-cols-3 md:grid-cols-4 auto-rows-[10rem]">
           {workerList.map((worker: any) => (
-            <WorkerInfoListItem worker={worker} />
+            <WorkerInfoListItem worker={worker} key={worker} />
           ))}
         </div>
       ) : (

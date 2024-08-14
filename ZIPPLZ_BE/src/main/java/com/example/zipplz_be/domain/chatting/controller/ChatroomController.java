@@ -22,6 +22,7 @@ import java.util.List;
 public class ChatroomController {
 
     private final ChatroomService chatroomService;
+    private int chatroomSerial;
 
     @PostMapping("")
     public ResponseEntity<ResponseDTO> createChatroom(Authentication authentication, @RequestBody CreateChatroomDTO createChatroomDTO) {

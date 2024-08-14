@@ -3,7 +3,11 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { searchWorkerList } from '@apis/worker/WorkerListApi';
+import {
+  getWorkerList,
+  getWorkerListByField,
+  searchWorkerList,
+} from '@apis/worker/WorkerListApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import FieldListItem from '@components/home/FieldListItem';
@@ -27,19 +31,30 @@ const fields: string[] = [
   '기타',
 ];
 export default function Workers() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { setWorkerList } = useWorkerListStore();
   const { category } = useParams<{ category?: string }>();
   const { keyword, setKeyword } = useBoardStore();
   const location = useLocation();
   const queryParam = new URLSearchParams(location.search);
   const type: string | null = queryParam.get('type');
+
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState('전문 시공자 둘러보기');
 
   const toggleDropdown = () => {
     setIsOpen(!isOpen);
   };
-
+  const fetchWorkerList = async () => {
+    const response = await getWorkerList();
+    setWorkerList(response.data.data);
+  };
+  const fetchWorkerListByField = async (field: number) => {
+    const response = getWorkerListByField(field);
+    setWorkerList((await response).data.data);
+  };
   const selectOption = (option: string) => {
     setSelectedOption(option);
     if (option === '전문 시공자 둘러보기') {
@@ -66,8 +81,20 @@ export default function Workers() {
       setSelectedOption('전문 시공자 구하기');
     }
   }, []);
+  const fetchData = async () => {
+    try {
+      if (type === '전체') {
+        await fetchWorkerList();
+      } else if (type) {
+        await fetchWorkerListByField(fields.indexOf(type));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
   useEffect(() => {
     setKeyword('');
+    fetchData();
   }, [category, type]);
   return (
     <>
@@ -120,11 +147,11 @@ export default function Workers() {
             }}
           >
             {fields.map((field, idx) => (
-              <div className="flex-shrink-0 w-1/6">
+              <div className="flex-shrink-0 w-1/6 ">
                 <FieldListItem
                   key={idx}
                   field={field}
-                  handlClickField={() =>
+                  handleClickField={() =>
                     navigate(`/workers/portfolios?type=${field}`)
                   }
                 />
@@ -148,7 +175,12 @@ export default function Workers() {
             fontSize="xs"
             radius="none"
             value={keyword}
-            onChange={handleInputChange} // `onChange` 핸들러 추가
+            onChange={handleInputChange}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === 'Enter') {
+                searchWorker();
+              }
+            }}
             additionalStyle="text-center relative"
           />
           <HiMagnifyingGlass
@@ -156,7 +188,7 @@ export default function Workers() {
             onClick={searchWorker}
           />
           {selectedOption === '전문 시공자 구하기' && (
-            <div className="flex items-center justify-end  w-full mt-4">
+            <div className="flex items-center justify-end w-full mt-4">
               <Button
                 buttonType="normal"
                 children="글 작성하기"

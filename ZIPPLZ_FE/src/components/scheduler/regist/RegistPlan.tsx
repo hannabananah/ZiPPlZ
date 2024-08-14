@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 import { addPlan } from '@/apis/scheduler/schedulerApi';
 import Button from '@/components/common/Button';
@@ -51,6 +52,7 @@ export default function RegistPlan({
   const closeModal = () => {
     setIsOpen(false);
   };
+  const navigate = useNavigate();
   const [name, setName] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [zipCode, setZipCode] = useState<string>('');
@@ -175,6 +177,7 @@ export default function RegistPlan({
               registPlan(name, address, memo);
               fetchPlanList();
               closeModal();
+              navigate(0);
             }}
           />
         </div>

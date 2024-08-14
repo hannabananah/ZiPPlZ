@@ -1,3 +1,4 @@
+import { CgProfile } from 'react-icons/cg';
 import { FaRegBookmark, FaRegComment, FaRegEye } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
@@ -14,8 +15,9 @@ interface HousePost {
 }
 
 export default function HousePostListItem({
-  post_image,
+  post_serial,
   title,
+  post_image,
   profile_image,
   nickname,
   upload_date,
@@ -27,8 +29,8 @@ export default function HousePostListItem({
 
   return (
     <div
-      className="h-64 w-full p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col"
-      onClick={() => navigate(`/HousePostDetail`)}
+      className="h-64 p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col"
+      onClick={() => navigate(`/housepost/${post_serial}`)}
     >
       {/* 이미지 */}
       <div className="flex items-center justify-center w-full">
@@ -53,7 +55,7 @@ export default function HousePostListItem({
             className="h-6 w-6 rounded-full"
           />
         ) : (
-          <div className="h-6 w-6 bg-gray-200 rounded-full" />
+          <CgProfile className="h-6 w-6 text-gray-400" />
         )}
         <div className="ml-2 text-zp-sm">{nickname}</div>
       </div>

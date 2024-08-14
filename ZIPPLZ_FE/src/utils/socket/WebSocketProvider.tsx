@@ -1,60 +1,86 @@
-import React, { ReactNode, createContext, useEffect, useState } from 'react';
+import { ReactNode, createContext, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 
+import type { ChatMessageData } from '@/types';
 import { Client, IMessage } from '@stomp/stompjs';
+import axios from 'axios';
 
 const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
-const chat_token = import.meta.env.VITE_APP_CHAT_TOKEN;
+const base_url = import.meta.env.VITE_APP_BASE_URL;
 
-const WebSocketContext = createContext<{
-  sendMessage: (message: string, userSerial: number) => void;
-  messages: {
-    userSerial: number;
-    userName: string;
-    chatMessageContent: string;
-    createdAt: string;
-    isFile: boolean;
-  }[];
-} | null>(null);
+interface WebSocketContextType {
+  sendMessage: (
+    msg: string,
+    userSerial: number,
+    file?: File,
+    type?: 'TALK' | 'IMAGE' | 'FILE'
+  ) => void;
+  messages: ChatMessageData[];
+}
+
+const WebSocketContext = createContext<WebSocketContextType | null>(null);
 
 const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [client, setClient] = useState<Client | null>(null);
-  const [messages, setMessages] = useState<
-    {
-      userSerial: number;
-      userName: string;
-      chatMessageContent: string;
-      createdAt: string;
-      isFile: boolean;
-    }[]
-  >([]);
+  const [messages, setMessages] = useState<ChatMessageData[]>([]);
+  const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
 
   useEffect(() => {
+    const fetchInitialMessages = async () => {
+      if (!chatroomSerial) return;
+      try {
+        const response = await axios.get<{
+          data: { chatMessages: ChatMessageData[] };
+        }>(`${base_url}/chatroom/${chatroomSerial}`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        });
+        if (response.status === 200) {
+          setMessages(response.data.data.chatMessages);
+        }
+      } catch (error) {
+        console.error('Error fetching initial messages:', error);
+      }
+    };
+
+    fetchInitialMessages();
+
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) {
+      console.error('Token not found in localStorage.');
+      return;
+    }
+
     const stompClient = new Client({
       brokerURL: chat_base_url,
       connectHeaders: {
-        'X-AUTH-TOKEN': chat_token,
+        'X-AUTH-TOKEN': storedToken,
       },
       debug: (msg) => console.log('STOMP debug:', msg),
-      reconnectDelay: 5000,
-      heartbeatIncoming: 4000,
-      heartbeatOutgoing: 4000,
       onConnect: (frame) => {
-        console.log('STOMP connected>_<', frame);
-        stompClient.subscribe('/sub/chat/room/1', (message: IMessage) => {
-          console.log('Subscription received+++++>>>>>', message);
-          try {
+        console.log('STOMP connected:', frame);
+        stompClient.subscribe(
+          `/sub/chat/room/${chatroomSerial}`,
+          (message: IMessage) => {
             if (message.body) {
-              let msg = JSON.parse(message.body);
-              console.log('Parsed message:', msg);
-              setMessages((chats) => [...chats, msg]);
+              try {
+                const msg: ChatMessageData = JSON.parse(message.body);
+                setMessages((prevMessages) => [...prevMessages, msg]);
+              } catch (error) {
+                console.error('Error parsing message:', error);
+              }
             }
-          } catch (error) {
-            console.error('Error parsing message:', error);
           }
+        );
+
+        stompClient.publish({
+          destination: '/pub/chat/enter',
+          headers: { 'X-AUTH-TOKEN': storedToken },
+          body: JSON.stringify({ chatroomSerial }),
         });
+        console.log('Entered chat room!');
       },
       onDisconnect: () => {
-        console.log('STOMP disconnected');
+        console.log('STOMP connection disconnected.');
       },
       onStompError: (frame) => {
         console.error('STOMP error:', frame);
@@ -73,28 +99,74 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     return () => {
       stompClient.deactivate();
     };
-  }, []);
+  }, [chatroomSerial]);
 
-  // TODO 이미지, 파일 첨부
-  // const sendMessage = (message: string, userSerial: number, type: 'text' | 'image' = 'text') => {
-  const sendMessage = (msg: string, userSerial: number) => {
-    if (msg.trim()) {
-      if (client && client.connected) {
-        const data = JSON.stringify({
-          chatMessageContent: msg,
-          chatroomSerial: 1,
-          userSerial,
-          // type,
-        });
-        client.publish({
-          destination: '/pub/chat/message',
-          body: data,
-        });
-        console.log('Message sent:', msg);
-        console.log('Data sent:', data);
-      } else {
-        console.error('Client not connected or client is null');
+  const sendMessage = (
+    msg: string,
+    userSerial: number,
+    file?: File,
+    type: 'TALK' | 'IMAGE' | 'FILE' = 'TALK'
+  ) => {
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) {
+      console.error('Token not found in localStorage.');
+      return;
+    }
+
+    const messagePayload = {
+      type,
+      chatroomSerial,
+      userSerial,
+      chatMessageContent: msg,
+      isFile: type === 'IMAGE' || type === 'FILE',
+      originalFileName: file?.name,
+    };
+
+    function arrayBufferToBase64(buffer: ArrayBuffer): string {
+      let binary = '';
+      const bytes = new Uint8Array(buffer);
+      const len = bytes.byteLength;
+
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
       }
+
+      return btoa(binary);
+    }
+
+    if (type === 'IMAGE' && file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result as string;
+        const base64Data = base64String.split(',')[1];
+        messagePayload.chatMessageContent = base64Data;
+        client?.publish({
+          destination: '/pub/chat/message',
+          headers: { 'X-AUTH-TOKEN': storedToken },
+          body: JSON.stringify(messagePayload),
+        });
+      };
+      reader.readAsDataURL(file as Blob);
+    } else if (type === 'FILE' && file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const arrayBuffer = reader.result as ArrayBuffer;
+        const base64String = arrayBufferToBase64(arrayBuffer);
+        messagePayload.chatMessageContent = base64String;
+
+        client?.publish({
+          destination: '/pub/chat/message',
+          headers: { 'X-AUTH-TOKEN': storedToken },
+          body: JSON.stringify(messagePayload),
+        });
+      };
+      reader.readAsArrayBuffer(file as Blob);
+    } else {
+      client?.publish({
+        destination: '/pub/chat/message',
+        headers: { 'X-AUTH-TOKEN': storedToken },
+        body: JSON.stringify(messagePayload),
+      });
     }
   };
 

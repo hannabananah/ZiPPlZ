@@ -94,7 +94,9 @@ export default function Schedule() {
       return await modifyWork(planSerial, workSerial, workContent);
   };
   const removePlan = async (planSerial: number) => {
-    return await deletePlan(planSerial);
+    await deletePlan(planSerial);
+    fetchWorkList(planSerial);
+    closeModal('mini');
   };
   const setPlanActive = async () => {
     if (planSerial) return await activePlan(planSerial);
@@ -108,6 +110,7 @@ export default function Schedule() {
     }
   }, []);
   useEffect(() => {
+    window.scrollTo(0, 0);
     fetchPlanList();
   }, []);
 
@@ -121,7 +124,11 @@ export default function Schedule() {
       setOptions(newOptions);
     }
   }, [planList]);
-
+  useEffect(() => {
+    if (selectedValue) {
+      localStorage.setItem('selectedValue', selectedValue);
+    }
+  }, [selectedValue]);
   useEffect(() => {
     if (options.length > 0 && selectedValue !== '계획을 선택해주세요.') {
       const selectedPlan = options.find(
@@ -166,7 +173,7 @@ export default function Schedule() {
               className="cursor-pointer"
               size={16}
               onClick={() => {
-                removePlan(plan.planSerial);
+                openModal('mini');
               }}
             />
           )}
@@ -210,6 +217,7 @@ export default function Schedule() {
               children={plan && plan.isActive === 1 ? '비활성화' : '활성화'}
               onClick={() => {
                 if (plan && plan.isActive === 0) setPlanActive();
+                navigate(0);
               }}
             />
           )}
@@ -272,6 +280,14 @@ export default function Schedule() {
         message="해당 공종을 삭제하시겠습니까?"
         onConfirm={() => {
           if (plan) handleConfirmDelete(plan.planSerial, selectedWorkSerial);
+        }}
+      />
+      <ModalComponent
+        type="mini"
+        title="계획 삭제"
+        message="해당 계획을 삭제하시겠습니까?"
+        onConfirm={() => {
+          if (plan) removePlan(plan.planSerial);
         }}
       />
     </>

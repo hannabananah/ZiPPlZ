@@ -93,11 +93,14 @@ export default function SignBottom({
     }, 3000);
   };
   const registUser = async (user: User) => {
+    console.log(user);
     const response = await signUp(user);
+    console.log('유저========', response.data.data);
     setUserSerial(response.data.data.userSerial);
   };
   const registSocialUser = async (user: socialUser) => {
     const response = await socialSignUp(user);
+
     setUserSerial(response.data.data.userSerial);
   };
   const registCustomer = async (customer: Customer) => {

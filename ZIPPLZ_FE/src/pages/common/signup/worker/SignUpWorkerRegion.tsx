@@ -97,7 +97,8 @@ export default function SignUpWorkerRegion({
       ...prev,
       locationList: selectedLocation,
     }));
-  }, [setSelectedLocation]);
+  }, [selectedLocation]);
+  useEffect(() => {});
   return (
     <div className="flex flex-col gap-4 overflow-auto mb-[6rem]">
       <p className="font-bold text-zp-xl">

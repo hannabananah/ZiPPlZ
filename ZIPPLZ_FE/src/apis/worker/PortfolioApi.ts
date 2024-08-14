@@ -2,7 +2,7 @@ import { END_POINT } from '../apiConstants';
 import { axiosInstance } from '../axiosInstance';
 
 interface Portfolio {
-  publickRelation: string;
+  publicRelation: string;
   career: number;
   asPeriod: number;
   company: string;
@@ -15,7 +15,7 @@ export const getPortfolioList = async (userSerial: number) => {
 };
 
 //포트폴리오 상세조회
-export const getPortfolitDetail = async (portfolioSerial: number) => {
+export const getPortfolioDetail = async (portfolioSerial: number) => {
   return await axiosInstance.get(END_POINT.PORTFOLIO(portfolioSerial));
 };
 //포트폴리오 수정
@@ -23,7 +23,11 @@ export const updatePortfolio = async (
   portfolioSerial: number,
   data: Portfolio
 ) => {
-  return await axiosInstance.patch(END_POINT.PORTFOLIO(portfolioSerial), data);
+  return await axiosInstance.patch(END_POINT.PORTFOLIO(portfolioSerial), data, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
 };
 //포트폴리오 삭제
 export const deletePortfolio = async (portfolioSerial: number) => {
