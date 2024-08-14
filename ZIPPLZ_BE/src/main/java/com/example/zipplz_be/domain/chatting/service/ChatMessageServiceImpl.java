@@ -57,9 +57,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                     .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
                     .userSerial(userSerial)
                     .userName(userRepository.findByUserSerial(userSerial).getUserName())
-                    .chatMessageContent(file.getFileName()) // return 받은 S3 file url
+//                    .chatMessageContent(file.getFileName()) // return 받은 S3 file url
+                    .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                     .fileType(chatMessageRequestDTO.getType())
                     .file(file)
+                    .isContract(chatMessageRequestDTO.isContract())
                     .build();
         } else {
             file = null;
@@ -71,6 +73,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                     .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                     .fileType(chatMessageRequestDTO.getType())
                     .file(file)
+                    .isContract(chatMessageRequestDTO.isContract())
                     .build();
         }
 

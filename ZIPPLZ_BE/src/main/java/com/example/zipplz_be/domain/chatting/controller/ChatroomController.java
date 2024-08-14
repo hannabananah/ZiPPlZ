@@ -90,6 +90,22 @@ public class ChatroomController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
+    @GetMapping("/{chatroomSerial}/name")
+    public ResponseEntity getOtherUserName(Authentication authentication, @PathVariable int chatroomSerial) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            String name = chatroomService.getOtherUserName(chatroomSerial, getUserSerial(authentication));
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "메세지들 조회 성공", name);
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
     @PatchMapping("/{chatroomSerial}")
     public ResponseEntity deleteChatRoom(Authentication authentication, @PathVariable int chatroomSerial) {
         ResponseDTO responseDTO;

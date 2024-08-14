@@ -21,6 +21,7 @@ public class ChatMessageRequestDTO {
     private Boolean isFile;
     private String originalFileName; // 파일 전송 시
     private File file;
+    private boolean isContract;
 
     // 안읽은 메세지 처리를 위한 생성자
     public ChatMessageRequestDTO(ChatMessageRequestDTO chatMessageRequestDTO, int count) {

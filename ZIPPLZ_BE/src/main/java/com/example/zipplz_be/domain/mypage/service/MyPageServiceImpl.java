@@ -308,4 +308,15 @@ public class MyPageServiceImpl implements MyPageService {
                 .filter(findWorker -> findWorkerWishList.contains(findWorker.getBoard_serial()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteAccount(int userSerial) {
+        if (!userRepository.existsByUserSerial(userSerial)) {
+            throw new UserNotFoundException("해당 유저가 존재하지 않습니다.");
+        }
+        User user = userRepository.findByUserSerial(userSerial);
+
+        user.setDelYN(1);
+        userRepository.save(user);
+    }
 }
