@@ -109,6 +109,11 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
       return;
     }
 
+    if (!startDate || !endDate || !fields[1].value || !fields[2].value) {
+      alert('All required fields must be filled in.');
+      return;
+    }
+
     const workPrice =
       Number(fields.find((field) => field.label === '작업 가격')?.value) || 0;
 
