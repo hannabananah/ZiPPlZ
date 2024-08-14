@@ -14,10 +14,7 @@ import { SiFoodpanda } from 'react-icons/si';
 import { TbDog } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 
-interface UserInfo {
-  nickname: string;
-  fullname: string;
-}
+import { useMyPageStore } from '@stores/myPageStore';
 
 const icons = [
   TbDog,
@@ -35,19 +32,22 @@ export default function MyPage() {
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-  const [userType, setUserType] = useState<'customer' | 'worker'>('customer');
-  const [userInfo, setUserInfo] = useState<UserInfo>({
-    nickname: '',
-    fullname: '',
-  });
-  const [profileImage, setProfileImage] = useState<string | JSX.Element | null>(
-    null
-  );
-  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null);
-  const [tempProfileImage, setTempProfileImage] = useState<string | null>(null);
-  const [tempSelectedIcon, setTempSelectedIcon] = useState<JSX.Element | null>(
-    null
-  );
+
+  const {
+    profileImg,
+    name,
+    role,
+    fetchMyPageData,
+    uploadProfileImage,
+    deleteProfileImage,
+  } = useMyPageStore();
+
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [previewImg, setPreviewImg] = useState<string | null>(null); // 이미지 미리보기용 상태
+
+  useEffect(() => {
+    fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
+  }, [fetchMyPageData]);
 
   const handleGoBack = () => {
     navigate('-1');
@@ -89,22 +89,18 @@ export default function MyPage() {
     setShowLogoutModal(false);
   };
 
+  // 로그아웃: localstorage에서 해당 유저 토큰 제거
   const handleLogoutConfirm = () => {
+    localStorage.removeItem('token');
     setShowLogoutModal(false);
     navigate('/');
   };
 
   const handleNavigateToResign = () => {
-    if (userType === 'customer') {
-      navigate('/mypage/resign');
-    } else if (userType === 'worker') {
-      navigate('/mypage/BeforeResign');
-    }
+    navigate('/mypage/resign');
   };
 
   const handleOpenProfileModal = () => {
-    setTempProfileImage(profileImage as string);
-    setTempSelectedIcon(selectedIcon);
     setShowProfileModal(true);
   };
 
@@ -112,37 +108,30 @@ export default function MyPage() {
     setShowProfileModal(false);
   };
 
-  useEffect(() => {
-    setUserType('customer');
-    setUserInfo({ nickname: '강신구', fullname: '김현태' });
-  }, []);
-
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      setSelectedFile(file);
       const reader = new FileReader();
       reader.onloadend = () => {
-        setTempProfileImage(reader.result as string);
-        setTempSelectedIcon(null);
+        setPreviewImg(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleIconSelect = (icon: JSX.Element) => {
-    setTempProfileImage(null);
-    setTempSelectedIcon(icon);
-  };
-
-  const handleSaveProfile = () => {
-    setProfileImage(tempProfileImage);
-    setSelectedIcon(tempSelectedIcon);
+  const handleSaveProfile = async () => {
+    if (selectedFile) {
+      await uploadProfileImage(selectedFile);
+      await fetchMyPageData(); // 프로필 이미지 업데이트 후 다시 불러오기
+      setPreviewImg(null); // 미리보기 이미지 초기화
+    }
     setShowProfileModal(false);
   };
 
-  const handleClearProfile = () => {
-    setTempProfileImage(null);
-    setTempSelectedIcon(null);
+  const handleClearProfile = async () => {
+    await deleteProfileImage(); // 프로필 이미지를 삭제
+    setPreviewImg(null); // 미리보기 이미지 초기화
   };
 
   return (
@@ -164,17 +153,21 @@ export default function MyPage() {
         <div className="flex justify-center w-full mt-4 relative">
           <div className="flex flex-col items-center">
             <div className="w-36 h-36 relative">
-              {profileImage && typeof profileImage === 'string' ? (
+              {previewImg ? (
                 <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
                   <img
-                    src={profileImage}
+                    src={previewImg}
                     alt="Profile"
                     className="w-full h-full object-cover rounded-zp-radius-full"
                   />
                 </div>
-              ) : selectedIcon ? (
-                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
-                  {React.cloneElement(selectedIcon, { size: 100 })}
+              ) : profileImg ? (
+                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+                  <img
+                    src={profileImg}
+                    alt="Profile"
+                    className="w-full h-full object-cover rounded-zp-radius-full"
+                  />
                 </div>
               ) : (
                 <div className="w-full h-full rounded-zp-radius-full overflow-hidden bg-zp-white flex items-center justify-center">
@@ -189,7 +182,7 @@ export default function MyPage() {
               </div>
             </div>
             <div className="w-36 h-8 grid place-items-center text-zp-lg font-bold">
-              {userType === 'customer' ? userInfo.nickname : userInfo.fullname}
+              {role === 'customer' ? name : '익명 사용자'}
             </div>
           </div>
         </div>
@@ -236,7 +229,7 @@ export default function MyPage() {
           </div>
         </div>
 
-        {userType === 'customer' && (
+        {role === 'customer' && (
           <>
             <div className="mt-6 flex items-center justify-between w-full">
               <div className="text-zp-lg">
@@ -342,45 +335,28 @@ export default function MyPage() {
               프로필 이미지 선택
             </h2>
             <div className="flex justify-center mb-4">
-              {tempProfileImage ? (
-                <div className="w-24 h-24 rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
-                  <img
-                    src={
-                      typeof tempProfileImage === 'string'
-                        ? tempProfileImage
-                        : undefined
-                    }
-                    alt="Profile"
-                    className="w-full h-full object-cover rounded-zp-radius-full"
+              <div className="grid grid-cols-5 gap-2">
+                <label className="bg-zp-white rounded-zp-radius-full flex items-center justify-center rounded-full w-12 h-12 cursor-pointer">
+                  <MdOutlinePhotoCamera size={24} />
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageUpload}
                   />
-                </div>
-              ) : tempSelectedIcon ? (
-                <div className="w-24 h-24 rounded-zp-radius-full overflow-hidden flex items-center justify-center bg-zp-white">
-                  {React.cloneElement(tempSelectedIcon, { size: 80 })}
-                </div>
-              ) : (
-                <CgProfile size={96} />
-              )}
-            </div>
-            <div className="grid grid-cols-5 gap-2">
-              <label className="bg-zp-white rounded-zp-radius-full flex items-center justify-center rounded-full w-12 h-12 cursor-pointer">
-                <MdOutlinePhotoCamera size={24} />
-                <input
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageUpload}
-                />
-              </label>
-              {icons.map((IconComponent, index) => (
-                <div
-                  key={index}
-                  className="w-12 h-12 bg-zp-white rounded-zp-radius-full  cursor-pointer flex items-center justify-center"
-                  onClick={() => handleIconSelect(<IconComponent size={24} />)}
-                >
-                  <IconComponent size={24} />
-                </div>
-              ))}
+                </label>
+                {icons.map((IconComponent, index) => (
+                  <div
+                    key={index}
+                    className="w-12 h-12 bg-zp-white rounded-zp-radius-full  cursor-pointer flex items-center justify-center"
+                    onClick={() =>
+                      handleIconSelect(<IconComponent size={24} />)
+                    }
+                  >
+                    <IconComponent size={24} />
+                  </div>
+                ))}
+              </div>
             </div>
             <div className="mt-6 flex justify-center space-x-2">
               <button

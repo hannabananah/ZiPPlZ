@@ -15,12 +15,14 @@ export default function BeforeResign() {
 
   // 탈퇴하기 핸들러
   const handleResign = () => {
+    localStorage.removeItem('token'); // JWT 토큰 제거
+    navigate('/');
     setShowModal(true);
   };
 
   // 모달 확인 버튼 핸들러
-  // 확인 버튼 누르면 로그아웃이 되고 홈 화면으로 이동하게 수정
-  // 로그아웃 추후 구현 필요
+  // 확인 버튼 누르면 홈 화면 이동
+  // 로그아웃은 회원탈퇴 되면서 자동으로 됨
   const handleConfirm = () => {
     navigate('/');
   };
