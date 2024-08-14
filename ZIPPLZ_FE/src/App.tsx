@@ -5,7 +5,6 @@ import Layout from '@components/layout/Layout';
 // 구인 게시물 컴포넌트, 시공자 컴포넌트
 import Custom404 from '@pages/common/404';
 import ChatRoom from '@pages/common/chat/ChatRoom';
-import VideoRoom from '@pages/common/chat/VideoRoom';
 import Community from '@pages/common/community/HousePostList';
 import Home from '@pages/common/home/Home';
 import MyBoardList from '@pages/common/mypage/MyBoardList';
@@ -38,7 +37,7 @@ import HousePostDetailCreate from './pages/common/community/HousePostDetailCreat
 import QuestionPost from './pages/common/community/QuestionPost';
 import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
 import QuestionPostDetailCreate from './pages/common/community/QuestionPostDetailCreate';
-import ImageChangePage from './pages/common/home/ImageChangePage';
+// import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import FindIdPw from './pages/common/login/find/FindIdPw';
 import SignUp from './pages/common/signup/SignUp';
