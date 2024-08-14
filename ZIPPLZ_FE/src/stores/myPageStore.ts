@@ -5,7 +5,14 @@ interface MyPageState {
   profileImg: string | null;
   name: string;
   role: string;
+  phoneNumber: string;
+  address: string;
   fetchMyPageData: () => Promise<void>;
+  updateCustomerInfo: (
+    tel: string,
+    nickname: string,
+    currentAddress: string
+  ) => Promise<void>;
   uploadProfileImage: (file: File) => Promise<void>;
   deleteProfileImage: () => Promise<void>;
 }
@@ -14,6 +21,8 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   profileImg: null,
   name: '',
   role: '',
+  phoneNumber: '',
+  address: '',
   fetchMyPageData: async () => {
     const token = localStorage.getItem('token');
     try {
@@ -26,9 +35,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       if (response.data.proc.code === 200) {
         const data = response.data.data;
         set({
-          profileImg: data.profileImg.saveFile,
+          profileImg: data.profileImg?.saveFile || null,
           name: data.name,
           role: data.role,
+          phoneNumber: data.tel, // 전화번호 가져오기
+          address: data.currentAddress, // 주소 가져오기
         });
       } else {
         console.error(
@@ -38,6 +49,39 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       }
     } catch (error) {
       console.error('Error fetching MyPage data:', error);
+    }
+  },
+
+  updateCustomerInfo: async (
+    tel: string,
+    nickname: string,
+    currentAddress: string
+  ) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/mypage/update-customer',
+        {
+          tel,
+          nickname,
+          currentAddress,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        console.log('고객 정보가 성공적으로 업데이트되었습니다.');
+        // 업데이트된 정보를 상태에 반영합니다.
+        set({ name: nickname, phoneNumber: tel, address: currentAddress });
+      } else {
+        console.error('고객 정보 업데이트 실패:', response.data.proc.message);
+      }
+    } catch (error) {
+      console.error('고객 정보 업데이트 중 오류 발생:', error);
     }
   },
 
@@ -71,6 +115,7 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       console.error('프로필 이미지 업로드 중 오류 발생:', error);
     }
   },
+
   deleteProfileImage: async () => {
     const token = localStorage.getItem('token');
 

@@ -46,8 +46,13 @@ export default function MyPage() {
   const [previewImg, setPreviewImg] = useState<string | null>(null); // 이미지 미리보기용 상태
 
   useEffect(() => {
-    fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
-  }, [fetchMyPageData]);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/'); // 로그인이 안 되어있다면 홈으로 리디렉션
+    } else {
+      fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
+    }
+  }, [fetchMyPageData, navigate, name, profileImg, role, phoneNumber, address]); // 의존성 배열에 추가
 
   const handleGoBack = () => {
     navigate('-1');
