@@ -4,12 +4,14 @@ import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @IdClass(PortfolioFileRelationId.class)
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PortfolioFileRelation {
