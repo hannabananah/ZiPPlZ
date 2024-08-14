@@ -114,7 +114,6 @@ function ChatRoomContent() {
                   chatMessageContent={msg.chatMessageContent}
                   createdAt={msg.createdAt}
                   userSerial={msg.userSerial}
-                  originalFile={msg.file?.originalFile}
                   fileType={msg.fileType}
                 />
               ))}
