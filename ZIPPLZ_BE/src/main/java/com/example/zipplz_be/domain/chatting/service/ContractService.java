@@ -167,30 +167,22 @@ public class ContractService {
     }
 
     @Transactional
-    public ContractDTO getContractService(int userSerial, int chatroomSerial) {
-        Chatroom chatroom = chatroomRepository.findByChatroomSerial(chatroomSerial);
-        User w_user = chatroom.getWuser();
-        User c_user = chatroom.getCuser();
+    public ContractDTO getContractService(int userSerial, int workSerial) {
+        Work work = workRepository.findByWorkSerial(workSerial);
+        Plan plan = work.getPlanSerial();
+
+        User w_user = work.getWorkerSerial().getUserSerial();
+        User c_user = plan.getCustomerSerial().getUserSerial();
 
         if(userSerial != w_user.getUserSerial() && userSerial != c_user.getUserSerial()) {
             throw new UnauthorizedUserException("계약서를 조회할 권한이 없습니다.");
         }
 
         Worker worker = workerRepository.findByUserSerial(w_user);
-        Customer customer = customerRepository.findByUserSerial(c_user);
-
-        Plan plan = planRepository.findByCustomerSerialAndIsActive(customer, 1);
-        List<Work> workList = workRepository.findByPlanSerialAndFieldNameAndStatus(plan, chatroom.getFieldName(), "confirmed");
-
-        if(workList.isEmpty()) {
-            throw new ContractNotFoundException("확정된 계약서가 존재하지 않습니다.");
-        }
-
-        Field field = fieldRepository.findByFieldName(chatroom.getFieldName());
-        Portfolio portfolio = portfolioRepository.findByWorkerAndFieldId(worker, field);
+        Portfolio portfolio = portfolioRepository.findByWorkerAndFieldId(worker, work.getFieldCode());
 
         // materialWork - 자재 리스트(해당 work 연번에 따라 가져오기)
-        List<MaterialWorkRelation> materialWorkRelationList = materialWorkRelationRepository.findByWorkSerial(workList.get(0));
+        List<MaterialWorkRelation> materialWorkRelationList = materialWorkRelationRepository.findByWorkSerial(work);
         List<String> materialNameList = new ArrayList<>();
 
         for(MaterialWorkRelation materialWorkRelation: materialWorkRelationList) {
@@ -206,10 +198,10 @@ public class ContractService {
                 .customerName(c_user.getUserName())
                 .customerTel(c_user.getTel())
                 .address(plan.getAddress())
-                .startDate(convertTimestamp(workList.get(0).getStartDate()))
-                .endDate(convertTimestamp(workList.get(0).getEndDate()))
-                .workPrice(workList.get(0).getWorkPrice())
-                .fieldName(chatroom.getFieldName())
+                .startDate(convertTimestamp(work.getStartDate()))
+                .endDate(convertTimestamp(work.getEndDate()))
+                .workPrice(work.getWorkPrice())
+                .fieldName(work.getFieldName())
                 .materialList(materialNameList)
                 .build();
 

@@ -32,7 +32,7 @@ public class JoinController {
         private String email;
     }
 
-    @GetMapping("/check-email")
+    @PostMapping("/check-email")
     public ResponseEntity<ResponseDTO> isEmailAlreadyExist(@RequestBody EmailRequest email) {
         ResponseDTO responseDTO;
         HttpStatus status;

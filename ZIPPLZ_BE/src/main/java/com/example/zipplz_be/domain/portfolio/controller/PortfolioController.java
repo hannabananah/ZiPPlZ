@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.portfolio.controller;
 
+import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.portfolio.dto.*;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
@@ -7,6 +8,7 @@ import com.example.zipplz_be.domain.portfolio.exception.CustomerReviewException;
 import com.example.zipplz_be.domain.portfolio.exception.PortfolioNotFoundException;
 import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
 import com.example.zipplz_be.domain.user.exception.UserNotFoundException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Map;
@@ -243,4 +246,58 @@ public class PortfolioController {
 
 
     }
+
+    //포트폴리오 이미지 넣기
+    @PostMapping("{portfolioSerial}/image")
+    public ResponseEntity<?> uploadPortfolioImage(Authentication authentication, @RequestPart MultipartFile image, @PathVariable int portfolioSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            File file = portfolioService.uploadPortfolioImageService(portfolioService.getUserSerial(authentication), image, portfolioSerial);
+
+            status= HttpStatus.CREATED;
+            responseDTO = new ResponseDTO<>(status.value(), "업로드 성공!", file);
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (PortfolioNotFoundException e) {
+            status = HttpStatus.NOT_FOUND;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (S3Exception e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    //포트폴리오에서 이미지 삭제
+    @DeleteMapping("/{portfolioSerial}/image/{fileSerial}")
+    public ResponseEntity<?> deletePortfolioImage(Authentication authentication, @PathVariable int portfolioSerial, @PathVariable int fileSerial) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+
+            portfolioService.deletePortfolioImageService(portfolioService.getUserSerial(authentication), portfolioSerial, fileSerial);
+
+            status= HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "삭제 성공!");
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch(Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+
+
 }

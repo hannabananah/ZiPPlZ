@@ -248,7 +248,7 @@ public class PlanService {
         return file;
     }
 
-    private String uploadImage(MultipartFile image) {
+    public String uploadImage(MultipartFile image) {
         this.validateImageFileExtension(image.getOriginalFilename());
 
         try {
