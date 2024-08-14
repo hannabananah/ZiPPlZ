@@ -13,7 +13,6 @@ interface WebSocketContextType {
     msg: string,
     userSerial: number,
     file?: File,
-    // originalFileName?: string,
     type?: 'TALK' | 'IMAGE' | 'FILE'
   ) => void;
   messages: ChatMessageData[];

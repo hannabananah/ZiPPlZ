@@ -41,6 +41,7 @@ export default function ToggleChatMenu({
   const [isAfterServiceModalOpen, setIsAfterServiceModalOpen] = useState(false);
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+
   const handleImageUpload = () => {
     imageInputRef.current?.click();
   };
@@ -70,9 +71,9 @@ export default function ToggleChatMenu({
       const file = files[0];
       if (!file.type.startsWith('image/')) {
         const reader = new FileReader();
-        reader.onload = () => {
-          const arrayBuffer = reader.result as ArrayBuffer;
-          setFileSrc(arrayBuffer);
+        reader.onloadend = () => {
+          const fileData = reader.result as string;
+          setFileSrc(fileData);
         };
         reader.readAsDataURL(file);
       }

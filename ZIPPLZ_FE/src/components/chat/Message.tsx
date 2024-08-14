@@ -1,4 +1,3 @@
-import type { ChatMessageData } from '@/types';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import { formatTime } from '@utils/formatDateWithTime';
 
@@ -6,19 +5,14 @@ interface MessageProps {
   userSerial: number;
   chatMessageContent?: string;
   createdAt: string;
-  fileName?: string;
-  originalFile?: string;
   fileType?: string;
-  saveFile?: string;
 }
 
 export default function Message({
   userSerial,
   chatMessageContent,
   createdAt,
-  fileName,
   fileType,
-  saveFile,
 }: MessageProps) {
   let formattedImgUrl = '';
   if (fileType === 'IMAGE') {
@@ -28,9 +22,10 @@ export default function Message({
   }
 
   const isImage = fileType === 'IMAGE';
-  const isFile = fileType === 'FILE' || fileType === 'IMAGE';
+  const isFile = fileType === 'FILE';
   const { loginUser } = useLoginUserStore();
   const currUserSerial = loginUser?.userSerial;
+
   return (
     <li
       className={`flex items-start px-4 py-2 ${
@@ -65,14 +60,14 @@ export default function Message({
           <a
             href={formattedImgUrl}
             download={formattedImgUrl}
-            className="text-blue-500 underline"
+            className={`hover:text-zp-black text-zp-gray underline ${fileType === 'FILE' ? 'line-clamp-2' : ''}`}
             target="_blank"
             rel="noopener noreferrer"
           >
             {formattedImgUrl}
           </a>
         ) : (
-          <p className="text-left whitespace-pre-wrap text-zp-xs">
+          <p className="text-left whitespace-pre-wrap text-zp-gray text-zp-xs">
             {chatMessageContent}
           </p>
         )}

@@ -1,7 +1,7 @@
 import { useContext, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 
-import type { ChatMessageData, ChatRoomDetails } from '@/types';
+import type { ChatRoomDetails } from '@/types';
 import ChatRoomHeader from '@components/chat/ChatRoomHeader';
 import Message from '@components/chat/Message';
 import TextInputBox from '@components/chat/TextInputBox';
@@ -114,10 +114,8 @@ function ChatRoomContent() {
                   chatMessageContent={msg.chatMessageContent}
                   createdAt={msg.createdAt}
                   userSerial={msg.userSerial}
-                  fileName={msg.file?.fileName}
                   originalFile={msg.file?.originalFile}
                   fileType={msg.fileType}
-                  saveFile={msg.file?.saveFile}
                 />
               ))}
               <div ref={messagesEndRef} />
