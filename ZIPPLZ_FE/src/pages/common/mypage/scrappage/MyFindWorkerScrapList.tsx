@@ -7,7 +7,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
-import FindWorkerListItem from '@/components/worker/FindWorkerListItem';
+// import FindWorkerListItem from '@/components/worker/FindWorkerListItem';
 import Input from '@components/common/Input';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
@@ -299,7 +299,7 @@ export default function MyFindWorkerList() {
                 }`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                <FindWorkerListItem />
+                {/* <FindWorkerListItem /> */}
               </div>
             </div>
           ))}

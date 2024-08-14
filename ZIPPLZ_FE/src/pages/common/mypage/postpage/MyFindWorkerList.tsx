@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
-import FindWorkerListItem from '@components/worker/WorkerInfoListItem';
+// import FindWorkerListItem from '@components/worker/WorkerInfoListItem';
 import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 
 type SortOption = '평점순' | '최신순' | '과거순';
@@ -296,7 +296,7 @@ export default function MyFindWorkerList() {
                 className={`w-full h-full ${isSelecting ? 'pointer-events-none' : ''}`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                <FindWorkerListItem />
+                {/* <FindWorkerListItem /> */}
               </div>
             </div>
           ))}
