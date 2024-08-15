@@ -52,7 +52,6 @@ export const acceptContract = async (sender: number, receiver: number) => {
         },
       }
     );
-    console.log('response.data', response.data);
     return response.data;
   } catch (error) {
     console.error('계약수락 중 에러가 발생했습니다:', error);

@@ -5,7 +5,6 @@ import { IoChatbubblesOutline } from 'react-icons/io5';
 import { IoCallOutline } from 'react-icons/io5';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-// import { getWish } from '@/apis/board/wishApi';
 import {
   getPortfolioDetail,
   getPortfolioList,
@@ -74,7 +73,6 @@ export default function Portfolio() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('overview');
   const [nowField, setNowField] = useState<string>('');
-  //데이터 fetch
   const fetchPortfolioList = async (userSerial: number) => {
     const response = await getPortfolioList(userSerial);
     setPortfolioList(response.data.data);
@@ -83,7 +81,6 @@ export default function Portfolio() {
     const response = await getPortfolioDetail(portfolioSerial);
     setPortfolioOverview(response.data.data);
   };
-  // URL 쿼리 파라미터에서 activeTab 읽기
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search);
     const tab = queryParams.get('tab');
@@ -141,7 +138,6 @@ export default function Portfolio() {
             </p>
           </div>
 
-          {/* 지역, 전화번호, 분야 */}
           <div className="flex flex-col mt-4 font-bold text-zp-xs">
             <div className="flex items-center gap-2">
               <CiLocationOn />
@@ -157,7 +153,6 @@ export default function Portfolio() {
                 <p>Skills</p>
               </div>
 
-              {/* Skills as buttons */}
               <div className="grid grid-cols-3 gap-4">
                 {portfolioList &&
                   portfolioList.map((item, index) => (

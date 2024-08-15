@@ -82,7 +82,6 @@ const board = {
     },
   ],
 };
-// 이미지 상태의 타입 정의
 type Image = string;
 
 export default function UpdateFindWorker() {
@@ -97,10 +96,8 @@ export default function UpdateFindWorker() {
 
   const navigate = useNavigate();
 
-  //리스트 이동
   const goList = () => navigate('/workers/findworker');
 
-  // 이미지 업로드 핸들러
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
     const readerPromises = files.map((file) => {
@@ -119,12 +116,10 @@ export default function UpdateFindWorker() {
     });
   };
 
-  // 이미지 삭제 핸들러
   const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
-  // 확인 버튼 핸들러
   const handleConfirm = () => {
     goList();
   };

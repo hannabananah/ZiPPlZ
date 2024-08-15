@@ -88,9 +88,6 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
       tel: phone,
     }));
   }, [phone]);
-  useEffect(() => {
-    console.log(isUniqueEmail);
-  }, [isUniqueEmail]);
   return (
     <div className="relative flex flex-col bg-zp-white w-full p-4 gap-4 overflow-auto mb-[9rem]">
       <p className="text-xl font-bold">이름</p>

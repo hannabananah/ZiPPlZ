@@ -76,7 +76,6 @@ export default function OverView({ portfolio }: Props) {
   const modifyPortfolio = async (data: data) => {
     return await updatePortfolio(portfolio.portfolioSerial, data);
   };
-  // 모달 열림, 한줄 소개 입력 값, 임시 값 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [asPeriod, setAsPeriod] = useState<number>(portfolio.asPeriod);
   const [career, setCareer] = useState<number>(portfolio.career);
@@ -111,7 +110,6 @@ export default function OverView({ portfolio }: Props) {
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
-  // 모달 열기
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
@@ -119,7 +117,6 @@ export default function OverView({ portfolio }: Props) {
     setCompanyAddress(data.address);
     setOpenDaum(false);
   };
-  // 모달 닫기
   const handleCloseModal = () => {
     setPublicRelation(portfolio.publicRelation);
     setAsPeriod(portfolio.asPeriod);
@@ -129,7 +126,6 @@ export default function OverView({ portfolio }: Props) {
     setBusinessNumber(portfolio.worker.businessNumber);
     setIsModalOpen(false);
   };
-  // 저장 버튼
   const handleSave = () => {
     if (isOk) {
       modifyPortfolio({
@@ -162,7 +158,6 @@ export default function OverView({ portfolio }: Props) {
       b_no: [data],
     };
     const response = await checkBusiness(JSON.stringify(inputData));
-    console.log(response.data);
     if ('match_cnt' in response.data) {
       setIsOk(true);
     } else {
@@ -224,7 +219,7 @@ export default function OverView({ portfolio }: Props) {
                   src={image.saveFile}
                 />
               ))}
-              <div className=" flex items-center">
+              <div className="flex items-center ">
                 <FiPlusCircle
                   size={24}
                   className="cursor-pointer aspect-square"
@@ -261,7 +256,6 @@ export default function OverView({ portfolio }: Props) {
 
         <hr className="w-full text-zp-main-color" />
 
-        {/* 소속업체 */}
         <div className="flex items-center gap-1">
           <TbBuildingCommunity size={16} />
           <p className="font-bold text-zp-sm">소속업체</p>
@@ -280,17 +274,14 @@ export default function OverView({ portfolio }: Props) {
         </div>
         <hr className="w-full text-zp-main-color" />
 
-        {/* 하고 싶은 말 */}
         <div className="flex items-center gap-1">
           <RiMessage2Line size={16} />
           <p className="font-bold text-zp-sm">하고 싶은 말</p>
         </div>
         <p className="pl-4 font-bold text-zp-xs">{portfolio.publicRelation}</p>
       </div>
-      {/* 수정 모달 창 */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center ">
-          {/* 모달 창 */}
           <div className="border flex flex-col border-zp-main-color rounded-zp-radius-big bg-zp-white p-6 shadow-lg w-[90%] gap-2">
             <p className="font-bold text-center text-zp-md">정보 수정</p>
             <div className="flex flex-col text-zp-xs">
@@ -343,7 +334,7 @@ export default function OverView({ portfolio }: Props) {
             </div>
             <div className="flex flex-col text-zp-xs">
               <p className="font-bold">업체 주소</p>
-              <div className="w-full relative ">
+              <div className="relative w-full ">
                 <Input
                   inputType="normal"
                   type="text"
@@ -393,11 +384,11 @@ export default function OverView({ portfolio }: Props) {
                   />
                 </div>
                 {isOk ? (
-                  <p className="text-zp-2xs font-bold text-zp-main-color">
+                  <p className="font-bold text-zp-2xs text-zp-main-color">
                     사업자 번호가 인증되었습니다.
                   </p>
                 ) : (
-                  <p className="text-zp-2xs font-bold text-zp-red">
+                  <p className="font-bold text-zp-2xs text-zp-red">
                     사업자 번호를 인증해주세요.
                   </p>
                 )}

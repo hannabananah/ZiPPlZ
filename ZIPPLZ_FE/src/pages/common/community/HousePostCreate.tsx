@@ -35,13 +35,12 @@ export default function HousePostCreate() {
   const [title, setTitle] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
   const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
-  // 시공업자 리스트 임시 저장
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
   const [workerInfoList, setWorkerInfoList] = useState<WorkerInfo[]>([]);
-  const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태 추가
-  const [filteredWorkers, setFilteredWorkers] = useState<WorkerInfo[]>([]); // 검색 결과 상태
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [filteredWorkers, setFilteredWorkers] = useState<WorkerInfo[]>([]);
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
@@ -51,7 +50,6 @@ export default function HousePostCreate() {
   const { createPost, selectedWorkers, setSelectedWorkers, searchWorkers } =
     useHousePostStore();
 
-  // 페이지 로드 시 selectedWorkers 초기화
   useEffect(() => {
     setSelectedWorkers([]);
     fetchWorkerInfoList();
@@ -62,7 +60,7 @@ export default function HousePostCreate() {
       const response = await axios.get('/api/workerlist/portfolios');
       if (response.data.proc.code === 200) {
         setWorkerInfoList(response.data.data);
-        setFilteredWorkers(response.data.data); // 초기에는 전체 목록 표시
+        setFilteredWorkers(response.data.data);
       } else {
         console.error(
           'Failed to fetch worker info list:',
@@ -81,10 +79,9 @@ export default function HousePostCreate() {
     if (query) {
       const results = await searchWorkers(query);
 
-      // 타입 단언을 사용하여 TypeScript에게 이 데이터가 WorkerInfo[]라고 알림
       setFilteredWorkers(results as WorkerInfo[]);
     } else {
-      setFilteredWorkers(workerInfoList); // 검색어가 없을 때는 전체 목록 표시
+      setFilteredWorkers(workerInfoList);
     }
   };
 
@@ -112,7 +109,6 @@ export default function HousePostCreate() {
 
     const formData = new FormData();
 
-    // 기본 필드들을 FormData에 추가
     formData.append('title', title);
     formData.append('board_content', workDetail);
 
@@ -130,11 +126,9 @@ export default function HousePostCreate() {
     );
     formData.append('selected_portfolio', selectedPortfolioJson);
 
-    // 이미지가 없을 경우 null 값을 추가
     if (images.length === 0) {
       formData.append('images', 'null');
     } else {
-      // 이미지 파일들을 FormData에 추가
       images.forEach((image) => {
         formData.append('images', image);
       });
@@ -168,12 +162,11 @@ export default function HousePostCreate() {
   };
 
   const handleWorkerModalConfirm = () => {
-    // 필요한 속성을 추가하여 setSelectedWorkers에 전달
     const updatedWorkers = tempSelectedWorkers.map((worker) => ({
       ...worker,
-      worker: worker.user_serial, // worker 속성 추가
-      user_name: worker.name, // user_name 속성 추가
-      temperature: worker.temp, // temperature 속성 추가
+      worker: worker.user_serial,
+      user_name: worker.name,
+      temperature: worker.temp,
     }));
 
     setSelectedWorkers(updatedWorkers);
@@ -182,21 +175,21 @@ export default function HousePostCreate() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6">
+      <div className="flex items-start justify-center min-h-screen p-6">
         <div className="w-full">
-          <div className="mt-12 flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full mt-12">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
               />
             </div>
-            <div className="relative right-4 text-zp-2xl font-bold text-center flex-1">
+            <div className="relative flex-1 font-bold text-center right-4 text-zp-2xl">
               자랑하기
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex items-center justify-start">
+          <div className="flex items-center justify-start mt-6 font-bold">
             <div className="text-left">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
               <div className="text-zp-xs text-zp-light-gray">
@@ -211,10 +204,10 @@ export default function HousePostCreate() {
               <div className="relative">
                 <label
                   htmlFor="file-upload-0"
-                  className="flex items-center justify-center w-24 h-24 bg-zp-white border border-zp-light-gray rounded-zp-radius-btn p-2 cursor-pointer"
+                  className="flex items-center justify-center w-24 h-24 p-2 border cursor-pointer bg-zp-white border-zp-light-gray rounded-zp-radius-btn"
                 >
                   <FaCamera size={36} className="" />
-                  <div className="w-full flex justify-center absolute bottom-2 font-bold text-zp-xs text-zp-gray">
+                  <div className="absolute flex justify-center w-full font-bold bottom-2 text-zp-xs text-zp-gray">
                     {images.length}/{maxImages}
                   </div>
                 </label>
@@ -228,7 +221,7 @@ export default function HousePostCreate() {
                 />
               </div>
             </div>
-            <div className="flex-1 flex overflow-x-auto space-x-4">
+            <div className="flex flex-1 space-x-4 overflow-x-auto">
               {images.map((image, index) => (
                 <div
                   key={index}
@@ -239,11 +232,11 @@ export default function HousePostCreate() {
                   <img
                     src={URL.createObjectURL(image)}
                     alt={`Preview ${index}`}
-                    className="w-full h-full object-cover rounded-zp-radius-btn"
+                    className="object-cover w-full h-full rounded-zp-radius-btn"
                   />
                   <button
                     onClick={() => handleImageRemove(index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                    className="absolute top-0 right-0 p-1 text-white bg-red-500 rounded-full"
                   >
                     <MdClose size={24} />
                   </button>
@@ -252,10 +245,10 @@ export default function HousePostCreate() {
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
+          <div className="flex flex-col items-center justify-center mt-6 font-bold">
+            <div className="w-full text-left">
               <div className="mb-2">제목</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
+              <div className="pl-2 border bg-zp-white border-zp-light-gray rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="제목 입력"
@@ -272,17 +265,17 @@ export default function HousePostCreate() {
                 />
               </div>
               {errors.title && (
-                <div className="text-zp-red text-zp-xs mt-1">
+                <div className="mt-1 text-zp-red text-zp-xs">
                   {errors.title}
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
+          <div className="flex flex-col items-center justify-center mt-6 font-bold">
+            <div className="w-full text-left">
               <div className="mb-2">자랑해주세요</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn  pl-2">
+              <div className="pl-2 border bg-zp-white border-zp-light-gray rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="집에서 자랑하고 싶은 내용을 입력해주세요."
@@ -299,20 +292,20 @@ export default function HousePostCreate() {
                 />
               </div>
               {errors.workDetail && (
-                <div className="text-zp-red text-zp-xs mt-1">
+                <div className="mt-1 text-zp-red text-zp-xs">
                   {errors.workDetail}
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
+          <div className="flex flex-col items-center justify-center mt-6 font-bold">
+            <div className="w-full text-left">
               <div className="">함께한 시공업자들</div>
               <div className="text-zp-xs text-zp-light-gray">
                 + 버튼을 클릭하여 함께한 시공업자들을 추가해주세요
               </div>
-              <div className="py-24 flex justify-center">
+              <div className="flex justify-center py-24">
                 <CiCirclePlus
                   style={{ color: 'gray' }}
                   size={40}
@@ -321,7 +314,7 @@ export default function HousePostCreate() {
                 />
               </div>
               {selectedWorkers.length > 0 && (
-                <div className="mt-2 grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mt-2">
                   {selectedWorkers.map((worker) => (
                     <WorkerInfoListItem
                       key={worker.portfolio_serial}
@@ -333,7 +326,7 @@ export default function HousePostCreate() {
             </div>
           </div>
 
-          <div className="mt-6 mb-12 font-bold h-20 flex items-center justify-center">
+          <div className="flex items-center justify-center h-20 mt-6 mb-12 font-bold">
             <Button
               children="확인"
               buttonType="second"
@@ -348,10 +341,10 @@ export default function HousePostCreate() {
       </div>
 
       {isWorkerModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50 overflow-y-auto">
-          <div className="bg-zp-white p-6 rounded-zp-radius-big">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-opacity-50 bg-zp-black">
+          <div className="p-6 bg-zp-white rounded-zp-radius-big">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="absolute font-bold transform -translate-x-1/2 left-1/2 text-zp-xl">
                 시공업자 선택
               </h2>
             </div>
@@ -360,28 +353,28 @@ export default function HousePostCreate() {
               시공업자의 이름을 검색하여 추가하고 확인 버튼을 눌러주세요
             </div>
 
-            <div className="mt-6 font-bold flex justify-center items-center relative">
+            <div className="relative flex items-center justify-center mt-6 font-bold">
               <Input
                 type="text"
                 placeholder="시공업자의 이름을 입력해주세요"
                 inputType="textArea"
                 width="14rem"
                 height={2.375}
-                className="mb-4 pr-10"
+                className="pr-10 mb-4"
                 fontSize="xs"
                 radius="btn"
-                value={searchQuery} // 검색어 상태 연결
-                onChange={handleSearchChange} // 검색어 변경 시 호출
+                value={searchQuery}
+                onChange={handleSearchChange}
               />
-              <HiMagnifyingGlass className="absolute right-2 top-1/2 transform -translate-y-1/2" />
+              <HiMagnifyingGlass className="absolute transform -translate-y-1/2 right-2 top-1/2" />
             </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-2 gap-4 mt-2 overflow-y-auto max-h-96">
               {filteredWorkers.map((worker) => (
                 <div key={worker.portfolio_serial} className="relative">
                   <WorkerInfoListItem worker={worker} />
                   <div
-                    className="absolute top-2 right-2 cursor-pointer"
+                    className="absolute cursor-pointer top-2 right-2"
                     onClick={() => handleWorkerSelect(worker)}
                   >
                     {tempSelectedWorkers.includes(worker) ? (
@@ -394,7 +387,7 @@ export default function HousePostCreate() {
               ))}
             </div>
 
-            <div className="mt-6 flex justify-center space-x-2">
+            <div className="flex justify-center mt-6 space-x-2">
               <div className="font-bold">
                 <Button
                   children="취소"

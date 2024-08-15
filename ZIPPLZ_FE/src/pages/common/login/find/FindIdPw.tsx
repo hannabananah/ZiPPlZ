@@ -8,7 +8,6 @@ export default function FindIdPw() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 쿼리 매개변수 파싱
   const searchParams = new URLSearchParams(location.search);
   const type = searchParams.get('type');
 

@@ -2,9 +2,7 @@ import axios from 'axios';
 import { create } from 'zustand';
 
 const BASE_URL: string = 'http://localhost:5000/';
-// '/api/'
 
-// 질문글 형식 인터페이스
 interface QuestionPost {
   board_serial: number;
   board_type: number;
@@ -18,7 +16,6 @@ interface QuestionPost {
   images: string[];
 }
 
-// 댓글 인터페이스
 interface Comment {
   board_serial: number;
   comment_content: string;
@@ -26,7 +23,6 @@ interface Comment {
   order_number: number;
 }
 
-// 질문글 상세 정보 인터페이스
 interface QuestionPostDetails {
   title: string;
   userSerial: number;
@@ -57,7 +53,6 @@ interface QuestionPostDetails {
   }[];
 }
 
-// 질문글 상태 관리 인터페이스
 interface QuestionPostState {
   title: string;
   boardContent: string;
@@ -141,7 +136,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
           userSerial: data.board.userSerial,
           boardSerial: data.board.boardSerial,
           nickname: data.board.nickname,
-          boardContent: data.board.boardContent, // 여기서 제대로 된 필드명을 사용
+          boardContent: data.board.boardContent,
           boardDate: data.board.boardDate,
           images: data.board_images.map((img: any) => ({
             saveFile: img.saveFile,
@@ -185,11 +180,10 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   createPost: async (token: string, formData: FormData) => {
     try {
-      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
       const hasNullImages = formData.get('images') === 'null';
       if (hasNullImages) {
-        formData.delete('images'); // 기존 'images' 필드를 제거
-        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+        formData.delete('images');
+        formData.append('images', '');
       }
 
       const response = await axios.post(
@@ -217,17 +211,12 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
     }
   },
 
-  updatePost: async (
-    token: string,
-    id: number,
-    formData: FormData // FormData를 받을 수 있도록 수정
-  ) => {
+  updatePost: async (token: string, id: number, formData: FormData) => {
     try {
-      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
       const hasNullImages = formData.get('images') === 'null';
       if (hasNullImages) {
-        formData.delete('images'); // 기존 'images' 필드를 제거
-        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+        formData.delete('images');
+        formData.append('images', '');
       }
 
       const response = await axios.patch(
@@ -236,7 +225,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
         {
           headers: {
             Authorization: token,
-            'Content-Type': 'multipart/form-data', // FormData 전송 시 올바른 Content-Type 설정
+            'Content-Type': 'multipart/form-data',
           },
         }
       );

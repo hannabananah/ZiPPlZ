@@ -63,7 +63,6 @@ export default function ContractPage() {
           room.workerName === contract.workerName &&
           room.customerName === contract.customerName
       )[0].chatroomSerial;
-      console.log(chatRoomSerial);
       if (chatRoomSerial) setSelectedChatRoomSerial(parseInt(chatRoomSerial));
     }
   });
@@ -89,15 +88,15 @@ export default function ContractPage() {
     <>
       {contract && contract !== null && (
         <div className="relative my-[3rem] flex flex-col w-full min-h-screen gap-4 p-6">
-          <p className="text-center text-zp-2xl font-bold">시공 계약서</p>
+          <p className="font-bold text-center text-zp-2xl">시공 계약서</p>
           <ImCancelCircle
             size={16}
             className="cursor-pointer absolute right-[2rem] top-[2rem]"
             onClick={() => navigate(-1)}
           />
-          <hr className="text-zp-light-gray w-full" />
+          <hr className="w-full text-zp-light-gray" />
           <div className="relative overflow-x-auto">
-            <table className="w-full text-zp-xs  text-gray-500 dark:text-gray-400">
+            <table className="w-full text-gray-500 text-zp-xs dark:text-gray-400">
               <tbody className="bg-zp-white">
                 <tr className="border-b border-gray-200 dark:border-gray-700">
                   <th
@@ -109,20 +108,20 @@ export default function ContractPage() {
                     <br />
                     (시공업자)
                   </th>
-                  <td className="border font-bold text-center">업체명</td>
-                  <td className="text-zp-2xs p-4 border">{contract.company}</td>
-                  <td className="border font-bold text-center">대표자</td>
-                  <td className="text-zp-2xs p-4">{contract.workerName}</td>
+                  <td className="font-bold text-center border">업체명</td>
+                  <td className="p-4 border text-zp-2xs">{contract.company}</td>
+                  <td className="font-bold text-center border">대표자</td>
+                  <td className="p-4 text-zp-2xs">{contract.workerName}</td>
                 </tr>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <td className="border font-bold text-center">연락처</td>
-                  <td className="text-zp-2xs p-4 border">
+                  <td className="font-bold text-center border">연락처</td>
+                  <td className="p-4 border text-zp-2xs">
                     {contract.workerTel}
                   </td>
-                  <td className="border font-bold text-center">
+                  <td className="font-bold text-center border">
                     사업자 등록 번호
                   </td>
-                  <td className="text-zp-2xs p-4 border">
+                  <td className="p-4 border text-zp-2xs">
                     {contract.businessNumber}
                   </td>
                 </tr>
@@ -134,35 +133,35 @@ export default function ContractPage() {
                   >
                     의뢰인(고객)
                   </th>
-                  <td className="border font-bold text-center">성명</td>
-                  <td className="text-zp-2xs p-4 border" colSpan={3}>
+                  <td className="font-bold text-center border">성명</td>
+                  <td className="p-4 border text-zp-2xs" colSpan={3}>
                     {contract.customerName}
                   </td>
                 </tr>
                 <tr className="border-b border-gray-200 dark:border-gray-700">
-                  <td className="border font-bold text-center">연락처</td>
-                  <td className="text-zp-2xs p-4 border" colSpan={3}>
+                  <td className="font-bold text-center border">연락처</td>
+                  <td className="p-4 border text-zp-2xs" colSpan={3}>
                     {contract.customerTel}
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <p className="text-center text-zp-md font-bold text-zp-red">
+          <p className="font-bold text-center text-zp-md text-zp-red">
             계약자와 의뢰인은 합의 하에 다음과 같은 계약 내용에 동의하고
             서명합니다.
           </p>
           <div className="relative overflow-x-auto">
-            <table className="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+            <table className="w-full text-sm text-left text-gray-500 rtl:text-right dark:text-gray-400">
               <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th
                     scope="col"
-                    className="border-r border-b text-center py-3 rounded-s-lg"
+                    className="py-3 text-center border-b border-r rounded-s-lg"
                   >
                     계약 유형
                   </th>
-                  <th scope="col" className=" border-b text-center py-3">
+                  <th scope="col" className="py-3 text-center border-b ">
                     내용
                   </th>
                 </tr>
@@ -171,7 +170,7 @@ export default function ContractPage() {
                 <tr>
                   <th
                     scope="row"
-                    className="border-r text-zp-sm font-bold text-center"
+                    className="font-bold text-center border-r text-zp-sm"
                   >
                     시공 내용
                   </th>
@@ -180,7 +179,7 @@ export default function ContractPage() {
                 <tr>
                   <th
                     scope="row"
-                    className="border-r text-zp-sm font-bold text-center"
+                    className="font-bold text-center border-r text-zp-sm"
                   >
                     시공 장소
                   </th>
@@ -189,7 +188,7 @@ export default function ContractPage() {
                 <tr>
                   <th
                     scope="row"
-                    className="border-r text-zp-sm font-bold text-center"
+                    className="font-bold text-center border-r text-zp-sm"
                   >
                     시공 기간
                   </th>
@@ -201,7 +200,7 @@ export default function ContractPage() {
                 <tr>
                   <th
                     scope="row"
-                    className="border-r text-zp-sm font-bold text-center"
+                    className="font-bold text-center border-r text-zp-sm"
                   >
                     계약 금액
                   </th>
@@ -212,12 +211,12 @@ export default function ContractPage() {
                 <tr>
                   <th
                     scope="row"
-                    className="border-r text-zp-sm font-bold text-center"
+                    className="font-bold text-center border-r text-zp-sm"
                   >
                     사용 자재
                   </th>
                   <td className="p-3 text-left">
-                    <div className="w-full flex gap-2">
+                    <div className="flex w-full gap-2">
                       {contract.materialList.map((material) => (
                         <p>{material}</p>
                       ))}
@@ -227,7 +226,7 @@ export default function ContractPage() {
                 <tr>
                   <th
                     scope="row"
-                    className="border-r text-zp-sm font-bold text-center"
+                    className="font-bold text-center border-r text-zp-sm"
                   >
                     하자 보수 기간
                   </th>
@@ -236,9 +235,9 @@ export default function ContractPage() {
               </tbody>
             </table>
           </div>
-          <div className="w-full flex justify-end items-end">
+          <div className="flex items-end justify-end w-full">
             <div className="flex flex-col gap-2 ">
-              <p className="text-zp-sm font-bold">서명란</p>
+              <p className="font-bold text-zp-sm">서명란</p>
               <p className="text-zp-sm">
                 계약자(시공업자): {contract.workerName}
               </p>
@@ -248,7 +247,7 @@ export default function ContractPage() {
               </p>
             </div>
           </div>
-          <div className="w-full flex items-center justify-center gap-4">
+          <div className="flex items-center justify-center w-full gap-4">
             <Button
               buttonType="second"
               children="닫기"

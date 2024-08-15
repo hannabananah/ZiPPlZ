@@ -54,7 +54,6 @@ const customModalStyles: ReactModal.Styles = {
   },
 };
 export default function ScheduleRegist({ planSerial }: Props) {
-  //   const { fieldList, setFieldList } = useScheduleStore();
   const navigate = useNavigate();
   const [isRegist, setIsRegist] = useState<boolean>(false);
   const [isNormalScehdule, setIsNormalSchedule] = useState<boolean>(false);

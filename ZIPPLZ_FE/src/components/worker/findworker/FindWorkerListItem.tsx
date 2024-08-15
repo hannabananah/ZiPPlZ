@@ -1,4 +1,3 @@
-// 워커찾기-전문 시공자 구하기 페이지의 게시물 컴포넌트
 import { CgProfile } from 'react-icons/cg';
 import { CiBookmark } from 'react-icons/ci';
 import { FaRegCalendarAlt } from 'react-icons/fa';

@@ -37,12 +37,9 @@ export default function TodaySchedule({ role, work, chatRoomList }: Props) {
           room.workerName === work.worker.userSerial.userName &&
           room.customerName === work.customer.userSerial.userName
       )[0].chatroomSerial;
-      console.log(chatRoomSerial);
       navigate(`/chatrooms/${chatRoomSerial}`);
     }
   };
-  console.log(role);
-  console.log(work);
   return (
     <>
       {work && (
