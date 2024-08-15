@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { ImCancelCircle } from 'react-icons/im';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { getChatRooms, makeChatRoom } from '@/apis/chatroom/chatApi';
+import { getChatRooms } from '@/apis/chatroom/chatApi';
 import { getContract } from '@/apis/member/MemberApi';
 import Button from '@/components/common/Button';
 import UpdateContract from '@components/chat/UpdateContract';

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -15,7 +15,7 @@ interface Props {
   review: any;
 }
 export default function PortfolioReview({ review }: Props) {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [comment, setComment] = useState<string>('');
   const writeBossReview = async (reviewSerial: number, review: string) => {
     await wirteWorkerReview(reviewSerial, { reviewComment: review });

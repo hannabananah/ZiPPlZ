@@ -1,5 +1,5 @@
-import { useContext, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+// import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { sendUpdateContract, updateContract } from '@/apis/member/MemberApi';
@@ -12,7 +12,7 @@ import { useLoginUserStore } from '@stores/loginUserStore';
 import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
 import { formatDateWithTime } from '@utils/formatDateWithTime';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
-import { WebSocketContext } from '@utils/socket/WebSocketProvider';
+// import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
 
 interface Contract {
@@ -102,11 +102,11 @@ export default function UpdateContract({
   const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([]);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const { sendMessage } = useContext(WebSocketContext) || {
-    sendMessage: () => {},
-  };
+  // const { sendMessage } = useContext(WebSocketContext) || {
+  //   sendMessage: () => {},
+  // };
   const { loginUser } = useLoginUserStore();
-  const userSerial: number | undefined = loginUser?.userSerial;
+  // const userSerial: number | undefined = loginUser?.userSerial;
   const userName: string | undefined = loginUser?.userName;
 
   useEffect(() => {
@@ -233,7 +233,7 @@ export default function UpdateContract({
     setSelectedMaterials(selectedMaterials.filter(Boolean) as Material[]);
   };
 
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     setTimeout(() => {
