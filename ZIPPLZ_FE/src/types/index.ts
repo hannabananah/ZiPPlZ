@@ -12,6 +12,7 @@ export interface ChatMessageData {
     saveFile: string;
     fileName: string;
   } | null;
+  contract: boolean;
 }
 
 // 파일(type이 IMAGE 혹은 FILE 일 경우) 관련 데이터
@@ -92,6 +93,7 @@ export interface SendMessageReq {
   chatMessageContent: string;
   isFile: boolean;
   originalFileName?: string;
+  contract?: boolean;
 }
 
 // 자재 전체목록 조회
