@@ -16,6 +16,7 @@ public class PortfolioWorkDetailDTO {
     String endDate;
     int workPrice;
     String workContent;
+    String fieldName;
 
     //계획 연번, 집주소, 공유내용(계획)
     int planSerial;
@@ -30,7 +31,8 @@ public class PortfolioWorkDetailDTO {
     String nickname;
 
     @Builder
-    public PortfolioWorkDetailDTO(String customerName, int workSerial, String startDate, String endDate, int workPrice, String workContent, int planSerial, String address, String sharedContents, List<File> planImageList, String nickname) {
+    public PortfolioWorkDetailDTO(String fieldName, String customerName, int workSerial, String startDate, String endDate, int workPrice, String workContent, int planSerial, String address, String sharedContents, List<File> planImageList, String nickname) {
+        this.fieldName = fieldName;
         this.customerName = customerName;
         this.workSerial = workSerial;
         this.startDate = startDate;

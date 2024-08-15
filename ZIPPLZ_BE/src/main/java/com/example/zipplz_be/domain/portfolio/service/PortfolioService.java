@@ -259,7 +259,9 @@ public class PortfolioService {
                 .sharedContents(plan.getSharedContents())
                 .nickname(customer.getNickname())
                 .customerName(cusUser.getUserName())
+                .fieldName(work.getFieldName())
                 .planImageList(planImageList)
+                .workSerial(work.getWorkSerial())
                 .build();
 
         return portfolioWorkDetailDTO;
