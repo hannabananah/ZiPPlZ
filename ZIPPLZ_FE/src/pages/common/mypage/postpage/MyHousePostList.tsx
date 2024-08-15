@@ -11,19 +11,7 @@ import HousePostListItem from '@/components/community/HousePostListItem';
 import Input from '@components/common/Input';
 import { useMyPageStore } from '@stores/myPageStore';
 
-// interface WorkerInfo {
-//   user_serial: number;
-//   portfolio_serial: number;
-//   name: string;
-//   birth_date: number;
-//   temp: number;
-//   field_id: number;
-//   field_name: string;
-//   career: number;
-//   certificated_badge: number;
-//   locations: string[];
-//   img: string;
-// }
+type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function MyHousePostList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -64,59 +52,54 @@ export default function MyHousePostList() {
     setSelectedValue(sortOption as SortOption);
   };
 
-//   const handleSortSelect = (sortOption: string) => {
-//     setSelectedValue(sortOption as SortOption);
-//   };
-
-//   const handleGoBack = () => {
-//     navigate('/mypage');
-//   };
-
-//   const toggleDropdown = () => {
-//     setIsDropdownOpen(!isDropdownOpen);
-//   };
-
-//   const handleNavigate = (path: string) => {
-//     navigate(path);
-//     setIsDropdownOpen(false);
-//   };
-
-//   const toggleAllSelected = () => {
-//     if (isAllSelected) {
-//       setSelectedWorkers([]);
-//     } else {
-//       setSelectedWorkers(list.map((worker) => worker.user_serial));
-//     }
-//     setIsAllSelected(!isAllSelected);
-//   };
-
-//   const handleWorkerSelect = (user_serial: number) => {
-//     if (selectedWorkers.includes(user_serial)) {
-//       setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
-//     } else {
-//       setSelectedWorkers([...selectedWorkers, user_serial]);
-//     }
-//   };
-
-//   const toggleSelecting = () => {
-//     if (isSelecting) {
-//       setSelectedWorkers([]);
-//     }
-//     setIsSelecting(!isSelecting);
-//     setIsAllSelected(false);
-//   };
-
-  const handleWorkerClick = (board_serial: number) => {
-    navigate(`/housepost/${board_serial}`);
+  const handleGoBack = () => {
+    navigate('/mypage');
   };
 
-//   const handleWorkerClick = (user_serial: number) => {
-//     navigate(`/housepost/${user_serial}`);
-//   };
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
-//   return (
-{
-  /*   <>
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsDropdownOpen(false);
+  };
+
+  const toggleAllSelected = () => {
+    if (isAllSelected) {
+      setSelectedWorkers([]);
+    } else {
+      setSelectedWorkers(list.map((worker) => worker.user_serial));
+    }
+    setIsAllSelected(!isAllSelected);
+  };
+
+  const handleWorkerSelect = (user_serial: number) => {
+    if (selectedWorkers.includes(user_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+    } else {
+      setSelectedWorkers([...selectedWorkers, user_serial]);
+    }
+  };
+
+  const toggleSelecting = () => {
+    if (isSelecting) {
+      setSelectedWorkers([]);
+    }
+    setIsSelecting(!isSelecting);
+    setIsAllSelected(false);
+  };
+
+  const handleWorkerClick = (user_serial: number) => {
+    navigate(`/housepost/${user_serial}`);
+  };
+
+  const handleDeleteConfirmation = () => {
+    setIsModalOpen(true);
+  };
+
+  return (
+    <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
@@ -204,8 +187,8 @@ export default function MyHousePostList() {
           전체 {list.length}
         </div>
 
-       <div className="w-full flex justify-between items-center text-zp-2xs">
-         {isSelecting && (
+        <div className="w-full flex justify-between items-center text-zp-2xs">
+          {isSelecting && (
             <div
               className="flex items-center space-x-2 cursor-pointer"
               onClick={toggleAllSelected}
@@ -287,7 +270,7 @@ export default function MyHousePostList() {
           ))}
         </div>
       </div>
-    {isModalOpen && (
+      {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">
             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
@@ -317,5 +300,4 @@ export default function MyHousePostList() {
       )}
     </>
   );
-}*/
 }

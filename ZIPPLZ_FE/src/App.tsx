@@ -39,7 +39,7 @@ import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import SocialLoginCheck from './pages/common/login/SocialLoginCheck';
 import FindIdPw from './pages/common/login/find/FindIdPw';
-// import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
+import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
 import MyQuestionPostList from './pages/common/mypage/postpage/MyQuestionPostList';
 import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
 import MyHousePostScrapList from './pages/common/mypage/scrappage/MyHousePostScrapList';

@@ -102,10 +102,10 @@ export default function MyFindWorkerScrapList() {
     navigate(`/findworkers/${user_serial}`);
   };
 
-//   const handleNavigate = (path: string) => {
-//     navigate(path);
-//     setIsDropdownOpen(false); // 드롭다운을 닫습니다.
-//   };
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+  };
 
   return (
     <>
@@ -310,5 +310,4 @@ export default function MyFindWorkerScrapList() {
       )}
     </>
   );
-}*/
 }

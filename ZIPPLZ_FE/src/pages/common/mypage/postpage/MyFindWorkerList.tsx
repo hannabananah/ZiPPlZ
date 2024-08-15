@@ -10,6 +10,8 @@ import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 import { useMyPageStore } from '@stores/myPageStore';
 
+type SortOption = '평점순' | '최신순' | '과거순';
+
 export interface WorkerInfo {
   board_serial: number;
   board_type: number;
@@ -33,62 +35,6 @@ export interface WorkerInfo {
   img: string;
   user_name: string; // user_name 속성 추가
 }
-
-// const list: WorkerInfo[] = [
-//   {
-//     user_serial: 1,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '전기',
-//     career: 3,
-//     certificated_badge: 1,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 2,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '철거',
-//     career: 4,
-//     certificated_badge: 0,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 3,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '설비',
-//     career: 5,
-//     certificated_badge: 1,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 4,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '타일',
-//     career: 6,
-//     certificated_badge: 0,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   // 다른 worker 정보 추가
-// ];
 
 export default function MyFindWorkerList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -161,6 +107,14 @@ export default function MyFindWorkerList() {
     loadWorkers();
   }, [fetchMyFindWorkerList]);
 
+  const handleWorkerSelect = (user_serial: number) => {
+    if (selectedWorkers.includes(user_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+    } else {
+      setSelectedWorkers([...selectedWorkers, user_serial]);
+    }
+  };
+
   const handleGoBack = () => {
     navigate('/mypage');
   };
@@ -182,24 +136,20 @@ export default function MyFindWorkerList() {
     setIsAllSelected(!isAllSelected);
   };
 
-//   const toggleSelecting = () => {
-//     if (isSelecting) {
-//       setSelectedWorkers([]);
-//     }
-//     setIsSelecting(!isSelecting);
-//     setIsAllSelected(false);
-//   };
+  const toggleSelecting = () => {
+    if (isSelecting) {
+      setSelectedWorkers([]);
+    }
+    setIsSelecting(!isSelecting);
+    setIsAllSelected(false);
+  };
 
-//   const handleDeleteConfirmation = () => {
-//     setIsModalOpen(true);
-//   };
-
-//   const handleWorkerClick = (user_serial: number) => {
-//     navigate(`/findworkers/${user_serial}`);
-//   };
+  const handleDeleteConfirmation = () => {
+    setIsModalOpen(true);
+  };
 
   const handleWorkerClick = (user_serial: number) => {
-    navigate(`/workers/findworker/${user_serial}`);
+    navigate(`/findworkers/${user_serial}`);
   };
 
   const handleNavigate = (path: string) => {
@@ -258,8 +208,7 @@ export default function MyFindWorkerList() {
               </button>
             </div>
           )}
-        </div>*/
-}
+        </div>
 
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
@@ -377,8 +326,7 @@ export default function MyFindWorkerList() {
             </div>
           ))}
         </div>
-      </div>*/
-}
+      </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -410,5 +358,4 @@ export default function MyFindWorkerList() {
       )}
     </>
   );
-}*/
 }
