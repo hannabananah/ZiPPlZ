@@ -9,15 +9,13 @@ import Selectbar from '@components/common/Selectbar';
 import HousePostListItem from '@components/community/HousePostListItem';
 import { useHousePostStore } from '@stores/housePostStore';
 
-// import HousePostDetail from './HousePostDetail';
-
 type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function HousePost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
-  const [bookmarkCounts] = useState<{
+  const [bookmarkCounts, setBookmarkCounts] = useState<{
     [key: number]: number;
   }>({}); // 각 포스트의 북마크 수를 저장하는 상태
 
@@ -52,12 +50,12 @@ export default function HousePost() {
     setInputValue(e.target.value);
   };
 
-  // const handleBookmarkChange = (postId: number, isBookmarked: boolean) => {
-  //   setBookmarkCounts((prev) => ({
-  //     ...prev,
-  //     [postId]: (prev[postId] || 0) + (isBookmarked ? 1 : -1),
-  //   }));
-  // };
+  const handleBookmarkChange = (postId: number, isBookmarked: boolean) => {
+    setBookmarkCounts((prev) => ({
+      ...prev,
+      [postId]: (prev[postId] || 0) + (isBookmarked ? 1 : -1),
+    }));
+  };
 
   return (
     <>

@@ -37,6 +37,9 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
     addComment,
     addReply,
     deleteComment,
+    addWish,
+    deleteWish,
+    searchWish,
     selectedWorkers,
     setSelectedWorkers,
   } = useHousePostStore();
@@ -44,13 +47,14 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   useEffect(() => {
     if (id) {
       fetchPostDetails(Number(id)).then((data) => {
-        // setIsBookmarked(data?.wish_cnt > 0);
-        if (data && data.tags) {
-          // setSelectedWorkers(data.tags); // fetchPostDetails에서 이미 설정된 selectedWorkers 사용
-        }
+        // 관심 목록 상태 확인
+        const token = `Bearer ${localStorage.getItem('token')}`;
+        searchWish(token, Number(id)).then((response) => {
+          setIsBookmarked(response.wish_count > 0);
+        });
       });
     }
-  }, [id, fetchPostDetails, setSelectedWorkers]);
+  }, [id, fetchPostDetails, searchWish, setSelectedWorkers]);
 
   if (!postDetails) {
     return <div>Loading...</div>;
@@ -61,9 +65,26 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   };
 
   const handleBookmarkClick = async () => {
+    const token = `Bearer ${localStorage.getItem('token')}`;
     const newBookmarkState = !isBookmarked;
-    setIsBookmarked(newBookmarkState);
-    onBookmarkChange();
+
+    if (newBookmarkState) {
+      const { code } = await addWish(token, Number(id), 2);
+      if (code === 200) {
+        setIsBookmarked(true);
+        onBookmarkChange();
+      } else {
+        alert('관심 목록 추가에 실패했습니다.');
+      }
+    } else {
+      const { code } = await deleteWish(token, Number(id));
+      if (code === 200) {
+        setIsBookmarked(false);
+        onBookmarkChange();
+      } else {
+        alert('관심 목록 삭제에 실패했습니다.');
+      }
+    }
   };
 
   const handleEditClick = () => {

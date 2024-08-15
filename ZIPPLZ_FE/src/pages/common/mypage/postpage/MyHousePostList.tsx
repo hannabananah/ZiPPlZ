@@ -221,7 +221,7 @@ export default function MyHousePostList() {
 
         {/* workerInfoListitem 컴포넌트 */}
         {/* 화면 width 따라 grid 개수 변화 */}
-        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
+        <div className="w-full mt-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
           {list.map((post) => (
             <div
               key={post.board_serial}

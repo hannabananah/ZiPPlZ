@@ -5,9 +5,9 @@ import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoIosClose, IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
+import FindWorkerListItem from '@/components/worker/findworker/FindWorkerListItem';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
-import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 import { useMyPageStore } from '@stores/myPageStore';
 
 export interface WorkerInfo {
@@ -169,8 +169,8 @@ export default function MyFindWorkerList() {
             width="full"
             height={2}
             className="pl-8"
-            fontSize=""
-            radius=""
+            fontSize="sm"
+            radius="big"
           />
           <IoIosClose
             size={30}
@@ -271,7 +271,7 @@ export default function MyFindWorkerList() {
                 }`}
                 onClick={() => handleWorkerClick(worker.board_serial)}
               >
-                <WorkerInfoListItem worker={worker} />
+                <FindWorkerListItem board={worker} />
               </div>
             </div>
           ))}
