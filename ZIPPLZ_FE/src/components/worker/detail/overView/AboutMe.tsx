@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { HiOutlineUser } from 'react-icons/hi2';
 
 export default function AboutMe() {
-  // 모달 열림, 한줄 소개 입력 값, 임시 값 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [introduce, setIntroduce] =
     useState<string>('한줄 소개가 여기에 들어갑니다.');
@@ -10,12 +9,10 @@ export default function AboutMe() {
   const [tempIntroduce, setTempIntroduce] = useState<string>(introduce);
   const [tempAsPeriod, setTempAsPeriod] = useState<string>(asPeriod);
 
-  // 모달 닫기
   const handleCloseModal = () => {
     setIsModalOpen(false);
   };
 
-  // 저장 버튼
   const handleSave = () => {
     setIntroduce(tempIntroduce);
     setAsPeriod(tempAsPeriod);
@@ -24,38 +21,38 @@ export default function AboutMe() {
 
   return (
     <>
-      <div className="mt-6 w-full h-6 font-bold text-zp-xs flex items-center justify-start space-x-1">
+      <div className="flex items-center justify-start w-full h-6 mt-6 space-x-1 font-bold text-zp-xs">
         <div>
           <HiOutlineUser />
         </div>
         <div>About Me</div>
       </div>
 
-      <div className="relative w-full bg-zp-white p-4 rounded-zp-radius-big">
-        <div className="text-zp-2xs flex flex-col space-y-2">
+      <div className="relative w-full p-4 bg-zp-white rounded-zp-radius-big">
+        <div className="flex flex-col space-y-2 text-zp-2xs">
           <div className="flex items-center">
             <div className="w-20">나이</div>
-            <div className="border-black h-full mx-2"></div>
+            <div className="h-full mx-2 border-black"></div>
             <div className="flex-grow text-zp-gray">30</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">E-MAIL</div>
-            <div className="border-black h-full mx-2"></div>
+            <div className="h-full mx-2 border-black"></div>
             <div className="flex-grow text-zp-gray">saffy@ssafy.com</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">경력</div>
-            <div className="border-black h-full mx-2"></div>
+            <div className="h-full mx-2 border-black"></div>
             <div className="flex-grow text-zp-gray">남성</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">누적 시공수</div>
-            <div className="border-black h-full mx-2"></div>
+            <div className="h-full mx-2 border-black"></div>
             <div className="flex-grow text-zp-gray">{introduce}</div>
           </div>
           <div className="flex items-center">
             <div className="w-20">A/S 보증 기간</div>
-            <div className="border-black h-full mx-2"></div>
+            <div className="h-full mx-2 border-black"></div>
             <div className="flex-grow text-zp-gray">{asPeriod}</div>
           </div>
         </div>
@@ -63,7 +60,7 @@ export default function AboutMe() {
 
       {/* 모달 창 */}
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           {/* 배경 오버레이 */}
           <div
             className="absolute inset-0 bg-black bg-opacity-50"
@@ -71,7 +68,7 @@ export default function AboutMe() {
           ></div>
           {/* 모달 창 */}
           <div className="border border-zp-main-color rounded-zp-radius-big bg-zp-white p-6 shadow-lg w-[300px]">
-            <div className="text-lg font-bold mb-4">
+            <div className="mb-4 text-lg font-bold">
               한줄소개 및 A/S 기간 수정
             </div>
             <div className="mb-4">
@@ -80,7 +77,7 @@ export default function AboutMe() {
                 type="text"
                 value={tempIntroduce}
                 onChange={(e) => setTempIntroduce(e.target.value)}
-                className="border border-gray-300 p-2 w-full"
+                className="w-full p-2 border border-gray-300"
               />
             </div>
             <div className="mb-4">
@@ -88,7 +85,7 @@ export default function AboutMe() {
               <select
                 value={tempAsPeriod}
                 onChange={(e) => setTempAsPeriod(e.target.value)}
-                className="border border-gray-300 p-2 w-full"
+                className="w-full p-2 border border-gray-300"
               >
                 <option value="" disabled>
                   A/S 기간을 선택해주세요
@@ -103,13 +100,13 @@ export default function AboutMe() {
             <div className="flex justify-end">
               <button
                 onClick={handleCloseModal}
-                className="bg-gray-300 text-black px-4 py-2 rounded mr-2"
+                className="px-4 py-2 mr-2 text-black bg-gray-300 rounded"
               >
                 취소
               </button>
               <button
                 onClick={handleSave}
-                className="bg-blue-500 text-white px-4 py-2 rounded"
+                className="px-4 py-2 text-white bg-blue-500 rounded"
               >
                 저장
               </button>

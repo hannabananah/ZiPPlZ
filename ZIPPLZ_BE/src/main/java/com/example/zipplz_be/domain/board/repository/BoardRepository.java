@@ -100,4 +100,15 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             "SET hit = hit + 1 " +
             "WHERE board_serial = :boardSerial", nativeQuery = true)
     void updateboardhit(@Param("boardSerial") int boardSerial);
+
+    @Modifying
+    @Transactional
+    @Query(value = "INSERT INTO BoardUserAddress(board_serial, user_address) " +
+            "VALUES(:boardSerial, :userAddress)", nativeQuery = true)
+    int addBoardUserAddress(@Param("boardSerial") int boardSerial, @Param("userAddress") String userAddress);
+
+    @Query(value = "SELECT user_address " +
+            "FROM BoardUserAddress " +
+            "WHERE board_serial = :boardSerial", nativeQuery = true)
+    String getUserAddress(@Param("boardSerial") int boardSerial);
 }

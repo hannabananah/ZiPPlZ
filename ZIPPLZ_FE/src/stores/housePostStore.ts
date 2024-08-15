@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
-// 자랑글 인터페이스
+const BASE_URL: string = 'http://localhost:5000/';
+
 interface HousePost {
   board_serial: number;
   board_type: number;
@@ -15,7 +16,6 @@ interface HousePost {
   comment_cnt: number;
 }
 
-// 댓글 인터페이스
 interface Comment {
   board_serial: number;
   comment_content: string;
@@ -23,7 +23,6 @@ interface Comment {
   order_number: number;
 }
 
-// 자랑글 상세 정보 인터페이스
 interface HousePostDetails {
   title: string;
   userSerial: number;
@@ -68,7 +67,6 @@ interface HousePostDetails {
   }[];
 }
 
-// 시공업자 정보 인터페이스
 interface WorkerInfo {
   portfolio_serial: number;
   worker: number;
@@ -83,15 +81,14 @@ interface WorkerInfo {
   img: string | null;
 }
 
-// 자랑글 상태 인터페이스
 interface HousePostState {
   title: string;
   boardContent: string;
   images: File[];
   housePosts: HousePost[];
   postDetails: HousePostDetails | null;
-  selectedWorkers: WorkerInfo[]; // 추가된 전역 상태
-  setSelectedWorkers: (workers: WorkerInfo[]) => void; // 전역 상태 업데이트 함수
+  selectedWorkers: WorkerInfo[];
+  setSelectedWorkers: (workers: WorkerInfo[]) => void;
   setTitle: (title: string) => void;
   setBoardContent: (content: string) => void;
   setImages: (images: File[]) => void;
@@ -148,8 +145,8 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   images: [],
   housePosts: [],
   postDetails: null,
-  selectedWorkers: [], // 초기값 설정
-  setSelectedWorkers: (workers) => set({ selectedWorkers: workers }), // 상태 업데이트 함수
+  selectedWorkers: [],
+  setSelectedWorkers: (workers) => set({ selectedWorkers: workers }),
 
   setTitle: (title) => set({ title }),
   setBoardContent: (boardContent) => set({ boardContent }),
@@ -157,7 +154,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   fetchHousePosts: async () => {
     try {
-      const response = await axios.post('/api/board/showoff/list');
+      const response = await axios.post(`${BASE_URL}board/showoff/list`);
       set({ housePosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch house posts:', error);
@@ -166,7 +163,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   fetchPostDetails: async (id: number) => {
     try {
-      const response = await axios.post(`/api/board/showoff/list/${id}`);
+      const response = await axios.post(`${BASE_URL}board/showoff/list/${id}`);
 
       if (response.data.proc.code === 200) {
         const data = response.data.data;
@@ -217,7 +214,6 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
           })),
         };
 
-        // Worker 정보가 postDetails.tags에 포함되어 있으므로 이를 selectedWorkers 상태로 설정
         set({
           postDetails,
           images: data.board_images.map((img: any) => img.saveFile),
@@ -231,8 +227,8 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
             field_name: tag.field_name,
             career: tag.career,
             certificated_badge: tag.certificated_badge,
-            locations: [], // 필요에 따라 location 데이터를 추가
-            img: null, // 필요에 따라 이미지 데이터를 추가
+            locations: [],
+            img: null,
           })),
         });
         return postDetails;
@@ -251,15 +247,14 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   createPost: async (token: string, formData: FormData) => {
     try {
-      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
       const hasNullImages = formData.get('images') === 'null';
       if (hasNullImages) {
-        formData.delete('images'); // 기존 'images' 필드를 제거
-        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+        formData.delete('images');
+        formData.append('images', '');
       }
 
       const response = await axios.post(
-        'http://localhost:5000/board/showoff/add',
+        `${BASE_URL}board/showoff/add`,
         formData,
         {
           headers: {
@@ -289,12 +284,12 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
     postData: {
       title: string;
       board_content: string;
-      selectedWorkers?: { portfolio_serial: number; worker: number }[]; // optional 필드로 지정
+      selectedWorkers?: { portfolio_serial: number; worker: number }[];
     }
   ) => {
     try {
       const response = await axios.patch(
-        `/api/board/showoff/list/${id}`,
+        `${BASE_URL}board/showoff/list/${id}`,
         postData,
         {
           headers: {
@@ -324,7 +319,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   deletePost: async (token: string, id: number) => {
     try {
-      const response = await axios.delete(`/api/board/delete/${id}`, {
+      const response = await axios.delete(`${BASE_URL}board/delete/${id}`, {
         headers: {
           Authorization: token,
         },
@@ -347,7 +342,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addComment: async (token: string, comment: Comment) => {
     try {
       const response = await axios.post(
-        '/api/comment/add',
+        `${BASE_URL}comment/add`,
         { ...comment },
         {
           headers: {
@@ -370,7 +365,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addReply: async (token: string, reply: Comment) => {
     try {
       const response = await axios.post(
-        '/api/comment/add',
+        `${BASE_URL}comment/add`,
         { ...reply },
         {
           headers: {
@@ -396,7 +391,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   ): Promise<{ code: number; message: string }> => {
     try {
       const response = await axios.delete(
-        `/api/comment/delete/${commentSerial}`,
+        `${BASE_URL}comment/delete/${commentSerial}`,
         {
           headers: {
             Authorization: token,
@@ -418,7 +413,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   searchWorkers: async (searchContent: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/board/find/findworker/${searchContent}`
+        `${BASE_URL}board/find/findworker/${searchContent}`
       );
 
       if (response.data.proc.code === 200) {
@@ -436,7 +431,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addWish: async (token, wish_serial, wish_type) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/wish/addWish',
+        `${BASE_URL}wish/addWish`,
         { wish_serial, wish_type },
         {
           headers: {
@@ -454,15 +449,12 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   deleteWish: async (token, wish_serial) => {
     try {
-      const response = await axios.delete(
-        'http://localhost:5000/wish/deleteWish',
-        {
-          headers: {
-            Authorization: token,
-          },
-          data: { wish_serial },
-        }
-      );
+      const response = await axios.delete(`${BASE_URL}wish/deleteWish`, {
+        headers: {
+          Authorization: token,
+        },
+        data: { wish_serial },
+      });
       const { code, message } = response.data.proc;
       return { code, message };
     } catch (error) {
@@ -474,7 +466,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   searchWish: async (token, wish_serial) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/wish/searchWish',
+        `${BASE_URL}wish/searchWish`,
         { wish_serial },
         {
           headers: {

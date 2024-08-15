@@ -61,7 +61,7 @@ export const wirteWorkerReview = async (
   data: { reviewComment: string }
 ) => {
   return await axiosInstance.post(
-    END_POINT.PORTFOLIO_REVIEW(customerSerial),
+    END_POINT.PORTFOLIO_REVIEW(customerSerial) + '/reviewcomment',
     data,
     {
       headers: {

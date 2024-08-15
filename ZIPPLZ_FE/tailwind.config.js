@@ -36,10 +36,12 @@ export default {
       'zp-radius-btn': '0.375rem',
       'zp-radius-full': '9999px',
       'zp-radius-none': '0px',
+      'zp-radius-sm': '3px',
     },
     dropShadow: {
       'zp-normal': '0 3px 6px rgba(0, 0, 0, 0.1)',
       'zp-deep': '0 3px 3px rgb(0, 0, 0, 0.3)',
+      'zp-slight': '0 1px 2px rgb(60, 60, 60, 0.1)',
     },
     fontFamily: {
       nanum: [

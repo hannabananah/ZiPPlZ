@@ -44,13 +44,11 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
     null
   );
 
-  // Fetch worker schedule from API
   const fetchWorkerSchedule = async (workerSerial: number) => {
     const response = await getWorkerSchedule(workerSerial);
     setDateList(response.data.data);
   };
 
-  // Fetch worker schedule detail from API
   const fetchWorkerScheduleDetail = async (
     workerSerial: number,
     workSerial: number
@@ -59,7 +57,6 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
     setDateDetail(response.data.data);
   };
 
-  // Update state and localStorage when component mounts or workerSerial changes
   useEffect(() => {
     if (workerSerial && workerSerial > 0) {
       fetchWorkerSchedule(workerSerial);
@@ -71,7 +68,6 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
     };
   }, [workerSerial]);
 
-  // Listen for storage events to handle cross-tab updates
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
       if (event.key === 'workSerial') {
@@ -86,7 +82,6 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
     };
   }, []);
 
-  // Fetch details when selectedWorkSerial changes
   useEffect(() => {
     if (
       workerSerial &&
@@ -98,7 +93,6 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
     }
   }, [workerSerial, selectedWorkSerial, id, loginUser]);
 
-  // Handle calendar event click
   const handleCalendarEventClick = (newWorkSerial: string) => {
     setSelectedWorkSerial(newWorkSerial);
     localStorage.setItem('workSerial', newWorkSerial);
@@ -112,7 +106,6 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
           room.workerName === loginUser?.userName &&
           room.customerName === dateDetail.customerName
       )[0].chatroomSerial;
-      console.log(chatRoomSerial);
       navigate(`/chatrooms/${chatRoomSerial}`);
     }
   };
@@ -130,7 +123,7 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
               endDate: item.endDate.split('T')[0],
             }))
           }
-          onEventClick={handleCalendarEventClick} // 이벤트 클릭 핸들러 추가
+          onEventClick={handleCalendarEventClick}
         />
         {id &&
           parseInt(id) === loginUser?.userSerial &&
@@ -147,7 +140,7 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
                 {formatDate(dateDetail.endDate)}
               </p>
               <p>출장 장소 : {dateDetail.address}</p>
-              <div className="flex flex-nowrap gap-2 overflow-auto w-full h-auto">
+              <div className="flex w-full h-auto gap-2 overflow-auto flex-nowrap">
                 {dateDetail.planImageList.map((image) => (
                   <img
                     key={image.saveFile}
@@ -157,7 +150,7 @@ export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
                   />
                 ))}
               </div>
-              <div className="w-full grid grid-cols-2 gap-4">
+              <div className="grid w-full grid-cols-2 gap-4">
                 <Button
                   buttonType="normal"
                   children="채팅하기"

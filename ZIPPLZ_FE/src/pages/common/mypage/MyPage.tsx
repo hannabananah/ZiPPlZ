@@ -43,15 +43,15 @@ export default function MyPage() {
   } = useMyPageStore();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewImg, setPreviewImg] = useState<string | null>(null); // 이미지 미리보기용 상태
-  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null); // 아이콘 선택 상태
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
+  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/member/login'); // 토큰이 없으면 로그인 페이지로 이동
+      navigate('/member/login');
     } else {
-      fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
+      fetchMyPageData();
     }
   }, [fetchMyPageData, navigate]);
 
@@ -95,9 +95,9 @@ export default function MyPage() {
     setShowLogoutModal(false);
   };
 
-  // 로그아웃: localstorage에서 해당 유저 토큰 제거 후 로그인 페이지로 이동
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('login-user');
     setShowLogoutModal(false);
     navigate('/member/login');
   };
@@ -121,14 +121,13 @@ export default function MyPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImg(reader.result as string);
-        setSelectedIcon(null); // 이미지 파일이 선택되면 아이콘 선택을 초기화
+        setSelectedIcon(null);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const convertIconToBlob = async (IconComponent: JSX.Element) => {
-    // ReactDOMServer를 이용하여 IconComponent를 문자열로 변환
     const svgString = new XMLSerializer().serializeToString(
       new DOMParser().parseFromString(
         `<svg xmlns="http://www.w3.org/2000/svg">${IconComponent.props.children}</svg>`,
@@ -136,7 +135,6 @@ export default function MyPage() {
       ).documentElement
     );
 
-    // 변환된 SVG 문자열을 Blob으로 변환
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     return blob;
   };
@@ -144,32 +142,32 @@ export default function MyPage() {
   const handleSaveProfile = async () => {
     if (selectedFile) {
       await uploadProfileImage(selectedFile);
-      await fetchMyPageData(); // 프로필 이미지 업데이트 후 다시 불러오기
-      setPreviewImg(null); // 미리보기 이미지 초기화
+      await fetchMyPageData();
+      setPreviewImg(null);
     } else if (selectedIcon) {
       const iconBlob = await convertIconToBlob(selectedIcon);
-      await uploadProfileImage(iconBlob); // 아이콘을 이미지로 변환하여 저장
+      await uploadProfileImage(iconBlob);
       await fetchMyPageData();
     }
     setShowProfileModal(false);
   };
 
   const handleClearProfile = async () => {
-    await deleteProfileImage(); // 프로필 이미지를 삭제
-    setPreviewImg(null); // 미리보기 이미지 초기화
-    setSelectedIcon(null); // 아이콘 선택 초기화
+    await deleteProfileImage();
+    setPreviewImg(null);
+    setSelectedIcon(null);
   };
 
   const handleIconSelect = (IconComponent: JSX.Element) => {
     setSelectedIcon(IconComponent);
-    setPreviewImg(null); // 아이콘을 선택하면 미리보기 이미지 초기화
-    setSelectedFile(null); // 아이콘을 선택하면 이미지 파일 선택을 초기화
+    setPreviewImg(null);
+    setSelectedFile(null);
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-6">
+    <div className="flex items-start justify-center min-h-screen p-6">
       <div className="w-full">
-        <div className="flex items-center justify-between w-full relative">
+        <div className="relative flex items-center justify-between w-full">
           <div className="flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
@@ -177,24 +175,24 @@ export default function MyPage() {
               size={20}
             />
           </div>
-          <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-3xl font-bold text-center">
+          <div className="absolute font-bold text-center transform -translate-x-1/2 left-1/2 text-zp-3xl">
             마이페이지
           </div>
         </div>
 
-        <div className="flex justify-center w-full mt-4 relative">
+        <div className="relative flex justify-center w-full mt-4">
           <div className="flex flex-col items-center">
-            <div className="w-36 h-36 relative">
+            <div className="relative w-36 h-36">
               {previewImg ? (
-                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+                <div className="flex items-center justify-center w-full h-full overflow-hidden rounded-zp-radius-full">
                   <img
                     src={previewImg}
                     alt="Profile"
-                    className="w-full h-full object-cover rounded-zp-radius-full"
+                    className="object-cover w-full h-full rounded-zp-radius-full"
                   />
                 </div>
               ) : selectedIcon ? (
-                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+                <div className="flex items-center justify-center w-full h-full overflow-hidden rounded-zp-radius-full">
                   {selectedIcon}
                 </div>
               ) : profileImg ? (
@@ -202,30 +200,30 @@ export default function MyPage() {
                   <img
                     src={profileImg}
                     alt="Profile"
-                    className="w-full h-full object-cover rounded-zp-radius-full"
+                    className="object-cover w-full h-full rounded-zp-radius-full"
                   />
                 </div>
               ) : (
-                <div className="w-full h-full rounded-zp-radius-full overflow-hidden bg-zp-white flex items-center justify-center">
+                <div className="flex items-center justify-center w-full h-full overflow-hidden rounded-zp-radius-full bg-zp-white">
                   <CgProfile size={144} />
                 </div>
               )}
               <div
-                className="absolute bottom-0 right-0 bg-zp-white rounded-zp-radius-full p-1 cursor-pointer"
+                className="absolute bottom-0 right-0 p-1 cursor-pointer bg-zp-white rounded-zp-radius-full"
                 onClick={handleOpenProfileModal}
               >
                 <MdOutlinePhotoCamera size={24} />
               </div>
             </div>
-            <div className="w-36 h-8 grid place-items-center text-zp-lg font-bold">
-              {role === 'customer' ? name : '익명 사용자'}
+            <div className="grid h-8 font-bold w-36 place-items-center text-zp-lg">
+              {name}
             </div>
           </div>
         </div>
 
-        <hr className="mt-6 w-full border-zp-light-gray" />
+        <hr className="w-full mt-6 border-zp-light-gray" />
 
-        <div className="mt-6 flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mt-6">
           <div className="text-zp-lg">내 정보 수정하기</div>
           <div>
             <HiChevronRight
@@ -235,7 +233,7 @@ export default function MyPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between w-full ">
+        <div className="flex items-center justify-between w-full mt-6 ">
           <div className="text-zp-lg">비밀번호 변경</div>
           <div>
             <HiChevronRight
@@ -245,7 +243,7 @@ export default function MyPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between w-full ">
+        <div className="flex items-center justify-between w-full mt-6 ">
           <div className="text-zp-lg">내가 쓴 글 목록</div>
           <div>
             <HiChevronRight
@@ -255,7 +253,7 @@ export default function MyPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between w-full ">
+        <div className="flex items-center justify-between w-full mt-6 ">
           <div className="text-zp-lg">스크랩 글 목록</div>
           <div>
             <HiChevronRight
@@ -267,7 +265,7 @@ export default function MyPage() {
 
         {role === 'customer' && (
           <>
-            <div className="mt-6 flex items-center justify-between w-full">
+            <div className="flex items-center justify-between w-full mt-6">
               <div className="text-zp-lg">관심있는 시공업자 목록</div>
               <div>
                 <HiChevronRight
@@ -279,9 +277,9 @@ export default function MyPage() {
           </>
         )}
 
-        <hr className="mt-6 w-full border-zp-light-gray" />
+        <hr className="w-full mt-6 border-zp-light-gray" />
 
-        <div className="mt-6 flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mt-6">
           <div className="text-zp-lg">이용약관 / 개인정보처리방침</div>
           <div>
             <HiChevronRight
@@ -291,18 +289,18 @@ export default function MyPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mt-6">
           <div className="text-zp-lg">버전</div>
           <div className="flex align-middle">
             <div className="px-2">1.1.0</div>
             <HiChevronRight
-              className="cursor-pointer relative top-1"
+              className="relative cursor-pointer top-1"
               onClick={handleNavigateToVersion}
             />
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mt-6">
           <div className="text-zp-lg">로그아웃</div>
           <div>
             <HiChevronRight
@@ -312,7 +310,7 @@ export default function MyPage() {
           </div>
         </div>
 
-        <div className="mt-6 flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mt-6">
           <div className="text-zp-lg">탈퇴하기</div>
           <div>
             <HiChevronRight
@@ -325,20 +323,20 @@ export default function MyPage() {
 
       {showLogoutModal && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-zp-black"
           onClick={handleCloseModal}
         >
           <div
             className="px-8 h-[250px] bg-zp-white rounded-zp-radius-big p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="p-6 text-zp-3xl font-bold flex justify-center">
+            <h2 className="flex justify-center p-6 font-bold text-zp-3xl">
               로그아웃
             </h2>
-            <p className="p-6 text-zp-xl font-bold flex justify-center">
+            <p className="flex justify-center p-6 font-bold text-zp-xl">
               정말 로그아웃을 하시겠습니까?
             </p>
-            <div className="mt-2 flex font-bold justify-center space-x-2">
+            <div className="flex justify-center mt-2 space-x-2 font-bold">
               <button
                 className="w-full px-4 py-2 rounded-zp-radius-big bg-zp-light-beige text-zp-xs "
                 onClick={handleCloseModal}
@@ -358,23 +356,23 @@ export default function MyPage() {
 
       {showProfileModal && (
         <div
-          className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-zp-black"
           onClick={handleCloseProfileModal}
         >
           <div
-            className="bg-zp-sub-color rounded-zp-radius-big p-6 w-80"
+            className="p-6 bg-zp-sub-color rounded-zp-radius-big w-80"
             onClick={(e) => e.stopPropagation()}
           >
-            <h2 className="text-zp-2xl font-bold flex justify-center mb-4">
+            <h2 className="flex justify-center mb-4 font-bold text-zp-2xl">
               프로필 이미지 선택
             </h2>
             {previewImg || selectedIcon ? (
-              <div className="w-24 h-24 mx-auto mb-4 rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+              <div className="flex items-center justify-center w-24 h-24 mx-auto mb-4 overflow-hidden rounded-zp-radius-full">
                 {previewImg ? (
                   <img
                     src={previewImg}
                     alt="Selected Profile"
-                    className="w-full h-full object-cover"
+                    className="object-cover w-full h-full"
                   />
                 ) : selectedIcon ? (
                   selectedIcon
@@ -383,7 +381,7 @@ export default function MyPage() {
             ) : null}
             <div className="flex justify-center mb-4">
               <div className="grid grid-cols-5 gap-2">
-                <label className="bg-zp-white rounded-zp-radius-full flex items-center justify-center rounded-full w-12 h-12 cursor-pointer">
+                <label className="flex items-center justify-center w-12 h-12 rounded-full cursor-pointer bg-zp-white rounded-zp-radius-full">
                   <MdOutlinePhotoCamera size={24} />
                   <input
                     type="file"
@@ -395,7 +393,7 @@ export default function MyPage() {
                 {icons.map((IconComponent, index) => (
                   <div
                     key={index}
-                    className="w-12 h-12 bg-zp-white rounded-zp-radius-full  cursor-pointer flex items-center justify-center"
+                    className="flex items-center justify-center w-12 h-12 cursor-pointer bg-zp-white rounded-zp-radius-full"
                     onClick={() =>
                       handleIconSelect(<IconComponent size={24} />)
                     }
@@ -406,15 +404,15 @@ export default function MyPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex justify-center space-x-2">
+            <div className="flex justify-center mt-6 space-x-2">
               <button
-                className="w-full h-10 bg-zp-main-color rounded-zp-radius-big font-bold"
+                className="w-full h-10 font-bold bg-zp-main-color rounded-zp-radius-big"
                 onClick={handleClearProfile}
               >
                 지우기
               </button>
               <button
-                className="w-full h-10 bg-zp-main-color rounded-zp-radius-big font-bold"
+                className="w-full h-10 font-bold bg-zp-main-color rounded-zp-radius-big"
                 onClick={handleSaveProfile}
               >
                 저장

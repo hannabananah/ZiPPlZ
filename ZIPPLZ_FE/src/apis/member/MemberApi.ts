@@ -90,7 +90,7 @@ export const requestLogin = async (email: string, pw: string) => {
     END_POINT.LOGIN,
     {},
     {
-      withCredentials: true,
+      // withCredentials: true,
       headers: {
         email: email,
         password: pw,
@@ -131,6 +131,22 @@ export const updateContract = async (
 ) => {
   return await axiosInstance.post(
     `contract/${chatRoomSerial}/modifyrequest`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
+};
+//계약서 수정 메시지 요청
+
+export const sendUpdateContract = async (
+  chatRoomSerial: number,
+  data: string
+) => {
+  return await axiosInstance.post(
+    `contract/${chatRoomSerial}/modifiedmessage`,
     data,
     {
       headers: {

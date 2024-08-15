@@ -4,5 +4,6 @@ public enum MessageType {
     TALK,
     IMAGE,
     FILE,
-    UNREAD_MESSAGE_COUNT_ALARM
+    UNREAD_MESSAGE_COUNT_ALARM,
+    CONTRACT
 }

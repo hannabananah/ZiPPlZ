@@ -23,7 +23,7 @@ const DateInput: React.FC<DateInputProps> = ({
   radius = 'none',
 }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    let inputValue = e.target.value.replace(/[^0-9]/g, ''); // 숫자 이외의 문자 제거
+    let inputValue = e.target.value.replace(/[^0-9]/g, '');
 
     if (inputValue.length > 8) {
       inputValue = inputValue.slice(0, 8);

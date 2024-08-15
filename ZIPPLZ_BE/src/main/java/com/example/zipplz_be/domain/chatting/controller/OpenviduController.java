@@ -181,17 +181,27 @@ public class OpenviduController {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "그런 세션은 없습니다.");
             } else {
-                ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-                Connection connection = session.createConnection(properties);
-
                 CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
                 int userSerial = customUserDetails.getUserSerial();
 
-                //토큰 암호화 필요?
-                openviduService.createConnection(connection.getToken(), userSerial, (Integer) params.get("chatroomSerial"));
+                Boolean flag = openviduService.checkToken(userSerial, (Integer) params.get("chatroomSerial"));
 
-                status = HttpStatus.OK;
-                responseDTO = new ResponseDTO<>(status.value(), "응답 성공", connection.getToken());
+                //해당 유저 토큰이 db에 없다면?
+                if(flag == false) {
+                    //발급
+                    ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
+                    Connection connection = session.createConnection(properties);
+
+                    //토큰 암호화 필요?
+                    openviduService.createConnection(connection.getToken(), userSerial, (Integer) params.get("chatroomSerial"));
+
+                    status = HttpStatus.OK;
+                    responseDTO = new ResponseDTO<>(status.value(), "응답 성공", connection.getToken());
+                }
+                else {
+                    status = HttpStatus.BAD_REQUEST;
+                    responseDTO = new ResponseDTO<>(status.value(), "이미 토큰이 존재합니다.");
+                }
             }
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;

@@ -11,7 +11,6 @@ interface Work {
   endDate: string;
   field: string;
 }
-// 더미 데이터 타입 정의
 interface Event {
   title: string;
   start: Date;
@@ -22,18 +21,21 @@ interface Props {
   workList: any | Work[];
   onEventClick?: (workSerial: string) => void;
 }
+
+const predefinedColors = [
+  '#fefff4',
+  '#f6f8ff',
+  '#FFFDF7',
+  '#fff5f5',
+  '#f8fff5',
+  '#fbf7ff',
+];
+
 const getRandomColor = (): string => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+  const randomIndex = Math.floor(Math.random() * predefinedColors.length);
+  return predefinedColors[randomIndex];
 };
 const ScheduleCalendar = function ({ workList, onEventClick }: Props) {
-  useEffect(() => {
-    console.log(workList);
-  }, []);
   const [eventList, setEventList] = useState<Event[]>([]);
   useEffect(() => {
     if (Array.isArray(workList)) {
@@ -67,21 +69,21 @@ const ScheduleCalendar = function ({ workList, onEventClick }: Props) {
           const adjustedEnd = new Date(event.end);
           adjustedEnd.setDate(adjustedEnd.getDate() + 1);
 
-          const randomColor = getRandomColor(); // 랜덤 색상 생성
+          const randomColor = getRandomColor();
 
           return {
             title: event.title,
             start: event.start.toISOString(),
             end: adjustedEnd.toISOString(),
             extendedProps: {
-              backgroundColor: randomColor, //  extendedProps를 사용하여 색상 전달
+              backgroundColor: randomColor,
               workSerial: event.workSerial,
             },
           };
         })}
         eventContent={(eventInfo) => (
           <div
-            className="p-1 text-zp-white text-zp-xl rounded-zp-radius-btn "
+            className="px-2 border-zp-light-gray border-[0.1px] text-zp-gray text-zp-3xs drop-shadow-zp-slight rounded-zp-radius-sm font-noto"
             style={{
               backgroundColor: eventInfo.event.extendedProps.backgroundColor,
             }}

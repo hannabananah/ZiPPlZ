@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 import { acceptContract, rejectContract } from '@apis/worker/ContractApi';
 import Accepted from '@assets/accepted-icon.svg?react';
@@ -14,6 +16,7 @@ interface MessageProps {
   fileType?: string;
   contract?: boolean;
   otherUserSerial: number;
+  loading?: boolean;
 }
 
 export default function Message({
@@ -23,6 +26,7 @@ export default function Message({
   fileType,
   contract,
   otherUserSerial,
+  loading = false,
 }: MessageProps) {
   const [contractHandled, setContractHandled] = useState<string | null>(null);
 
@@ -71,13 +75,16 @@ export default function Message({
         userSerial === currUserSerial ? 'justify-end' : 'justify-start'
       }`}
     >
-      {userSerial !== currUserSerial && (
-        <img
-          className="w-8 mr-2 border border-zp-light-gray profile-img"
-          src="https://i.pravatar.cc/50?img=1"
-          alt="프로필 이미지"
-        />
-      )}
+      {userSerial !== currUserSerial &&
+        (loading ? (
+          <Skeleton circle={true} height={32} width={32} className="mr-2" />
+        ) : (
+          <img
+            className="w-8 mr-2 border border-zp-light-gray profile-img"
+            src="https://i.pravatar.cc/50?img=1"
+            alt="프로필 이미지"
+          />
+        ))}
       <div
         className={`p-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 relative ${
           userSerial === currUserSerial
@@ -85,7 +92,9 @@ export default function Message({
             : 'text-left rounded-ss-zp-radius-none'
         }`}
       >
-        {isImage ? (
+        {loading ? (
+          <Skeleton count={2} />
+        ) : isImage ? (
           <>
             {formattedImgUrl && (
               <img
@@ -99,7 +108,9 @@ export default function Message({
           <a
             href={formattedImgUrl}
             download={formattedImgUrl}
-            className={`hover:text-zp-black text-zp-gray underline ${fileType === 'FILE' ? 'line-clamp-2' : ''}`}
+            className={`hover:text-zp-black text-zp-gray underline ${
+              fileType === 'FILE' ? 'line-clamp-2' : ''
+            }`}
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -110,32 +121,35 @@ export default function Message({
             {chatMessageContent}
           </p>
         )}
-        {contract && currRole === 'customer' && !contractHandled && (
-          <div className="flex justify-end gap-2 mt-2">
-            <Button
-              type="button"
-              buttonType="normal"
-              width="full"
-              height={1.5}
-              fontSize="2xs"
-              radius="btn"
-              onClick={handleRejectContract}
-            >
-              거절
-            </Button>
-            <Button
-              type="button"
-              buttonType="second"
-              width="full"
-              height={1.5}
-              fontSize="2xs"
-              radius="btn"
-              onClick={handleAcceptContract}
-            >
-              수락
-            </Button>
-          </div>
-        )}
+        {!loading &&
+          contract &&
+          currRole === 'customer' &&
+          !contractHandled && (
+            <div className="flex justify-end gap-2 mt-2">
+              <Button
+                type="button"
+                buttonType="normal"
+                width="full"
+                height={1.5}
+                fontSize="2xs"
+                radius="btn"
+                onClick={handleRejectContract}
+              >
+                거절
+              </Button>
+              <Button
+                type="button"
+                buttonType="second"
+                width="full"
+                height={1.5}
+                fontSize="2xs"
+                radius="btn"
+                onClick={handleAcceptContract}
+              >
+                수락
+              </Button>
+            </div>
+          )}
         {contractHandled === 'accepted' && (
           <div className="absolute z-50 w-40 -translate-x-1/2 -top-12 left-1/2 animate-zoom-in">
             <Accepted className="w-40" />
@@ -151,17 +165,20 @@ export default function Message({
             userSerial === currUserSerial ? 'text-left' : 'text-right'
           }`}
         >
-          {formatTime(createdAt)}
+          {loading ? <Skeleton width={40} /> : formatTime(createdAt)}
         </p>
       </div>
 
-      {userSerial === currUserSerial && (
-        <img
-          className="w-8 ml-2 border border-zp-light-gray profile-img"
-          src="https://i.pravatar.cc/50?img=1"
-          alt="프로필 이미지"
-        />
-      )}
+      {userSerial === currUserSerial &&
+        (loading ? (
+          <Skeleton circle={true} height={32} width={32} className="ml-2" />
+        ) : (
+          <img
+            className="w-8 ml-2 border border-zp-light-gray profile-img"
+            src="https://i.pravatar.cc/50?img=1"
+            alt="프로필 이미지"
+          />
+        ))}
     </li>
   );
 }

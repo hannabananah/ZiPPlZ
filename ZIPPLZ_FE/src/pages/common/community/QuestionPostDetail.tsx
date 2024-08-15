@@ -66,10 +66,10 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
     const newBookmarkState = !isBookmarked;
 
     if (newBookmarkState) {
-      const { code } = await addWish(token, Number(id), 1); // 1은 질문글에 대한 타입
+      const { code } = await addWish(token, Number(id), 1);
       if (code === 200) {
         setIsBookmarked(true);
-        onBookmarkChange(); // 북마크 추가 시 true
+        onBookmarkChange();
       } else {
         alert('관심 목록 추가에 실패했습니다.');
       }
@@ -77,7 +77,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
       const { code } = await deleteWish(token, Number(id));
       if (code === 200) {
         setIsBookmarked(false);
-        onBookmarkChange(); // 북마크 삭제 시 false
+        onBookmarkChange();
       } else {
         alert('관심 목록 삭제에 실패했습니다.');
       }
@@ -127,7 +127,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
       alert('댓글이 성공적으로 저장되었습니다.');
       setCommentContent('');
       setIsCommentActive(false);
-      fetchPostDetails(Number(id)); // 댓글 추가 후 게시글 새로고침
+      fetchPostDetails(Number(id));
     } else {
       alert(`댓글 저장에 실패했습니다: ${message}`);
     }
@@ -148,7 +148,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
       alert('대댓글이 성공적으로 저장되었습니다.');
       setReplyContent('');
       setActiveReplyComment(null);
-      fetchPostDetails(Number(id)); // 대댓글 추가 후 게시글 새로고침
+      fetchPostDetails(Number(id));
     } else {
       alert(`대댓글 저장에 실패했습니다: ${message}`);
     }
@@ -170,7 +170,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
       return userSerial === currentUserSerial;
     }
 
-    return false; // 로그인 정보가 없을 경우 false 반환
+    return false;
   };
 
   const handleCommentClick = () => {
@@ -197,7 +197,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
 
   const handleEditComment = (commentSerial: number) => {
     setEditingCommentId(commentSerial);
-    setDropdownOpen(null); // 드롭다운 닫기
+    setDropdownOpen(null);
   };
 
   const handleDeleteComment = async (commentSerial: number) => {
@@ -208,22 +208,21 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
     if (code === 200) {
       alert('댓글이 성공적으로 삭제되었습니다.');
       setEditingCommentId(null);
-      fetchPostDetails(Number(id)); // 새로고침
+      fetchPostDetails(Number(id));
     } else {
       alert(`댓글 삭제에 실패했습니다: ${message}`);
     }
   };
 
   const handleSaveEditedComment = async () => {
-    // 로컬 상태에서 댓글 수정 후, 게시글을 다시 불러옵니다.
-    setEditingCommentId(null); // 수정 모드 해제
-    fetchPostDetails(Number(id)); // 새로고침
+    setEditingCommentId(null);
+    fetchPostDetails(Number(id));
     alert('댓글이 성공적으로 수정되었습니다.');
   };
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6">
+      <div className="flex items-start justify-center min-h-screen p-6">
         <div className="w-full">
           <div className="mt-12">
             <GoArrowLeft
@@ -232,9 +231,9 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
               size={20}
             />
           </div>
-          <div className="mt-6 flex justify-between items-center">
+          <div className="flex items-center justify-between mt-6">
             <div className="flex items-center">
-              <div className="text-zp-2xl font-bold">{postDetails.title}</div>
+              <div className="font-bold text-zp-2xl">{postDetails.title}</div>
               <div
                 className="ml-2 cursor-pointer"
                 onClick={handleBookmarkClick}
@@ -256,7 +255,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-start items-center">
+          <div className="flex items-center justify-start mt-6">
             <div>
               <CgProfile size={40} />
             </div>
@@ -267,7 +266,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
               {new Date(postDetails.boardDate).toLocaleDateString()}
             </div>
           </div>
-          <div className="mt-4 flex justify-center">
+          <div className="flex justify-center mt-4">
             {postDetails.images && postDetails.images.length > 0 ? (
               postDetails.images.map((image, index) => (
                 <img
@@ -282,16 +281,16 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
             )}
           </div>
 
-          <div className="mt-6 text-zp-sm font-bold">
+          <div className="mt-6 font-bold text-zp-sm">
             {postDetails.boardContent}
           </div>
 
-          <div className="mt-6 text-zp-xl font-bold">
+          <div className="mt-6 font-bold text-zp-xl">
             댓글 {postDetails.comments ? postDetails.comments.length : 0}개
           </div>
 
-          <div className="mb-12 mt-6 w-full flex space-x-2">
-            <div className="flex justify-start items-start">
+          <div className="flex w-full mt-6 mb-12 space-x-2">
+            <div className="flex items-start justify-start">
               <CgProfile size={40} />
             </div>
 
@@ -336,20 +335,20 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
 
           {postDetails.comments && postDetails.comments.length > 0 ? (
             postDetails.comments.map((comment, index) => (
-              <div key={index} className="mb-24 mt-6 flex flex-col">
+              <div key={index} className="flex flex-col mt-6 mb-24">
                 <div className="flex items-center">
                   <CgProfile size={40} />
-                  <div className="px-2 text-zp-xs font-bold">
+                  <div className="px-2 font-bold text-zp-xs">
                     {comment.parent_comment.nickName}
                   </div>
-                  <div className="text-zp-xs text-zp-gray font-bold">
+                  <div className="font-bold text-zp-xs text-zp-gray">
                     ·{' '}
                     {new Date(
                       comment.parent_comment.commentDate
                     ).toLocaleDateString()}
                   </div>
                   {isAuthor(comment.parent_comment.userSerial) && (
-                    <div className="ml-auto cursor-pointer relative">
+                    <div className="relative ml-auto cursor-pointer">
                       <BsThreeDotsVertical
                         size={20}
                         onClick={() =>
@@ -360,8 +359,8 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                       />
                       {dropdownOpen ===
                         comment.parent_comment.commentSerial && (
-                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
-                          <div className="flex justify-center items-center">
+                        <div className="absolute right-0 w-24 mt-2 border shadow-lg bg-zp-sub-color border-zp-main-color rounded-zp-radius-big">
+                          <div className="flex items-center justify-center">
                             <div className="p-2">
                               <GoPencil />
                             </div>
@@ -377,7 +376,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                             </div>
                           </div>
 
-                          <div className="flex justify-center items-center">
+                          <div className="flex items-center justify-center">
                             <div className="p-2">
                               <FaRegTrashAlt />
                             </div>
@@ -397,7 +396,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                     </div>
                   )}
                 </div>
-                <div className="ml-12 text-zp-xs font-bold text-zp-gray">
+                <div className="ml-12 font-bold text-zp-xs text-zp-gray">
                   {editingCommentId === comment.parent_comment.commentSerial ? (
                     <div className="flex items-center">
                       <Input
@@ -426,7 +425,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                     comment.parent_comment.commentContent
                   )}
                 </div>
-                <div className="flex justify-start ml-12 mt-2">
+                <div className="flex justify-start mt-2 ml-12">
                   <div
                     className="cursor-pointer"
                     onClick={() =>
@@ -440,7 +439,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                     )}
                   </div>
                   <div
-                    className="cursor-pointer text-zp-xs text-zp-main-color font-bold ml-2"
+                    className="ml-2 font-bold cursor-pointer text-zp-xs text-zp-main-color"
                     onClick={() =>
                       toggleCommentExpand(comment.parent_comment.commentSerial)
                     }
@@ -451,7 +450,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
 
                 {expandedComments[comment.parent_comment.commentSerial] && (
                   <>
-                    <div className="ml-12 mt-4 flex space-x-2 items-start">
+                    <div className="flex items-start mt-4 ml-12 space-x-2">
                       <CgProfile size={40} />
                       <div className="w-full">
                         <Input
@@ -506,19 +505,19 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                       comment.child_comments.map((child, childIndex) => (
                         <div
                           key={childIndex}
-                          className="ml-12 mt-2 flex flex-col"
+                          className="flex flex-col mt-2 ml-12"
                         >
                           <div className="flex items-center">
                             <CgProfile size={40} />
-                            <div className="px-2 text-zp-xs font-bold">
+                            <div className="px-2 font-bold text-zp-xs">
                               {child.nickName}
                             </div>
-                            <div className="text-zp-xs text-zp-gray font-bold">
+                            <div className="font-bold text-zp-xs text-zp-gray">
                               ·{' '}
                               {new Date(child.commentDate).toLocaleDateString()}
                             </div>
                             {isAuthor(child.userSerial) && (
-                              <div className="ml-auto cursor-pointer relative">
+                              <div className="relative ml-auto cursor-pointer">
                                 <BsThreeDotsVertical
                                   size={20}
                                   onClick={() =>
@@ -526,8 +525,8 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                                   }
                                 />
                                 {dropdownOpen === child.commentSerial && (
-                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
-                                    <div className="flex justify-center items-center">
+                                  <div className="absolute right-0 w-24 mt-2 border shadow-lg bg-zp-sub-color border-zp-main-color rounded-zp-radius-big">
+                                    <div className="flex items-center justify-center">
                                       <div className="p-2">
                                         <GoPencil />
                                       </div>
@@ -540,7 +539,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                                         수정
                                       </div>
                                     </div>
-                                    <div className="flex justify-center items-center">
+                                    <div className="flex items-center justify-center">
                                       <div className="p-2">
                                         <FaRegTrashAlt />
                                       </div>
@@ -560,7 +559,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                               </div>
                             )}
                           </div>
-                          <div className="ml-12 text-zp-xs font-bold text-zp-gray">
+                          <div className="ml-12 font-bold text-zp-xs text-zp-gray">
                             {editingCommentId === child.commentSerial ? (
                               <div className="flex items-center">
                                 <Input
@@ -604,9 +603,9 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
       </div>
 
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
-          <div className="bg-zp-white p-6 rounded-zp-radius-big shadow-lg">
-            <div className="text-lg font-bold mb-4">삭제 확인</div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-zp-black">
+          <div className="p-6 shadow-lg bg-zp-white rounded-zp-radius-big">
+            <div className="mb-4 text-lg font-bold">삭제 확인</div>
             <div className="mb-4">정말로 삭제하시겠습니까?</div>
             <div className="flex justify-end space-x-4">
               <div className="font-bold">

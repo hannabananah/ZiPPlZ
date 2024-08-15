@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 
 import Contract from '@components/chat/Contract';
 import FullModal from '@components/common/FullModal';
-import useOpenVidu from '@hooks/useOpenvidu';
+// import useOpenVidu from '@hooks/useOpenvidu';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import axios from 'axios';
 import {
@@ -52,10 +52,10 @@ export default function Options({
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
   // const { startRecording, stopRecording } = useOpenVidu();
+  // const { startScreenShare } = useOpenVidu();
   // const [onRecord, setOnRecord] = useState(false);
   const { loginUser } = useLoginUserStore();
   const userRole: string | undefined = loginUser?.role;
-  console.log('role:', userRole);
 
   const handleMute = () => {
     const newMuteState = !isMuted;
@@ -124,7 +124,6 @@ export default function Options({
   };
 
   const closeContractModal = () => {
-    console.log('녹화 중지 및 계약서 모달 닫기 시도!!!!');
     // stopScreenShare();
     setIsContractModalOpen(false);
   };
@@ -135,7 +134,6 @@ export default function Options({
   };
 
   const handleSharingContract = () => {
-    console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
     // startScreenShare();
     setIsContractModalOpen(true);
   };

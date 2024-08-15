@@ -1,13 +1,17 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import DaumPostcode from 'react-daum-postcode';
 import { FaImage } from 'react-icons/fa';
+import { FaSearch } from 'react-icons/fa';
 import { FiPlusCircle } from 'react-icons/fi';
 import { HiOutlineUser } from 'react-icons/hi2';
 import { IoArrowBackSharp } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { RiMessage2Line } from 'react-icons/ri';
 import { TbBuildingCommunity } from 'react-icons/tb';
+import Modal from 'react-modal';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { checkBusiness } from '@/apis/member/MemberApi';
 import {
   addPortfolioImg,
   getPortfolioDetail,
@@ -18,6 +22,41 @@ import Input from '@/components/common/Input';
 import { useLoginUserStore } from '@/stores/loginUserStore';
 import { PortfolioDetail, usePortfolioStore } from '@/stores/portfolioStore';
 
+const postCodeStyle = {
+  width: '200px',
+  height: '30rem',
+  zIndex: 200,
+};
+const customModalStyles: ReactModal.Styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 100,
+    pointerEvents: 'auto',
+  },
+  content: {
+    maxWidth: '468px',
+    minWidth: '350px',
+    height: '30rem',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '1rem',
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    justifyContent: 'center',
+    padding: '1.5rem',
+    zIndex: 150,
+    pointerEvents: 'auto',
+  },
+};
 interface data {
   publicRelation: string;
   career: number;
@@ -30,13 +69,13 @@ interface Props {
   portfolio: PortfolioDetail;
 }
 export default function OverView({ portfolio }: Props) {
+  const [openDaum, setOpenDaum] = useState<boolean>(false);
   const { id } = useParams<{ id: string }>();
   const { loginUser } = useLoginUserStore();
   const navigate = useNavigate();
   const modifyPortfolio = async (data: data) => {
     return await updatePortfolio(portfolio.portfolioSerial, data);
   };
-  // 모달 열림, 한줄 소개 입력 값, 임시 값 상태 관리
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [asPeriod, setAsPeriod] = useState<number>(portfolio.asPeriod);
   const [career, setCareer] = useState<number>(portfolio.career);
@@ -71,12 +110,13 @@ export default function OverView({ portfolio }: Props) {
   const handleClick = () => {
     if (fileInputRef.current) fileInputRef.current.click();
   };
-  // 모달 열기
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
-
-  // 모달 닫기
+  const onCompletePost = (data: any) => {
+    setCompanyAddress(data.address);
+    setOpenDaum(false);
+  };
   const handleCloseModal = () => {
     setPublicRelation(portfolio.publicRelation);
     setAsPeriod(portfolio.asPeriod);
@@ -86,20 +126,44 @@ export default function OverView({ portfolio }: Props) {
     setBusinessNumber(portfolio.worker.businessNumber);
     setIsModalOpen(false);
   };
-  // 저장 버튼
   const handleSave = () => {
-    modifyPortfolio({
-      publicRelation,
-      career,
-      asPeriod,
-      company,
-      companyAddress,
-      businessNumber,
-    });
+    if (isOk) {
+      modifyPortfolio({
+        publicRelation,
+        career,
+        asPeriod,
+        company,
+        companyAddress,
+        businessNumber,
+      });
+    } else {
+      modifyPortfolio({
+        publicRelation,
+        career,
+        asPeriod,
+        company,
+        companyAddress,
+        businessNumber: '',
+      });
+    }
     handleCloseModal();
     navigate(0);
   };
-
+  useEffect(() => {
+    if (isOk) setIsOk(false);
+  }, [businessNumber]);
+  const [isOk, setIsOk] = useState<boolean>(false);
+  const checkBusinessNumber = async (data: string) => {
+    const inputData: any = {
+      b_no: [data],
+    };
+    const response = await checkBusiness(JSON.stringify(inputData));
+    if ('match_cnt' in response.data) {
+      setIsOk(true);
+    } else {
+      setIsOk(false);
+    }
+  };
   return (
     <>
       <IoArrowBackSharp
@@ -155,7 +219,7 @@ export default function OverView({ portfolio }: Props) {
                   src={image.saveFile}
                 />
               ))}
-              <div className=" flex items-center">
+              <div className="flex items-center ">
                 <FiPlusCircle
                   size={24}
                   className="cursor-pointer aspect-square"
@@ -192,7 +256,6 @@ export default function OverView({ portfolio }: Props) {
 
         <hr className="w-full text-zp-main-color" />
 
-        {/* 소속업체 */}
         <div className="flex items-center gap-1">
           <TbBuildingCommunity size={16} />
           <p className="font-bold text-zp-sm">소속업체</p>
@@ -211,17 +274,14 @@ export default function OverView({ portfolio }: Props) {
         </div>
         <hr className="w-full text-zp-main-color" />
 
-        {/* 하고 싶은 말 */}
         <div className="flex items-center gap-1">
           <RiMessage2Line size={16} />
           <p className="font-bold text-zp-sm">하고 싶은 말</p>
         </div>
         <p className="pl-4 font-bold text-zp-xs">{portfolio.publicRelation}</p>
       </div>
-      {/* 수정 모달 창 */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center ">
-          {/* 모달 창 */}
           <div className="border flex flex-col border-zp-main-color rounded-zp-radius-big bg-zp-white p-6 shadow-lg w-[90%] gap-2">
             <p className="font-bold text-center text-zp-md">정보 수정</p>
             <div className="flex flex-col text-zp-xs">
@@ -274,35 +334,65 @@ export default function OverView({ portfolio }: Props) {
             </div>
             <div className="flex flex-col text-zp-xs">
               <p className="font-bold">업체 주소</p>
-              <Input
-                inputType="normal"
-                type="text"
-                placeholder="업체 주소를 입력해주세요."
-                width="full"
-                height={1.5}
-                radius="btn"
-                fontSize="xs"
-                value={companyAddress}
-                onChange={(e: React.ChangeEvent) =>
-                  setCompanyAddress((e.target as HTMLInputElement).value)
-                }
-              />
+              <div className="relative w-full ">
+                <Input
+                  inputType="normal"
+                  type="text"
+                  placeholder="업체 주소를 입력해주세요."
+                  width="full"
+                  height={1.5}
+                  radius="btn"
+                  fontSize="xs"
+                  value={companyAddress}
+                  onChange={(e: React.ChangeEvent) =>
+                    setCompanyAddress((e.target as HTMLInputElement).value)
+                  }
+                />
+                <FaSearch
+                  size={16}
+                  className="absolute top-1 right-1"
+                  onClick={() => setOpenDaum(true)}
+                />
+              </div>
             </div>
             <div className="flex flex-col text-zp-xs">
               <p className="font-bold">사업자 번호</p>
-              <Input
-                inputType="normal"
-                type="text"
-                placeholder="숫자 10자리를 입력해주세요."
-                width="full"
-                height={1.5}
-                radius="btn"
-                fontSize="xs"
-                value={businessNumber}
-                onChange={(e: React.ChangeEvent) =>
-                  setBusinessNumber((e.target as HTMLInputElement).value)
-                }
-              />
+              <div className="flex flex-col w-full">
+                <div className="flex w-full gap-4">
+                  <Input
+                    inputType="normal"
+                    type="text"
+                    placeholder="숫자 10자리를 입력해주세요."
+                    width="full"
+                    height={1.5}
+                    radius="btn"
+                    fontSize="xs"
+                    value={businessNumber}
+                    onChange={(e: React.ChangeEvent) =>
+                      setBusinessNumber((e.target as HTMLInputElement).value)
+                    }
+                  />
+                  <Button
+                    buttonType={isOk ? 'light' : 'primary'}
+                    width={2}
+                    height={1.5}
+                    radius="btn"
+                    fontSize="2xs"
+                    children="인증"
+                    onClick={() => checkBusinessNumber(businessNumber)}
+                    disabled={isOk}
+                  />
+                </div>
+                {isOk ? (
+                  <p className="font-bold text-zp-2xs text-zp-main-color">
+                    사업자 번호가 인증되었습니다.
+                  </p>
+                ) : (
+                  <p className="font-bold text-zp-2xs text-zp-red">
+                    사업자 번호를 인증해주세요.
+                  </p>
+                )}
+              </div>
             </div>
             <div className="flex flex-col text-zp-xs">
               <p className="font-bold">한줄 소개</p>
@@ -344,6 +434,13 @@ export default function OverView({ portfolio }: Props) {
           </div>
         </div>
       )}
+      <Modal
+        style={customModalStyles}
+        isOpen={openDaum}
+        onRequestClose={onCompletePost}
+      >
+        <DaumPostcode style={postCodeStyle} onComplete={onCompletePost} />
+      </Modal>
     </>
   );
 }

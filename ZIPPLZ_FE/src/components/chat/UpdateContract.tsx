@@ -1,10 +1,9 @@
-import { useContext, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import Select from 'react-select';
 
+import { sendUpdateContract, updateContract } from '@/apis/member/MemberApi';
 import { Material } from '@/types';
 import { ContractRequestData } from '@apis/worker/ContractApi';
-import { postContract } from '@apis/worker/ContractApi';
 import { getMaterials } from '@apis/worker/MaterialApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
@@ -12,13 +11,31 @@ import { useLoginUserStore } from '@stores/loginUserStore';
 import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
 import { formatDateWithTime } from '@utils/formatDateWithTime';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
-import { WebSocketContext } from '@utils/socket/WebSocketProvider';
+// import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
+
+interface Contract {
+  workerName: string;
+  company: string;
+  businessNumber: string;
+  workerTel: string;
+  customerName: string;
+  customerTel: string;
+  address: string;
+  startDate: string;
+  endDate: string;
+  workPrice: number;
+  fieldName: string;
+  asPeriod: number;
+  materialList: string[];
+}
 
 interface ContractProps {
   closeContractModal: () => void;
-  name: string;
+  contract: Contract;
+  selectedChatRoomSerial: number;
 }
+
 interface Field {
   label: string;
   value: string;
@@ -29,39 +46,43 @@ interface Field {
 
 const base_url = import.meta.env.VITE_APP_BASE_URL;
 
-export default function Contract({ closeContractModal, name }: ContractProps) {
+export default function UpdateContract({
+  closeContractModal,
+  contract,
+  selectedChatRoomSerial,
+}: ContractProps) {
   const contractInfo: Field[] = [
     {
       label: '고객 이름',
-      value: name,
+      value: contract.customerName,
       placeholder: '내용을 입력해주세요.',
       type: 'input',
       editable: false,
     },
     {
       label: '작업 가격',
-      value: '',
+      value: contract.workPrice.toString(),
       placeholder: '내용을 입력해주세요.',
       type: 'input',
       editable: true,
     },
     {
       label: '출장 주소',
-      value: '',
+      value: contract.address,
       placeholder: '내용을 입력해주세요.',
       type: 'input',
-      editable: true,
+      editable: false,
     },
     {
       label: '작업 시작일',
-      value: '',
+      value: contract.startDate,
       placeholder: 'YYYY-MM-DD',
       type: 'input',
       editable: true,
     },
     {
       label: '작업 마감일',
-      value: '',
+      value: contract.endDate,
       placeholder: 'YYYY-MM-DD',
       type: 'input',
       editable: true,
@@ -80,15 +101,13 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
   const [selectedMaterials, setSelectedMaterials] = useState<Material[]>([]);
   const [startDate, setStartDate] = useState<string>('');
   const [endDate, setEndDate] = useState<string>('');
-  const { sendMessage } = useContext(WebSocketContext) || {
-    sendMessage: () => {},
-  };
+  // const { sendMessage } = useContext(WebSocketContext) || {
+  //   sendMessage: () => {},
+  // };
   const { loginUser } = useLoginUserStore();
-  const userSerial: number | undefined = loginUser?.userSerial;
+  // const userSerial: number | undefined = loginUser?.userSerial;
   const userName: string | undefined = loginUser?.userName;
-  const { chatroomSerial } = useParams<{
-    chatroomSerial?: string | undefined;
-  }>();
+
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
@@ -103,11 +122,6 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
   }, []);
 
   const handlePostContract = async () => {
-    if (!chatroomSerial) {
-      console.error('Invalid chatroomSerial');
-      return;
-    }
-
     if (!startDate || !endDate || !fields[1].value || !fields[2].value) {
       alert('모든 양식을 채워주세요.');
       return;
@@ -131,7 +145,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
       startDate && endDate ? calculateTotalDuration(startDate, endDate) : 0;
 
     const requestData: ContractRequestData = {
-      requestComment: '계약서 초안 작성해서 보냅니다.',
+      requestComment: '계약서 수정 내용 작성해서 보냅니다.',
       startDate,
       endDate,
       workPrice,
@@ -142,7 +156,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
 
     try {
       const response = await axios.get(
-        `${base_url}/chatroom/${chatroomSerial}`,
+        `${base_url}/chatroom/${selectedChatRoomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
@@ -150,30 +164,43 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
 
       if (response.status === 200 && response.data) {
         const otherUserName = response.data.data.otherUser.name;
-        await postContract(Number(chatroomSerial), requestData);
+        if (selectedChatRoomSerial)
+          await updateContract(selectedChatRoomSerial, requestData);
         const formattedMessage = `
-                ✨ 계약서 초안 작성 완료! ✨
+                계약서 수정내용 작성 완료
                 
-    👷‍♂️ 시공자: ${userName}
-    👩‍🦰 고객: ${otherUserName}
-    👏 요청 일자: ${formatDateWithTime(new Date().toISOString())}
-    💵 작업 가격: ${formatNumberWithCommas(workPrice)}원
-    🏠 출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
-    📅 작업 기간: ${startDate}~${endDate}(${totalDuration}일)
-    🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
+    시공자: ${userName}
+    고객: ${otherUserName}
+    요청 일자: ${formatDateWithTime(new Date().toISOString())}
+   작업 가격: ${formatNumberWithCommas(workPrice)}원
+    출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
+    작업 기간: ${startDate}~${endDate}(${totalDuration}일)
+    자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
         `;
-        if (sendMessage) {
-          sendMessage(
-            formattedMessage,
-            userSerial as number,
-            undefined,
-            'TALK',
-            true
-          );
-        } else {
-          console.error('메시지를 전송할 수 없습니다.');
-        }
+        // const contractContent = {
+        //   requestComment: '계약서 수정 요청해서 보냅니다.',
+        //   startDate,
+        //   endDate,
+        //   workPrice,
+        //   materialList: selectedMaterials.map(
+        //     (material) => material.materialSerial
+        //   ),
+        //   chatroomSerial: selectedChatRoomSerial,
+        // };
 
+        // if (sendMessage) {
+        //   sendMessage(
+        //     formattedMessage,
+        //     userSerial as number,
+        //     undefined,
+        //     'TALK',
+        //     true,
+        //     contractContent
+        //   );
+        // } else {
+        //   console.error('메시지를 전송할 수 없습니다.');
+        // }
+        sendUpdateContract(selectedChatRoomSerial, formattedMessage);
         closeContractModal();
       } else {
         throw new Error('Unexpected response from the server');
@@ -182,6 +209,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
       console.error('계약서 초안 작성 실패:', error);
     }
   };
+
   const handleFieldChange = (index: number, key: 'value', value: string) => {
     const newFields = fields.map((field, i) =>
       i === index ? { ...field, [key]: value } : field
@@ -204,9 +232,13 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
     setSelectedMaterials(selectedMaterials.filter(Boolean) as Material[]);
   };
 
+  // const navigate = useNavigate();
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    handlePostContract();
+    setTimeout(() => {
+      handlePostContract();
+    }, 2000);
+    closeContractModal();
   };
 
   const handleReset = () => {
@@ -275,14 +307,14 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
                 <Select
                   isMulti
                   name="materials"
-                  options={(materials || []).map((material) => ({
+                  options={materials.map((material) => ({
                     value: material.materialSerial,
                     label: material.materialName,
                   }))}
                   className="w-full basic-multi-select"
                   classNamePrefix="select"
                   styles={multiSelectBoxCustomStyles}
-                  value={(selectedMaterials || []).map((material) => ({
+                  value={selectedMaterials.map((material) => ({
                     value: material.materialSerial,
                     label: material.materialName,
                   }))}

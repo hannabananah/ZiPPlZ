@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 import { IoChatbubbleEllipsesOutline } from 'react-icons/io5';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -15,7 +15,6 @@ interface Props {
   review: any;
 }
 export default function PortfolioReview({ review }: Props) {
-  const navigate = useNavigate();
   const [comment, setComment] = useState<string>('');
   const writeBossReview = async (reviewSerial: number, review: string) => {
     await wirteWorkerReview(reviewSerial, { reviewComment: review });
@@ -28,21 +27,23 @@ export default function PortfolioReview({ review }: Props) {
       <div className="flex flex-col gap-4 p-6 shadow-lg bg-zp-light-beige rounded-zp-radius-big">
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-2">
-            <img className="w-5 h-5 border rounded-zp-radius-full" src="" />
             <p className="font-bold text-zp-xs">{review.customerNickname}</p>
             <FaStar size={16} color="yellow" />
+            <p className="font-bold text-zp-2xs">x {review.averageStar}</p>
           </div>
           <p className="text-zp-2xs">{formatDate(review.customerReviewDate)}</p>
         </div>
         <p className="text-zp-xs text-wrap">{review.customerReviewContent}</p>
-        {id && parseInt(id) === loginUser?.userSerial && (
-          <p
-            className="w-full text-right cursor-pointer text-zp-2xs"
-            onClick={() => setIsWriteReview(!isWriteReview)}
-          >
-            댓글 달기
-          </p>
-        )}
+        {id &&
+          parseInt(id) === loginUser?.userSerial &&
+          review.reviewComment === null && (
+            <p
+              className="text-right cursor-pointer text-zp-2xs"
+              onClick={() => setIsWriteReview(!isWriteReview)}
+            >
+              댓글 달기
+            </p>
+          )}
       </div>
       {isWriteReview && (
         <div className="relative flex w-full gap-4 mt-2">
@@ -69,7 +70,6 @@ export default function PortfolioReview({ review }: Props) {
             onClick={() => {
               writeBossReview(review.customerReviewSerial, comment);
               setIsWriteReview(false);
-              navigate(0);
             }}
           />
           <IoChatbubbleEllipsesOutline

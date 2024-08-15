@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
-// 질문글 형식 인터페이스
+const BASE_URL: string = 'http://localhost:5000/';
+
 interface QuestionPost {
   board_serial: number;
   board_type: number;
@@ -15,7 +16,6 @@ interface QuestionPost {
   images: string[];
 }
 
-// 댓글 인터페이스
 interface Comment {
   board_serial: number;
   comment_content: string;
@@ -23,7 +23,6 @@ interface Comment {
   order_number: number;
 }
 
-// 질문글 상세 정보 인터페이스
 interface QuestionPostDetails {
   title: string;
   userSerial: number;
@@ -54,7 +53,6 @@ interface QuestionPostDetails {
   }[];
 }
 
-// 질문글 상태 관리 인터페이스
 interface QuestionPostState {
   title: string;
   boardContent: string;
@@ -119,9 +117,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   fetchQuestionPosts: async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/board/question/list'
-      );
+      const response = await axios.post(`${BASE_URL}board/question/list`);
       set({ questionPosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch question posts:', error);
@@ -130,7 +126,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   fetchPostDetails: async (id: number) => {
     try {
-      const response = await axios.post(`/api/board/question/list/${id}`);
+      const response = await axios.post(`${BASE_URL}board/question/list/${id}`);
 
       if (response.data.proc.code === 200) {
         const data = response.data.data;
@@ -140,7 +136,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
           userSerial: data.board.userSerial,
           boardSerial: data.board.boardSerial,
           nickname: data.board.nickname,
-          boardContent: data.board.boardContent, // 여기서 제대로 된 필드명을 사용
+          boardContent: data.board.boardContent,
           boardDate: data.board.boardDate,
           images: data.board_images.map((img: any) => ({
             saveFile: img.saveFile,
@@ -184,15 +180,14 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   createPost: async (token: string, formData: FormData) => {
     try {
-      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
       const hasNullImages = formData.get('images') === 'null';
       if (hasNullImages) {
-        formData.delete('images'); // 기존 'images' 필드를 제거
-        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+        formData.delete('images');
+        formData.append('images', '');
       }
 
       const response = await axios.post(
-        'http://localhost:5000/board/question/add',
+        `${BASE_URL}board/question/add`,
         formData,
         {
           headers: {
@@ -216,26 +211,21 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
     }
   },
 
-  updatePost: async (
-    token: string,
-    id: number,
-    formData: FormData // FormData를 받을 수 있도록 수정
-  ) => {
+  updatePost: async (token: string, id: number, formData: FormData) => {
     try {
-      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
       const hasNullImages = formData.get('images') === 'null';
       if (hasNullImages) {
-        formData.delete('images'); // 기존 'images' 필드를 제거
-        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+        formData.delete('images');
+        formData.append('images', '');
       }
 
       const response = await axios.patch(
-        `/api/board/question/list/${id}`,
+        `${BASE_URL}board/question/list/${id}`,
         formData,
         {
           headers: {
             Authorization: token,
-            'Content-Type': 'multipart/form-data', // FormData 전송 시 올바른 Content-Type 설정
+            'Content-Type': 'multipart/form-data',
           },
         }
       );
@@ -256,7 +246,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   deletePost: async (token: string, id: number) => {
     try {
-      const response = await axios.delete(`/api/board/delete/${id}`, {
+      const response = await axios.delete(`${BASE_URL}board/delete/${id}`, {
         headers: {
           Authorization: token,
         },
@@ -279,7 +269,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   addComment: async (token: string, comment: Comment) => {
     try {
       const response = await axios.post(
-        '/api/comment/add',
+        `${BASE_URL}comment/add`,
         { ...comment },
         {
           headers: {
@@ -302,7 +292,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   addReply: async (token: string, reply: Comment) => {
     try {
       const response = await axios.post(
-        '/api/comment/add',
+        `${BASE_URL}comment/add`,
         { ...reply },
         {
           headers: {
@@ -328,7 +318,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   ): Promise<{ code: number; message: string }> => {
     try {
       const response = await axios.delete(
-        `/api/comment/delete/${commentSerial}`,
+        `${BASE_URL}comment/delete/${commentSerial}`,
         {
           headers: {
             Authorization: token,
@@ -350,7 +340,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   addWish: async (token, wish_serial, wish_type) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/wish/addWish',
+        `${BASE_URL}wish/addWish`,
         { wish_serial, wish_type },
         {
           headers: {
@@ -368,15 +358,12 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   deleteWish: async (token, wish_serial) => {
     try {
-      const response = await axios.delete(
-        'http://localhost:5000/wish/deleteWish',
-        {
-          headers: {
-            Authorization: token,
-          },
-          data: { wish_serial },
-        }
-      );
+      const response = await axios.delete(`${BASE_URL}wish/deleteWish`, {
+        headers: {
+          Authorization: token,
+        },
+        data: { wish_serial },
+      });
       const { code, message } = response.data.proc;
       return { code, message };
     } catch (error) {
@@ -388,7 +375,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   searchWish: async (token, wish_serial) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/wish/searchWish',
+        `${BASE_URL}wish/searchWish`,
         { wish_serial },
         {
           headers: {

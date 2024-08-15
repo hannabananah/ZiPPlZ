@@ -34,12 +34,14 @@ interface Props {
   planSerial?: number;
   updateContent: (serial: number, content: string) => void;
   chatRoomList: ChatRoom[];
+  openReviewModal: (serial: number) => void;
 }
 export default function SchedulerCardExist({
   schedule,
   idx,
   updateContent,
   chatRoomList,
+  openReviewModal,
 }: Props) {
   const { loginUser } = useLoginUserStore();
   const navigate = useNavigate();
@@ -117,7 +119,7 @@ export default function SchedulerCardExist({
               <div className="flex w-[30%] flex-col items-center gap-2">
                 <div className="w-[60%] aspect-square text-center  rounded-zp-radius-full">
                   <img
-                    className="object-cover w-full h-full object-cover rounded-zp-radius-full"
+                    className="w-full h-full object-cover rounded-zp-radius-full"
                     src={schedule.workerSerial.userSerial.fileSerial.saveFile}
                   />
                 </div>
@@ -201,6 +203,7 @@ export default function SchedulerCardExist({
                           height={1.5}
                           radius="big"
                           fontSize="2xs"
+                          onClick={() => openReviewModal(schedule.workSerial)}
                         />
                       )}
                     </>

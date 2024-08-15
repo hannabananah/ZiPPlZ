@@ -16,11 +16,6 @@ export default function MyPasswordModify() {
   const navigate = useNavigate();
   const { changePassword } = useMyPageStore();
 
-  // 페이지 돌아가기 핸들러
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -35,7 +30,11 @@ export default function MyPasswordModify() {
     confirm: false,
     emptyFields: false,
   });
-  const existingPassword = '1234'; // 기존 비밀번호 설정 (이 부분은 실제로는 서버에서 확인해야 함)
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentPassword(e.target.value);
@@ -64,46 +63,52 @@ export default function MyPasswordModify() {
         ...prev,
         emptyFields: true,
       }));
-    } else {
-      if (currentPassword !== existingPassword) {
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError((prev) => ({
+        ...prev,
+        new: true,
+        confirm: true,
+      }));
+      return;
+    }
+
+    try {
+      const response = await changePassword(currentPassword, newPassword);
+
+      if (response.success) {
+        setShowModal(true);
+      } else {
         setError((prev) => ({
           ...prev,
           current: true,
         }));
       }
-
-      if (newPassword !== confirmPassword) {
-        setError((prev) => ({
-          ...prev,
-          new: true,
-          confirm: true,
-        }));
-      }
-
-      if (
-        currentPassword === existingPassword &&
-        newPassword === confirmPassword
-      ) {
-        await changePassword(newPassword);
-        navigate('/mypage');
-      }
+    } catch (error) {
+      console.error('Error during password change:', error);
     }
+  };
+
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    navigate('/member/login');
   };
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6">
+      <div className="flex items-start justify-center min-h-screen p-6">
         <div className="w-full">
-          {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
-          <div className="mt-12 h-12 flex items-center justify-between w-full relative">
+          <div className="relative flex items-center justify-between w-full h-12 mt-12">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
-                size={20} // 아이콘 크기 조정
+                size={20}
               />
             </div>
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-2xl font-bold text-center">
+            <div className="absolute font-bold text-center transform -translate-x-1/2 left-1/2 text-zp-2xl">
               비밀번호 변경
             </div>
           </div>
@@ -113,18 +118,18 @@ export default function MyPasswordModify() {
             <input
               type={showCurrentPassword ? 'text' : 'password'}
               placeholder="비밀번호를 입력하세요."
-              className="w-full px-2 mt-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border-none focus:outline-none"
+              className="w-full px-2 mt-4 font-bold border-none text-zp-xl text-zp-black bg-zp-light-beige focus:outline-none"
               value={currentPassword}
               onChange={handlePasswordChange}
             />
             {showCurrentPassword ? (
               <PiEyeLight
-                className="w-6 h-6 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                className="absolute w-6 h-6 transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
                 onClick={() => setShowCurrentPassword(false)}
               />
             ) : (
               <PiEyeSlash
-                className="w-6 h-6 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                className="absolute w-6 h-6 transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
                 onClick={() => setShowCurrentPassword(true)}
               />
             )}
@@ -152,18 +157,18 @@ export default function MyPasswordModify() {
             <input
               type={showNewPassword ? 'text' : 'password'}
               placeholder="새 비밀번호를 입력하세요."
-              className="w-full px-2 mt-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border-none focus:outline-none"
+              className="w-full px-2 mt-4 font-bold border-none text-zp-xl text-zp-black bg-zp-light-beige focus:outline-none"
               value={newPassword}
               onChange={handleNewPasswordChange}
             />
             {showNewPassword ? (
               <PiEyeLight
-                className="w-6 h-6 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                className="absolute w-6 h-6 transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
                 onClick={() => setShowNewPassword(false)}
               />
             ) : (
               <PiEyeSlash
-                className="w-6 h-6 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                className="absolute w-6 h-6 transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
                 onClick={() => setShowNewPassword(true)}
               />
             )}
@@ -192,18 +197,18 @@ export default function MyPasswordModify() {
             <input
               type={showConfirmPassword ? 'text' : 'password'}
               placeholder="새 비밀번호를 다시 입력하세요."
-              className="w-full px-2 mt-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border-none focus:outline-none"
+              className="w-full px-2 mt-4 font-bold border-none text-zp-xl text-zp-black bg-zp-light-beige focus:outline-none"
               value={confirmPassword}
               onChange={handleConfirmPasswordChange}
             />
             {showConfirmPassword ? (
               <PiEyeLight
-                className="w-6 h-6 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                className="absolute w-6 h-6 transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
                 onClick={() => setShowConfirmPassword(false)}
               />
             ) : (
               <PiEyeSlash
-                className="w-6 h-6 absolute top-1/2 right-3 transform -translate-y-1/2 cursor-pointer"
+                className="absolute w-6 h-6 transform -translate-y-1/2 cursor-pointer top-1/2 right-3"
                 onClick={() => setShowConfirmPassword(true)}
               />
             )}
@@ -228,13 +233,33 @@ export default function MyPasswordModify() {
           )}
 
           <button
-            className="w-full h-10 bg-zp-sub-color rounded-zp-radius-btn font-bold text-zp-xl flex justify-center items-center mt-6"
+            className="flex items-center justify-center w-full h-10 mt-6 font-bold bg-zp-sub-color rounded-zp-radius-btn text-zp-xl"
             onClick={handleSubmit}
           >
             변경
           </button>
         </div>
       </div>
+
+      {/* 모달 창 */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-zp-black">
+          <div className="p-6 bg-zp-white rounded-zp-radius-big">
+            <h2 className="mb-4 font-bold text-center text-zp-2xl">
+              비밀번호 변경 성공
+            </h2>
+            <p className="mb-6 text-center text-zp-lg">
+              비밀번호가 변경되었습니다. 다시 로그인 해주세요.
+            </p>
+            <button
+              className="flex items-center justify-center w-full h-10 font-bold bg-zp-sub-color rounded-zp-radius-btn text-zp-xl"
+              onClick={handleModalConfirm}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

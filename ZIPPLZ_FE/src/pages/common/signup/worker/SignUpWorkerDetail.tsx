@@ -69,7 +69,6 @@ export default function SignupWorkerDetail({
       b_no: [data],
     };
     const response = await checkBusiness(JSON.stringify(inputData));
-    console.log(response.data);
     if ('match_cnt' in response.data) {
       setIsOk(true);
     } else {

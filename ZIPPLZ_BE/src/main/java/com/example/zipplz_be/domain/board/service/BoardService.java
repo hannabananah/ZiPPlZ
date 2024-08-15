@@ -32,4 +32,6 @@ public interface BoardService {
     int deleteBoard(int boardSerial);
 
     void updateboardhit(int boardSerial);
+
+    int addBoardUserAddress(int boardSerial, String userAddress);
 }

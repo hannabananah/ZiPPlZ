@@ -5,6 +5,7 @@ import { HiOutlinePencilAlt } from 'react-icons/hi';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getChatRooms } from '@/apis/chatroom/chatApi';
+import ScheduleReviewModal from '@/components/scheduler/ScheduleReviewModal';
 import {
   activePlan,
   deletePlan,
@@ -64,9 +65,6 @@ export default function Schedule() {
   useEffect(() => {
     fetchChatRooms();
   }, []);
-  useEffect(() => {
-    console.log(chatRoomList);
-  }, [chatRoomList]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const param: string | null = queryParams.get('plan');
@@ -88,6 +86,15 @@ export default function Schedule() {
   } = useScheduleStore();
   const { openModal, closeModal } = useModalActions();
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [isOpenReviewModal, setIsOpenReviewModal] = useState<boolean>(false);
+  const openReviewModal = () => {
+    setIsOpenReviewModal(true);
+  };
+  const closeReviewModal = () => {
+    setIsOpenReviewModal(false);
+  };
+  const [selectedWorkSerialForReview, setSelectedWorkSerialForReview] =
+    useState<number | null>(null);
   const [options, setOptions] = useState<Plan[]>([]);
   const [selectedWorkSerial, setSelectedWorkSerial] = useState<number>(0);
   const handleConfirmDelete = async (
@@ -144,7 +151,6 @@ export default function Schedule() {
       setWorkList(null);
       setPlan(null);
       setFileList(null);
-      // setSelectedValue(null);
     };
   }, []);
   useEffect(() => {
@@ -296,6 +302,10 @@ export default function Schedule() {
                     planSerial={plan?.planSerial}
                     updateContent={updateWork}
                     chatRoomList={chatRoomList}
+                    openReviewModal={(workSerial: number) => {
+                      setSelectedWorkSerialForReview(workSerial);
+                      openReviewModal();
+                    }}
                   />
                 ) : item.fieldCode.fieldCode === 0 ? (
                   <SchedulerCardCustom
@@ -338,6 +348,14 @@ export default function Schedule() {
           if (plan) removePlan(plan.planSerial);
         }}
       />
+      {plan && selectedWorkSerialForReview !== null && (
+        <ScheduleReviewModal
+          isModalOpen={isOpenReviewModal}
+          closeModal={closeReviewModal}
+          planSerial={plan && plan.planSerial}
+          workSerial={selectedWorkSerialForReview}
+        />
+      )}
     </>
   );
 }

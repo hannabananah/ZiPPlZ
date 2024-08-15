@@ -7,13 +7,9 @@ import Button from '@/components/common/Button';
 import QuestionPostListItem from '@/components/community/QuestionPostListItem';
 import { useQuestionPostStore } from '@/stores/QuestionPostStore';
 import Input from '@components/common/Input';
-import Selectbar from '@components/common/Selectbar';
-
-type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function QuestionPost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
   const [bookmarkCounts, setBookmarkCounts] = useState<{
     [key: number]: number;
@@ -34,16 +30,10 @@ export default function QuestionPost() {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  const handleSortSelect = (sortOption: string) => {
-    setSelectedValue(sortOption as SortOption);
-  };
-
   const handleNavigate = (path: string) => {
     navigate(path);
     setIsDropdownOpen(false);
   };
-
-  const options: SortOption[] = ['평점순', '최신순', '과거순'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -57,15 +47,15 @@ export default function QuestionPost() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-6">
+    <div className="flex items-start justify-center min-h-screen p-6">
       <div className="w-full">
         {/* 드롭다운 버튼 */}
-        <div className="mt-16 relative flex justify-center items-center">
+        <div className="relative flex items-center justify-center mt-16">
           <div
             onClick={toggleDropdown}
-            className="cursor-pointer flex items-center space-x-2"
+            className="flex items-center space-x-2 cursor-pointer"
           >
-            <div className="font-bold text-zp-lg text-zp-black text-center">
+            <div className="font-bold text-center text-zp-lg text-zp-black">
               질문글
             </div>
             <IoMdArrowDropdown
@@ -74,18 +64,17 @@ export default function QuestionPost() {
             />
           </div>
 
-          {/* 드롭다운 메뉴 */}
           {isDropdownOpen && (
-            <div className="absolute top-full border border-zp-light-gray rounded-zp-radius-btn font-bold hover:bg-zp-light-beige ">
+            <div className="absolute font-bold border top-full border-zp-light-gray rounded-zp-radius-btn hover:bg-zp-light-beige ">
               <button
                 onClick={() => handleNavigate('/HousePost')}
-                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
+                className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
               >
                 집들이
               </button>
               <button
                 onClick={() => handleNavigate('/QuestionPost')}
-                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
+                className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
               >
                 질문글
               </button>
@@ -93,26 +82,8 @@ export default function QuestionPost() {
           )}
         </div>
 
-        {/* 정렬 버튼 */}
-        <div className="relative left-3 flex justify-end">
-          <Selectbar
-            backgroundColor="none"
-            fontColor="black"
-            options={options}
-            selectedValue={selectedValue}
-            setSelectedValue={handleSortSelect}
-            width={5}
-            height={2}
-            fontSize="xs"
-            radius="btn"
-            border="none"
-            hover="light-gray"
-          />
-        </div>
-
-        {/* 글 작성하기 버튼 */}
         <div className="flex justify-end mb-4">
-          <div className="text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
+          <div className="py-2 mt-8 text-center bg-white border text-zp-2xs rounded-zp-radius-btn border-zp-main-color">
             <Button
               children="작성하기"
               buttonType="light"
@@ -125,8 +96,7 @@ export default function QuestionPost() {
           </div>
         </div>
 
-        {/* 글의 제목이나 작성자 이름을 입력하세요. */}
-        <div className="w-full relative flex justify-center items-center">
+        <div className="relative flex items-center justify-center w-full">
           <HiMagnifyingGlass className="relative left-4" />
           <Input
             placeholder="글의 제목이나 작성자 이름을 입력하세요."
@@ -142,7 +112,7 @@ export default function QuestionPost() {
           />
         </div>
 
-        <div className="mt-6 grid grid-cols-1 gap-3">
+        <div className="grid grid-cols-1 gap-3 mt-6">
           {questionPosts && questionPosts.length > 0 ? (
             questionPosts.map((post) => (
               <QuestionPostListItem
@@ -150,9 +120,9 @@ export default function QuestionPost() {
                 post_serial={post.board_serial}
                 post_image={post.images?.[0] || ''}
                 title={post.title}
-                content={''} // content 속성을 사용하여 게시글 내용 표시
-                calendar_image={null} // calendar_image는 null로 설정
-                profile_image={null} // 기본 이미지 사용
+                content={''}
+                calendar_image={null}
+                profile_image={null}
                 nickname={post.nickname}
                 upload_date={new Date(post.board_date)}
                 view_cnt={post.hit}
@@ -162,8 +132,8 @@ export default function QuestionPost() {
                     : post.wish_cnt
                 }
                 comment_cnt={post.comment_cnt}
-                isBookmarked={false} // 기본값으로 false 설정 또는 적절한 값으로 설정
-                onBookmarkToggle={handleBookmarkChange} // 북마크 토글 이벤트 핸들러 전달
+                isBookmarked={false}
+                onBookmarkToggle={handleBookmarkChange}
               />
             ))
           ) : (
