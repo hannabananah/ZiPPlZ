@@ -13,7 +13,7 @@ export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
     publisher,
     subscriber,
     leaveSession,
-    setSubscriber,
+    // setSubscriber,
     setPublisher,
     OV,
   } = useOpenVidu();
@@ -37,7 +37,7 @@ export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
           <Session
             publisher={publisher as Publisher}
             subscriber={subscriber as Subscriber}
-            setSubscriber={setSubscriber}
+            // setSubscriber={setSubscriber}
           />
         )}
       </div>

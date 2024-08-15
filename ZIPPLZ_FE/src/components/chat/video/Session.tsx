@@ -1,27 +1,16 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 import Video from '@components/chat/video/Video';
 import { Publisher, Subscriber } from 'openvidu-browser';
 
 interface SessionProps {
-  subscriber: Subscriber | null;
+  subscriber: Subscriber;
   publisher: Publisher;
-  setSubscriber: (subscriber: Subscriber | null) => void;
 }
 
-export default function Session({
-  subscriber,
-  setSubscriber,
-  publisher,
-}: SessionProps) {
+export default function Session({ subscriber, publisher }: SessionProps) {
   const publisherRef = useRef<HTMLVideoElement>(null);
   const subscriberRef = useRef<HTMLVideoElement>(null);
-
-  useEffect(() => {
-    if (subscriber) {
-      setSubscriber(subscriber);
-    }
-  }, [subscriber]);
 
   return (
     <div className="relative flex flex-col items-center justify-center h-full p-4 space-y-4">
