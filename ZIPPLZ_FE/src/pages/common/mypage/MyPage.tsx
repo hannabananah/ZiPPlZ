@@ -98,6 +98,7 @@ export default function MyPage() {
   // 로그아웃: localstorage에서 해당 유저 토큰 제거 후 로그인 페이지로 이동
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('login-user');
     setShowLogoutModal(false);
     navigate('/member/login');
   };

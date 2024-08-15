@@ -2,60 +2,91 @@ import { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { GoArrowLeft } from 'react-icons/go';
 import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+
+import { useMyPageStore } from '@stores/myPageStore';
 
 export default function MyInformationModify() {
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // 사용자가 고객인지 시공업자인지 상태를 설정합니다.
-  const [userType] = useState<'customer' | 'worker'>('worker');
+  // Zustand 상태 관리 사용
+  const {
+    role,
+    nickname, // nickname 필드를 직접 가져옵니다.
+    phoneNumber,
+    address,
+    fetchMyPageData,
+    updateCustomerInfo,
+    updateWorkerInfo,
+  } = useMyPageStore();
+
+  // 사용자가 고객인지 시공업자인지 상태를 API에서 가져온 role로 설정합니다.
+  const userType = role === 'worker' ? 'worker' : 'customer';
 
   // 각 입력 필드의 상태를 관리합니다.
-  const [nickname, setNickname] = useState('백승범123');
-  const [phoneNumber, setPhoneNumber] = useState('010-1234-5678');
-  const [address, setAddress] = useState('서울시 강남구 테헤란로');
+  const [localNickname, setLocalNickname] = useState(nickname || '');
+  const [phone, setPhone] = useState(phoneNumber || '');
+  const [userAddress, setUserAddress] = useState(address || '');
   const [businessNumber, setBusinessNumber] = useState('123-45-67890');
-  const [locationDetails, setLocationDetails] = useState<string[]>([]);
+  const [locationDetails] = useState<string[]>([]);
+  // setLocationDetails
   const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
 
   // 오류 메시지 상태를 관리합니다.
   const [nicknameError, setNicknameError] = useState('');
-  const [phoneNumberError, setPhoneNumberError] = useState('');
+  const [phoneError, setPhoneError] = useState('');
   const [addressError, setAddressError] = useState('');
+
+  // 컴포넌트가 마운트될 때 유저 데이터를 불러옵니다.
+  useEffect(() => {
+    fetchMyPageData(); // 유저 데이터를 불러오는 함수
+  }, [fetchMyPageData]);
+
+  // 유저 정보가 업데이트되면 입력 필드를 초기화합니다.
+  useEffect(() => {
+    setLocalNickname(nickname);
+    setPhone(phoneNumber);
+    setUserAddress(address);
+  }, [nickname, phoneNumber, address]);
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/mypage');
   };
 
-  // WorkerInfoLocationDetail에서 전달된 데이터를 수신하여 설정합니다.
-  useEffect(() => {
-    if (location.state && location.state.locations) {
-      const locations = location.state.locations.map(
-        (loc: any) => `${loc.city} ${loc.district}`
-      );
-      setLocationDetails(locations);
-    }
-  }, [location.state]);
-
   // 수정완료 버튼 핸들러
-  const handleSubmit = () => {
-    if (userType === 'customer' && !nickname)
+  const handleSubmit = async () => {
+    if (userType === 'customer' && !localNickname)
       setNicknameError('닉네임을 적어주세요');
     else setNicknameError('');
 
-    if (!phoneNumber) setPhoneNumberError('휴대폰 번호를 적어주세요');
-    else setPhoneNumberError('');
+    if (!phone) setPhoneError('휴대폰 번호를 적어주세요');
+    else setPhoneError('');
 
-    if (userType === 'customer' && !address)
+    if (userType === 'customer' && !userAddress)
       setAddressError('자택 주소를 적어주세요');
     else setAddressError('');
 
     if (
-      (userType === 'customer' && nickname && phoneNumber && address) ||
-      (userType === 'worker' && phoneNumber)
+      (userType === 'customer' && localNickname && phone && userAddress) ||
+      (userType === 'worker' && phone)
     ) {
+      if (userType === 'customer') {
+        // 고객 정보 업데이트
+        await updateCustomerInfo(phone, localNickname, userAddress);
+      } else if (userType === 'worker') {
+        // 시공업자 정보 업데이트
+        const locationList = locationDetails.map((location) => {
+          const [city, district] = location.split(' ');
+          return {
+            sidoCode: 0,
+            gugunCode: 0,
+            localName: `${city} ${district}`,
+          }; // 실제 코드로 변경 필요
+        });
+        await updateWorkerInfo(phone, locationList);
+      }
+
       navigate('/mypage');
     }
   };
@@ -75,7 +106,7 @@ export default function MyInformationModify() {
       fullAddress += extraAddress !== '' ? `(${extraAddress})` : '';
     }
 
-    setAddress(fullAddress);
+    setUserAddress(fullAddress);
     setIsPostcodeOpen(false);
   };
 
@@ -105,12 +136,12 @@ export default function MyInformationModify() {
                 <input
                   className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
                   placeholder="닉네임을 입력하세요"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
+                  value={localNickname}
+                  onChange={(e) => setLocalNickname(e.target.value)}
                 />
                 <IoIosCloseCircleOutline
                   className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => setNickname('')}
+                  onClick={() => setLocalNickname('')}
                   style={{ width: '24px', height: '24px' }}
                 />
                 {nicknameError && (
@@ -119,14 +150,6 @@ export default function MyInformationModify() {
                   </div>
                 )}
               </div>
-              <ul className="mt-2 list-disc pl-6 text-zp-2xs">
-                <li>
-                  일부 특수문자 사용 불가 (&, &lt;, &gt;, (, ), ‘, /, “, 콤마),
-                  이모티콘 사용 불가
-                </li>
-                <li>최대 10자 이내</li>
-                <li>띄어쓰기 불가능</li>
-              </ul>
 
               <div className="mt-6 font-bold text-zp-xl text-zp-gray">
                 자택 주소
@@ -135,13 +158,13 @@ export default function MyInformationModify() {
                 <input
                   className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
                   placeholder="자택 주소를 입력하세요"
-                  value={address}
+                  value={userAddress}
                   onClick={() => setIsPostcodeOpen(true)}
                   readOnly
                 />
                 <IoIosCloseCircleOutline
                   className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => setAddress('')}
+                  onClick={() => setUserAddress('')}
                   style={{ width: '24px', height: '24px' }}
                 />
                 {addressError && (
@@ -160,17 +183,17 @@ export default function MyInformationModify() {
             <input
               className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
               placeholder="010-1234-5678"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
             />
             <IoIosCloseCircleOutline
               className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => setPhoneNumber('')}
+              onClick={() => setPhone('')}
               style={{ width: '24px', height: '24px' }}
             />
-            {phoneNumberError && (
+            {phoneError && (
               <div className="text-zp-red font-bold text-zp-xs mt-1">
-                {phoneNumberError}
+                {phoneError}
               </div>
             )}
           </div>
@@ -191,7 +214,7 @@ export default function MyInformationModify() {
 
               <div
                 className="mt-6 w-full h-10 text-zp-xl font-bold bg-zp-sub-color rounded-zp-radius-btn flex justify-center items-center cursor-pointer"
-                onClick={() => navigate('/workerinfolocationdetail')}
+                onClick={() => navigate('/mypage/workerinfolocationdetail')}
               >
                 활동 지역 선택
               </div>

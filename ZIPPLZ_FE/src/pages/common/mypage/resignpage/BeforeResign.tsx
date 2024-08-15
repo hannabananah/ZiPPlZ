@@ -4,7 +4,6 @@ import { IoAlertCircleOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 export default function BeforeResign() {
-  let user: string = '강신구';
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
@@ -40,7 +39,6 @@ export default function BeforeResign() {
             />
           </div>
           <div className="mt-6 w-[400px] h-24">
-            <div className="text-zp-3xl font-bold">{user}님,</div>
             <div className="text-zp-3xl font-bold">
               탈퇴하기 전에 확인해주세요!
             </div>

@@ -2,7 +2,6 @@ import axios from 'axios';
 import { create } from 'zustand';
 
 const BASE_URL: string = 'http://localhost:5000/';
-// '/api/'
 
 interface WorkerPost {
   board_serial: number;
@@ -19,7 +18,8 @@ interface WorkerPost {
 
 interface MyPageState {
   profileImg: string | null;
-  name: string;
+  name: string; // 실제 이름
+  nickname: string; // 닉네임 추가
   role: string;
   phoneNumber: string;
   address: string;
@@ -28,6 +28,10 @@ interface MyPageState {
     tel: string,
     nickname: string,
     currentAddress: string
+  ) => Promise<void>;
+  updateWorkerInfo: (
+    tel: string,
+    locationList: { sidoCode: number; gugunCode: number; localName: string }[]
   ) => Promise<void>;
   uploadProfileImage: (file: File | Blob) => Promise<void>;
   deleteProfileImage: () => Promise<void>;
@@ -46,6 +50,7 @@ interface MyPageState {
 export const useMyPageStore = create<MyPageState>((set) => ({
   profileImg: null,
   name: '',
+  nickname: '', // 초기값 설정
   role: '',
   phoneNumber: '',
   address: '',
@@ -62,8 +67,9 @@ export const useMyPageStore = create<MyPageState>((set) => ({
         const data = response.data.data;
         set({
           profileImg: data.profileImg?.saveFile || null,
-          name: data.name,
-          role: data.role,
+          name: data.name, // 실제 이름
+          nickname: data.nickname, // 닉네임 설정
+          role: data.role, // 고객 또는 시공업자 여부 설정
           phoneNumber: data.tel,
           address: data.currentAddress,
         });
@@ -101,12 +107,42 @@ export const useMyPageStore = create<MyPageState>((set) => ({
 
       if (response.data.proc.code === 200) {
         console.log('고객 정보가 성공적으로 업데이트되었습니다.');
-        set({ name: nickname, phoneNumber: tel, address: currentAddress });
+        set({ nickname: nickname, phoneNumber: tel, address: currentAddress });
       } else {
         console.error('고객 정보 업데이트 실패:', response.data.proc.message);
       }
     } catch (error) {
       console.error('고객 정보 업데이트 중 오류 발생:', error);
+    }
+  },
+
+  updateWorkerInfo: async (
+    tel: string,
+    locationList: { sidoCode: number; gugunCode: number; localName: string }[]
+  ) => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.post(
+        `${BASE_URL}mypage/update-worker`,
+        {
+          tel,
+          locationList,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        console.log('시공자 정보가 성공적으로 업데이트되었습니다.');
+        set({ phoneNumber: tel });
+      } else {
+        console.error('시공자 정보 업데이트 실패:', response.data.proc.message);
+      }
+    } catch (error) {
+      console.error('시공자 정보 업데이트 중 오류 발생:', error);
     }
   },
 
@@ -166,7 +202,7 @@ export const useMyPageStore = create<MyPageState>((set) => ({
     }
   },
 
-  changePassword: async (currentPassword: string, newPassword: string) => {
+  changePassword: async (newPassword: string) => {
     const token = localStorage.getItem('token');
 
     try {
