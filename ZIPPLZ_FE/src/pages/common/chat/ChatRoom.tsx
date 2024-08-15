@@ -117,6 +117,7 @@ function ChatRoomContent() {
                   userSerial={msg.userSerial}
                   fileType={msg.fileType}
                   contract={msg.contract}
+                  otherUserSerial={selectedChatRoom?.otherUser.userSerial ?? 0}
                 />
               ))}
               <div ref={messagesEndRef} />

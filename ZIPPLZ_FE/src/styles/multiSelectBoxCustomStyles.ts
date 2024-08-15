@@ -12,7 +12,6 @@ const multiSelectBoxCustomStyles: StylesConfig<any, true> = {
   menu: (provided) => ({
     ...provided,
     border: '1px solid #ccc',
-    height: 70,
     overflow: 'scroll',
     scrollbarWidth: 'none',
     msOverflowStyle: 'none',
@@ -22,7 +21,7 @@ const multiSelectBoxCustomStyles: StylesConfig<any, true> = {
   }),
   menuList: (provided) => ({
     ...provided,
-    height: 70,
+    height: 50,
     fontSize: '12px',
     overflowY: 'auto',
     scrollbarWidth: 'none',
@@ -35,12 +34,15 @@ const multiSelectBoxCustomStyles: StylesConfig<any, true> = {
     ...provided,
     backgroundColor: '#ebebeb',
     fontSize: '13px',
+    ':hover': {
+      backgroundColor: '#F6F7E2',
+    },
   }),
   multiValueRemove: (provided) => ({
     ...provided,
     backgroundColor: '#ebebeb',
     ':hover': {
-      backgroundColor: '#e9e8d5',
+      backgroundColor: '#F6F7E2',
     },
   }),
   valueContainer: (provided) => ({
@@ -54,6 +56,11 @@ const multiSelectBoxCustomStyles: StylesConfig<any, true> = {
     '&::-webkit-scrollbar': {
       display: 'none',
     },
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isFocused ? '#F6F7E2' : provided.backgroundColor,
+    color: state.isSelected ? '#73744A' : provided.color,
   }),
 };
 

@@ -1,7 +1,11 @@
+import { useState } from 'react';
+
+import { acceptContract, rejectContract } from '@apis/worker/ContractApi';
+import Accepted from '@assets/accepted-icon.svg?react';
+import Rejected from '@assets/rejected-icon.svg?react';
 import Button from '@components/common/Button';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import { formatTime } from '@utils/formatDateWithTime';
-import axios from 'axios';
 
 interface MessageProps {
   userSerial: number;
@@ -9,9 +13,8 @@ interface MessageProps {
   createdAt: string;
   fileType?: string;
   contract?: boolean;
+  otherUserSerial: number;
 }
-
-const base_url = import.meta.env.VITE_APP_BASE_URL;
 
 export default function Message({
   userSerial,
@@ -19,7 +22,10 @@ export default function Message({
   createdAt,
   fileType,
   contract,
+  otherUserSerial,
 }: MessageProps) {
+  const [contractHandled, setContractHandled] = useState<string | null>(null);
+
   let formattedImgUrl = '';
   if (fileType === 'IMAGE') {
     formattedImgUrl = `data:image/jpeg;base64,${chatMessageContent}`;
@@ -30,44 +36,35 @@ export default function Message({
   const isImage = fileType === 'IMAGE';
   const isFile = fileType === 'FILE';
   const { loginUser } = useLoginUserStore();
-  const currUserSerial = loginUser?.userSerial;
+  const currUserSerial: number | undefined = loginUser?.userSerial;
   const currRole = loginUser?.role;
 
-  const postRejectContract = async () => {
+  const handleAcceptContract = async () => {
     try {
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      };
-      const url = `${base_url}/contract/reject`;
-
-      const response = await axios.post(url, null, { headers });
-      if (response.status === 200) {
-        console.log('성공적으로 계약을 거절했습니다.');
-      } else {
-        console.error('계약거절 중 에러발생', response);
+      if (typeof currUserSerial === 'number') {
+        const response = await acceptContract(otherUserSerial, currUserSerial);
+        if (response.proc.code === 200) {
+          setContractHandled('accepted');
+        }
       }
     } catch (error) {
-      console.error('계약거절 중 에러발생', error);
+      console.error('계약 수락 중 에러가 발생했습니다:', error);
     }
   };
 
-  const acceptContract = async () => {
+  const handleRejectContract = async () => {
     try {
-      const headers = {
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      };
-      const url = `${base_url}/contract/accept`;
-
-      const response = await axios.post(url, null, { headers });
-      if (response.status === 200) {
-        console.log('성공적으로 계약을 수락했습니다.');
-      } else {
-        console.error('계약수락 중 에러발생', response);
+      if (typeof currUserSerial === 'number') {
+        const response = await rejectContract(otherUserSerial, currUserSerial);
+        if (response.proc.code === 200) {
+          setContractHandled('rejected');
+        }
       }
     } catch (error) {
-      console.error('계약수락 중 에러발생', error);
+      console.error('계약 거절 중 에러가 발생했습니다:', error);
     }
   };
+
   return (
     <li
       className={`flex items-start px-4 py-2 ${
@@ -82,7 +79,7 @@ export default function Message({
         />
       )}
       <div
-        className={`p-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 ${
+        className={`p-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 relative ${
           userSerial === currUserSerial
             ? 'text-right rounded-se-zp-radius-none'
             : 'text-left rounded-ss-zp-radius-none'
@@ -113,7 +110,7 @@ export default function Message({
             {chatMessageContent}
           </p>
         )}
-        {contract && currRole == 'customer' && (
+        {contract && currRole === 'customer' && !contractHandled && (
           <div className="flex justify-end gap-2 mt-2">
             <Button
               type="button"
@@ -122,7 +119,7 @@ export default function Message({
               height={1.5}
               fontSize="2xs"
               radius="btn"
-              onClick={postRejectContract}
+              onClick={handleRejectContract}
             >
               거절
             </Button>
@@ -133,10 +130,20 @@ export default function Message({
               height={1.5}
               fontSize="2xs"
               radius="btn"
-              onClick={acceptContract}
+              onClick={handleAcceptContract}
             >
               수락
             </Button>
+          </div>
+        )}
+        {contractHandled === 'accepted' && (
+          <div className="absolute z-50 w-40 -translate-x-1/2 -top-12 left-1/2 animate-zoom-in">
+            <Accepted className="w-40" />
+          </div>
+        )}
+        {contractHandled === 'rejected' && (
+          <div className="absolute z-50 w-40 -translate-x-1/2 -top-16 left-1/2 animate-zoom-in">
+            <Rejected className="w-40" />
           </div>
         )}
         <p
