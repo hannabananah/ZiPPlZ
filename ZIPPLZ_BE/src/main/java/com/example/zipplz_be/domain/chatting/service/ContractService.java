@@ -216,7 +216,7 @@ public class ContractService {
         Request request =  requestRepository.getPendingRequest((Integer)params.get("sender"), (Integer)params.get("receiver"));
 
         System.out.println(userSerial);
-        
+
         if(request.getReceiver().getUserSerial() != userSerial) {
             throw new UnauthorizedUserException("수락할 권한이 없습니다.");
         }

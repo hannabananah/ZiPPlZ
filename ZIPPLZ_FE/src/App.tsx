@@ -26,7 +26,7 @@ import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCre
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
 
-import Contract from './pages/common/Contract';
+import ContractPage from './pages/common/ContractPage';
 import HousePost from './pages/common/community/HousePost';
 import HousePostCreate from './pages/common/community/HousePostCreate';
 import HousePostDetail from './pages/common/community/HousePostDetail';
@@ -56,7 +56,7 @@ export default function App() {
         <Route index element={<Home />} />
         {/* 스케줄 & 계약서 */}
         <Route path="schedule" element={<Schedule />} />
-        <Route path="contract/:workserial" element={<Contract />} />
+        <Route path="contract/:workserial" element={<ContractPage />} />
         <Route path="community" element={<Community />} />
         <Route path="mypage" element={<MyPage />} />
         <Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
