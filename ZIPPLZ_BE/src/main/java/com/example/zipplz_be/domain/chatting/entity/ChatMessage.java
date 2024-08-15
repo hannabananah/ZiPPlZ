@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.chatting.entity;
 
+import com.example.zipplz_be.domain.chatting.dto.ContractRequestDTO;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.BaseTimeEntity;
 import com.example.zipplz_be.domain.model.entity.MessageType;

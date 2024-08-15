@@ -20,4 +20,6 @@ public interface UserToChatroomRepository extends JpaRepository<UserToChatroom, 
     @Query(value = "UPDATE Usertochatroom set token = :token where (chatroom_serial = :chatroomSerial) and (user_serial = :userSerial)",  nativeQuery = true)
     void updateToken(@Param("token") String token, @Param("userSerial")  int userSerial, @Param("chatroomSerial") int chatroomSerial);
 
+    @Query(value = "select * from Usertochatroom where user_serial = :userSerial and chatroom_serial= :chatroomSerial", nativeQuery = true)
+    UserToChatroom findByuserSerialAndChatroomSerial(int userSerial, int chatroomSerial);
 }
