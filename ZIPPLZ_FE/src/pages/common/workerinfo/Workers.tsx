@@ -191,7 +191,7 @@ export default function Workers() {
           />
           {selectedOption === '전문 시공자 구하기' && (
             <div className="flex items-center justify-end w-full mt-4">
-              {loginUser.role === 'customer' && (
+              {loginUser && loginUser.role === 'customer' && (
                 <Button
                   buttonType="normal"
                   children="글 작성하기"

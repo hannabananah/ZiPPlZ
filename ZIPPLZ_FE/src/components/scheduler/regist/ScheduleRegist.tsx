@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
 import { LuMinimize2 } from 'react-icons/lu';
 import ReactModal from 'react-modal';
@@ -144,6 +144,10 @@ export default function ScheduleRegist({ planSerial }: Props) {
           radius="btn"
           width="full"
           fontSize="xl"
+          value={newPrivateSchedule}
+          onChange={(e: React.ChangeEvent) =>
+            setNewPrivateSchedule((e.target as HTMLInputElement).value)
+          }
           onKeyDown={handleKeyDown}
         />
       )}

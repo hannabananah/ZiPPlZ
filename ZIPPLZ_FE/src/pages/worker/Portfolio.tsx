@@ -101,7 +101,7 @@ export default function Portfolio() {
     };
   }, []);
   useEffect(() => {
-    if (portfolioList.length > 0) {
+    if (portfolioList && portfolioList.length > 0) {
       fetchPortFolioOverView(portfolioList[0].portfolioSerial);
       setNowField(portfolioList[0].fieldId.fieldName);
     }
@@ -159,25 +159,28 @@ export default function Portfolio() {
 
               {/* Skills as buttons */}
               <div className="grid grid-cols-3 gap-4">
-                {portfolioList.map((item, index) => (
-                  <Button
-                    buttonType={
-                      nowField === item.fieldId.fieldName ? 'primary' : 'second'
-                    }
-                    disabled={nowField === item.fieldId.fieldName}
-                    width={4}
-                    height={2}
-                    fontSize="xs"
-                    radius="big"
-                    key={index}
-                    onClick={() => {
-                      fetchPortFolioOverView(item.portfolioSerial);
-                      setNowField(item.fieldId.fieldName);
-                    }}
-                  >
-                    {item.fieldId.fieldName}
-                  </Button>
-                ))}
+                {portfolioList &&
+                  portfolioList.map((item, index) => (
+                    <Button
+                      buttonType={
+                        nowField === item.fieldId.fieldName
+                          ? 'primary'
+                          : 'second'
+                      }
+                      disabled={nowField === item.fieldId.fieldName}
+                      width={4}
+                      height={2}
+                      fontSize="xs"
+                      radius="big"
+                      key={index}
+                      onClick={() => {
+                        fetchPortFolioOverView(item.portfolioSerial);
+                        setNowField(item.fieldId.fieldName);
+                      }}
+                    >
+                      {item.fieldId.fieldName}
+                    </Button>
+                  ))}
               </div>
             </div>
           </div>

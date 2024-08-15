@@ -27,6 +27,13 @@ interface Field {
   fieldCode: number;
   fieldName: string;
 }
+interface Contract {
+  requestComment: string;
+  startDate: string;
+  endDate: string;
+  workPrice: number;
+  materialList: number[];
+}
 
 export interface Worker {
   userSerial: number;
@@ -116,4 +123,19 @@ export const getContract = async (workSerial: number) => {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },
   });
+};
+//계약서 수정 요청
+export const updateContract = async (
+  chatRoomSerial: number,
+  data: Contract
+) => {
+  return await axiosInstance.post(
+    `contract/${chatRoomSerial}/modifyrequest`,
+    data,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
 };
