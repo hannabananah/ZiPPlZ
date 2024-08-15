@@ -5,9 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import QuestionPostListItem from '@/components/community/QuestionPostListItem';
+import { useQuestionPostStore } from '@/stores/QuestionPostStore';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
-import { useQuestionPostStore } from '@stores/QuestionPostStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
@@ -35,7 +35,6 @@ export default function QuestionPost() {
   };
 
   const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption);
   };
 
