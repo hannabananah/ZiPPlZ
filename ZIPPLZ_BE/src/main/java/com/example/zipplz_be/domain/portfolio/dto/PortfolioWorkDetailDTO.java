@@ -26,10 +26,12 @@ public class PortfolioWorkDetailDTO {
     List<File> planImageList;
 
     //고객 닉네임
+    String customerName;
     String nickname;
 
     @Builder
-    public PortfolioWorkDetailDTO(int workSerial, String startDate, String endDate, int workPrice, String workContent, int planSerial, String address, String sharedContents, List<File> planImageList, String nickname) {
+    public PortfolioWorkDetailDTO(String customerName, int workSerial, String startDate, String endDate, int workPrice, String workContent, int planSerial, String address, String sharedContents, List<File> planImageList, String nickname) {
+        this.customerName = customerName;
         this.workSerial = workSerial;
         this.startDate = startDate;
         this.endDate = endDate;

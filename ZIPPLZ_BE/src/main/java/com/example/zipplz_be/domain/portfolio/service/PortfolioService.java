@@ -234,6 +234,7 @@ public class PortfolioService {
 
         Work work = workRepository.findByWorkSerial(workSerial);
         Plan plan = planRepository.findByPlanSerial(work.getPlanSerial().getPlanSerial());
+        User cusUser = userRepository.findByUserSerial(plan.getCustomerSerial().getUserSerial().getUserSerial());
         Customer customer = customerRepository.findByCustomerSerial(plan.getCustomerSerial().getCustomerSerial());
         List<File> planImageList = new ArrayList<>();
 
@@ -257,6 +258,7 @@ public class PortfolioService {
                 .address(plan.getAddress())
                 .sharedContents(plan.getSharedContents())
                 .nickname(customer.getNickname())
+                .customerName(cusUser.getUserName())
                 .planImageList(planImageList)
                 .build();
 
