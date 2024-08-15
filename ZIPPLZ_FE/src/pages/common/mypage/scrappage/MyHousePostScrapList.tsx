@@ -38,8 +38,23 @@ export default function MyHousePostScrapList() {
   }, [fetchMyHousePostScrapList]);
 
   const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption);
+    // 정렬 로직 추가
+    setList((prevList) =>
+      [...prevList].sort((a, b) => {
+        if (sortOption === '최신순') {
+          return (
+            new Date(b.board_date).getTime() - new Date(a.board_date).getTime()
+          );
+        } else if (sortOption === '과거순') {
+          return (
+            new Date(a.board_date).getTime() - new Date(b.board_date).getTime()
+          );
+        } else {
+          return b.wish_cnt - a.wish_cnt; // 평점순
+        }
+      })
+    );
   };
 
   // 페이지 돌아가기 핸들러
@@ -92,7 +107,6 @@ export default function MyHousePostScrapList() {
   return (
     <>
       <div className="flex flex-col items-start w-full min-h-screen gap-4 px-6 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
         <div className="relative flex items-center justify-between w-full h-10 mt-16">
           <div className="flex items-center justify-center w-full gap-2">
             <GoArrowLeft
@@ -113,7 +127,9 @@ export default function MyHousePostScrapList() {
             className="flex items-center space-x-2 cursor-pointer"
           >
             <IoMdArrowDropdown
-              className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              className={`transition-transform ${
+                isDropdownOpen ? 'rotate-180' : ''
+              }`}
               size={24}
             />
           </div>
@@ -142,7 +158,7 @@ export default function MyHousePostScrapList() {
             </div>
           )}
         </div>
-        {/* 검색 input */}
+
         <div className="relative flex items-center justify-center w-full">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -159,7 +175,6 @@ export default function MyHousePostScrapList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
           <div className="relative flex items-center justify-end top-3">
             <div>
               <Selectbar
@@ -178,12 +193,11 @@ export default function MyHousePostScrapList() {
             </div>
           </div>
         </div>
-        {/* 전체 게시글 수 표시 부분 */}
+
         <div className="font-bold text-zp-xl text-zp-gray">
           전체 {list.length}
         </div>
 
-        {/* 선택하기-삭제하기 버튼 */}
         <div className="flex items-center justify-between w-full text-zp-2xs">
           {isSelecting && (
             <div
@@ -222,11 +236,9 @@ export default function MyHousePostScrapList() {
             </button>
           </div>
         </div>
-        {/* 가로선 */}
+
         <hr className="w-full border-zp-main-color" />
 
-        {/* HousePostListItem 컴포넌트 */}
-        {/* 화면 width 따라 grid 개수 변화 */}
         <div className="grid w-full grid-cols-2 gap-3 mt-2 sm:grid-cols-2 md:grid-cols-3">
           {list.map((post) => (
             <div
@@ -269,7 +281,6 @@ export default function MyHousePostScrapList() {
         </div>
       </div>
 
-      {/* 모달 */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="p-6 bg-zp-white rounded-zp-radius-big">
