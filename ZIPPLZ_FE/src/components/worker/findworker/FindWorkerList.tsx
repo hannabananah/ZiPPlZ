@@ -16,10 +16,20 @@ export default function FindWorkerList() {
   }, []);
   return (
     <div className="flex flex-col gap-6 mb-[6rem] overflow-auto">
-      {findWorkerList &&
+      {findWorkerList && findWorkerList.length > 0 ? (
         findWorkerList.map((item: FindWorker) => (
           <FindWorkerListItem board={item} />
-        ))}
+        ))
+      ) : (
+        <>
+          <div className="flex flex-col items-center justify-center w-full ">
+            <img src="/nothing-icon.svg" className="w-[60%] aspect-square" />
+            <p className="font-bold text-zp-xl text-zp-light-gray">
+              존재하는 게시물이 없습니다
+            </p>
+          </div>
+        </>
+      )}
     </div>
   );
 }

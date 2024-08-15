@@ -121,7 +121,6 @@ export const modifyWork = async (
 
 //빈 공정 삭제
 export const deleteWork = async (planSerial: number, workSerial: number) => {
-  console.log(planSerial, workSerial);
   return await axiosInstance.delete(
     END_POINT.WORK_SERIAL(planSerial, workSerial),
     {
@@ -172,6 +171,14 @@ export const addImg = async (planSerial: number, imageFile: File) => {
 //유저별 공종 목록 조회
 export const getWorksByUser = async () => {
   return await axiosInstance.get(END_POINT.WORKS_USERS, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+};
+//유저별 시공중인 공종 조회
+export const getTodayWork = async () => {
+  return await axiosInstance.get('schedule/users/working', {
     headers: {
       Authorization: `Bearer ${localStorage.getItem('token')}`,
     },

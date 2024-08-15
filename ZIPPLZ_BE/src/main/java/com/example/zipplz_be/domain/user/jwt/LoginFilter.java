@@ -32,10 +32,17 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String email = request.getHeader("email"); // 우리는 username 대신 email로 검증
         String password = request.getHeader("password");
 
-        System.out.println("password when attempting authentication :" + password);
+        // User 사용자 조회
+        User user = userRepository.findByEmail(email);
+        if (user == null) {
+            throw new AuthenticationException("User not found") {};
+        }
+
+        if (user.getDelYN() == 1) {
+            throw new AuthenticationException("This account has been deleted") {};
+        }
 
         UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(email, password, null);
-
         return authenticationManager.authenticate(authToken);
     }
 

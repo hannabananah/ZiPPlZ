@@ -3,6 +3,7 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import {
   getWorkerList,
   getWorkerListByField,
@@ -31,6 +32,10 @@ const fields: string[] = [
   '기타',
 ];
 export default function Workers() {
+  const { loginUser } = useLoginUserStore();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
   const { setWorkerList } = useWorkerListStore();
   const { category } = useParams<{ category?: string }>();
   const { keyword, setKeyword } = useBoardStore();
@@ -148,7 +153,7 @@ export default function Workers() {
                 <FieldListItem
                   key={idx}
                   field={field}
-                  handlClickField={() =>
+                  handleClickField={() =>
                     navigate(`/workers/portfolios?type=${field}`)
                   }
                 />
@@ -186,15 +191,17 @@ export default function Workers() {
           />
           {selectedOption === '전문 시공자 구하기' && (
             <div className="flex items-center justify-end w-full mt-4">
-              <Button
-                buttonType="normal"
-                children="글 작성하기"
-                width={5}
-                height={1.5}
-                fontSize="2xs"
-                radius="btn"
-                onClick={() => navigate('/workers/findworker/write')}
-              />
+              {loginUser.role === 'customer' && (
+                <Button
+                  buttonType="normal"
+                  children="글 작성하기"
+                  width={5}
+                  height={1.5}
+                  fontSize="2xs"
+                  radius="btn"
+                  onClick={() => navigate('/workers/findworker/write')}
+                />
+              )}
             </div>
           )}
         </div>

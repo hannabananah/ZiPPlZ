@@ -325,7 +325,7 @@ public class BoardController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    // 질문글 검색
+    // 자랑글 검색
     @GetMapping("/find/showboard/{search_content}")
     public ResponseEntity<ResponseDTO<List<ShowBoardListDTO>>> findShowBoardByContent(Authentication authentication, @PathVariable(value = "search_content") String search_content) {
         ResponseDTO<List<ShowBoardListDTO>> responseDTO;

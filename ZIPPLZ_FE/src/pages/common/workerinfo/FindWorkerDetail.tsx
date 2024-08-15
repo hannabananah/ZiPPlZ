@@ -4,14 +4,11 @@ import { CgProfile } from 'react-icons/cg';
 import { CiLocationOn } from 'react-icons/ci';
 import { FaTrashAlt } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
-import {
-  // IoBookmark,
-  IoBookmarkOutline,
-  IoChatbubblesOutline,
-} from 'react-icons/io5';
+import { IoBookmarkOutline, IoChatbubblesOutline } from 'react-icons/io5';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { writeReview } from '@/apis/board/reviewApi';
+import { addWish, cancelWish, getWish } from '@/apis/board/wishApi';
 import {
   deleteFindWorker,
   getFIndWorkerDetail,
@@ -26,6 +23,10 @@ import { useWorkerListStore } from '@stores/workerListStore';
 
 // FindWorkerDetail 컴포넌트 정의
 export default function FindWorkerDetai() {
+  const checkWish = async (boardSerial: number) => {
+    const response = await getWish(boardSerial);
+    setIsWish(response.data.data);
+  };
   const { id } = useParams<{ id: string }>();
   const boardSerial: number = id ? parseInt(id) : 0;
   const { loginUser } = useLoginUserStore();
@@ -37,6 +38,7 @@ export default function FindWorkerDetai() {
     const response = await getFIndWorkerDetail(boardSerial);
     setFindWorker(response.data.data);
   };
+  const [isWish, setIsWish] = useState<number>(-1);
   const handleClickRegistReview = async (
     boardSerial: number,
     review: string
@@ -53,8 +55,20 @@ export default function FindWorkerDetai() {
     return await deleteFindWorker(boardSerial);
   };
   useEffect(() => {
-    if (boardSerial > 0) fetchFindWorker(boardSerial);
+    if (boardSerial > 0) {
+      fetchFindWorker(boardSerial);
+      checkWish(boardSerial);
+    }
   }, []);
+  const handleClickWish = async (boardSerial: number, type: number) => {
+    if (isWish > 0) {
+      setIsWish(0);
+      return await cancelWish(boardSerial, type);
+    } else {
+      setIsWish(1);
+      return await addWish(boardSerial, type);
+    }
+  };
   return (
     <>
       {findWorker ? (
@@ -180,27 +194,30 @@ export default function FindWorkerDetai() {
             style={{ bottom: '3.6rem', left: 0 }}
           >
             <hr className="w-full text-zp-light-gray" />
-            <div className="flex grid items-center w-full grid-cols-2 gap-4 mb-4">
+            <div className="flex items-center w-full gap-4 mb-4">
               <Button
-                buttonType="normal"
-                width="full"
+                buttonType={isWish > 0 ? 'primary' : 'normal'}
+                width={loginUser?.role === 'worker' ? '50%' : 'full'}
                 height={3}
                 fontSize="lg"
                 radius="btn"
+                onClick={() => handleClickWish(boardSerial, 3)}
               >
                 <IoBookmarkOutline size={24} />
                 <span className="font-bold"> 찜하기</span>
               </Button>
-              <Button
-                buttonType="second"
-                width="full"
-                height={3}
-                fontSize="lg"
-                radius="btn"
-              >
-                <IoChatbubblesOutline size={24} />
-                <span className="font-bold">채팅하기</span>
-              </Button>
+              {loginUser?.role === 'worker' && (
+                <Button
+                  buttonType="second"
+                  width="full"
+                  height={3}
+                  fontSize="lg"
+                  radius="btn"
+                >
+                  <IoChatbubblesOutline size={24} />
+                  <span className="font-bold">채팅하기</span>
+                </Button>
+              )}
             </div>
           </div>
           <ModalComponent

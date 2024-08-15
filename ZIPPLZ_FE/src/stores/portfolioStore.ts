@@ -7,7 +7,7 @@ export interface Portfolio {
     fieldName: string;
   };
 }
-export interface PortfolitDetail {
+export interface PortfolioDetail {
   portfolioSerial: number;
   publicRelation: string;
   career: number;
@@ -66,7 +66,9 @@ interface DateDetail {
     originalFile: string;
     saveFile: string;
   }[];
+  customerName: string;
   nickname: string;
+  fieldName: string;
 }
 interface Review {
   customerReviewSerial: number;
@@ -92,13 +94,13 @@ interface GPTReview {
 }
 interface usePortfolioStore {
   portfolioList: Portfolio[];
-  portfolioOverview: PortfolitDetail | null;
+  portfolioOverview: PortfolioDetail | null;
   dateList: WorkerDate[];
   dateDetail: DateDetail | null;
   portfolioReview: PortfolioReview | null;
   gtpReview: GPTReview | null;
   setPortfolioList: (portfolioList: Portfolio[]) => void;
-  setPortfolioOverview: (portfolioOverview: PortfolitDetail) => void;
+  setPortfolioOverview: (portfolioOverview: PortfolioDetail | null) => void;
   setDateList: (dateList: WorkerDate[]) => void;
   setDateDetail: (dateDetail: DateDetail) => void;
   setPortfolioReview: (portfolioReview: PortfolioReview) => void;
@@ -112,7 +114,7 @@ export const usePortfolioStore = create<usePortfolioStore>()((set) => ({
   portfolioReview: null,
   gtpReview: null,
   setPortfolioList: (portfolioList: Portfolio[]) => set({ portfolioList }),
-  setPortfolioOverview: (portfolioOverview: PortfolitDetail) =>
+  setPortfolioOverview: (portfolioOverview: PortfolioDetail | null) =>
     set({ portfolioOverview }),
   setDateList: (dateList: WorkerDate[]) => set({ dateList }),
   setDateDetail: (dateDetail: DateDetail) => set({ dateDetail }),

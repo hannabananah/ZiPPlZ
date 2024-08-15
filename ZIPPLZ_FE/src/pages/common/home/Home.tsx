@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { getChatRooms } from '@/apis/chatroom/chatApi';
 import { getTopWorkerList } from '@/apis/worker/WorkerListApi';
 import { useWorkerListStore } from '@/stores/workerListStore';
-import { getWorksByUser } from '@apis/scheduler/schedulerApi';
+import { getTodayWork, getWorksByUser } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import FieldListItem from '@components/home/FieldListItem';
 import ImageChangeTab from '@components/home/ImageChangeTab';
+import ImageChangeViewTab from '@components/home/ImageChangeViewTab';
 import TodaySchedule from '@components/home/TodaySchedule';
 import WorkerCard from '@components/home/WorkerCard';
 import { useLoginUserStore } from '@stores/loginUserStore';
@@ -30,14 +32,96 @@ const fields: string[] = [
 interface Work {
   starDate: string;
   endDate: string;
-  fiield: string;
+  field: string;
 }
-
+interface TodayWork {
+  workSerial: number;
+  startDate: string;
+  endDate: string;
+  field: string;
+  address: string;
+  workerProfile: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+  customerProfile: string;
+  customer: {
+    customerSerial: number;
+    userSerial: {
+      userSerial: number;
+      fileSerial: number;
+      email: string;
+      password: string;
+      userName: string;
+      birthDate: string;
+      tel: string;
+      delYN: number;
+      role: string;
+    };
+    nickname: string;
+    currentAddress: string | null;
+  };
+  worker: {
+    workerSerial: number;
+    userSerial: {
+      userSerial: number;
+      fileSerial: {
+        fileSerial: number;
+        saveFolder: string;
+        originalFile: string;
+        saveFile: string;
+        fileName: string | null;
+      };
+      email: string;
+      password: string;
+      userName: string;
+      birthDate: string;
+      tel: string;
+      delYN: number;
+      role: string;
+    };
+    company: string;
+    companyAddress: string;
+    businessNumber: string;
+    hasAsBadge: number;
+    certificatedBadge: number;
+  };
+}
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
 export default function Home() {
   const [scheduleList, setScheduleList] = useState<Work[]>([]);
+  const [todayWork, setTodayWork] = useState<TodayWork[]>([]);
   const navigate = useNavigate();
   const { loginUser } = useLoginUserStore();
   const { workerList, setWorkerList } = useWorkerListStore();
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const fetchChatRooms = async () => {
+    const response = await getChatRooms();
+    setChatRoomList(response.data.data);
+  };
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
   const handleClickImageChange = () =>
     navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
   const fetchWorks = async () => {
@@ -51,21 +135,31 @@ export default function Home() {
     const response = await getTopWorkerList();
     setWorkerList(response.data.data);
   };
+  const fetchTodaySchedule = async () => {
+    try {
+      const response = await getTodayWork();
+      setTodayWork(response.data.data);
+    } catch (error) {}
+  };
   useEffect(() => {
     fetchHotWorkers();
     if (loginUser?.role) {
       fetchWorks();
+      fetchTodaySchedule();
     }
   }, []);
   useEffect(() => {
-    console.log(workerList);
-  }, [workerList]);
+    console.log(todayWork);
+  }, [todayWork]);
+  useEffect(() => {
+    console.log(chatRoomList);
+  }, [chatRoomList]);
   return (
-    <div className="relative flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
-      <div className="w-full p-4 rounded-zp-radius-big bg-zp-white">
+    <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
+      <div className="relative w-full p-4 rounded-zp-radius-big bg-zp-white">
         <ScheduleCalendar workList={scheduleList} />
         {(!loginUser || loginUser.role === '') && (
-          <div className="absolute flex justify-center items-center top-[2rem] left-[2rem] w-[85%] rounded-zp-radius-big bg-[rgba(255,255,255,0.5)] aspect-square z-10">
+          <div className="absolute flex justify-center items-center w-full h-full top-0 left-0 rounded-zp-radius-big bg-[rgba(255,255,255,0.5)] z-10">
             <div className="flex flex-col justify-center items-center w-[80%] h-[40%] bg-zp-light-beige opacity-100 z-100 rounded-zp-radius-big gap-4 p-4">
               <p className="font-bold text-center text-zp-xs">
                 나만의 시공 업무를 관리하고 싶다면?
@@ -87,13 +181,31 @@ export default function Home() {
         <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
           <div className="basis-7/12">
             <p className="font-extrabold text-zp-xl">Today</p>
-            <TodaySchedule role={loginUser?.role || ''} />
+            {todayWork.length > 0 ? (
+              todayWork
+                .filter((work) => work.worker !== null)
+                .map((work) => (
+                  <TodaySchedule
+                    key={work.workSerial}
+                    role={loginUser?.role || ''}
+                    work={work}
+                    chatRoomList={chatRoomList}
+                  />
+                ))
+            ) : (
+              <div className="w-full h-[8.3rem] rounded-zp-radius-big bg-zp-white flex items-center justify-center">
+                <p className="font-bold text-zp-md text-zp-light-gray">
+                  시공이 없습니다
+                </p>
+              </div>
+            )}
           </div>
           <div className="basis-5/12">
             <p className="font-extrabold text-zp-xl">Image Change</p>
-            {/* <div className="w-full h-[4rem]"> */}
-            <ImageChangeTab onClick={handleClickImageChange} />
-            {/* </div> */}
+            <div className="flex flex-col gap-2">
+              <ImageChangeTab onClick={handleClickImageChange} />
+              <ImageChangeViewTab onClick={handleClickImageChange} />
+            </div>
           </div>
         </div>
       )}
@@ -106,15 +218,21 @@ export default function Home() {
       <div className="grid w-full grid-cols-6 gap-4 ">
         {fields.map((item) => (
           <FieldListItem
+            key={item}
             field={item}
-            handlClickField={() => handleClickField(item)}
+            handleClickField={() => handleClickField(item)}
           />
         ))}
       </div>
       <p className="font-extrabold text-zp-xl">HOT한 시공업자</p>
-      <div className="flex w-full overflow-x-auto">
+      <div
+        className="flex w-full overflow-x-auto"
+        style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
+      >
         <div className="flex justify-between w-full h-[8rem] ">
-          {workerList?.map((worker) => <WorkerCard worker={worker} />)}
+          {workerList?.map((worker) => (
+            <WorkerCard key={worker.field_id} worker={worker} />
+          ))}
         </div>
       </div>
     </div>

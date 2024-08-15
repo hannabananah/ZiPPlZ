@@ -11,7 +11,19 @@ import HousePostListItem from '@/components/community/HousePostListItem';
 import Input from '@components/common/Input';
 import { useMyPageStore } from '@stores/myPageStore';
 
-type SortOption = '평점순' | '최신순' | '과거순';
+// interface WorkerInfo {
+//   user_serial: number;
+//   portfolio_serial: number;
+//   name: string;
+//   birth_date: number;
+//   temp: number;
+//   field_id: number;
+//   field_name: string;
+//   career: number;
+//   certificated_badge: number;
+//   locations: string[];
+//   img: string;
+// }
 
 export default function MyHousePostList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -52,56 +64,60 @@ export default function MyHousePostList() {
     setSelectedValue(sortOption as SortOption);
   };
 
-  const handleGoBack = () => {
-    navigate('/mypage');
-  };
+//   const handleSortSelect = (sortOption: string) => {
+//     setSelectedValue(sortOption as SortOption);
+//   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+//   const handleGoBack = () => {
+//     navigate('/mypage');
+//   };
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
-    setIsDropdownOpen(false);
-  };
+//   const toggleDropdown = () => {
+//     setIsDropdownOpen(!isDropdownOpen);
+//   };
 
-  const toggleAllSelected = () => {
-    if (isAllSelected) {
-      setSelectedWorkers([]);
-    } else {
-      setSelectedWorkers(list.map((worker) => worker.user_serial));
-    }
-    setIsAllSelected(!isAllSelected);
-  };
+//   const handleNavigate = (path: string) => {
+//     navigate(path);
+//     setIsDropdownOpen(false);
+//   };
 
-  const handleWorkerSelect = (user_serial: number) => {
-    if (selectedWorkers.includes(user_serial)) {
-      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
-    } else {
-      setSelectedWorkers([...selectedWorkers, user_serial]);
-    }
-  };
+//   const toggleAllSelected = () => {
+//     if (isAllSelected) {
+//       setSelectedWorkers([]);
+//     } else {
+//       setSelectedWorkers(list.map((worker) => worker.user_serial));
+//     }
+//     setIsAllSelected(!isAllSelected);
+//   };
 
-  const toggleSelecting = () => {
-    if (isSelecting) {
-      setSelectedWorkers([]);
-    }
-    setIsSelecting(!isSelecting);
-    setIsAllSelected(false);
-  };
+//   const handleWorkerSelect = (user_serial: number) => {
+//     if (selectedWorkers.includes(user_serial)) {
+//       setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+//     } else {
+//       setSelectedWorkers([...selectedWorkers, user_serial]);
+//     }
+//   };
 
-  const handleDeleteConfirmation = () => {
-    setIsModalOpen(true);
-  };
+//   const toggleSelecting = () => {
+//     if (isSelecting) {
+//       setSelectedWorkers([]);
+//     }
+//     setIsSelecting(!isSelecting);
+//     setIsAllSelected(false);
+//   };
 
   const handleWorkerClick = (board_serial: number) => {
     navigate(`/housepost/${board_serial}`);
   };
 
-  return (
-    <>
+//   const handleWorkerClick = (user_serial: number) => {
+//     navigate(`/housepost/${user_serial}`);
+//   };
+
+//   return (
+{
+  /*   <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
@@ -149,7 +165,6 @@ export default function MyHousePostList() {
             </div>
           )}
         </div>
-        {/* 검색 input */}
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -166,7 +181,6 @@ export default function MyHousePostList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
           <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
@@ -190,9 +204,8 @@ export default function MyHousePostList() {
           전체 {list.length}
         </div>
 
-        {/* 선택하기-삭제하기 버튼 */}
-        <div className="w-full flex justify-between items-center text-zp-2xs">
-          {isSelecting && (
+       <div className="w-full flex justify-between items-center text-zp-2xs">
+         {isSelecting && (
             <div
               className="flex items-center space-x-2 cursor-pointer"
               onClick={toggleAllSelected}
@@ -229,7 +242,6 @@ export default function MyHousePostList() {
             </button>
           </div>
         </div>
-        {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
         {/* workerInfoListitem 컴포넌트 */}
@@ -275,9 +287,7 @@ export default function MyHousePostList() {
           ))}
         </div>
       </div>
-
-      {/* 모달 */}
-      {isModalOpen && (
+    {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">
             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
@@ -307,4 +317,5 @@ export default function MyHousePostList() {
       )}
     </>
   );
+}*/
 }

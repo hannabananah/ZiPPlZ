@@ -3,13 +3,17 @@ import Session from '@components/chat/video/Session';
 import useOpenVidu from '@hooks/useOpenvidu';
 import { Publisher, Subscriber } from 'openvidu-browser';
 
-export default function VideoRoom() {
+interface VideoModalProps {
+  handleCloseVideo: () => void;
+}
+
+export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
   const {
     session,
     publisher,
     subscriber,
     leaveSession,
-    setSubscriber,
+    // setSubscriber,
     setPublisher,
     OV,
   } = useOpenVidu();
@@ -33,7 +37,7 @@ export default function VideoRoom() {
           <Session
             publisher={publisher as Publisher}
             subscriber={subscriber as Subscriber}
-            setSubscriber={setSubscriber}
+            // setSubscriber={setSubscriber}
           />
         )}
       </div>
@@ -46,6 +50,7 @@ export default function VideoRoom() {
         setPublisher={setPublisher}
         publishAudio={publishAudio}
         publishVideo={publishVideo}
+        handleCloseVideo={handleCloseVideo}
       />
     </div>
   );

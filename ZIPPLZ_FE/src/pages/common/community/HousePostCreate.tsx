@@ -35,6 +35,7 @@ export default function HousePostCreate() {
   const [title, setTitle] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
   const [isWorkerModalOpen, setIsWorkerModalOpen] = useState(false);
+  // 시공업자 리스트 임시 저장
   const [tempSelectedWorkers, setTempSelectedWorkers] = useState<WorkerInfo[]>(
     []
   );
@@ -58,9 +59,7 @@ export default function HousePostCreate() {
 
   const fetchWorkerInfoList = async () => {
     try {
-      const response = await axios.get(
-        'http://localhost:5000/workerlist/portfolios'
-      );
+      const response = await axios.get('/api/workerlist/portfolios');
       if (response.data.proc.code === 200) {
         setWorkerInfoList(response.data.data);
         setFilteredWorkers(response.data.data); // 초기에는 전체 목록 표시

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { FaRegTrashAlt } from 'react-icons/fa';
 import { FiPlusCircle } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 
 interface Props {
   schedule: any;
@@ -15,7 +16,7 @@ export default function SchedulerCard({ schedule, idx, onClickTrash }: Props) {
     console.log(schedule.workSerial);
     setIsOpen(!isOpen);
   };
-
+  const navigate = useNavigate();
   const handleClickTrash = () => {
     if (onClickTrash) {
       onClickTrash();
@@ -62,7 +63,9 @@ export default function SchedulerCard({ schedule, idx, onClickTrash }: Props) {
             <FiPlusCircle
               className="cursor-pointer"
               size={32}
-              onClick={() => alert('리스트추가')}
+              onClick={() =>
+                navigate(`/workers/portfolios?type=${schedule.fieldName}`)
+              }
             />
           </div>
         )}

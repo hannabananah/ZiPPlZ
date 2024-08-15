@@ -3,6 +3,7 @@ package com.example.zipplz_be.global.config;
 import com.example.zipplz_be.domain.user.jwt.JWTFilter;
 import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import com.example.zipplz_be.domain.user.jwt.LoginFilter;
+import com.example.zipplz_be.global.config.CorsConfig;
 import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.service.CustomOAuth2UserService;
 import com.example.zipplz_be.global.handler.OAuth2SuccessHandler;
@@ -31,8 +32,10 @@ public class SecurityConfig {
     private final JWTUtil jwtUtil;
     private final CustomOAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
-
-    public SecurityConfig(AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomOAuth2UserService oAuth2UserService, OAuth2SuccessHandler oAuth2SuccessHandler) {
+    private final CorsConfig corsConfig;
+    
+    public SecurityConfig(CorsConfig corsConfig, AuthenticationConfiguration authenticationConfiguration, JWTUtil jwtUtil, CustomOAuth2UserService oAuth2UserService, OAuth2SuccessHandler oAuth2SuccessHandler) {
+        this.corsConfig = corsConfig;
         this.authenticationConfiguration = authenticationConfiguration;
         this.jwtUtil = jwtUtil;
         this.oAuth2UserService = oAuth2UserService;
@@ -72,19 +75,20 @@ public class SecurityConfig {
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, userRepository), UsernamePasswordAuthenticationFilter.class);
 
         // CORS 설정
-        http.cors(cors -> cors.configurationSource(request -> {
-            CorsConfiguration configuration = new CorsConfiguration();
-            configuration.setAllowedOrigins(Collections.singletonList("http://localhost:5173"));
-            configuration.setAllowedMethods(Collections.singletonList("*"));
-            configuration.setAllowCredentials(true);
-            configuration.setAllowedHeaders(Collections.singletonList("*"));
-            configuration.setMaxAge(3600L);
-            configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
+        http.cors(cors -> cors.configurationSource(corsConfig.corsFilter()));
+        // http.cors(cors -> cors.configurationSource(request -> {
+        //     CorsConfiguration configuration = new CorsConfiguration();
+        //     configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173", "https://zipplz.site"));
+        //     configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        //     configuration.setAllowCredentials(true);
+        //     configuration.setAllowedHeaders(Collections.singletonList("*"));
+        //     configuration.setMaxAge(3600L);
+        //     configuration.setExposedHeaders(Arrays.asList("Authorization", "token"));
 
-            UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-            source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 대해 CORS 설정 적용
-            return configuration;
-        }));
+        //     UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        //     source.registerCorsConfiguration("/**", configuration);  // 모든 경로에 대해 CORS 설정 적용
+        //     return configuration;
+        // }));
 
         return http.build();
     }

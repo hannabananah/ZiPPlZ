@@ -36,17 +36,23 @@ export default function WorkerInfoList({
       else fetchWorkerList();
     }
   }, [field]);
-  console.log(field);
   return (
     <>
       {workerList && workerList.length > 0 ? (
         <div className="grid w-full grid-cols-3 h-[40rem] overflow-auto gap-4 sm:grid-cols-3 md:grid-cols-4 auto-rows-[10rem]">
           {workerList.map((worker: any) => (
-            <WorkerInfoListItem worker={worker} key={worker} />
+            <WorkerInfoListItem worker={worker} key={worker.protfolioSerial} />
           ))}
         </div>
       ) : (
-        <p>선택한 조건에 해당하는 시공자가 없습니다.</p>
+        <>
+          <div className="flex flex-col items-center justify-center w-full ">
+            <img src="/nothing-icon.svg" className="w-[60%] aspect-square" />
+            <p className="font-bold text-zp-xl text-zp-light-gray">
+              존재하는 게시물이 없습니다
+            </p>
+          </div>
+        </>
       )}
     </>
   );

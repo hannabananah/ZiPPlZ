@@ -1,16 +1,22 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { FaImage } from 'react-icons/fa';
+import { FiPlusCircle } from 'react-icons/fi';
 import { HiOutlineUser } from 'react-icons/hi2';
+import { IoArrowBackSharp } from 'react-icons/io5';
 import { PiNotePencil } from 'react-icons/pi';
 import { RiMessage2Line } from 'react-icons/ri';
 import { TbBuildingCommunity } from 'react-icons/tb';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { updatePortfolio } from '@/apis/worker/PortfolioApi';
+import {
+  addPortfolioImg,
+  getPortfolioDetail,
+  updatePortfolio,
+} from '@/apis/worker/PortfolioApi';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { useLoginUserStore } from '@/stores/loginUserStore';
-import { PortfolitDetail } from '@/stores/portfolioStore';
+import { PortfolioDetail, usePortfolioStore } from '@/stores/portfolioStore';
 
 interface data {
   publicRelation: string;
@@ -21,7 +27,7 @@ interface data {
   businessNumber: string;
 }
 interface Props {
-  portfolio: PortfolitDetail;
+  portfolio: PortfolioDetail;
 }
 export default function OverView({ portfolio }: Props) {
   const { id } = useParams<{ id: string }>();
@@ -44,7 +50,27 @@ export default function OverView({ portfolio }: Props) {
   const [publicRelation, setPublicRelation] = useState<string>(
     portfolio.publicRelation
   );
-
+  const handleUpload = async (file: File) => {
+    if (portfolio) {
+      return await addPortfolioImg(portfolio.portfolioSerial, file);
+    }
+  };
+  const { setPortfolioOverview } = usePortfolioStore();
+  const fetchPortFolioOverView = async (portfolioSerial: number) => {
+    const response = await getPortfolioDetail(portfolioSerial);
+    setPortfolioOverview(response.data.data);
+  };
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files ? e.target.files[0] : null;
+    if (file && portfolio) {
+      await handleUpload(file);
+      await fetchPortFolioOverView(portfolio.portfolioSerial);
+    }
+  };
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const handleClick = () => {
+    if (fileInputRef.current) fileInputRef.current.click();
+  };
   // 모달 열기
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -60,7 +86,6 @@ export default function OverView({ portfolio }: Props) {
     setBusinessNumber(portfolio.worker.businessNumber);
     setIsModalOpen(false);
   };
-
   // 저장 버튼
   const handleSave = () => {
     modifyPortfolio({
@@ -77,6 +102,11 @@ export default function OverView({ portfolio }: Props) {
 
   return (
     <>
+      <IoArrowBackSharp
+        size={20}
+        onClick={() => navigate(-1)}
+        className="absolute top-[3.5rem]"
+      />
       <div className="flex flex-col w-full gap-4">
         {id && loginUser?.userSerial === parseInt(id) && (
           <div className="flex justify-end">
@@ -110,31 +140,53 @@ export default function OverView({ portfolio }: Props) {
           </div>
         </div>
         <hr className="w-full text-zp-main-color" />
-        {/* 사진 표시 컴포넌트 */}
         <div
-          className="flex w-full gap-4 overflow-x-auto"
+          className="relative flex w-full gap-4 overflow-x-auto"
           style={{
             scrollbarWidth: 'none',
             msOverflowStyle: 'none',
           }}
         >
           {portfolio && portfolio.imageList.length > 0 ? (
-            portfolio.imageList.map((image) => (
-              <img
-                className="flex-shrink-0 w-[25%] aspect-square border"
-                src={image.saveFile}
-              />
-            ))
+            <>
+              {portfolio.imageList.map((image: any) => (
+                <img
+                  className="flex-shrink-0 w-[25%] aspect-square border"
+                  src={image.saveFile}
+                />
+              ))}
+              <div className=" flex items-center">
+                <FiPlusCircle
+                  size={24}
+                  className="cursor-pointer aspect-square"
+                  onClick={handleClick}
+                />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  style={{ display: 'none' }}
+                  onChange={handleFileChange}
+                />
+              </div>
+            </>
           ) : (
-            <div className="flex flex-col items-center w-full gap-4">
-              <label className="flex flex-col items-center justify-center w-full">
-                <FaImage size={50} />
-                <p className="w-full font-bold text-center">
-                  포트폴리오 이미지를 넣어주세요.
-                </p>
-                <input type="file" className="hidden" />
-              </label>
-            </div>
+            id &&
+            loginUser?.userSerial === parseInt(id) && (
+              <div className="flex flex-col items-center w-full gap-4">
+                <label className="flex flex-col items-center justify-center w-full">
+                  <FaImage size={50} />
+                  <p className="w-full font-bold text-center">
+                    포트폴리오 이미지를 넣어주세요.
+                  </p>
+
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
+              </div>
+            )
           )}
         </div>
 

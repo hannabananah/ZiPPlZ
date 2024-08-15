@@ -1,31 +1,56 @@
 import { useEffect, useState } from 'react';
-import { LuMaximize2 } from 'react-icons/lu';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   getWorkerSchedule,
   getWorkerScheduleDetail,
 } from '@/apis/worker/PortfolioApi';
+import Button from '@/components/common/Button';
 import { useLoginUserStore } from '@/stores/loginUserStore';
+import { formatDate } from '@/utils/formatDateWithTime';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
-import TodaySchedule from '@components/home/TodaySchedule';
 import { WorkerDate, usePortfolioStore } from '@stores/portfolioStore';
 
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
 interface Props {
   workerSerial?: number;
+  chatRoomList: ChatRoom[];
 }
-export default function WorkerSchedule({ workerSerial }: Props) {
+
+export default function WorkerSchedule({ workerSerial, chatRoomList }: Props) {
+  const navigate = useNavigate();
   const { dateList, setDateList, dateDetail, setDateDetail } =
     usePortfolioStore();
   const { id } = useParams<{ id: string }>();
   const { loginUser } = useLoginUserStore();
-  const [selectedWorkSerial, setSelectedWorkSerial] = useState<number | null>(
+  const [selectedWorkSerial, setSelectedWorkSerial] = useState<string | null>(
     null
   );
+
+  // Fetch worker schedule from API
   const fetchWorkerSchedule = async (workerSerial: number) => {
     const response = await getWorkerSchedule(workerSerial);
     setDateList(response.data.data);
   };
+
+  // Fetch worker schedule detail from API
   const fetchWorkerScheduleDetail = async (
     workerSerial: number,
     workSerial: number
@@ -33,55 +58,123 @@ export default function WorkerSchedule({ workerSerial }: Props) {
     const response = await getWorkerScheduleDetail(workerSerial, workSerial);
     setDateDetail(response.data.data);
   };
+
+  // Update state and localStorage when component mounts or workerSerial changes
   useEffect(() => {
-    if (workerSerial) fetchWorkerSchedule(workerSerial);
-    const storedWorkSerial = localStorage.getItem('workSerial');
-    if (storedWorkSerial) {
-      setSelectedWorkSerial(parseInt(storedWorkSerial, 10));
+    if (workerSerial && workerSerial > 0) {
+      fetchWorkerSchedule(workerSerial);
     }
-  }, []);
+    const storedSerial = localStorage.getItem('workSerial');
+    setSelectedWorkSerial(storedSerial);
+    return () => {
+      localStorage.removeItem('workSerial');
+    };
+  }, [workerSerial]);
+
+  // Listen for storage events to handle cross-tab updates
   useEffect(() => {
-    if (workerSerial && selectedWorkSerial !== null)
-      fetchWorkerScheduleDetail(workerSerial, selectedWorkSerial);
-  }, [selectedWorkSerial]);
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === 'workSerial') {
+        setSelectedWorkSerial(event.newValue);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+    };
+  }, []);
+
+  // Fetch details when selectedWorkSerial changes
+  useEffect(() => {
+    if (
+      workerSerial &&
+      selectedWorkSerial !== null &&
+      id &&
+      parseInt(id) === loginUser?.userSerial
+    ) {
+      fetchWorkerScheduleDetail(workerSerial, parseInt(selectedWorkSerial));
+    }
+  }, [workerSerial, selectedWorkSerial, id, loginUser]);
+
+  // Handle calendar event click
+  const handleCalendarEventClick = (newWorkSerial: string) => {
+    setSelectedWorkSerial(newWorkSerial);
+    localStorage.setItem('workSerial', newWorkSerial);
+  };
+
+  const chatStart = () => {
+    if (chatRoomList.length > 0 && dateDetail) {
+      const chatRoomSerial: string = chatRoomList.filter(
+        (room) =>
+          room.fieldName === dateDetail.fieldName &&
+          room.workerName === loginUser?.userName &&
+          room.customerName === dateDetail.customerName
+      )[0].chatroomSerial;
+      console.log(chatRoomSerial);
+      navigate(`/chatrooms/${chatRoomSerial}`);
+    }
+  };
 
   return (
     <>
       <div className="flex flex-col gap-4">
         <ScheduleCalendar
-          workList={dateList.map((item: WorkerDate) => ({
-            workSerial: item.workSerial,
-            title: item.fieldName,
-            start: item.startDate,
-            end: item.endDate,
-          }))}
+          workList={
+            dateList.length > 0 &&
+            dateList.map((item: WorkerDate) => ({
+              workSerial: item.workSerial,
+              field: item.fieldName,
+              startDate: item.startDate.split('T')[0],
+              endDate: item.endDate.split('T')[0],
+            }))
+          }
+          onEventClick={handleCalendarEventClick} // 이벤트 클릭 핸들러 추가
         />
-        {id && parseInt(id) === loginUser?.userSerial && dateDetail && (
-          <>
-            <div className="w-full h-[8.3rem] grid grid-cols-2 gap-4">
-              <TodaySchedule role="worker" work={dateDetail} />
-              <div className="relative flex flex-col justify-center w-full h-full gap-4 p-6 bg-zp-white rounded-zp-radius-big">
-                <div className="flex w-full gap-2">
-                  {dateDetail.planImageList.length > 0 &&
-                    dateDetail.planImageList.map((img) => (
-                      <img
-                        className="w-[30%] aspect-square border"
-                        src={img.saveFile}
-                      />
-                    ))}
-                </div>
-                <p className="text-zp-xs line-clamp-1">
-                  {dateDetail.sharedContents}
-                </p>
-                <LuMaximize2
-                  className="absolute top-[10%] right-[5%] cursor-pointer"
-                  size="8%"
-                  // onClick={openModal}
+        {id &&
+          parseInt(id) === loginUser?.userSerial &&
+          dateDetail &&
+          selectedWorkSerial !== null &&
+          workerSerial !== null && (
+            <div className="w-full h-[15rem] rounded-zp-radius-big bg-zp-white gap-2 p-6 text-zp-sm flex flex-col font-bold">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded-zp-radius-full bg-zp-main-color" />
+                <p>{dateDetail.nickname}</p>
+              </div>
+              <p>
+                시공기간 : {formatDate(dateDetail.startDate)} ~{' '}
+                {formatDate(dateDetail.endDate)}
+              </p>
+              <p>출장 장소 : {dateDetail.address}</p>
+              <div className="flex flex-nowrap gap-2 overflow-auto w-full h-auto">
+                {dateDetail.planImageList.map((image) => (
+                  <img
+                    key={image.saveFile}
+                    className="w-[20%] aspect-square"
+                    src={image.saveFile}
+                    alt="계획 이미지"
+                  />
+                ))}
+              </div>
+              <div className="w-full grid grid-cols-2 gap-4">
+                <Button
+                  buttonType="normal"
+                  children="채팅하기"
+                  radius="btn"
+                  fontSize="xs"
+                  onClick={chatStart}
+                />
+                <Button
+                  buttonType="normal"
+                  children="계약서"
+                  radius="btn"
+                  fontSize="xs"
+                  onClick={() => navigate(`/contract/${selectedWorkSerial}`)}
                 />
               </div>
             </div>
-          </>
-        )}
+          )}
       </div>
     </>
   );
