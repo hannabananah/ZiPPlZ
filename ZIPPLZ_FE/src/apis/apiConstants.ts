@@ -1,4 +1,4 @@
-export const BASE_URL: string = 'http://localhost:5000/';
+export const BASE_URL: string = '/api/';
 
 export const END_POINT = {
   //로그인 회원가입
@@ -37,6 +37,7 @@ export const END_POINT = {
   MATERIAL: 'materials?category=',
   CONTRACT: 'contract',
   AFTERSERVICE: 'afterservice',
+  NOTIFICATION: 'notification',
 } as const;
 
 export const HTTP_STATUS_CODE = {

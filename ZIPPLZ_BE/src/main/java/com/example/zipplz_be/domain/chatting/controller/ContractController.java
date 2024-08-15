@@ -60,19 +60,16 @@ public class ContractController {
      }
 
      //계약서 내용 조회
-    @GetMapping("/{chatroomSerial}")
-    public ResponseEntity<?> getContract(Authentication authentication, @PathVariable int chatroomSerial) {
+    @GetMapping("/{workSerial}")
+    public ResponseEntity<?> getContract(Authentication authentication, @PathVariable int workSerial) {
         ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            ContractDTO contractDTO = contractService.getContractService(portfolioService.getUserSerial(authentication), chatroomSerial);
+            ContractDTO contractDTO = contractService.getContractService(portfolioService.getUserSerial(authentication), workSerial);
 
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "조회 성공!", contractDTO);
-        } catch (ContractNotFoundException e) {
-            status = HttpStatus.NOT_FOUND;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
         } catch (UnauthorizedUserException e) {
             status = HttpStatus.UNAUTHORIZED;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
@@ -85,13 +82,13 @@ public class ContractController {
     }
 
     //요청 수락
-    @PatchMapping("/{requestSerial}/accept")
-    public ResponseEntity<?> acceptRequest(Authentication authentication, @PathVariable int requestSerial) {
+    @PatchMapping("/accept")
+    public ResponseEntity<?> acceptRequest(Authentication authentication, @RequestBody Map<String, Object> params) {
         ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            contractService.acceptRequestService(portfolioService.getUserSerial(authentication), requestSerial);
+            contractService.acceptRequestService(portfolioService.getUserSerial(authentication), params);
 
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "요청 수락 완료!");
@@ -110,13 +107,13 @@ public class ContractController {
     }
 
     //요청 거절
-    @PatchMapping("/{requestSerial}/reject")
-    public ResponseEntity<?> rejectRequest(Authentication authentication, @PathVariable int requestSerial) {
+    @PatchMapping("/reject")
+    public ResponseEntity<?> rejectRequest(Authentication authentication, @RequestBody Map<String, Object> params) {
         ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            contractService.rejectRequestService(portfolioService.getUserSerial(authentication), requestSerial);
+            contractService.rejectRequestService(portfolioService.getUserSerial(authentication), params);
 
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "요청 거절 완료!");

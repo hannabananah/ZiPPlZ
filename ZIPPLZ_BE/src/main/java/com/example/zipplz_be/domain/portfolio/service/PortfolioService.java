@@ -1,4 +1,9 @@
 package com.example.zipplz_be.domain.portfolio.service;
+import com.example.zipplz_be.domain.model.PortfolioFileRelation;
+import com.example.zipplz_be.domain.model.repository.PortfolioFileRelationRepository;
+import com.example.zipplz_be.domain.schedule.exception.PlanNotFoundException;
+import com.example.zipplz_be.domain.schedule.exception.S3Exception;
+import com.example.zipplz_be.domain.schedule.service.PlanService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.file.repository.FileRepository;
@@ -32,10 +37,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.*;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -49,6 +56,7 @@ import com.example.zipplz_be.domain.user.entity.Worker;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class PortfolioService {
@@ -59,6 +67,7 @@ public class PortfolioService {
     private final RestTemplate restTemplate;
 
     private final CustomerReviewService customerReviewService;
+    private final PlanService planService;
 
     private final PortfolioRepository portfolioRepository;
     private final WorkerRepository workerRepository;
@@ -70,8 +79,11 @@ public class PortfolioService {
     private final CustomerRepository customerRepository;
     private final PlanFileRelationRepository planFileRelationRepository;
     private final CustomerReviewRepository customerReviewRepository;
+    private final PortfolioFileRelationRepository portfolioFileRelationRepository;
 
-    PortfolioService(AppConfig appConfig, RestTemplate restTemplate, CustomerReviewRepository customerReviewRepository, CustomerReviewService customerReviewService, PlanFileRelationRepository planFileRelationRepository,CustomerRepository customerRepository,PlanRepository planRepository,WorkRepository workRepository, LocalRepository localRepository, FileRepository fileRepository,UserRepository userRepository, PortfolioRepository portfolioRepository, WorkerRepository workerRepository) {
+    PortfolioService(PortfolioFileRelationRepository portfolioFileRelationRepository, @Lazy PlanService planService, AppConfig appConfig, RestTemplate restTemplate, CustomerReviewRepository customerReviewRepository, CustomerReviewService customerReviewService, PlanFileRelationRepository planFileRelationRepository, CustomerRepository customerRepository, PlanRepository planRepository, WorkRepository workRepository, LocalRepository localRepository, FileRepository fileRepository, UserRepository userRepository, PortfolioRepository portfolioRepository, WorkerRepository workerRepository) {
+        this.portfolioFileRelationRepository = portfolioFileRelationRepository;
+        this.planService = planService;
         this.appConfig = appConfig;
         this.restTemplate = restTemplate;
         this.customerReviewRepository = customerReviewRepository;
@@ -527,5 +539,47 @@ public class PortfolioService {
         return content;
     }
 
+    @Transactional
+    public File uploadPortfolioImageService(int userSerial, MultipartFile image, int portfolioSerial) {
+        if(image.isEmpty() || Objects.isNull(image.getOriginalFilename())) {
+            throw new S3Exception("파일이 비었습니다.");
+        }
+
+        Portfolio portfolio = portfolioRepository.findByPortfolioSerial(portfolioSerial);
+
+        if(portfolio == null) {
+            throw new PortfolioNotFoundException("포트폴리오를 찾을 수 없습니다.");
+        }
+        if(userSerial != portfolio.getWorker().getUserSerial().getUserSerial()) {
+            throw new UnauthorizedUserException("업로드 권한이 없습니다.");
+        }
+
+        String url = planService.uploadImage(image);
+        File file = fileRepository.findBySaveFile(url);
+
+        PortfolioFileRelation portfolioFileRelation = PortfolioFileRelation.builder()
+                .portfolioSerial(portfolio)
+                .fileSerial(file)
+                .build();
+
+        portfolioFileRelationRepository.save(portfolioFileRelation);
+        return file;
+    }
+
+    @Transactional
+    public void deletePortfolioImageService(int userSerial, int portfolioSerial, int fileSerial) throws IOException {
+        Portfolio portfolio = portfolioRepository.findByPortfolioSerial(portfolioSerial);
+        File file = fileRepository.findByFileSerial(fileSerial);
+
+        if(userSerial != portfolio.getWorker().getUserSerial().getUserSerial()) {
+            throw new UnauthorizedUserException("삭제할 권한이 없습니다.");
+        }
+
+        PortfolioFileRelation portfolioFileRelation = portfolioFileRelationRepository.findByPortfolioSerialAndFileSerial(portfolio, file);
+        portfolioFileRelationRepository.delete(portfolioFileRelation);
+
+        planService.deleteS3(file.getFileName());
+        fileRepository.delete(file);
+    }
 
 }

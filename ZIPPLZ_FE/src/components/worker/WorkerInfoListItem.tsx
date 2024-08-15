@@ -1,8 +1,19 @@
 import { MdElectricalServices } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
-
+interface WorkerInfo {
+  user_serial: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
 interface Props {
   worker: WorkerInfo;
 }

@@ -1,3 +1,9 @@
+import { useState } from 'react';
+
+import { acceptContract, rejectContract } from '@apis/worker/ContractApi';
+import Accepted from '@assets/accepted-icon.svg?react';
+import Rejected from '@assets/rejected-icon.svg?react';
+import Button from '@components/common/Button';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import { formatTime } from '@utils/formatDateWithTime';
 
@@ -6,6 +12,8 @@ interface MessageProps {
   chatMessageContent?: string;
   createdAt: string;
   fileType?: string;
+  contract?: boolean;
+  otherUserSerial: number;
 }
 
 export default function Message({
@@ -13,7 +21,11 @@ export default function Message({
   chatMessageContent,
   createdAt,
   fileType,
+  contract,
+  otherUserSerial,
 }: MessageProps) {
+  const [contractHandled, setContractHandled] = useState<string | null>(null);
+
   let formattedImgUrl = '';
   if (fileType === 'IMAGE') {
     formattedImgUrl = `data:image/jpeg;base64,${chatMessageContent}`;
@@ -24,7 +36,34 @@ export default function Message({
   const isImage = fileType === 'IMAGE';
   const isFile = fileType === 'FILE';
   const { loginUser } = useLoginUserStore();
-  const currUserSerial = loginUser?.userSerial;
+  const currUserSerial: number | undefined = loginUser?.userSerial;
+  const currRole = loginUser?.role;
+
+  const handleAcceptContract = async () => {
+    try {
+      if (typeof currUserSerial === 'number') {
+        const response = await acceptContract(otherUserSerial, currUserSerial);
+        if (response.proc.code === 200) {
+          setContractHandled('accepted');
+        }
+      }
+    } catch (error) {
+      console.error('계약 수락 중 에러가 발생했습니다:', error);
+    }
+  };
+
+  const handleRejectContract = async () => {
+    try {
+      if (typeof currUserSerial === 'number') {
+        const response = await rejectContract(otherUserSerial, currUserSerial);
+        if (response.proc.code === 200) {
+          setContractHandled('rejected');
+        }
+      }
+    } catch (error) {
+      console.error('계약 거절 중 에러가 발생했습니다:', error);
+    }
+  };
 
   return (
     <li
@@ -40,7 +79,7 @@ export default function Message({
         />
       )}
       <div
-        className={`p-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 ${
+        className={`p-2 rounded-zp-radius-bubble pb-2 text-zp-black max-w-[300px] min-w-[60px] drop-shadow-zp-normal bg-zp-white space-y-2 relative ${
           userSerial === currUserSerial
             ? 'text-right rounded-se-zp-radius-none'
             : 'text-left rounded-ss-zp-radius-none'
@@ -71,6 +110,42 @@ export default function Message({
             {chatMessageContent}
           </p>
         )}
+        {contract && currRole === 'customer' && !contractHandled && (
+          <div className="flex justify-end gap-2 mt-2">
+            <Button
+              type="button"
+              buttonType="normal"
+              width="full"
+              height={1.5}
+              fontSize="2xs"
+              radius="btn"
+              onClick={handleRejectContract}
+            >
+              거절
+            </Button>
+            <Button
+              type="button"
+              buttonType="second"
+              width="full"
+              height={1.5}
+              fontSize="2xs"
+              radius="btn"
+              onClick={handleAcceptContract}
+            >
+              수락
+            </Button>
+          </div>
+        )}
+        {contractHandled === 'accepted' && (
+          <div className="absolute z-50 w-40 -translate-x-1/2 -top-12 left-1/2 animate-zoom-in">
+            <Accepted className="w-40" />
+          </div>
+        )}
+        {contractHandled === 'rejected' && (
+          <div className="absolute z-50 w-40 -translate-x-1/2 -top-16 left-1/2 animate-zoom-in">
+            <Rejected className="w-40" />
+          </div>
+        )}
         <p
           className={`text-zp-gray text-zp-3xs break-keep ${
             userSerial === currUserSerial ? 'text-left' : 'text-right'
@@ -79,6 +154,7 @@ export default function Message({
           {formatTime(createdAt)}
         </p>
       </div>
+
       {userSerial === currUserSerial && (
         <img
           className="w-8 ml-2 border border-zp-light-gray profile-img"

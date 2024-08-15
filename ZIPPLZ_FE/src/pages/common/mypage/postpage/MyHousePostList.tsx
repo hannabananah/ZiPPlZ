@@ -1,138 +1,151 @@
-import { useState } from 'react';
-import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
-import { GoArrowLeft } from 'react-icons/go';
-import { HiMagnifyingGlass } from 'react-icons/hi2';
-import { IoIosClose } from 'react-icons/io';
-import { IoMdArrowDropdown } from 'react-icons/io';
-import { useNavigate } from 'react-router-dom';
+// import { useState } from 'react';
+// import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
+// import { GoArrowLeft } from 'react-icons/go';
+// import { HiMagnifyingGlass } from 'react-icons/hi2';
+// import { IoIosClose } from 'react-icons/io';
+// import { IoMdArrowDropdown } from 'react-icons/io';
+// import { useNavigate } from 'react-router-dom';
 
-import Selectbar from '@/components/common/Selectbar';
-import HousePostListItem from '@/components/community/HousePostListItem';
-import Input from '@components/common/Input';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
+// import Selectbar from '@/components/common/Selectbar';
+// import HousePostListItem from '@/components/community/HousePostListItem';
+// import Input from '@components/common/Input';
 
-type SortOption = '평점순' | '최신순' | '과거순';
+// interface WorkerInfo {
+//   user_serial: number;
+//   portfolio_serial: number;
+//   name: string;
+//   birth_date: number;
+//   temp: number;
+//   field_id: number;
+//   field_name: string;
+//   career: number;
+//   certificated_badge: number;
+//   locations: string[];
+//   img: string;
+// }
 
-const list: WorkerInfo[] = [
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 2,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '철거',
-    career: 4,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 3,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '설비',
-    career: 5,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 4,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '타일',
-    career: 6,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  // 다른 worker 정보 추가
-];
+// type SortOption = '평점순' | '최신순' | '과거순';
 
-export default function MyHousePostList() {
-  const options: SortOption[] = ['평점순', '최신순', '과거순'];
-  const navigate = useNavigate();
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
-  const [isSelecting, setIsSelecting] = useState(false);
-  const [isAllSelected, setIsAllSelected] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+// const list: WorkerInfo[] = [
+//   {
+//     user_serial: 1,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '전기',
+//     career: 3,
+//     certificated_badge: 1,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   {
+//     user_serial: 2,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '철거',
+//     career: 4,
+//     certificated_badge: 0,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   {
+//     user_serial: 3,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '설비',
+//     career: 5,
+//     certificated_badge: 1,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   {
+//     user_serial: 4,
+//     portfolio_serial: 1,
+//     name: '김현태',
+//     birth_date: 1990,
+//     temp: 36.5,
+//     field_id: 1,
+//     field_name: '타일',
+//     career: 6,
+//     certificated_badge: 0,
+//     locations: ['서울 강남구'],
+//     img: '/',
+//   },
+//   // 다른 worker 정보 추가
+// ];
 
-  const handleSortSelect = (sortOption: string) => {
-    setSelectedValue(sortOption as SortOption);
-  };
+// export default function MyHousePostList() {
+//   const options: SortOption[] = ['평점순', '최신순', '과거순'];
+//   const navigate = useNavigate();
+//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+//   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+//   const [isSelecting, setIsSelecting] = useState(false);
+//   const [isAllSelected, setIsAllSelected] = useState(false);
+//   const [isModalOpen, setIsModalOpen] = useState(false);
+//   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
 
-  const handleGoBack = () => {
-    navigate('/mypage');
-  };
+//   const handleSortSelect = (sortOption: string) => {
+//     setSelectedValue(sortOption as SortOption);
+//   };
 
-  const toggleDropdown = () => {
-    setIsDropdownOpen(!isDropdownOpen);
-  };
+//   const handleGoBack = () => {
+//     navigate('/mypage');
+//   };
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
-    setIsDropdownOpen(false);
-  };
+//   const toggleDropdown = () => {
+//     setIsDropdownOpen(!isDropdownOpen);
+//   };
 
-  const toggleAllSelected = () => {
-    if (isAllSelected) {
-      setSelectedWorkers([]);
-    } else {
-      setSelectedWorkers(list.map((worker) => worker.user_serial));
-    }
-    setIsAllSelected(!isAllSelected);
-  };
+//   const handleNavigate = (path: string) => {
+//     navigate(path);
+//     setIsDropdownOpen(false);
+//   };
 
-  const handleWorkerSelect = (user_serial: number) => {
-    if (selectedWorkers.includes(user_serial)) {
-      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
-    } else {
-      setSelectedWorkers([...selectedWorkers, user_serial]);
-    }
-  };
+//   const toggleAllSelected = () => {
+//     if (isAllSelected) {
+//       setSelectedWorkers([]);
+//     } else {
+//       setSelectedWorkers(list.map((worker) => worker.user_serial));
+//     }
+//     setIsAllSelected(!isAllSelected);
+//   };
 
-  const toggleSelecting = () => {
-    if (isSelecting) {
-      setSelectedWorkers([]);
-    }
-    setIsSelecting(!isSelecting);
-    setIsAllSelected(false);
-  };
+//   const handleWorkerSelect = (user_serial: number) => {
+//     if (selectedWorkers.includes(user_serial)) {
+//       setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+//     } else {
+//       setSelectedWorkers([...selectedWorkers, user_serial]);
+//     }
+//   };
 
-  const handleDeleteConfirmation = () => {
-    setIsModalOpen(true);
-  };
+//   const toggleSelecting = () => {
+//     if (isSelecting) {
+//       setSelectedWorkers([]);
+//     }
+//     setIsSelecting(!isSelecting);
+//     setIsAllSelected(false);
+//   };
 
-  const handleWorkerClick = (user_serial: number) => {
-    navigate(`/housepost/${user_serial}`);
-  };
+//   const handleDeleteConfirmation = () => {
+//     setIsModalOpen(true);
+//   };
 
-  return (
-    <>
+//   const handleWorkerClick = (user_serial: number) => {
+//     navigate(`/housepost/${user_serial}`);
+//   };
+
+//   return (
+{
+  /*   <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
@@ -180,7 +193,6 @@ export default function MyHousePostList() {
             </div>
           )}
         </div>
-        {/* 검색 input */}
         <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
@@ -197,7 +209,6 @@ export default function MyHousePostList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
           <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
@@ -216,12 +227,12 @@ export default function MyHousePostList() {
             </div>
           </div>
         </div>
-        {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">전체 {list.length}</div>
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {list.length}
+        </div>
 
-        {/* 선택하기-삭제하기 버튼 */}
-        <div className="w-full flex justify-between items-center text-zp-2xs">
-          {isSelecting && (
+       <div className="w-full flex justify-between items-center text-zp-2xs">
+         {isSelecting && (
             <div
               className="flex items-center space-x-2 cursor-pointer"
               onClick={toggleAllSelected}
@@ -258,11 +269,8 @@ export default function MyHousePostList() {
             </button>
           </div>
         </div>
-        {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
 
-        {/* workerInfoListitem 컴포넌트 */}
-        {/* 화면 width 따라 grid 개수 변화 */}
         <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
           {list.map((worker) => (
             <div
@@ -290,23 +298,21 @@ export default function MyHousePostList() {
                 </div>
               )}
               <HousePostListItem
-                post_serial={worker.user_serial} 
-                post_image={worker.img} 
-                title={worker.field_name} 
-                profile_image={null} 
-                nickname={worker.name} 
-                upload_date={new Date()} 
-                view_cnt={100} 
-                bookmark_cnt={50} 
-                comment_cnt={10} 
+                post_serial={worker.user_serial}
+                post_image={worker.img}
+                title={worker.field_name}
+                profile_image={null}
+                nickname={worker.name}
+                upload_date={new Date()}
+                view_cnt={100}
+                bookmark_cnt={50}
+                comment_cnt={10}
               />
             </div>
           ))}
         </div>
       </div>
-
-      {/* 모달 */}
-      {isModalOpen && (
+    {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">
             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
@@ -336,4 +342,5 @@ export default function MyHousePostList() {
       )}
     </>
   );
+}*/
 }
