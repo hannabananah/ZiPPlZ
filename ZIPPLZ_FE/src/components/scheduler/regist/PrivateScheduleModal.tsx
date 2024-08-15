@@ -52,7 +52,7 @@ export default function PrivateScheduleModal({
             height={1.5}
             width={6}
             radius="btn"
-            placeholder="시작일"
+            placeholder="yyyy-mm-dd"
             value={start}
             onChange={(e: React.ChangeEvent) =>
               setStart((e.target as HTMLInputElement).value)
@@ -66,7 +66,7 @@ export default function PrivateScheduleModal({
             height={1.5}
             width={6}
             radius="btn"
-            placeholder="종료일"
+            placeholder="yyyy-mm-dd"
             value={end}
             onChange={(e: React.ChangeEvent) =>
               setEnd((e.target as HTMLInputElement).value)

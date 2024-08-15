@@ -181,7 +181,7 @@ export default function Home() {
         <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
           <div className="basis-7/12">
             <p className="font-extrabold text-zp-xl">Today</p>
-            {todayWork.length > 0 ? (
+            {todayWork && todayWork.length > 0 ? (
               todayWork
                 .filter((work) => work.worker !== null)
                 .map((work) => (

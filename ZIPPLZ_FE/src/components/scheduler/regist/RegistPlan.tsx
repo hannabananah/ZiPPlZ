@@ -91,6 +91,7 @@ export default function RegistPlan({
             type="text"
             inputType="normal"
             placeholder="계획명을 입력해주세요."
+            value={name}
             width="full"
             height={2}
             radius="btn"
@@ -151,6 +152,7 @@ export default function RegistPlan({
             height={2}
             radius="btn"
             fontSize="xs"
+            value={memo}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               setMemo((e.target as HTMLInputElement).value);
             }}
