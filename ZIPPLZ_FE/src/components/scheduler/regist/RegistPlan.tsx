@@ -7,8 +7,6 @@ import { addPlan } from '@/apis/scheduler/schedulerApi';
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 
-import value from './../../../../svg.d';
-
 interface Props {
   isOpen: boolean;
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
