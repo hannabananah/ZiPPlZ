@@ -1,12 +1,47 @@
+import { useNavigate } from 'react-router-dom';
+
 import { formatDate } from '@/utils/formatDateWithTime';
 
 import Button from '../common/Button';
 
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
 interface Props {
   role: string;
   work?: any;
+  chatRoomList: ChatRoom[];
 }
-export default function TodaySchedule({ role, work }: Props) {
+export default function TodaySchedule({ role, work, chatRoomList }: Props) {
+  const navigate = useNavigate();
+  const chatStart = () => {
+    if (chatRoomList.length > 0 && work) {
+      const chatRoomSerial: string = chatRoomList.filter(
+        (room) =>
+          room.fieldName === work.field &&
+          room.workerName === work.worker.userSerial.userName &&
+          room.customerName === work.customer.userSerial.userName
+      )[0].chatroomSerial;
+      console.log(chatRoomSerial);
+      navigate(`/chatrooms/${chatRoomSerial}`);
+    }
+  };
+
   return (
     <>
       {work && (
@@ -47,6 +82,7 @@ export default function TodaySchedule({ role, work }: Props) {
               height={1.5}
               fontSize="2xs"
               radius="btn"
+              onClick={chatStart}
             />
             <Button
               buttonType="normal"
@@ -55,6 +91,7 @@ export default function TodaySchedule({ role, work }: Props) {
               height={1.5}
               fontSize="2xs"
               radius="btn"
+              onClick={() => navigate(`/contract/${work.workSerial}`)}
             />
           </div>
         </div>
