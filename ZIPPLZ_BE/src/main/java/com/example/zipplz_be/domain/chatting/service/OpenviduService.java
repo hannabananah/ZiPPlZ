@@ -50,7 +50,7 @@ public class OpenviduService {
         }
         else {
             //업데이트
-            userToChatroomRepository.updateToken(token, userSerial, chatroomSerial);
+            //userToChatroomRepository.updateToken(token, userSerial, chatroomSerial);
         }
 
     }
