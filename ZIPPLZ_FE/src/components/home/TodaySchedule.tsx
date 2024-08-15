@@ -1,12 +1,48 @@
+import { useNavigate } from 'react-router-dom';
+
 import { formatDate } from '@/utils/formatDateWithTime';
 
 import Button from '../common/Button';
 
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
 interface Props {
   role: string;
   work?: any;
+  chatRoomList: ChatRoom[];
 }
-export default function TodaySchedule({ role, work }: Props) {
+export default function TodaySchedule({ role, work, chatRoomList }: Props) {
+  const navigate = useNavigate();
+  const chatStart = () => {
+    if (chatRoomList.length > 0 && work) {
+      const chatRoomSerial: string = chatRoomList.filter(
+        (room) =>
+          room.fieldName === work.field &&
+          room.workerName === work.worker.userSerial.userName &&
+          room.customerName === work.customer.userSerial.userName
+      )[0].chatroomSerial;
+      console.log(chatRoomSerial);
+      navigate(`/chatrooms/${chatRoomSerial}`);
+    }
+  };
+  console.log(role);
+  console.log(work);
   return (
     <>
       {work && (
@@ -29,13 +65,13 @@ export default function TodaySchedule({ role, work }: Props) {
             </div>
             {role === 'customer' && (
               <div className="flex flex-col items-center gap-1">
-                <div className="border w-[80%] aspect-square rounded-zp-radius-full">
+                <div className="border w-[60%] aspect-square rounded-zp-radius-full">
                   <img
                     className="object-cover w-full h-full rounded-zp-radius-full"
                     src={work.worker.userSerial.fileSerial.saveFile}
                   />
                 </div>
-                <p className="text-zp-2xs">{work.worker.userName}</p>
+                <p className="text-zp-2xs">{work.worker.userSerial.userName}</p>
               </div>
             )}
           </div>
@@ -47,6 +83,7 @@ export default function TodaySchedule({ role, work }: Props) {
               height={1.5}
               fontSize="2xs"
               radius="btn"
+              onClick={chatStart}
             />
             <Button
               buttonType="normal"
@@ -55,6 +92,7 @@ export default function TodaySchedule({ role, work }: Props) {
               height={1.5}
               fontSize="2xs"
               radius="btn"
+              onClick={() => navigate(`/contract/${work.workSerial}`)}
             />
           </div>
         </div>

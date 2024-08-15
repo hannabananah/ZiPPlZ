@@ -19,6 +19,11 @@ export default function DontUseZIPPLZ() {
   // AI 인테리어 기능 페이지로 이동하는 핸들러
   // 임시로 홈으로 가게 해놓음
   const handleNavigateToPage = () => {
+    navigate('/image-change/:userSerial');
+  };
+
+  // 홈으로 핸들러
+  const handleHome = () => {
     navigate('/');
   };
 
@@ -95,12 +100,19 @@ export default function DontUseZIPPLZ() {
           </div>
         </div>
 
-        {/* 넘어가기 버튼 */}
-        <button onClick={handleResign}>
-          <div className="mt-6 w-full font-bold h-10 rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer">
-            넘어가기
-          </div>
-        </button>
+        {/* 홈으로 + 넘어가기 버튼 */}
+        <div className="flex justify-center space-x-4">
+          <button onClick={handleHome} className="w-1/2">
+            <div className="mt-6 font-bold h-10 rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer">
+              홈으로
+            </div>
+          </button>
+          <button onClick={handleResign} className="w-1/2">
+            <div className="mt-6 font-bold h-10 rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer">
+              넘어가기
+            </div>
+          </button>
+        </div>
       </div>
     </>
   );

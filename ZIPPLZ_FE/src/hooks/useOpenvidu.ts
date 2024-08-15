@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
-import axios, { AxiosError } from 'axios';
+import axios from 'axios';
 import {
   Session as OVSession,
   OpenVidu,
@@ -16,50 +16,70 @@ export default function useOpenVidu() {
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
   const [session, setSession] = useState<OVSession | null>(null);
   const [sessionId, setSessionId] = useState<string>('');
-  const [subscriber, setSubscriber] = useState<Subscriber[]>([]);
+  const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
-  const [screenPublisher, setScreenPublisher] = useState<Publisher | null>(
-    null
-  );
+  // const [recordingId, setRecordingId] = useState<string | null>(null);
+  // const [participants, setParticipants] = useState<number>(0);
+  // const [isRecording, setIsRecording] = useState(false);
+  const navigate = useNavigate();
 
-  const joinSession = () => {
+  const joinSession = useCallback(() => {
     const OVs = new OpenVidu();
     setOV(OVs);
-    const newSession = OVs.initSession();
-    setSession(newSession);
-
-    newSession.on('streamCreated', (event: StreamEvent) => {
-      const stream = event.stream;
-      const isScreenShare = stream.typeOfVideo === 'SCREEN';
-      const newSubscriber = newSession.subscribe(event.stream, undefined);
-
-      if (isScreenShare) {
-        setSubscriber((subs) => [newSubscriber, ...subs]);
-      } else {
-        setSubscriber((subs) => [...subs, newSubscriber]);
-      }
-    });
-  };
+    setSession(OVs.initSession());
+  }, []);
 
   useEffect(() => {
     if (chatroomSerial) {
       setSessionId(String(chatroomSerial));
       joinSession();
     }
-  }, [chatroomSerial]);
+  }, [chatroomSerial, joinSession]);
 
-  const leaveSession = useCallback(() => {
-    if (session) session.disconnect();
+  // const stopRecording = async () => {
+  //   if (recordingId && participants < 2) {
+  //     try {
+  //       await axios.post(
+  //         `${base_url}/openvidu/api/sessions/recording/stop`,
+  //         { recordingId },
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //         }
+  //       );
+  //       console.log('녹화가 성공적으로 중지되었습니다');
+  //       setRecordingId(null);
+  //     } catch (error) {
+  //       console.error('녹화 중지 오류:', error);
+  //     }
+  //   } else {
+  //     console.error('녹화 ID가 없거나 참여자가 2명 이상입니다');
+  //   }
+  // };
 
-    setOV(null);
-    setSession(null);
-    setSessionId('');
-    setSubscriber([]);
-    setPublisher(null);
-    setScreenPublisher(null);
-    console.log('Session ended successfully');
-  }, [session]);
+  const leaveSession = useCallback(async () => {
+    if (sessionId) {
+      await axios.delete(`${base_url}/openvidu/api/sessions`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        data: JSON.stringify({ sessionId }),
+      });
+      setOV(null);
+      setSession(null);
+      setSessionId('');
+      setSubscriber(null);
+      setPublisher(null);
+      // setRecordingId(null);
+      // setParticipants(0);
+      // navigate(`/chatrooms/${chatroomSerial}`);
+      console.log('세션이 성공적으로 종료되었습니다');
+    }
+  }, [sessionId, navigate, chatroomSerial]);
 
   useEffect(() => {
     window.addEventListener('beforeunload', leaveSession);
@@ -69,31 +89,98 @@ export default function useOpenVidu() {
     };
   }, [leaveSession]);
 
+  // const startRecording = async () => {
+  //   if (!sessionId) {
+  //     console.error('세션 ID가 없습니다');
+  //     return;
+  //   }
+
+  //   if (participants < 2) {
+  //     console.error('녹화를 시작하기에 충분한 참여자가 없습니다');
+  //     return;
+  //   }
+
+  //   if (publisher && publisher.stream) {
+  //     try {
+  //       console.log('녹화 시작 시도...');
+  //       const response = await axios.post(
+  //         `${base_url}/openvidu/api/sessions/recording`,
+  //         JSON.stringify({ sessionId }),
+  //         {
+  //           headers: {
+  //             Authorization: `Bearer ${localStorage.getItem('token')}`,
+  //             'Content-Type': 'application/json',
+  //           },
+  //           // timeout: 60000,
+  //         }
+  //       );
+  //       setRecordingId(response.data.recordingId);
+  //       console.log('녹화가 성공적으로 시작되었습니다');
+  //     } catch (error) {
+  //       if (axios.isAxiosError(error)) {
+  //         console.error('오류 상태:', error.response?.status);
+  //         console.error('오류 데이터:', error.response?.data);
+  //         console.error('오류 메시지:', error.message);
+  //         if (error.response?.status === 409) {
+  //           console.log(
+  //             '녹화 요청 충돌 발생. 세션이 이미 녹화 중이거나 세션 ID가 올바르지 않을 수 있습니다.'
+  //           );
+  //         } else {
+  //           console.error(
+  //             '기타 Axios 오류:',
+  //             error.response?.data || error.message
+  //           );
+  //         }
+  //       } else {
+  //         console.error('예상치 못한 오류:', error);
+  //       }
+  //     }
+  //   } else {
+  //     console.error('퍼블리셔 또는 퍼블리셔 스트림이 없습니다');
+  //   }
+  // };
+
   useEffect(() => {
     if (!session) return;
 
     const handleStreamDestroyed = (event: StreamEvent) => {
-      setSubscriber((subs) =>
-        subs.filter((sub) => sub.stream !== event.stream)
-      );
+      if (subscriber && event.stream.streamId === subscriber.stream.streamId) {
+        setSubscriber(null);
+      } else if (
+        publisher &&
+        event.stream.streamId === publisher.stream.streamId
+      ) {
+        setPublisher(null);
+      }
+    };
+
+    const handleStreamCreated = (event: StreamEvent) => {
+      if (
+        !subscriber &&
+        event.stream.connection.connectionId !==
+          publisher?.stream.connection.connectionId
+      ) {
+        const newSubscriber = session.subscribe(event.stream, '');
+        setSubscriber(newSubscriber);
+      }
     };
 
     session.on('streamDestroyed', handleStreamDestroyed);
+    session.on('streamCreated', handleStreamCreated);
 
     return () => {
       session.off('streamDestroyed', handleStreamDestroyed);
+      session.off('streamCreated', handleStreamCreated);
     };
-  }, [session]);
-
-  let token = '';
-
+  }, [session, publisher, subscriber]);
   useEffect(() => {
     if (!session) return;
 
-    const createSession = async (sessionIds: string) => {
+    const createSession = async (sessionId: string) => {
       try {
         const data = JSON.stringify({
-          customSessionId: sessionIds,
+          customSessionId: sessionId,
+          mediaMode: 'ROUTED',
           chatroomSerial: Number(chatroomSerial),
         });
         const response = await axios.post(
@@ -108,18 +195,13 @@ export default function useOpenVidu() {
         );
         return response.data.data;
       } catch (error) {
-        if (axios.isAxiosError(error)) {
-          console.error('Error response:', error.response);
-          console.error('Error message:', error.message);
-          console.error('Error config:', error.config);
+        if (axios.isAxiosError(error) && error.response?.status === 409) {
+          console.log('세션이 이미 존재합니다. 기존 세션을 사용합니다.');
+          return sessionId;
         } else {
-          console.error('Unexpected error:', error);
+          console.error('세션 생성 실패:', error);
+          throw error;
         }
-        const errorResponse = (error as AxiosError)?.response;
-        if (errorResponse?.status === 409) {
-          return sessionIds;
-        }
-        throw new Error('세션 생성에 실패했습니다.');
       }
     };
 
@@ -147,22 +229,22 @@ export default function useOpenVidu() {
         }
       } catch (error) {
         if (axios.isAxiosError(error)) {
-          console.error('Axios error:', error.response?.data || error.message);
+          console.error('Axios 오류:', error.response?.data || error.message);
         } else {
-          console.error('Unexpected error:', error);
+          console.error('예상치 못한 오류:', error);
         }
-        throw new Error('Failed to create token.');
+        throw new Error('토큰 생성 실패.');
       }
     };
 
     const getToken = async (): Promise<string> => {
       try {
         const sessionIds = await createSession(sessionId);
-        token = await createToken(sessionIds);
-        console.log('토큰 받았다!!!!!!');
+        const token = await createToken(sessionIds);
+        console.log('토큰을 성공적으로 받았습니다');
         return token;
       } catch (error) {
-        throw new Error('Failed to get token.');
+        throw new Error('토큰 받기 실패.');
       }
     };
 
@@ -182,50 +264,96 @@ export default function useOpenVidu() {
               setPublisher(publisher);
               session
                 .publish(publisher)
-                .catch((error) => console.error('Error publishing:', error));
+                .catch((error) => console.error('퍼블리싱 오류:', error));
             }
           })
-          .catch((error) => console.error('Error connecting session:', error));
+          .catch((error) => console.error('세션 연결 오류:', error));
       })
-      .catch((error) => console.error('Error getting token:', error));
+      .catch((error) => console.error('토큰 받기 오류:', error));
   }, [session, OV, sessionId]);
 
-  const startScreenShare = useCallback(() => {
-    if (OV && session && !screenPublisher) {
-      const screenPub = OV.initPublisher(undefined, {
-        videoSource: 'screen',
-        publishAudio: false,
-        mirror: false,
-      });
+  useEffect(() => {
+    const getDetailSession = async () => {
+      if (sessionId) {
+        try {
+          const response = await axios.post(
+            `${base_url}/openvidu/api/sessions/info`,
+            JSON.stringify({ sessionId }),
+            {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            }
+          );
+          // const participantsCount = response.data.data.connections.length;
+          // setParticipants(participantsCount);
+        } catch (error) {
+          if (axios.isAxiosError(error)) {
+            console.error('오류 상태:', error.response?.status);
+            console.error('오류 데이터:', error.response?.data);
+          } else {
+            console.error('예상치 못한 오류:', error);
+          }
+        }
+      } else {
+        console.error('세션 ID가 없습니다');
+      }
+    };
 
-      screenPub.once('accessAllowed', () => {
-        session.publish(screenPub);
-        setScreenPublisher(screenPub);
-      });
+    getDetailSession();
+  }, [sessionId]);
 
-      screenPub.once('accessDenied', () => {
-        console.warn('Screen share access denied');
-      });
-    }
-  }, [OV, session, screenPublisher]);
+  // const startScreenShare = async () => {
+  //   try {
+  //     const token = await getToken();
+  //     if (OV && session) {
+  //       const publisher = OV.initPublisher(undefined, {
+  //         videoSource: 'screen',
+  //         publishAudio: false,
+  //         publishVideo: true,
+  //       });
 
-  const stopScreenShare = useCallback(() => {
-    if (screenPublisher) {
-      session?.unpublish(screenPublisher);
-      setScreenPublisher(null);
-    }
-  }, [screenPublisher, session]);
+  //       publisher.once('accessAllowed', () => {
+  //         publisher.stream
+  //           .getMediaStream()
+  //           .getVideoTracks()[0]
+  //           .addEventListener('ended', () => {
+  //             console.log('User pressed the "Stop sharing" button');
+  //           });
+  //         session.publish(publisher);
+  //       });
+
+  //       publisher.once('accessDenied', () => {
+  //         console.warn('ScreenShare: Access Denied');
+  //       });
+
+  //       await session.connect(token);
+  //       session.publish(publisher);
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to start screen share:', error);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   if (participants >= 2 && !isRecording && publisher) {
+  //     startRecording();
+  //     setIsRecording(true);
+  //   } else if (participants < 2 && isRecording) {
+  //     stopRecording();
+  //     setIsRecording(false);
+  //   }
+  // }, [participants, publisher, isRecording, startRecording, stopRecording]);
 
   return {
     session,
     publisher,
     subscriber,
     leaveSession,
+    // startScreenShare,
     joinSession,
     setSubscriber,
     setPublisher,
     OV,
-    startScreenShare,
-    stopScreenShare,
   };
 }

@@ -11,8 +11,10 @@ import { useLoginUserStore } from '@stores/loginUserStore';
 
 export default function Login() {
   const { setIsLogin, setLoginUser } = useLoginUserStore();
-  const GOOGLE_LOGIN_URL: string = import.meta.env.VITE_GOOGLE_LOGIN_URL;
-  const KAKAO_LOGIN_URL: string = import.meta.env.VITE_KAKAO_LOGIN_URL;
+  const GOOGLE_LOGIN_URL: string =
+    'https://zipplz.site/api/oauth2/authorization/google';
+  const KAKAO_LOGIN_URL: string =
+    'https://zipplz.site/api/oauth2/authorization/kakao';
   const navigate = useNavigate();
   const [isNoUser, setIsNoUser] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
@@ -77,7 +79,7 @@ export default function Login() {
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       <div
-        className="z-10 flex flex-col min-h-screen gap-6 px-4"
+        className="z-10 flex flex-col min-h-screen gap-4 px-4"
         style={{
           backgroundImage: "url('/svg/landing-cover1.svg')",
           backgroundSize: '130%',
@@ -87,18 +89,18 @@ export default function Login() {
         <div className="z-50 flex items-end justify-end">
           <IoHomeOutline
             size={24}
-            className="mt-4 cursor-pointer"
+            className="absolute top-[1rem] cursor-pointer"
             onClick={() => navigate('/')}
           />
         </div>
         <div className="absolute inset-0 z-20 bg-zp-white bg-opacity-20"></div>
-        <div className="flex flex-col items-center gap-6 mt-[25%] z-30">
+        <div className="flex flex-col items-center gap-6 mt-[10%] z-30">
           <p className="font-bodoni text-zp-3xl">Zip plz</p>
           <div className="text-center">
             <p className="font-bold text-zp-xl">
               완벽한 인테리어, 편리한 시공 스케줄링,
             </p>
-            <p className="font-bold text-zp-xl">
+            <p className="font-bold text-zp-xl text-wrap">
               나만의 공간을 더욱 특별하게 만드는 단 하나의 플랫폼
             </p>
           </div>

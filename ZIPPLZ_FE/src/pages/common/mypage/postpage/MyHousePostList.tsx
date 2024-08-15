@@ -1,150 +1,105 @@
-// import { useState } from 'react';
-// import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
-// import { GoArrowLeft } from 'react-icons/go';
-// import { HiMagnifyingGlass } from 'react-icons/hi2';
-// import { IoIosClose } from 'react-icons/io';
-// import { IoMdArrowDropdown } from 'react-icons/io';
-// import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
+import { GoArrowLeft } from 'react-icons/go';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
+import { IoIosClose } from 'react-icons/io';
+import { IoMdArrowDropdown } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 
-// import Selectbar from '@/components/common/Selectbar';
-// import HousePostListItem from '@/components/community/HousePostListItem';
-// import Input from '@components/common/Input';
+import Selectbar from '@/components/common/Selectbar';
+import HousePostListItem from '@/components/community/HousePostListItem';
+import Input from '@components/common/Input';
+import { useMyPageStore } from '@stores/myPageStore';
 
-// interface WorkerInfo {
-//   user_serial: number;
-//   portfolio_serial: number;
-//   name: string;
-//   birth_date: number;
-//   temp: number;
-//   field_id: number;
-//   field_name: string;
-//   career: number;
-//   certificated_badge: number;
-//   locations: string[];
-//   img: string;
-// }
+type SortOption = '평점순' | '최신순' | '과거순';
 
-// type SortOption = '평점순' | '최신순' | '과거순';
+export default function MyHousePostList() {
+  const options: SortOption[] = ['평점순', '최신순', '과거순'];
+  const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
 
-// const list: WorkerInfo[] = [
-//   {
-//     user_serial: 1,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '전기',
-//     career: 3,
-//     certificated_badge: 1,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 2,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '철거',
-//     career: 4,
-//     certificated_badge: 0,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 3,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '설비',
-//     career: 5,
-//     certificated_badge: 1,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 4,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '타일',
-//     career: 6,
-//     certificated_badge: 0,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   // 다른 worker 정보 추가
-// ];
+  const { fetchMyHousePostList } = useMyPageStore();
+  const [list, setList] = useState<HousePost[]>([]);
 
-// export default function MyHousePostList() {
-//   const options: SortOption[] = ['평점순', '최신순', '과거순'];
-//   const navigate = useNavigate();
-//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-//   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
-//   const [isSelecting, setIsSelecting] = useState(false);
-//   const [isAllSelected, setIsAllSelected] = useState(false);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+  interface HousePost {
+    board_serial: number;
+    user_serial: number; // user_serial 속성 추가
+    title: string;
+    board_content: string;
+    board_date: string;
+    hit: number;
+    nickname: string;
+    comment_cnt: number;
+    wish_cnt: number;
+    img?: string;
+  }
 
-//   const handleSortSelect = (sortOption: string) => {
-//     setSelectedValue(sortOption as SortOption);
-//   };
+  useEffect(() => {
+    const fetchData = async () => {
+      const posts = await fetchMyHousePostList();
+      setList(posts);
+    };
 
-//   const handleGoBack = () => {
-//     navigate('/mypage');
-//   };
+    fetchData();
+  }, [fetchMyHousePostList]);
 
-//   const toggleDropdown = () => {
-//     setIsDropdownOpen(!isDropdownOpen);
-//   };
+  const handleSortSelect = (sortOption: string) => {
+    setSelectedValue(sortOption as SortOption);
+  };
 
-//   const handleNavigate = (path: string) => {
-//     navigate(path);
-//     setIsDropdownOpen(false);
-//   };
+  const handleGoBack = () => {
+    navigate('/mypage');
+  };
 
-//   const toggleAllSelected = () => {
-//     if (isAllSelected) {
-//       setSelectedWorkers([]);
-//     } else {
-//       setSelectedWorkers(list.map((worker) => worker.user_serial));
-//     }
-//     setIsAllSelected(!isAllSelected);
-//   };
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
 
-//   const handleWorkerSelect = (user_serial: number) => {
-//     if (selectedWorkers.includes(user_serial)) {
-//       setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
-//     } else {
-//       setSelectedWorkers([...selectedWorkers, user_serial]);
-//     }
-//   };
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsDropdownOpen(false);
+  };
 
-//   const toggleSelecting = () => {
-//     if (isSelecting) {
-//       setSelectedWorkers([]);
-//     }
-//     setIsSelecting(!isSelecting);
-//     setIsAllSelected(false);
-//   };
+  const toggleAllSelected = () => {
+    if (isAllSelected) {
+      setSelectedWorkers([]);
+    } else {
+      setSelectedWorkers(list.map((worker) => worker.user_serial));
+    }
+    setIsAllSelected(!isAllSelected);
+  };
 
-//   const handleDeleteConfirmation = () => {
-//     setIsModalOpen(true);
-//   };
+  const handleWorkerSelect = (user_serial: number) => {
+    if (selectedWorkers.includes(user_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+    } else {
+      setSelectedWorkers([...selectedWorkers, user_serial]);
+    }
+  };
 
-//   const handleWorkerClick = (user_serial: number) => {
-//     navigate(`/housepost/${user_serial}`);
-//   };
+  const toggleSelecting = () => {
+    if (isSelecting) {
+      setSelectedWorkers([]);
+    }
+    setIsSelecting(!isSelecting);
+    setIsAllSelected(false);
+  };
 
-//   return (
-{
-  /*   <>
+  const handleWorkerClick = (user_serial: number) => {
+    navigate(`/housepost/${user_serial}`);
+  };
+
+  const handleDeleteConfirmation = () => {
+    setIsModalOpen(true);
+  };
+
+  return (
+    <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
@@ -227,12 +182,13 @@
             </div>
           </div>
         </div>
+        {/* 전체 게시글 수 표시 부분 */}
         <div className="text-zp-xl font-bold text-zp-gray">
           전체 {list.length}
         </div>
 
-       <div className="w-full flex justify-between items-center text-zp-2xs">
-         {isSelecting && (
+        <div className="w-full flex justify-between items-center text-zp-2xs">
+          {isSelecting && (
             <div
               className="flex items-center space-x-2 cursor-pointer"
               onClick={toggleAllSelected}
@@ -271,26 +227,28 @@
         </div>
         <hr className="w-full border-zp-main-color" />
 
-        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {list.map((worker) => (
+        {/* workerInfoListitem 컴포넌트 */}
+        {/* 화면 width 따라 grid 개수 변화 */}
+        <div className="w-full mt-2 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          {list.map((post) => (
             <div
-              key={worker.user_serial}
+              key={post.board_serial}
               className={`relative rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
-                selectedWorkers.includes(worker.user_serial)
+                selectedWorkers.includes(post.user_serial)
                   ? 'bg-zp-light-gray'
                   : ''
               }`}
-              onClick={() => handleWorkerClick(worker.user_serial)}
+              onClick={() => handleWorkerClick(post.board_serial)}
             >
               {isSelecting && (
                 <div
                   className="absolute top-2 right-2 z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleWorkerSelect(worker.user_serial);
+                    handleWorkerSelect(post.user_serial);
                   }}
                 >
-                  {selectedWorkers.includes(worker.user_serial) ? (
+                  {selectedWorkers.includes(post.user_serial) ? (
                     <FaRegCircleCheck />
                   ) : (
                     <FaRegCircle />
@@ -298,21 +256,21 @@
                 </div>
               )}
               <HousePostListItem
-                post_serial={worker.user_serial}
-                post_image={worker.img}
-                title={worker.field_name}
+                post_serial={post.board_serial}
+                post_image={post.img ?? null}
+                title={post.title}
                 profile_image={null}
-                nickname={worker.name}
-                upload_date={new Date()}
-                view_cnt={100}
-                bookmark_cnt={50}
-                comment_cnt={10}
+                nickname={post.nickname}
+                upload_date={new Date(post.board_date)}
+                view_cnt={post.hit}
+                bookmark_cnt={post.wish_cnt}
+                comment_cnt={post.comment_cnt}
               />
             </div>
           ))}
         </div>
       </div>
-    {isModalOpen && (
+      {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">
             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
@@ -342,5 +300,4 @@
       )}
     </>
   );
-}*/
 }

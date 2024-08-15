@@ -168,6 +168,17 @@ export const addImg = async (planSerial: number, imageFile: File) => {
     }
   );
 };
+//공유이미지 삭제
+export const deleteImg = async (planSerial: number, fileSerial: number) => {
+  return await axiosInstance.delete(
+    END_POINT.PLAN_SERIAL(planSerial) + `/image/${fileSerial}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
+  );
+};
 //유저별 공종 목록 조회
 export const getWorksByUser = async () => {
   return await axiosInstance.get(END_POINT.WORKS_USERS, {

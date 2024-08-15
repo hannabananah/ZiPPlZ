@@ -9,8 +9,6 @@ import Selectbar from '@components/common/Selectbar';
 import HousePostListItem from '@components/community/HousePostListItem';
 import { useHousePostStore } from '@stores/housePostStore';
 
-// import HousePostDetail from './HousePostDetail';
-
 type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function HousePost() {
