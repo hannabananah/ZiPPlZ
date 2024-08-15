@@ -4,6 +4,7 @@ import { FaTrashAlt } from 'react-icons/fa';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { getChatRooms } from '@/apis/chatroom/chatApi';
 import {
   activePlan,
   deletePlan,
@@ -30,12 +31,42 @@ import { useModalActions } from '@stores/modalStore';
 import { useScheduleStore } from '@stores/scheduleStore';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
+
 interface Plan {
   planSerial: number;
   planName: string;
   status: number;
 }
 export default function Schedule() {
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const fetchChatRooms = async () => {
+    const response = await getChatRooms();
+    setChatRoomList(response.data.data);
+  };
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
+  useEffect(() => {
+    console.log(chatRoomList);
+  }, [chatRoomList]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const param: string | null = queryParams.get('plan');
@@ -113,7 +144,7 @@ export default function Schedule() {
       setWorkList(null);
       setPlan(null);
       setFileList(null);
-      setSelectedValue(null);
+      // setSelectedValue(null);
     };
   }, []);
   useEffect(() => {
@@ -264,6 +295,7 @@ export default function Schedule() {
                     idx={idx + 1}
                     planSerial={plan?.planSerial}
                     updateContent={updateWork}
+                    chatRoomList={chatRoomList}
                   />
                 ) : item.fieldCode.fieldCode === 0 ? (
                   <SchedulerCardCustom

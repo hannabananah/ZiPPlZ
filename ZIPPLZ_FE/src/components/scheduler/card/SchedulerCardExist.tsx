@@ -4,21 +4,44 @@ import { FaPencilAlt } from 'react-icons/fa';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
+import { makeChatRoom } from '@/apis/chatroom/chatApi';
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import { CertificatedBadge } from '@assets/svg/icons';
 import Button from '@components/common/Button';
 import { formatDate } from '@utils/formatDateWithTime';
 
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
 interface Props {
   schedule: any;
   idx: number;
   planSerial?: number;
   updateContent: (serial: number, content: string) => void;
+  chatRoomList: ChatRoom[];
 }
 export default function SchedulerCardExist({
   schedule,
   idx,
   updateContent,
+  chatRoomList,
 }: Props) {
+  const { loginUser } = useLoginUserStore();
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
@@ -27,10 +50,29 @@ export default function SchedulerCardExist({
   const handleClickChevron = function () {
     setIsOpen(!isOpen);
   };
+  const chatStart = async () => {
+    try {
+      if (schedule)
+        return await makeChatRoom(
+          schedule.workSerial,
+          schedule.fieldCode.fieldName
+        );
+    } catch (error) {
+      if (chatRoomList && chatRoomList.length > 0 && schedule) {
+        const chatRoomSerial: string = chatRoomList.filter(
+          (room) =>
+            room.fieldName === schedule.fieldCode.fieldName &&
+            room.workerName === schedule.workerSerial.userSerial.userName &&
+            room.customerName === loginUser?.userName
+        )[0].chatroomSerial;
+        navigate(`/chatrooms/${chatRoomSerial}`);
+      }
+    }
+  };
   return (
     <>
       <div
-        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-normals"
+        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white  drop-shadow-zp-normal"
         style={{ height: cardHeight }}
       >
         <div className="absolute flex items-center justify-between w-full px-6 top-5 ">
@@ -73,10 +115,10 @@ export default function SchedulerCardExist({
             <hr className="w-full border-zp-light-gray" />
             <div className="flex items-start w-full">
               <div className="flex w-[30%] flex-col items-center gap-2">
-                <div className="w-[60%] aspect-square text-center border rounded-zp-radius-full">
+                <div className="w-[60%] aspect-square text-center  rounded-zp-radius-full">
                   <img
                     className="object-cover w-full h-full object-cover rounded-zp-radius-full"
-                    src="schedule.workerSerial.userSerial.fileSerial.saveFile"
+                    src={schedule.workerSerial.userSerial.fileSerial.saveFile}
                   />
                 </div>
                 <div className="flex gap-1">
@@ -138,6 +180,7 @@ export default function SchedulerCardExist({
                         height={1.5}
                         radius="big"
                         fontSize="2xs"
+                        onClick={chatStart}
                       />
                       <Button
                         children="계약서"
@@ -146,6 +189,9 @@ export default function SchedulerCardExist({
                         height={1.5}
                         radius="big"
                         fontSize="2xs"
+                        onClick={() =>
+                          navigate(`/contract/${schedule.workSerial}`)
+                        }
                       />
                       {schedule.isCompleted === 1 && (
                         <Button
