@@ -13,7 +13,7 @@ import java.util.*;
 public interface NotificationRepository extends JpaRepository<Notification, Integer> {
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO notification(user_serial, notification_comment, notification_date, is_checked) " +
+    @Query(value = "INSERT INTO Notification(user_serial, notification_comment, notification_date, is_checked) " +
             "VALUES(:userSerial, " +
             ":notificationComment, " +
             ":notificationDate, " +
