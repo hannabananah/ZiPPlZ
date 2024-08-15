@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useLoginUserStore } from '@/stores/loginUserStore';
 
 import ChangeTab from './ChangeTab';
-import WatchTab from './WatchTab';
+import WatchImage from './WatchImage';
 
 export default function ImageChangePage() {
   const { loginUser } = useLoginUserStore();
@@ -37,7 +37,7 @@ export default function ImageChangePage() {
           사진보기
         </p>
       </div>
-      {tab === 'change' ? <ChangeTab /> : <WatchTab />}
+      {tab === 'change' ? <ChangeTab /> : <WatchImage />}
     </div>
   );
 }
