@@ -8,7 +8,6 @@ import AiInteriorIcon from '@assets/ai-interior-icon.svg';
 // SVG 파일 import
 
 export default function DontUseZIPPLZ() {
-  let user: string = '강신구';
   const navigate = useNavigate();
 
   // 페이지 돌아가기 핸들러
@@ -19,6 +18,11 @@ export default function DontUseZIPPLZ() {
   // AI 인테리어 기능 페이지로 이동하는 핸들러
   // 임시로 홈으로 가게 해놓음
   const handleNavigateToPage = () => {
+    navigate('/image-change/:userSerial');
+  };
+
+  // 홈으로 핸들러
+  const handleHome = () => {
     navigate('/');
   };
 
@@ -32,7 +36,7 @@ export default function DontUseZIPPLZ() {
       <div className="flex flex-col min-h-screen p-6 bg-gray-100">
         <div className="w-full">
           {/* 뒤로가기 버튼 */}
-          <div className="mt-6 flex items-center">
+          <div className="mt-8 flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
               onClick={handleGoBack}
@@ -41,7 +45,6 @@ export default function DontUseZIPPLZ() {
           </div>
 
           <div className="mt-6 w-full">
-            <div className="text-zp-2xl font-bold">{user}님,</div>
             <div className="text-zp-2xl font-bold">이런 기능도 써보셨나요?</div>
           </div>
 
@@ -95,12 +98,19 @@ export default function DontUseZIPPLZ() {
           </div>
         </div>
 
-        {/* 넘어가기 버튼 */}
-        <button onClick={handleResign}>
-          <div className="mt-6 w-full font-bold h-10 rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer">
-            넘어가기
-          </div>
-        </button>
+        {/* 홈으로 + 넘어가기 버튼 */}
+        <div className="flex justify-center space-x-4">
+          <button onClick={handleHome} className="w-1/2">
+            <div className="mt-6 font-bold h-10 rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer">
+              홈으로
+            </div>
+          </button>
+          <button onClick={handleResign} className="w-1/2">
+            <div className="mt-6 font-bold h-10 rounded-zp-radius-btn bg-zp-sub-color flex justify-center items-center cursor-pointer">
+              넘어가기
+            </div>
+          </button>
+        </div>
       </div>
     </>
   );

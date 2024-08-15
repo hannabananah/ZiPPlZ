@@ -25,9 +25,12 @@ interface WorkerInfo {
   certificated_badge: number;
   locations: string[];
   img: string;
+  worker?: number;
+  user_name?: string;
+  temperature?: number;
 }
 
-export default function HousePostDetailCreate() {
+export default function HousePostCreate() {
   const [images, setImages] = useState<File[]>([]);
   const [title, setTitle] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
@@ -37,24 +40,29 @@ export default function HousePostDetailCreate() {
     []
   );
   const [workerInfoList, setWorkerInfoList] = useState<WorkerInfo[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>(''); // 검색어 상태 추가
+  const [filteredWorkers, setFilteredWorkers] = useState<WorkerInfo[]>([]); // 검색 결과 상태
 
   const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   const navigate = useNavigate();
   const maxImages = 10;
 
-  const { createPost, selectedWorkers, setSelectedWorkers } =
+  const { createPost, selectedWorkers, setSelectedWorkers, searchWorkers } =
     useHousePostStore();
 
+  // 페이지 로드 시 selectedWorkers 초기화
   useEffect(() => {
+    setSelectedWorkers([]);
     fetchWorkerInfoList();
-  }, []);
+  }, [setSelectedWorkers]);
 
   const fetchWorkerInfoList = async () => {
     try {
       const response = await axios.get('/api/workerlist/portfolios');
       if (response.data.proc.code === 200) {
         setWorkerInfoList(response.data.data);
+        setFilteredWorkers(response.data.data); // 초기에는 전체 목록 표시
       } else {
         console.error(
           'Failed to fetch worker info list:',
@@ -63,6 +71,20 @@ export default function HousePostDetailCreate() {
       }
     } catch (error) {
       console.error('Error fetching worker info list:', error);
+    }
+  };
+
+  const handleSearchChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value;
+    setSearchQuery(query);
+
+    if (query) {
+      const results = await searchWorkers(query);
+
+      // 타입 단언을 사용하여 TypeScript에게 이 데이터가 WorkerInfo[]라고 알림
+      setFilteredWorkers(results as WorkerInfo[]);
+    } else {
+      setFilteredWorkers(workerInfoList); // 검색어가 없을 때는 전체 목록 표시
     }
   };
 
@@ -94,14 +116,10 @@ export default function HousePostDetailCreate() {
     formData.append('title', title);
     formData.append('board_content', workDetail);
 
-    // selected_portfolio 배열을 JSON 문자열로 변환하여 FormData에 추가
     const selectedPortfolioJson = JSON.stringify(
       selectedWorkers.map((worker) => ({
         portfolio_serial: worker.portfolio_serial,
-        // worker: worker.user_serial,
-        // user_name: worker.name,
         birth_date: worker.birth_date,
-        // temperature: worker.temp,
         field_id: worker.field_id,
         field_name: worker.field_name,
         career: worker.career,
@@ -112,10 +130,15 @@ export default function HousePostDetailCreate() {
     );
     formData.append('selected_portfolio', selectedPortfolioJson);
 
-    // 이미지 파일들을 FormData에 추가
-    images.forEach((image) => {
-      formData.append('images', image);
-    });
+    // 이미지가 없을 경우 null 값을 추가
+    if (images.length === 0) {
+      formData.append('images', 'null');
+    } else {
+      // 이미지 파일들을 FormData에 추가
+      images.forEach((image) => {
+        formData.append('images', image);
+      });
+    }
 
     try {
       const token = `Bearer ${localStorage.getItem('token')}`;
@@ -129,14 +152,6 @@ export default function HousePostDetailCreate() {
       }
     } catch (error) {
       console.error('Failed to create post:', error);
-      // if (error.response) {
-      //   console.error('Response data:', error.response.data);
-      //   alert(
-      //     `서버 오류 발생: ${error.response.data.message || '알 수 없는 오류'}`
-      //   );
-      // } else {
-      //   alert('네트워크 오류가 발생했습니다. 다시 시도해 주세요.');
-      // }
     }
   };
 
@@ -153,13 +168,15 @@ export default function HousePostDetailCreate() {
   };
 
   const handleWorkerModalConfirm = () => {
-    const cleanedWorkers = tempSelectedWorkers.map((worker) => ({
+    // 필요한 속성을 추가하여 setSelectedWorkers에 전달
+    const updatedWorkers = tempSelectedWorkers.map((worker) => ({
       ...worker,
-      worker: 0, // 기본값 할당
-      user_name: '김현태', // 기본값 할당
-      temperature: 36.5, // 기본값 할당
+      worker: worker.user_serial, // worker 속성 추가
+      user_name: worker.name, // user_name 속성 추가
+      temperature: worker.temp, // temperature 속성 추가
     }));
-    setSelectedWorkers(cleanedWorkers);
+
+    setSelectedWorkers(updatedWorkers);
     setIsWorkerModalOpen(false);
   };
 
@@ -332,7 +349,7 @@ export default function HousePostDetailCreate() {
 
       {isWorkerModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50 overflow-y-auto">
-          <div className="bg-zp-white p-6 rounded-zp-radius-big w-3/4">
+          <div className="bg-zp-white p-6 rounded-zp-radius-big">
             <div className="flex justify-between items-center mb-4">
               <h2 className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold">
                 시공업자 선택
@@ -353,13 +370,14 @@ export default function HousePostDetailCreate() {
                 className="mb-4 pr-10"
                 fontSize="xs"
                 radius="btn"
-                // 검색 기능 추가 필요
+                value={searchQuery} // 검색어 상태 연결
+                onChange={handleSearchChange} // 검색어 변경 시 호출
               />
               <HiMagnifyingGlass className="absolute right-2 top-1/2 transform -translate-y-1/2" />
             </div>
 
             <div className="mt-2 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
-              {workerInfoList.map((worker) => (
+              {filteredWorkers.map((worker) => (
                 <div key={worker.portfolio_serial} className="relative">
                   <WorkerInfoListItem worker={worker} />
                   <div

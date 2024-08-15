@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
@@ -8,39 +8,10 @@ import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
 import QuestionPostListItem from '@/components/community/QuestionPostListItem';
+import { useMyPageStore } from '@/stores/myPageStore';
 import Input from '@components/common/Input';
 
 type SortOption = '평점순' | '최신순' | '과거순';
-
-const list = [
-  {
-    post_serial: 1,
-    title: '전기 문제 질문',
-    content: '전기 작업 중 발생한 문제에 대한 질문입니다.',
-    profile_image: null,
-    nickname: '전기장인',
-    calendar_image: null,
-    upload_date: new Date(),
-    view_cnt: 123,
-    bookmark_cnt: 12,
-    comment_cnt: 5,
-    post_image: null, // post_image를 선택적으로 설정
-  },
-  {
-    post_serial: 2,
-    title: '철거 작업 질문',
-    content: '철거 작업 중 발생한 문제에 대한 질문입니다.',
-    profile_image: null,
-    nickname: '철거마스터',
-    calendar_image: null,
-    upload_date: new Date(),
-    view_cnt: 98,
-    bookmark_cnt: 8,
-    comment_cnt: 3,
-    post_image: null, // post_image를 선택적으로 설정
-  },
-  // 다른 질문글 정보 추가
-];
 
 export default function MyQuestionPostScrapList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -52,9 +23,22 @@ export default function MyQuestionPostScrapList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
   const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([]);
+  const [list, setList] = useState<any[]>([]);
+
+  const fetchMyQuestionPostScrapList = useMyPageStore(
+    (state) => state.fetchMyQuestionPostScrapList
+  );
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchMyQuestionPostScrapList();
+      setList(data);
+    };
+
+    fetchData();
+  }, [fetchMyQuestionPostScrapList]);
 
   const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption);
   };
 
@@ -75,16 +59,16 @@ export default function MyQuestionPostScrapList() {
     if (isAllSelected) {
       setSelectedPosts([]);
     } else {
-      setSelectedPosts(list.map((post) => post.post_serial));
+      setSelectedPosts(list.map((post) => post.board_serial));
     }
     setIsAllSelected(!isAllSelected);
   };
 
-  const handlePostSelect = (post_serial: number) => {
-    if (selectedPosts.includes(post_serial)) {
-      setSelectedPosts(selectedPosts.filter((id) => id !== post_serial));
+  const handlePostSelect = (board_serial: number) => {
+    if (selectedPosts.includes(board_serial)) {
+      setSelectedPosts(selectedPosts.filter((id) => id !== board_serial));
     } else {
-      setSelectedPosts([...selectedPosts, post_serial]);
+      setSelectedPosts([...selectedPosts, board_serial]);
     }
   };
 
@@ -100,22 +84,24 @@ export default function MyQuestionPostScrapList() {
     setIsModalOpen(true);
   };
 
-  const handleWorkerClick = (post_serial: number) => {
-    navigate(`/questionpost/${post_serial}`);
+  const handleWorkerClick = (board_serial: number) => {
+    navigate(`/questionpost/${board_serial}`);
   };
 
-  const handleBookmarkToggle = (post_serial: number, isBookmarked: boolean) => {
+  const handleBookmarkToggle = (
+    board_serial: number,
+    isBookmarked: boolean
+  ) => {
     if (isBookmarked) {
-      setBookmarkedPosts([...bookmarkedPosts, post_serial]);
+      setBookmarkedPosts([...bookmarkedPosts, board_serial]);
     } else {
-      setBookmarkedPosts(bookmarkedPosts.filter((id) => id !== post_serial));
+      setBookmarkedPosts(bookmarkedPosts.filter((id) => id !== board_serial));
     }
   };
 
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "스크랩 글 목록" 글자 */}
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
@@ -249,9 +235,9 @@ export default function MyQuestionPostScrapList() {
         <div className="w-full mt-2 grid grid-cols-1 gap-4">
           {list.map((post) => (
             <div
-              key={post.post_serial}
+              key={post.board_serial}
               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
-                selectedPosts.includes(post.post_serial)
+                selectedPosts.includes(post.board_serial)
                   ? 'bg-zp-light-gray'
                   : ''
               }`}
@@ -261,10 +247,10 @@ export default function MyQuestionPostScrapList() {
                   className="absolute top-2 right-2 z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handlePostSelect(post.post_serial);
+                    handlePostSelect(post.board_serial);
                   }}
                 >
-                  {selectedPosts.includes(post.post_serial) ? (
+                  {selectedPosts.includes(post.board_serial) ? (
                     <FaRegCircleCheck />
                   ) : (
                     <FaRegCircle />
@@ -275,11 +261,21 @@ export default function MyQuestionPostScrapList() {
                 className={`w-full h-full ${
                   isSelecting ? 'pointer-events-none' : ''
                 }`}
-                onClick={() => handleWorkerClick(post.post_serial)}
+                onClick={() => handleWorkerClick(post.board_serial)}
               >
                 <QuestionPostListItem
-                  {...post}
-                  isBookmarked={bookmarkedPosts.includes(post.post_serial)}
+                  post_serial={post.board_serial} // post_serial 추가
+                  title={post.title}
+                  content={post.board_content}
+                  profile_image={null} // 수정 필요
+                  nickname={post.nickname}
+                  calendar_image={null} // 수정 필요
+                  upload_date={new Date(post.board_date)}
+                  view_cnt={post.hit}
+                  bookmark_cnt={post.wish_cnt}
+                  comment_cnt={post.comment_cnt}
+                  post_image={null} // 수정 필요
+                  isBookmarked={bookmarkedPosts.includes(post.board_serial)}
                   onBookmarkToggle={handleBookmarkToggle}
                 />
               </div>

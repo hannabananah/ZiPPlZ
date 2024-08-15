@@ -27,8 +27,8 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
   const [activeReplyComment, setActiveReplyComment] = useState<number | null>(
     null
   );
-  const [editingCommentId, setEditingCommentId] = useState<number | null>(null); // 댓글 또는 답글 수정 상태
-  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null); // 드롭다운 상태
+  const [editingCommentId, setEditingCommentId] = useState<number | null>(null);
+  const [dropdownOpen, setDropdownOpen] = useState<number | null>(null);
 
   const {
     fetchPostDetails,
@@ -36,17 +36,22 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
     deletePost,
     addComment,
     addReply,
-    // toggleBookmark,
     deleteComment,
+    addWish,
+    deleteWish,
+    searchWish,
   } = useQuestionPostStore();
 
   useEffect(() => {
     if (id) {
       fetchPostDetails(Number(id)).then(() => {
-        // setIsBookmarked(data?.wish_cnt > 0); // 서버에서 받은 초기 북마크 상태 설정
+        const token = `Bearer ${localStorage.getItem('token')}`;
+        searchWish(token, Number(id)).then((response) => {
+          setIsBookmarked(response.wish_count > 0);
+        });
       });
     }
-  }, [id, fetchPostDetails]);
+  }, [id, fetchPostDetails, searchWish]);
 
   if (!postDetails) {
     return <div>Loading...</div>;
@@ -57,14 +62,26 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
   };
 
   const handleBookmarkClick = async () => {
+    const token = `Bearer ${localStorage.getItem('token')}`;
     const newBookmarkState = !isBookmarked;
-    setIsBookmarked(newBookmarkState);
 
-    // 북마크 상태 변경 시 콜백 호출
-    onBookmarkChange();
-
-    // 실제 API 호출은 생략했지만, 필요시 아래에서 처리
-    // const result = await toggleBookmark(Number(id), newBookmarkState);
+    if (newBookmarkState) {
+      const { code } = await addWish(token, Number(id), 1); // 1은 질문글에 대한 타입
+      if (code === 200) {
+        setIsBookmarked(true);
+        onBookmarkChange(); // 북마크 추가 시 true
+      } else {
+        alert('관심 목록 추가에 실패했습니다.');
+      }
+    } else {
+      const { code } = await deleteWish(token, Number(id));
+      if (code === 200) {
+        setIsBookmarked(false);
+        onBookmarkChange(); // 북마크 삭제 시 false
+      } else {
+        alert('관심 목록 삭제에 실패했습니다.');
+      }
+    }
   };
 
   const handleEditClick = () => {
@@ -343,7 +360,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                       />
                       {dropdownOpen ===
                         comment.parent_comment.commentSerial && (
-                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
                           <div className="flex justify-center items-center">
                             <div className="p-2">
                               <GoPencil />
@@ -509,7 +526,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                                   }
                                 />
                                 {dropdownOpen === child.commentSerial && (
-                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
                                     <div className="flex justify-center items-center">
                                       <div className="p-2">
                                         <GoPencil />

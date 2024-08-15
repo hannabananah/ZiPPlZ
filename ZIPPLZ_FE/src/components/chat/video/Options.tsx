@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 
 import Contract from '@components/chat/Contract';
 import FullModal from '@components/common/FullModal';
-import useOpenVidu from '@hooks/useOpenvidu';
+// import useOpenVidu from '@hooks/useOpenvidu';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import axios from 'axios';
 import {

@@ -285,6 +285,7 @@ export default function useOpenVidu() {
               },
             }
           );
+          console.log(response); //임시로 추가해놓음
           // const participantsCount = response.data.data.connections.length;
           // setParticipants(participantsCount);
         } catch (error) {

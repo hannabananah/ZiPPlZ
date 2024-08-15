@@ -61,9 +61,13 @@ export default function QuestionPostCreate() {
     formData.append('title', title);
     formData.append('board_content', workDetail);
 
-    images.forEach((image) => {
-      formData.append('images', image);
-    });
+    if (images.length === 0) {
+      formData.append('images', 'null');
+    } else {
+      images.forEach((image) => {
+        formData.append('images', image);
+      });
+    }
 
     try {
       let response;
@@ -111,9 +115,9 @@ export default function QuestionPostCreate() {
           </div>
 
           <div className="mt-6 font-bold flex items-center justify-start">
-            <div className="text-left">
+            <div className="text-left text-zp-xs">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
-              <div className="text-zp-xs text-zp-light-gray">
+              <div className="text-zp-2xs text-zp-light-gray">
                 사진을 첨부하면 질문에 대한 보다 상세한 답변을 받을 수 있어요.
               </div>
             </div>
@@ -124,9 +128,9 @@ export default function QuestionPostCreate() {
               <div className="relative">
                 <label
                   htmlFor="file-upload"
-                  className="flex items-center justify-center w-24 h-24 bg-zp-white border border-zp-main-color rounded-zp-radius-btn p-2 cursor-pointer"
+                  className="flex items-center justify-center w-20 h-20 bg-zp-white border border-zp-main-color rounded-zp-radius-btn p-2 cursor-pointer"
                 >
-                  <FaCamera size={36} className="" />
+                  <FaCamera size={24} className="" />
                   <div className="w-full flex justify-center absolute bottom-2 font-bold text-zp-xs text-zp-gray">
                     {images.length}/{maxImages}
                   </div>
@@ -146,8 +150,8 @@ export default function QuestionPostCreate() {
               {images.map((image, index) => (
                 <div
                   key={index}
-                  className={`relative w-24 h-24 flex-shrink-0 ${
-                    index === 0 ? 'ml-4' : ''
+                  className={`relative w-20 h-20 flex-shrink-0 ${
+                    index === 0 ? 'ml-6' : ''
                   }`}
                 >
                   <img
@@ -170,7 +174,7 @@ export default function QuestionPostCreate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">제목</div>
-              <div className="bg-zp-white border rounded-zp-radius-btn pl-2">
+              <div className="bg-zp-white border rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="제목 입력"
@@ -197,7 +201,7 @@ export default function QuestionPostCreate() {
           <div className="mt-6 font-bold flex flex-col items-center justify-center">
             <div className="text-left w-full">
               <div className="mb-2">질문</div>
-              <div className="bg-zp-white border rounded-zp-radius-btn pl-2">
+              <div className="bg-zp-white border rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="질문 내용을 입력하세요."

@@ -5,17 +5,15 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import Selectbar from '@components/common/Selectbar';
+// import Selectbar from '@components/common/Selectbar';
 import HousePostListItem from '@components/community/HousePostListItem';
 import { useHousePostStore } from '@stores/housePostStore';
 
-// import HousePostDetail from './HousePostDetail';
-
-type SortOption = '평점순' | '최신순' | '과거순';
+// type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function HousePost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+  // const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
   const [bookmarkCounts] = useState<{
     [key: number]: number;
@@ -36,17 +34,17 @@ export default function HousePost() {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
-    setSelectedValue(sortOption as SortOption);
-  };
+  // const handleSortSelect = (sortOption: string) => {
+  //   console.log(`Selected sort option: ${sortOption}`);
+  //   setSelectedValue(sortOption as SortOption);
+  // };
 
   const handleNavigate = (path: string) => {
     navigate(path);
     setIsDropdownOpen(false);
   };
 
-  const options: SortOption[] = ['평점순', '최신순', '과거순'];
+  // const options: SortOption[] = ['평점순', '최신순', '과거순'];
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
@@ -99,7 +97,7 @@ export default function HousePost() {
             )}
           </div>
           {/* 정렬 버튼 */}
-          <div className="relative left-3 flex justify-end">
+          {/* <div className="relative left-3 flex justify-end">
             <Selectbar
               backgroundColor="none"
               fontColor="black"
@@ -113,10 +111,10 @@ export default function HousePost() {
               border="none"
               hover="light-gray"
             />
-          </div>
+          </div> */}
           {/* 글 작성하기 버튼 */}
           <div className="flex justify-end mb-4">
-            <div className="text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
+            <div className="mt-8 text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
               <Button
                 children="작성하기"
                 buttonType="light"
