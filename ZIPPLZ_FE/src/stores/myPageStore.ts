@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
+const BASE_URL: string = 'http://localhost:5000/';
+// '/api/'
+
 interface WorkerPost {
   board_serial: number;
   board_type: number;
@@ -28,13 +31,16 @@ interface MyPageState {
   ) => Promise<void>;
   uploadProfileImage: (file: File | Blob) => Promise<void>;
   deleteProfileImage: () => Promise<void>;
-  changePassword: (newPassword: string) => Promise<void>;
+  changePassword: (
+    currentPassword: string,
+    newPassword: string
+  ) => Promise<{ success: boolean; message?: string }>;
   fetchMyHousePostList: () => Promise<WorkerPost[]>;
   fetchMyQuestionPostList: () => Promise<WorkerPost[]>;
   fetchMyHousePostScrapList: () => Promise<WorkerPost[]>;
   fetchMyQuestionPostScrapList: () => Promise<WorkerPost[]>;
   fetchMyFindWorkerList: () => Promise<WorkerPost[]>;
-  fetchMyFindWorkerScrapList: () => Promise<WorkerPost[]>; // 추가된 부분
+  fetchMyFindWorkerScrapList: () => Promise<WorkerPost[]>;
 }
 
 export const useMyPageStore = create<MyPageState>((set) => ({
@@ -46,7 +52,7 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   fetchMyPageData: async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get('http://localhost:5000/mypage', {
+      const response = await axios.get(`${BASE_URL}mypage`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -80,7 +86,7 @@ export const useMyPageStore = create<MyPageState>((set) => ({
     const token = localStorage.getItem('token');
     try {
       const response = await axios.post(
-        'http://localhost:5000/mypage/update-customer',
+        `${BASE_URL}mypage/update-customer`,
         {
           tel,
           nickname,
@@ -117,7 +123,7 @@ export const useMyPageStore = create<MyPageState>((set) => ({
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/mypage/profile-img',
+        `${BASE_URL}mypage/profile-img`,
         formData,
         {
           headers: {
@@ -143,14 +149,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
     const token = localStorage.getItem('token');
 
     try {
-      const response = await axios.delete(
-        'http://localhost:5000/mypage/profile-img',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.delete(`${BASE_URL}mypage/profile-img`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.proc.code === 200) {
         console.log('프로필 이미지가 성공적으로 삭제되었습니다.');
@@ -163,12 +166,12 @@ export const useMyPageStore = create<MyPageState>((set) => ({
     }
   },
 
-  changePassword: async (newPassword: string) => {
+  changePassword: async (currentPassword: string, newPassword: string) => {
     const token = localStorage.getItem('token');
 
     try {
       const response = await axios.post(
-        'http://localhost:5000/mypage/change-pw',
+        `${BASE_URL}mypage/change-pw`,
         { password: newPassword },
         {
           headers: {
@@ -179,25 +182,25 @@ export const useMyPageStore = create<MyPageState>((set) => ({
 
       if (response.data.proc.code === 200) {
         console.log('비밀번호가 성공적으로 변경되었습니다.');
+        return { success: true };
       } else {
         console.error('비밀번호 변경 실패:', response.data.proc.message);
+        return { success: false, message: response.data.proc.message };
       }
     } catch (error) {
       console.error('비밀번호 변경 중 오류 발생:', error);
+      return { success: false, message: '비밀번호 변경 중 오류 발생' };
     }
   },
 
   fetchMyHousePostList: async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(
-        'http://localhost:5000/mypage/showboards',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}mypage/showboards`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.proc.code === 200) {
         return response.data.data;
@@ -220,14 +223,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   fetchMyQuestionPostList: async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(
-        'http://localhost:5000/mypage/questions',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}mypage/questions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.proc.code === 200) {
         return response.data.data;
@@ -250,14 +250,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   fetchMyHousePostScrapList: async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(
-        'http://localhost:5000/mypage/wish/showboards',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}mypage/wish/showboards`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.proc.code === 200) {
         return response.data.data;
@@ -280,14 +277,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   fetchMyQuestionPostScrapList: async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(
-        'http://localhost:5000/mypage/wish/questions',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}mypage/wish/questions`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.proc.code === 200) {
         return response.data.data;
@@ -310,14 +304,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   fetchMyFindWorkerList: async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(
-        'http://localhost:5000/mypage/findworkers',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}mypage/findworkers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.proc.code === 200) {
         return response.data.data;
@@ -340,14 +331,11 @@ export const useMyPageStore = create<MyPageState>((set) => ({
   fetchMyFindWorkerScrapList: async () => {
     const token = localStorage.getItem('token');
     try {
-      const response = await axios.get(
-        'http://localhost:5000/mypage/wish/findworkers',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+      const response = await axios.get(`${BASE_URL}mypage/wish/findworkers`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       if (response.data.proc.code === 200) {
         return response.data.data;

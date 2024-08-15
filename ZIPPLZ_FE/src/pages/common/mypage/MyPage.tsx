@@ -217,8 +217,9 @@ export default function MyPage() {
                 <MdOutlinePhotoCamera size={24} />
               </div>
             </div>
+            {/* 임시로 고객, 시공업자 둘다 이름 */}
             <div className="w-36 h-8 grid place-items-center text-zp-lg font-bold">
-              {role === 'customer' ? name : '익명 사용자'}
+              {name}
             </div>
           </div>
         </div>

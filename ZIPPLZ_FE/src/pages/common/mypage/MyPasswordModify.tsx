@@ -16,11 +16,6 @@ export default function MyPasswordModify() {
   const navigate = useNavigate();
   const { changePassword } = useMyPageStore();
 
-  // 페이지 돌아가기 핸들러
-  const handleGoBack = () => {
-    navigate(-1);
-  };
-
   const [currentPassword, setCurrentPassword] = useState<string>('');
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -35,7 +30,12 @@ export default function MyPasswordModify() {
     confirm: false,
     emptyFields: false,
   });
-  const existingPassword = '1234'; // 기존 비밀번호 설정 (이 부분은 실제로는 서버에서 확인해야 함)
+  const [showModal, setShowModal] = useState<boolean>(false);
+
+  // 페이지 돌아가기 핸들러
+  const handleGoBack = () => {
+    navigate(-1);
+  };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentPassword(e.target.value);
@@ -64,30 +64,41 @@ export default function MyPasswordModify() {
         ...prev,
         emptyFields: true,
       }));
-    } else {
-      if (currentPassword !== existingPassword) {
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError((prev) => ({
+        ...prev,
+        new: true,
+        confirm: true,
+      }));
+      return;
+    }
+
+    try {
+      // 서버로 현재 비밀번호와 새 비밀번호를 보냅니다.
+      const response = await changePassword(currentPassword, newPassword);
+
+      if (response.success) {
+        // 비밀번호 변경 성공 시, 모달을 띄움
+        setShowModal(true);
+      } else {
+        // 서버에서 비밀번호가 틀리다고 응답한 경우 처리
         setError((prev) => ({
           ...prev,
           current: true,
         }));
       }
-
-      if (newPassword !== confirmPassword) {
-        setError((prev) => ({
-          ...prev,
-          new: true,
-          confirm: true,
-        }));
-      }
-
-      if (
-        currentPassword === existingPassword &&
-        newPassword === confirmPassword
-      ) {
-        await changePassword(newPassword);
-        navigate('/mypage');
-      }
+    } catch (error) {
+      console.error('Error during password change:', error);
+      // 필요시 추가 에러 처리
     }
+  };
+
+  const handleModalConfirm = () => {
+    setShowModal(false);
+    navigate('/member/login'); // 로그인 페이지로 이동
   };
 
   return (
@@ -235,6 +246,26 @@ export default function MyPasswordModify() {
           </button>
         </div>
       </div>
+
+      {/* 모달 창 */}
+      {showModal && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-zp-black bg-opacity-50">
+          <div className="bg-zp-white p-6 rounded-zp-radius-big">
+            <h2 className="text-zp-2xl font-bold mb-4 text-center">
+              비밀번호 변경 성공
+            </h2>
+            <p className="text-zp-lg mb-6 text-center">
+              비밀번호가 변경되었습니다. 다시 로그인 해주세요.
+            </p>
+            <button
+              className="w-full h-10 bg-zp-sub-color rounded-zp-radius-btn font-bold text-zp-xl flex justify-center items-center"
+              onClick={handleModalConfirm}
+            >
+              확인
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }
