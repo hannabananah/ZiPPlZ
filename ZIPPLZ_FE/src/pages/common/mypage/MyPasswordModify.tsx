@@ -3,6 +3,8 @@ import { GoArrowLeft } from 'react-icons/go';
 import { PiEyeLight, PiEyeSlash } from 'react-icons/pi';
 import { useNavigate } from 'react-router-dom';
 
+import { useMyPageStore } from '@stores/myPageStore';
+
 interface ErrorState {
   current: boolean;
   new: boolean;
@@ -12,6 +14,7 @@ interface ErrorState {
 
 export default function MyPasswordModify() {
   const navigate = useNavigate();
+  const { changePassword } = useMyPageStore();
 
   // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
@@ -32,7 +35,7 @@ export default function MyPasswordModify() {
     confirm: false,
     emptyFields: false,
   });
-  const existingPassword = '1234'; // 기존 비밀번호 설정
+  const existingPassword = '1234'; // 기존 비밀번호 설정 (이 부분은 실제로는 서버에서 확인해야 함)
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setCurrentPassword(e.target.value);
@@ -48,7 +51,7 @@ export default function MyPasswordModify() {
     setConfirmPassword(e.target.value);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     setError({
       current: false,
       new: false,
@@ -75,6 +78,14 @@ export default function MyPasswordModify() {
           new: true,
           confirm: true,
         }));
+      }
+
+      if (
+        currentPassword === existingPassword &&
+        newPassword === confirmPassword
+      ) {
+        await changePassword(newPassword);
+        navigate('/mypage');
       }
     }
   };

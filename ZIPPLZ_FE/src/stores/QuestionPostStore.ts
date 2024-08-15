@@ -91,6 +91,19 @@ interface QuestionPostState {
     token: string,
     commentSerial: number
   ) => Promise<{ code: number; message: string }>;
+  addWish: (
+    token: string,
+    wish_serial: number,
+    wish_type: number
+  ) => Promise<{ code: number; message: string }>;
+  deleteWish: (
+    token: string,
+    wish_serial: number
+  ) => Promise<{ code: number; message: string }>;
+  searchWish: (
+    token: string,
+    wish_serial: number
+  ) => Promise<{ code: number; wish_count: number }>;
 }
 
 export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
@@ -106,8 +119,9 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   fetchQuestionPosts: async () => {
     try {
-      const response = await axios.post('/api/board/question/list');
-      console.log('Fetched question posts:', response.data.data);
+      const response = await axios.post(
+        'http://localhost:5000/board/question/list'
+      );
       set({ questionPosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch question posts:', error);
@@ -170,12 +184,23 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   createPost: async (token: string, formData: FormData) => {
     try {
-      const response = await axios.post('/api/board/question/add', formData, {
-        headers: {
-          Authorization: token,
-          'Content-Type': 'multipart/form-data',
-        },
-      });
+      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
+      const hasNullImages = formData.get('images') === 'null';
+      if (hasNullImages) {
+        formData.delete('images'); // 기존 'images' 필드를 제거
+        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+      }
+
+      const response = await axios.post(
+        'http://localhost:5000/board/question/add',
+        formData,
+        {
+          headers: {
+            Authorization: token,
+            'Content-Type': 'multipart/form-data',
+          },
+        }
+      );
 
       const { code, message } = response.data.proc;
       if (code === 200) {
@@ -197,6 +222,13 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
     formData: FormData // FormData를 받을 수 있도록 수정
   ) => {
     try {
+      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
+      const hasNullImages = formData.get('images') === 'null';
+      if (hasNullImages) {
+        formData.delete('images'); // 기존 'images' 필드를 제거
+        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+      }
+
       const response = await axios.patch(
         `/api/board/question/list/${id}`,
         formData,
@@ -312,6 +344,64 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
         console.error('Response data:', error.response?.data);
       }
       return { code: 500, message: '댓글 삭제 실패' };
+    }
+  },
+
+  addWish: async (token, wish_serial, wish_type) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/wish/addWish',
+        { wish_serial, wish_type },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      const { code, message } = response.data.proc;
+      return { code, message };
+    } catch (error) {
+      console.error('Failed to add wish:', error);
+      return { code: 500, message: '추가 실패' };
+    }
+  },
+
+  deleteWish: async (token, wish_serial) => {
+    try {
+      const response = await axios.delete(
+        'http://localhost:5000/wish/deleteWish',
+        {
+          headers: {
+            Authorization: token,
+          },
+          data: { wish_serial },
+        }
+      );
+      const { code, message } = response.data.proc;
+      return { code, message };
+    } catch (error) {
+      console.error('Failed to delete wish:', error);
+      return { code: 500, message: '삭제 실패' };
+    }
+  },
+
+  searchWish: async (token, wish_serial) => {
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/wish/searchWish',
+        { wish_serial },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+      const { code } = response.data.proc;
+      const wish_count = response.data.data;
+      return { code, wish_count };
+    } catch (error) {
+      console.error('Failed to search wish:', error);
+      return { code: 500, wish_count: 0 };
     }
   },
 }));
