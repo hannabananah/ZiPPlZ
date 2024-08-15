@@ -53,7 +53,6 @@ export default function SharedImg({ fileList, planSerial }: Props) {
   };
   const handleUpload = async (file: File) => {
     if (planSerial) {
-      console.log(file);
       await addImg(planSerial, file);
     }
   };

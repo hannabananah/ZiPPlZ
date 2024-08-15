@@ -93,9 +93,7 @@ export default function SignBottom({
     }, 3000);
   };
   const registUser = async (user: User) => {
-    console.log(user);
     const response = await signUp(user);
-    console.log('유저========', response.data.data);
     setUserSerial(response.data.data.userSerial);
   };
   const registSocialUser = async (user: socialUser) => {
@@ -105,12 +103,10 @@ export default function SignBottom({
   };
   const registCustomer = async (customer: Customer) => {
     const response = await signUpCustomer(customer);
-    console.log('Customer registration response:', response);
     return response.data;
   };
   const registWorker = async (worker: Worker) => {
     const response = await signUpWorker(worker);
-    console.log('Customer registration response:', response);
     return response.data;
   };
   useEffect(() => {
@@ -170,8 +166,6 @@ export default function SignBottom({
             setNext(false);
             setActive(false);
             if (phrase === 'extrainfo') {
-              console.log(socialUser);
-
               navigate(link);
             } else {
               if (
@@ -186,7 +180,6 @@ export default function SignBottom({
                 if (phrase == 'nickname' || phrase == 'skills')
                   registUser(user);
                 else registSocialUser(socialUser);
-                console.log(user);
                 openModal();
               }
             }
@@ -227,7 +220,6 @@ export default function SignBottom({
                 closeModal();
               } else {
                 if (type === 'customer') {
-                  console.log(customer);
                   registCustomer(customer);
                 } else {
                   registWorker(worker);

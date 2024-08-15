@@ -28,7 +28,6 @@ export default function Login() {
   const login = async (email: string, password: string) => {
     try {
       const response = await requestLogin(email, password);
-      console.log('response', response);
       if (response && response.headers) {
         const authorizationHeader = response.headers.authorization;
         let token: string = authorizationHeader.split(' ')[1];
@@ -48,7 +47,6 @@ export default function Login() {
 
         const decoder = new TextDecoder('utf-8');
         const decodedText = decoder.decode(bytes);
-        console.log(decodedText);
 
         let decodingInfoJson = JSON.parse(decodedText);
 
@@ -191,9 +189,6 @@ export default function Login() {
           <Link to={GOOGLE_LOGIN_URL}>
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
-              onClick={() => {
-                console.log(GOOGLE_LOGIN_URL);
-              }}
               style={{
                 backgroundImage: "url('/svg/login/GoogleLogin.svg')",
                 backgroundRepeat: 'no-repeat',

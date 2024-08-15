@@ -18,8 +18,8 @@ interface WorkerPost {
 
 interface MyPageState {
   profileImg: string | null;
-  name: string; // 실제 이름
-  nickname: string; // 닉네임 추가
+  name: string;
+  nickname: string;
   role: string;
   phoneNumber: string;
   address: string;
@@ -50,7 +50,7 @@ interface MyPageState {
 export const useMyPageStore = create<MyPageState>((set) => ({
   profileImg: null,
   name: '',
-  nickname: '', // 초기값 설정
+  nickname: '',
   role: '',
   phoneNumber: '',
   address: '',
@@ -67,9 +67,9 @@ export const useMyPageStore = create<MyPageState>((set) => ({
         const data = response.data.data;
         set({
           profileImg: data.profileImg?.saveFile || null,
-          name: data.name, // 실제 이름
-          nickname: data.nickname, // 닉네임 설정
-          role: data.role, // 고객 또는 시공업자 여부 설정
+          name: data.name,
+          nickname: data.nickname,
+          role: data.role,
           phoneNumber: data.tel,
           address: data.currentAddress,
         });
@@ -106,7 +106,6 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       );
 
       if (response.data.proc.code === 200) {
-        console.log('고객 정보가 성공적으로 업데이트되었습니다.');
         set({ nickname: nickname, phoneNumber: tel, address: currentAddress });
       } else {
         console.error('고객 정보 업데이트 실패:', response.data.proc.message);
@@ -136,7 +135,6 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       );
 
       if (response.data.proc.code === 200) {
-        console.log('시공자 정보가 성공적으로 업데이트되었습니다.');
         set({ phoneNumber: tel });
       } else {
         console.error('시공자 정보 업데이트 실패:', response.data.proc.message);
@@ -170,7 +168,6 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       );
 
       if (response.data.proc.code === 200) {
-        console.log('프로필 이미지가 성공적으로 업로드되었습니다.');
         const newProfileImgUrl = response.data.data?.profileImg?.saveFile || '';
         set({ profileImg: newProfileImgUrl });
       } else {
@@ -192,7 +189,6 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       });
 
       if (response.data.proc.code === 200) {
-        console.log('프로필 이미지가 성공적으로 삭제되었습니다.');
         set({ profileImg: null });
       } else {
         console.error('프로필 이미지 삭제 실패:', response.data.proc.message);
@@ -217,7 +213,6 @@ export const useMyPageStore = create<MyPageState>((set) => ({
       );
 
       if (response.data.proc.code === 200) {
-        console.log('비밀번호가 성공적으로 변경되었습니다.');
         return { success: true };
       } else {
         console.error('비밀번호 변경 실패:', response.data.proc.message);

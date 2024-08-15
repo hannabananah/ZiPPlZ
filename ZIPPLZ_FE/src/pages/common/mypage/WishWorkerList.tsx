@@ -89,7 +89,6 @@ export default function WishWorkerList() {
   };
 
   const handleModalConfirm = () => {
-    // 선택된 Worker 삭제 로직
     setSelectedWorkers([]);
     setIsSelecting(false);
     setIsModalOpen(false);
@@ -97,21 +96,20 @@ export default function WishWorkerList() {
 
   const handleFieldClick = (field: string) => {
     console.log(`Selected field: ${field}`);
-    // 이곳에 필드 선택 시 동작할 로직 추가 가능
   };
 
   return (
     <>
-      <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        <div className="mt-20 h-10 flex items-center justify-between w-full relative">
-          <div className="flex w-full items-center justify-center gap-2">
+      <div className="flex flex-col items-start w-full min-h-screen gap-4 px-6 mb-6">
+        <div className="relative flex items-center justify-between w-full h-10 mt-20">
+          <div className="flex items-center justify-center w-full gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
               size={20}
             />
             <div className="flex items-center space-x-2">
-              <div className="text-zp-lg font-bold">관심 있는 시공업자</div>
+              <div className="font-bold text-zp-lg">관심 있는 시공업자</div>
             </div>
           </div>
         </div>
@@ -126,7 +124,7 @@ export default function WishWorkerList() {
           ))}
         </div>
 
-        <div className="w-full relative flex justify-center items-center">
+        <div className="relative flex items-center justify-center w-full">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
             type="text"
@@ -142,7 +140,7 @@ export default function WishWorkerList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          <div className="relative top-3 left-3 flex justify-end items-center">
+          <div className="relative flex items-center justify-end top-3 left-3">
             <Selectbar
               backgroundColor="none"
               fontColor="black"
@@ -158,10 +156,10 @@ export default function WishWorkerList() {
             />
           </div>
         </div>
-        <div className="text-zp-xl font-bold text-zp-gray">
+        <div className="font-bold text-zp-xl text-zp-gray">
           <div>전체 {list.length}</div>
         </div>
-        <div className="w-full flex justify-between items-center text-zp-2xs">
+        <div className="flex items-center justify-between w-full text-zp-2xs">
           {isSelecting && (
             <div
               className="flex items-center space-x-2 cursor-pointer"
@@ -176,7 +174,7 @@ export default function WishWorkerList() {
             </div>
           )}
           <button
-            className="rounded-zp-radius-big p-2 px-3 bg-zp-light-gray flex items-center space-x-2 ml-auto"
+            className="flex items-center p-2 px-3 ml-auto space-x-2 rounded-zp-radius-big bg-zp-light-gray"
             onClick={() => {
               if (isSelecting && selectedWorkers.length === 0) {
                 toggleSelecting();
@@ -203,7 +201,7 @@ export default function WishWorkerList() {
         </div>
         <hr className="w-full border-zp-main-color" />
 
-        <div className="w-full mt-2 overflow-x-auto gap-4 grid grid-cols-3">
+        <div className="grid w-full grid-cols-3 gap-4 mt-2 overflow-x-auto">
           {list.map((worker, index) => (
             <div
               key={index}
@@ -213,7 +211,7 @@ export default function WishWorkerList() {
               onClick={() => handleWorkerSelect(index)}
             >
               {isSelecting && (
-                <div className="absolute top-6 right-2 z-10">
+                <div className="absolute z-10 top-6 right-2">
                   {selectedWorkers.includes(index) ? (
                     <FaRegCircleCheck size={20} />
                   ) : (
@@ -235,21 +233,21 @@ export default function WishWorkerList() {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-          <div className="bg-zp-white rounded-zp-radius-big p-6">
-            <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="p-6 bg-zp-white rounded-zp-radius-big">
+            <div className="mb-4 font-bold text-zp-2xl">삭제 확인</div>
             <div className="mb-4 font-bold">
               선택한 항목을 삭제하시겠습니까?
             </div>
             <div className="flex justify-end space-x-2">
               <button
-                className="w-full font-bold px-4 py-2 bg-zp-light-beige rounded-zp-radius-big"
+                className="w-full px-4 py-2 font-bold bg-zp-light-beige rounded-zp-radius-big"
                 onClick={handleModalCancel}
               >
                 취소
               </button>
               <button
-                className="w-full font-bold px-4 py-2 bg-zp-sub-color rounded-zp-radius-big"
+                className="w-full px-4 py-2 font-bold bg-zp-sub-color rounded-zp-radius-big"
                 onClick={handleModalConfirm}
               >
                 확인

@@ -2,9 +2,7 @@ import axios from 'axios';
 import { create } from 'zustand';
 
 const BASE_URL: string = 'http://localhost:5000/';
-// '/api/'
 
-// 자랑글 인터페이스
 interface HousePost {
   board_serial: number;
   board_type: number;
@@ -18,7 +16,6 @@ interface HousePost {
   comment_cnt: number;
 }
 
-// 댓글 인터페이스
 interface Comment {
   board_serial: number;
   comment_content: string;
@@ -26,7 +23,6 @@ interface Comment {
   order_number: number;
 }
 
-// 자랑글 상세 정보 인터페이스
 interface HousePostDetails {
   title: string;
   userSerial: number;
@@ -71,7 +67,6 @@ interface HousePostDetails {
   }[];
 }
 
-// 시공업자 정보 인터페이스
 interface WorkerInfo {
   portfolio_serial: number;
   worker: number;
@@ -86,15 +81,14 @@ interface WorkerInfo {
   img: string | null;
 }
 
-// 자랑글 상태 인터페이스
 interface HousePostState {
   title: string;
   boardContent: string;
   images: File[];
   housePosts: HousePost[];
   postDetails: HousePostDetails | null;
-  selectedWorkers: WorkerInfo[]; // 추가된 전역 상태
-  setSelectedWorkers: (workers: WorkerInfo[]) => void; // 전역 상태 업데이트 함수
+  selectedWorkers: WorkerInfo[];
+  setSelectedWorkers: (workers: WorkerInfo[]) => void;
   setTitle: (title: string) => void;
   setBoardContent: (content: string) => void;
   setImages: (images: File[]) => void;
@@ -151,8 +145,8 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   images: [],
   housePosts: [],
   postDetails: null,
-  selectedWorkers: [], // 초기값 설정
-  setSelectedWorkers: (workers) => set({ selectedWorkers: workers }), // 상태 업데이트 함수
+  selectedWorkers: [],
+  setSelectedWorkers: (workers) => set({ selectedWorkers: workers }),
 
   setTitle: (title) => set({ title }),
   setBoardContent: (boardContent) => set({ boardContent }),
@@ -220,7 +214,6 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
           })),
         };
 
-        // Worker 정보가 postDetails.tags에 포함되어 있으므로 이를 selectedWorkers 상태로 설정
         set({
           postDetails,
           images: data.board_images.map((img: any) => img.saveFile),
@@ -234,8 +227,8 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
             field_name: tag.field_name,
             career: tag.career,
             certificated_badge: tag.certificated_badge,
-            locations: [], // 필요에 따라 location 데이터를 추가
-            img: null, // 필요에 따라 이미지 데이터를 추가
+            locations: [],
+            img: null,
           })),
         });
         return postDetails;
@@ -254,11 +247,10 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   createPost: async (token: string, formData: FormData) => {
     try {
-      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
       const hasNullImages = formData.get('images') === 'null';
       if (hasNullImages) {
-        formData.delete('images'); // 기존 'images' 필드를 제거
-        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+        formData.delete('images');
+        formData.append('images', '');
       }
 
       const response = await axios.post(
@@ -292,7 +284,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
     postData: {
       title: string;
       board_content: string;
-      selectedWorkers?: { portfolio_serial: number; worker: number }[]; // optional 필드로 지정
+      selectedWorkers?: { portfolio_serial: number; worker: number }[];
     }
   ) => {
     try {

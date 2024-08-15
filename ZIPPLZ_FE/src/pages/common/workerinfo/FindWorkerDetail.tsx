@@ -21,7 +21,6 @@ import Review from '@components/common/review/Review';
 import { useModalActions } from '@stores/modalStore';
 import { useWorkerListStore } from '@stores/workerListStore';
 
-// FindWorkerDetail 컴포넌트 정의
 export default function FindWorkerDetai() {
   const checkWish = async (boardSerial: number) => {
     const response = await getWish(boardSerial);
@@ -182,8 +181,8 @@ export default function FindWorkerDetai() {
                 findWorker.comments.length > 0 &&
                 findWorker.comments.map((comment) => (
                   <Review
-                    comment={comment.parent_comment || undefined} // null을 undefined로 변환
-                    childComments={comment.child_comments || undefined} // null을 undefined로 변환
+                    comment={comment.parent_comment || undefined}
+                    childComments={comment.child_comments || undefined}
                     key={comment.parent_comment?.commentSerial}
                   />
                 ))}

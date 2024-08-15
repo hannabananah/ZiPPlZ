@@ -111,8 +111,6 @@ export default function HousePostUpdate() {
       })),
     };
 
-    console.log('postData to send:', postData);
-
     const token = `Bearer ${localStorage.getItem('token')}`;
 
     try {
@@ -148,9 +146,9 @@ export default function HousePostUpdate() {
   const handleWorkerModalConfirm = () => {
     const cleanedWorkers = tempSelectedWorkers.map((worker) => ({
       ...worker,
-      worker: 0, // 기본값 할당
-      user_name: '김현태', // 기본값 할당
-      temperature: 36.5, // 기본값 할당
+      worker: 0,
+      user_name: '김현태',
+      temperature: 36.5,
     }));
     setSelectedWorkers(cleanedWorkers);
     setIsWorkerModalOpen(false);
@@ -158,21 +156,21 @@ export default function HousePostUpdate() {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6">
+      <div className="flex items-start justify-center min-h-screen p-6">
         <div className="w-full">
-          <div className="mt-12 flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full mt-12">
             <div className="flex items-center">
               <GoArrowLeft
                 className="mr-6 cursor-pointer"
                 onClick={handleGoBack}
               />
             </div>
-            <div className="relative right-4 text-zp-2xl font-bold text-center flex-1">
+            <div className="relative flex-1 font-bold text-center right-4 text-zp-2xl">
               자랑하기
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex items-center justify-start">
+          <div className="flex items-center justify-start mt-6 font-bold">
             <div className="text-left">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
               <div className="text-zp-xs text-zp-light-gray">
@@ -187,10 +185,10 @@ export default function HousePostUpdate() {
               <div className="relative">
                 <label
                   htmlFor="file-upload"
-                  className="flex items-center justify-center w-24 h-24 bg-zp-white border border-zp-light-gray rounded-zp-radius-btn p-2 cursor-pointer"
+                  className="flex items-center justify-center w-24 h-24 p-2 border cursor-pointer bg-zp-white border-zp-light-gray rounded-zp-radius-btn"
                 >
                   <FaCamera size={36} className="" />
-                  <div className="w-full flex justify-center absolute bottom-2 font-bold text-zp-xs text-zp-gray">
+                  <div className="absolute flex justify-center w-full font-bold bottom-2 text-zp-xs text-zp-gray">
                     {images.length}/{maxImages}
                   </div>
                 </label>
@@ -204,7 +202,7 @@ export default function HousePostUpdate() {
                 />
               </div>
             </div>
-            <div className="flex-1 flex overflow-x-auto space-x-4">
+            <div className="flex flex-1 space-x-4 overflow-x-auto">
               {images.map((image, index) => (
                 <div
                   key={index}
@@ -217,11 +215,11 @@ export default function HousePostUpdate() {
                       image instanceof File ? URL.createObjectURL(image) : image
                     }
                     alt={`Preview ${index}`}
-                    className="w-full h-full object-cover rounded-zp-radius-btn"
+                    className="object-cover w-full h-full rounded-zp-radius-btn"
                   />
                   <button
                     onClick={() => handleImageRemove(index)}
-                    className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                    className="absolute top-0 right-0 p-1 text-white bg-red-500 rounded-full"
                   >
                     <MdClose size={24} />
                   </button>
@@ -230,10 +228,10 @@ export default function HousePostUpdate() {
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
+          <div className="flex flex-col items-center justify-center mt-6 font-bold">
+            <div className="w-full text-left">
               <div className="mb-2">제목</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
+              <div className="pl-2 border bg-zp-white border-zp-light-gray rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="제목 입력"
@@ -250,17 +248,17 @@ export default function HousePostUpdate() {
                 />
               </div>
               {errors.title && (
-                <div className="text-zp-red text-zp-xs mt-1">
+                <div className="mt-1 text-zp-red text-zp-xs">
                   {errors.title}
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
+          <div className="flex flex-col items-center justify-center mt-6 font-bold">
+            <div className="w-full text-left">
               <div className="mb-2">자랑해주세요</div>
-              <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
+              <div className="pl-2 border bg-zp-white border-zp-light-gray rounded-zp-radius-btn">
                 <Input
                   type="text"
                   placeholder="집에서 자랑하고 싶은 내용을 입력해주세요."
@@ -277,20 +275,20 @@ export default function HousePostUpdate() {
                 />
               </div>
               {errors.boardContent && (
-                <div className="text-zp-red text-zp-xs mt-1">
+                <div className="mt-1 text-zp-red text-zp-xs">
                   {errors.boardContent}
                 </div>
               )}
             </div>
           </div>
 
-          <div className="mt-6 font-bold flex flex-col items-center justify-center">
-            <div className="text-left w-full">
+          <div className="flex flex-col items-center justify-center mt-6 font-bold">
+            <div className="w-full text-left">
               <div className="">함께한 시공업자들</div>
               <div className="text-zp-xs text-zp-light-gray">
                 + 버튼을 클릭하여 함께한 시공업자들을 추가해주세요
               </div>
-              <div className="py-24 flex justify-center">
+              <div className="flex justify-center py-24">
                 <CiCirclePlus
                   style={{ color: 'gray' }}
                   size={40}
@@ -299,7 +297,7 @@ export default function HousePostUpdate() {
                 />
               </div>
               {selectedWorkers.length > 0 && (
-                <div className="mt-2 grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-2 gap-4 mt-2">
                   {/* {selectedWorkers.map((worker) => (
                     <WorkerInfoListItem
                       key={worker.portfolio_serial}
@@ -315,7 +313,7 @@ export default function HousePostUpdate() {
             </div>
           </div>
 
-          <div className="mt-6 mb-12 font-bold h-20 flex items-center justify-center">
+          <div className="flex items-center justify-center h-20 mt-6 mb-12 font-bold">
             <Button
               children={isEditMode ? '수정하기' : '확인'}
               buttonType="second"
@@ -330,10 +328,10 @@ export default function HousePostUpdate() {
       </div>
 
       {isWorkerModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50 overflow-y-auto">
-          <div className="bg-zp-white p-6 rounded-zp-radius-big w-3/4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold">
+        <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-opacity-50 bg-zp-black">
+          <div className="w-3/4 p-6 bg-zp-white rounded-zp-radius-big">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="absolute font-bold transform -translate-x-1/2 left-1/2 text-zp-xl">
                 시공업자 선택
               </h2>
             </div>
@@ -342,27 +340,27 @@ export default function HousePostUpdate() {
               시공업자의 이름을 검색하여 추가하고 확인 버튼을 눌러주세요
             </div>
 
-            <div className="mt-6 font-bold flex justify-center items-center relative">
+            <div className="relative flex items-center justify-center mt-6 font-bold">
               <Input
                 type="text"
                 placeholder="시공업자의 이름을 입력해주세요"
                 inputType="textArea"
                 width="14rem"
                 height={2.375}
-                className="mb-4 pr-10"
+                className="pr-10 mb-4"
                 fontSize="xs"
                 radius="btn"
                 onChange={() => {}}
               />
-              <HiMagnifyingGlass className="absolute right-2 top-1/2 transform -translate-y-1/2" />
+              <HiMagnifyingGlass className="absolute transform -translate-y-1/2 right-2 top-1/2" />
             </div>
 
-            <div className="mt-2 grid grid-cols-2 gap-4 max-h-96 overflow-y-auto">
+            <div className="grid grid-cols-2 gap-4 mt-2 overflow-y-auto max-h-96">
               {workerInfoList.map((worker) => (
                 <div key={worker.portfolio_serial} className="relative">
                   <WorkerInfoListItem worker={worker} />
                   <div
-                    className="absolute top-2 right-2 cursor-pointer"
+                    className="absolute cursor-pointer top-2 right-2"
                     onClick={() => handleWorkerSelect(worker)}
                   >
                     {tempSelectedWorkers.includes(worker) ? (
@@ -375,7 +373,7 @@ export default function HousePostUpdate() {
               ))}
             </div>
 
-            <div className="mt-6 flex justify-center space-x-2">
+            <div className="flex justify-center mt-6 space-x-2">
               <div className="font-bold">
                 <Button
                   children="취소"

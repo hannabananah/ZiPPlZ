@@ -47,7 +47,6 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   useEffect(() => {
     if (id) {
       fetchPostDetails(Number(id)).then(() => {
-        // 관심 목록 상태 확인
         const token = `Bearer ${localStorage.getItem('token')}`;
         searchWish(token, Number(id)).then((response) => {
           setIsBookmarked(response.wish_count > 0);
@@ -228,7 +227,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6">
+      <div className="flex items-start justify-center min-h-screen p-6">
         <div className="w-full">
           <div className="mt-12">
             <GoArrowLeft
@@ -237,9 +236,9 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
               size={20}
             />
           </div>
-          <div className="mt-6 flex justify-between items-center">
+          <div className="flex items-center justify-between mt-6">
             <div className="flex items-center">
-              <div className="text-zp-2xl font-bold">{postDetails.title}</div>
+              <div className="font-bold text-zp-2xl">{postDetails.title}</div>
               <div
                 className="ml-2 cursor-pointer"
                 onClick={handleBookmarkClick}
@@ -261,7 +260,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
             </div>
           </div>
 
-          <div className="mt-6 flex justify-start items-center">
+          <div className="flex items-center justify-start mt-6">
             <div>
               <CgProfile size={40} />
             </div>
@@ -272,7 +271,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
               {new Date(postDetails.boardDate).toLocaleDateString()}
             </div>
           </div>
-          <div className="mt-4 flex justify-center">
+          <div className="flex justify-center mt-4">
             {postDetails.images && postDetails.images.length > 0 ? (
               postDetails.images.map((image, index) => (
                 <img
@@ -287,17 +286,14 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
             )}
           </div>
 
-          <div className="mt-6 text-zp-sm font-bold">
+          <div className="mt-6 font-bold text-zp-sm">
             {postDetails.boardContent}
           </div>
 
-          <div className="mt-6 text-zp-xl font-bold">이 분들과 함께 했어요</div>
+          <div className="mt-6 font-bold text-zp-xl">이 분들과 함께 했어요</div>
 
-          {/* WorkerCard 표시 부분 */}
-          {/* x축으로 움직이면서 열람 가능 */}
-          <div className="flex w-full overflow-x-auto mt-4">
+          <div className="flex w-full mt-4 overflow-x-auto">
             <div className="flex justify-between w-full h-[8rem] ">
-              {/* 선택 시공업자 있으면 */}
               {selectedWorkers.length > 0 ? (
                 selectedWorkers.map((worker) => {
                   const safeWorker = {
@@ -312,19 +308,17 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                   );
                 })
               ) : (
-                // 선택 시공업자 없으면
                 <div>함께한 시공업자가 없습니다.</div>
               )}
             </div>
           </div>
 
-          {/* 댓글 n개 */}
-          <div className="mt-6 text-zp-xl font-bold">
+          <div className="mt-6 font-bold text-zp-xl">
             댓글 {postDetails.comments ? postDetails.comments.length : 0}개
           </div>
 
-          <div className="mb-12 mt-6 w-full flex space-x-2">
-            <div className="flex justify-start items-start">
+          <div className="flex w-full mt-6 mb-12 space-x-2">
+            <div className="flex items-start justify-start">
               <CgProfile size={40} />
             </div>
 
@@ -370,20 +364,20 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
           {/* 댓글 부분 */}
           {postDetails.comments && postDetails.comments.length > 0 ? (
             postDetails.comments.map((comment, index) => (
-              <div key={index} className="mb-24 mt-6 flex flex-col">
+              <div key={index} className="flex flex-col mt-6 mb-24">
                 <div className="flex items-center">
                   <CgProfile size={40} />
-                  <div className="px-2 text-zp-xs font-bold">
+                  <div className="px-2 font-bold text-zp-xs">
                     {comment.parent_comment.nickName}
                   </div>
-                  <div className="text-zp-xs text-zp-gray font-bold">
+                  <div className="font-bold text-zp-xs text-zp-gray">
                     ·{' '}
                     {new Date(
                       comment.parent_comment.commentDate
                     ).toLocaleDateString()}
                   </div>
                   {isAuthor(comment.parent_comment.userSerial) && (
-                    <div className="ml-auto cursor-pointer relative">
+                    <div className="relative ml-auto cursor-pointer">
                       <BsThreeDotsVertical
                         size={20}
                         onClick={() =>
@@ -394,8 +388,8 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                       />
                       {dropdownOpen ===
                         comment.parent_comment.commentSerial && (
-                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
-                          <div className="flex justify-center items-center">
+                        <div className="absolute right-0 w-24 mt-2 border shadow-lg bg-zp-sub-color border-zp-main-color rounded-zp-radius-big">
+                          <div className="flex items-center justify-center">
                             <div className="p-2">
                               <GoPencil />
                             </div>
@@ -411,7 +405,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                             </div>
                           </div>
 
-                          <div className="flex justify-center items-center">
+                          <div className="flex items-center justify-center">
                             <div className="p-2">
                               <FaRegTrashAlt />
                             </div>
@@ -431,7 +425,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                     </div>
                   )}
                 </div>
-                <div className="ml-12 text-zp-xs font-bold text-zp-gray">
+                <div className="ml-12 font-bold text-zp-xs text-zp-gray">
                   {editingCommentId === comment.parent_comment.commentSerial ? (
                     <div className="flex items-center">
                       <Input
@@ -460,7 +454,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                     comment.parent_comment.commentContent
                   )}
                 </div>
-                <div className="flex justify-start ml-12 mt-2">
+                <div className="flex justify-start mt-2 ml-12">
                   <div
                     className="cursor-pointer"
                     onClick={() =>
@@ -474,7 +468,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                     )}
                   </div>
                   <div
-                    className="cursor-pointer text-zp-xs text-zp-main-color font-bold ml-2"
+                    className="ml-2 font-bold cursor-pointer text-zp-xs text-zp-main-color"
                     onClick={() =>
                       toggleCommentExpand(comment.parent_comment.commentSerial)
                     }
@@ -485,7 +479,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
                 {expandedComments[comment.parent_comment.commentSerial] && (
                   <>
-                    <div className="ml-12 mt-4 flex space-x-2 items-start">
+                    <div className="flex items-start mt-4 ml-12 space-x-2">
                       <CgProfile size={40} />
                       <div className="w-full">
                         <Input
@@ -540,19 +534,19 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                       comment.child_comments.map((child, childIndex) => (
                         <div
                           key={childIndex}
-                          className="ml-12 mt-2 flex flex-col"
+                          className="flex flex-col mt-2 ml-12"
                         >
                           <div className="flex items-center">
                             <CgProfile size={40} />
-                            <div className="px-2 text-zp-xs font-bold">
+                            <div className="px-2 font-bold text-zp-xs">
                               {child.nickName}
                             </div>
-                            <div className="text-zp-xs text-zp-gray font-bold">
+                            <div className="font-bold text-zp-xs text-zp-gray">
                               ·{' '}
                               {new Date(child.commentDate).toLocaleDateString()}
                             </div>
                             {isAuthor(child.userSerial) && (
-                              <div className="ml-auto cursor-pointer relative">
+                              <div className="relative ml-auto cursor-pointer">
                                 <BsThreeDotsVertical
                                   size={20}
                                   onClick={() =>
@@ -560,8 +554,8 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                                   }
                                 />
                                 {dropdownOpen === child.commentSerial && (
-                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
-                                    <div className="flex justify-center items-center">
+                                  <div className="absolute right-0 w-24 mt-2 border shadow-lg bg-zp-sub-color border-zp-main-color rounded-zp-radius-big">
+                                    <div className="flex items-center justify-center">
                                       <div className="p-2">
                                         <GoPencil />
                                       </div>
@@ -574,7 +568,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                                         수정
                                       </div>
                                     </div>
-                                    <div className="flex justify-center items-center">
+                                    <div className="flex items-center justify-center">
                                       <div className="p-2">
                                         <FaRegTrashAlt />
                                       </div>
@@ -594,7 +588,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
                               </div>
                             )}
                           </div>
-                          <div className="ml-12 text-zp-xs font-bold text-zp-gray">
+                          <div className="ml-12 font-bold text-zp-xs text-zp-gray">
                             {editingCommentId === child.commentSerial ? (
                               <div className="flex items-center">
                                 <Input
@@ -638,9 +632,9 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
       </div>
 
       {isDeleteModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-zp-black bg-opacity-50 z-50">
-          <div className="bg-zp-white p-6 rounded-zp-radius-big shadow-lg">
-            <div className="text-lg font-bold mb-4">삭제 확인</div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-zp-black">
+          <div className="p-6 shadow-lg bg-zp-white rounded-zp-radius-big">
+            <div className="mb-4 text-lg font-bold">삭제 확인</div>
             <div className="mb-4">정말로 삭제하시겠습니까?</div>
             <div className="flex justify-end space-x-4">
               <div className="font-bold">

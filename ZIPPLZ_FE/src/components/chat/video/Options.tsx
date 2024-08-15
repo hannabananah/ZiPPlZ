@@ -56,7 +56,6 @@ export default function Options({
   // const [onRecord, setOnRecord] = useState(false);
   const { loginUser } = useLoginUserStore();
   const userRole: string | undefined = loginUser?.role;
-  console.log('role:', userRole);
 
   const handleMute = () => {
     const newMuteState = !isMuted;
@@ -125,7 +124,6 @@ export default function Options({
   };
 
   const closeContractModal = () => {
-    console.log('녹화 중지 및 계약서 모달 닫기 시도!!!!');
     // stopScreenShare();
     setIsContractModalOpen(false);
   };
@@ -136,7 +134,6 @@ export default function Options({
   };
 
   const handleSharingContract = () => {
-    console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
     // startScreenShare();
     setIsContractModalOpen(true);
   };

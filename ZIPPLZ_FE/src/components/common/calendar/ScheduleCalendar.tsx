@@ -36,9 +36,6 @@ const getRandomColor = (): string => {
   return predefinedColors[randomIndex];
 };
 const ScheduleCalendar = function ({ workList, onEventClick }: Props) {
-  useEffect(() => {
-    console.log(workList);
-  }, []);
   const [eventList, setEventList] = useState<Event[]>([]);
   useEffect(() => {
     if (Array.isArray(workList)) {

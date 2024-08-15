@@ -13,7 +13,7 @@ export default function QuestionPostUpdate() {
   type Image = File | string;
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
-  const [boardContent, setBoardContent] = useState<string>(''); // 기본값을 빈 문자열로 설정
+  const [boardContent, setBoardContent] = useState<string>('');
   const [isEditMode, setIsEditMode] = useState(false);
   const [postId, setPostId] = useState<number | null>(null);
 
@@ -29,9 +29,9 @@ export default function QuestionPostUpdate() {
   useEffect(() => {
     if (location.state) {
       const { post, isEditMode } = location.state;
-      setTitle(post.title || ''); // 기본값을 빈 문자열로 설정
-      setBoardContent(post.board_content || ''); // 기본값을 빈 문자열로 설정
-      setImages(post.images.map((img: any) => img.saveFile) || []); // Set images as URLs if editing
+      setTitle(post.title || '');
+      setBoardContent(post.board_content || '');
+      setImages(post.images.map((img: any) => img.saveFile) || []);
       setIsEditMode(isEditMode);
       setPostId(post.board_serial);
     }
@@ -135,21 +135,21 @@ export default function QuestionPostUpdate() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-6">
+    <div className="flex items-start justify-center min-h-screen p-6">
       <div className="w-full">
-        <div className="mt-12 flex items-center justify-between w-full">
+        <div className="flex items-center justify-between w-full mt-12">
           <div className="flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
               onClick={handleGoBack}
             />
           </div>
-          <div className="relative right-4 text-zp-2xl font-bold text-center flex-1">
+          <div className="relative flex-1 font-bold text-center right-4 text-zp-2xl">
             {isEditMode ? '질문 수정하기' : '질문 작성하기'}
           </div>
         </div>
 
-        <div className="mt-6 font-bold flex items-center justify-start">
+        <div className="flex items-center justify-start mt-6 font-bold">
           <div className="text-left">
             <div>질문과 관련된 사진을 올려주세요.(선택사항)</div>
             <div className="text-zp-xs text-zp-light-gray">
@@ -163,10 +163,10 @@ export default function QuestionPostUpdate() {
             <div className="relative">
               <label
                 htmlFor="file-upload"
-                className="flex items-center justify-center w-24 h-24 bg-zp-white border border-zp-light-gray rounded-zp-radius-btn p-2 cursor-pointer"
+                className="flex items-center justify-center w-24 h-24 p-2 border cursor-pointer bg-zp-white border-zp-light-gray rounded-zp-radius-btn"
               >
                 <FaCamera size={36} className="" />
-                <div className="w-full flex justify-center absolute bottom-2 font-bold text-zp-xs text-zp-gray">
+                <div className="absolute flex justify-center w-full font-bold bottom-2 text-zp-xs text-zp-gray">
                   {images.length}/{maxImages}
                 </div>
               </label>
@@ -180,7 +180,7 @@ export default function QuestionPostUpdate() {
               />
             </div>
           </div>
-          <div className="flex-1 flex overflow-x-auto space-x-4">
+          <div className="flex flex-1 space-x-4 overflow-x-auto">
             {images.map((image, index) => (
               <div
                 key={index}
@@ -193,11 +193,11 @@ export default function QuestionPostUpdate() {
                     image instanceof File ? URL.createObjectURL(image) : image
                   }
                   alt={`Preview ${index}`}
-                  className="w-full h-full object-cover rounded-zp-radius-btn"
+                  className="object-cover w-full h-full rounded-zp-radius-btn"
                 />
                 <button
                   onClick={() => handleImageRemove(index)}
-                  className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1"
+                  className="absolute top-0 right-0 p-1 text-white bg-red-500 rounded-full"
                 >
                   <MdClose size={24} />
                 </button>
@@ -206,10 +206,10 @@ export default function QuestionPostUpdate() {
           </div>
         </div>
 
-        <div className="mt-6 font-bold flex flex-col items-center justify-center">
-          <div className="text-left w-full">
+        <div className="flex flex-col items-center justify-center mt-6 font-bold">
+          <div className="w-full text-left">
             <div className="mb-2">제목</div>
-            <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
+            <div className="pl-2 border bg-zp-white border-zp-light-gray rounded-zp-radius-btn">
               <Input
                 type="text"
                 placeholder="제목 입력"
@@ -226,15 +226,15 @@ export default function QuestionPostUpdate() {
               />
             </div>
             {errors.title && (
-              <div className="text-zp-red text-zp-xs mt-1">{errors.title}</div>
+              <div className="mt-1 text-zp-red text-zp-xs">{errors.title}</div>
             )}
           </div>
         </div>
 
-        <div className="mt-6 font-bold flex flex-col items-center justify-center">
-          <div className="text-left w-full">
+        <div className="flex flex-col items-center justify-center mt-6 font-bold">
+          <div className="w-full text-left">
             <div className="mb-2">질문 내용</div>
-            <div className="bg-zp-white border border-zp-light-gray rounded-zp-radius-btn pl-2">
+            <div className="pl-2 border bg-zp-white border-zp-light-gray rounded-zp-radius-btn">
               <Input
                 type="text"
                 placeholder="질문 내용을 입력하세요."
@@ -251,14 +251,14 @@ export default function QuestionPostUpdate() {
               />
             </div>
             {errors.boardContent && (
-              <div className="text-zp-red text-zp-xs mt-1">
+              <div className="mt-1 text-zp-red text-zp-xs">
                 {errors.boardContent}
               </div>
             )}
           </div>
         </div>
 
-        <div className="mt-6 mb-12 font-bold h-20 flex items-center justify-center">
+        <div className="flex items-center justify-center h-20 mt-6 mb-12 font-bold">
           <Button
             children={isEditMode ? '수정하기' : '작성하기'}
             buttonType="second"

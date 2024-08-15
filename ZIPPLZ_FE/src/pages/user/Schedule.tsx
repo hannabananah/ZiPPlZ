@@ -65,9 +65,6 @@ export default function Schedule() {
   useEffect(() => {
     fetchChatRooms();
   }, []);
-  useEffect(() => {
-    console.log(chatRoomList);
-  }, [chatRoomList]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const param: string | null = queryParams.get('plan');
@@ -154,7 +151,6 @@ export default function Schedule() {
       setWorkList(null);
       setPlan(null);
       setFileList(null);
-      // setSelectedValue(null);
     };
   }, []);
   useEffect(() => {

@@ -13,7 +13,6 @@ import { useMyPageStore } from '@stores/myPageStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
-// WorkerPost 타입 추가
 interface WorkerPost {
   board_serial: number;
   board_type: number;
@@ -25,7 +24,7 @@ interface WorkerPost {
   nickname: string;
   comment_cnt: number;
   wish_cnt: number;
-  user_name: string; // user_name 속성 추가
+  user_name: string;
 }
 
 export default function MyFindWorkerScrapList() {
@@ -45,10 +44,9 @@ export default function MyFindWorkerScrapList() {
     const loadWorkers = async () => {
       const workers = await fetchMyFindWorkerScrapList();
 
-      // user_name 속성이 없다면 기본 값을 설정 (예: nickname을 user_name으로 사용)
       const updatedWorkers = workers.map((worker) => ({
         ...worker,
-        user_name: worker.nickname || '', // 'nickname'을 'user_name'으로 대체
+        user_name: worker.nickname || '',
       }));
 
       setWorkerList(updatedWorkers);
@@ -104,15 +102,15 @@ export default function MyFindWorkerScrapList() {
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+    setIsDropdownOpen(false);
   };
 
   return (
     <>
-      <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
+      <div className="flex flex-col items-start w-full min-h-screen gap-4 px-6 mb-6">
         {/* 뒤로가기 버튼 + "스크랩 글 목록" 글자 */}
-        <div className="mt-16 h-10 flex items-center justify-between w-full relative">
-          <div className="flex w-full items-center justify-center gap-2">
+        <div className="relative flex items-center justify-between w-full h-10 mt-16">
+          <div className="flex items-center justify-center w-full gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
@@ -197,7 +195,7 @@ export default function MyFindWorkerScrapList() {
           </div>
         </div>
         {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">
+        <div className="font-bold text-zp-xl text-zp-gray">
           전체 {workerList.length}
         </div>
 
@@ -242,7 +240,7 @@ export default function MyFindWorkerScrapList() {
         <hr className="w-full border-zp-main-color" />
 
         {/* FindWorkerListItem 컴포넌트 */}
-        <div className="w-full mt-2 grid grid-cols-1 gap-4">
+        <div className="grid w-full grid-cols-1 gap-4 mt-2">
           {workerList.map((worker) => (
             <div
               key={worker.user_serial}

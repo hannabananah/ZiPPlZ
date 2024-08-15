@@ -15,7 +15,6 @@ interface Props {
   review: any;
 }
 export default function PortfolioReview({ review }: Props) {
-  // const navigate = useNavigate();
   const [comment, setComment] = useState<string>('');
   const writeBossReview = async (reviewSerial: number, review: string) => {
     await wirteWorkerReview(reviewSerial, { reviewComment: review });
@@ -30,7 +29,7 @@ export default function PortfolioReview({ review }: Props) {
           <div className="flex items-center gap-2">
             <p className="font-bold text-zp-xs">{review.customerNickname}</p>
             <FaStar size={16} color="yellow" />
-            <p className="text-zp-2xs font-bold">x {review.averageStar}</p>
+            <p className="font-bold text-zp-2xs">x {review.averageStar}</p>
           </div>
           <p className="text-zp-2xs">{formatDate(review.customerReviewDate)}</p>
         </div>
@@ -71,7 +70,6 @@ export default function PortfolioReview({ review }: Props) {
             onClick={() => {
               writeBossReview(review.customerReviewSerial, comment);
               setIsWriteReview(false);
-              // navigate(0);
             }}
           />
           <IoChatbubbleEllipsesOutline

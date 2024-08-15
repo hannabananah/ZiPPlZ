@@ -36,9 +36,6 @@ export default function SignUpWorkerSkill({
   useEffect(() => {
     fetchFields();
   }, []);
-  useEffect(() => {
-    console.log(selectedFields);
-  }, [selectedFields]);
   const handleButtonClick = (field: Field) => {
     if (selectedFields.includes(field)) {
       setSelectedFields((prev: Field[]) =>

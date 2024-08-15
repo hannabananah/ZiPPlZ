@@ -12,14 +12,13 @@ type Location = {
 export default function WorkerInfoLocationDetail() {
   const [selectedCity, setSelectedCity] = useState<string | null>(null);
   const [selectedDistrict, setSelectedDistrict] = useState<string | null>(null);
-  const [selectedLocations, setSelectedLocations] = useState<Location[]>([]); // 선택된 도시와 구역의 배열
-
+  const [selectedLocations, setSelectedLocations] = useState<Location[]>([]);
   const navigate = useNavigate();
-  const maxSelections: number = 8; // 최대 선택 가능한 조합 수
+  const maxSelections: number = 8;
 
   const handleCityClick = (city: string) => {
     setSelectedCity(city);
-    setSelectedDistrict(null); // 도시 클릭 시 구역 초기화
+    setSelectedDistrict(null);
   };
 
   const handleDistrictClick = (district: string) => {
@@ -29,7 +28,6 @@ export default function WorkerInfoLocationDetail() {
       const location: Location = { city: selectedCity, district };
 
       setSelectedLocations((prev) => {
-        // 이미 선택된 조합이 아닌 경우에만 추가하고 최대 개수를 초과하지 않도록 제한
         if (
           !prev.some(
             (loc) => loc.city === selectedCity && loc.district === district
@@ -45,7 +43,6 @@ export default function WorkerInfoLocationDetail() {
 
   const handleConfirmClick = () => {
     if (selectedLocations.length > 0) {
-      // 선택된 위치 데이터를 MyInformationModify.tsx로 전달
       navigate('/mypage/myinformationmodify', {
         state: { locations: selectedLocations },
       });
@@ -53,7 +50,7 @@ export default function WorkerInfoLocationDetail() {
   };
 
   const handleClose = () => {
-    navigate('/mypage'); // 우측 상단 x 클릭 시 마이페이지로 돌아가기
+    navigate('/mypage');
   };
 
   const handleRemoveLocation = (index: number) => {
@@ -101,10 +98,10 @@ export default function WorkerInfoLocationDetail() {
   };
 
   return (
-    <div className="flex justify-center items-start min-h-screen p-6 bg-gray-100">
+    <div className="flex items-start justify-center min-h-screen p-6 bg-gray-100">
       <div className="w-full max-w-3xl">
-        <div className="flex justify-between items-center w-full mb-4">
-          <div className="ml-5 flex-1 text-center font-bold">
+        <div className="flex items-center justify-between w-full mb-4">
+          <div className="flex-1 ml-5 font-bold text-center">
             작업 지역 선택
           </div>
           <IoIosClose
@@ -160,7 +157,7 @@ export default function WorkerInfoLocationDetail() {
           {selectedLocations.map((location, index) => (
             <div
               key={index}
-              className="flex items-center space-x-2 bg-gray-200 p-2 font-bold text-zp-white bg-zp-main-color rounded-zp-radius-big cursor-pointer mr-2 mb-2"
+              className="flex items-center p-2 mb-2 mr-2 space-x-2 font-bold bg-gray-200 cursor-pointer text-zp-white bg-zp-main-color rounded-zp-radius-big"
               onClick={() => handleRemoveLocation(index)}
             >
               <span>
@@ -170,16 +167,13 @@ export default function WorkerInfoLocationDetail() {
           ))}
         </div>
 
-        {/* 선택한 조합의 개수 표시 */}
-        <div className="font-bold text-zp-lg text-zp-light-gray flex justify-end mb-4">
+        <div className="flex justify-end mb-4 font-bold text-zp-lg text-zp-light-gray">
           <span>
             {selectedLocations.length}/{maxSelections}
           </span>
         </div>
 
-        {/* 초기화 및 확인 버튼 묶는 div */}
-        <div className="font-bold space-x-2 first-letter:mb-4 h-20 flex items-center justify-between">
-          {/* 초기화 버튼 */}
+        <div className="flex items-center justify-between h-20 space-x-2 font-bold first-letter:mb-4">
           <Button
             children="초기화"
             buttonType="second"
@@ -190,11 +184,10 @@ export default function WorkerInfoLocationDetail() {
             onClick={() => {
               setSelectedCity(null);
               setSelectedDistrict(null);
-              setSelectedLocations([]); // 선택된 지역들 초기화
+              setSelectedLocations([]);
             }}
           />
 
-          {/* 확인 버튼 */}
           <Button
             children="확인"
             buttonType="primary"

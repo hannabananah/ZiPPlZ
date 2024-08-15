@@ -1,8 +1,5 @@
 import { useState } from 'react';
-import {
-  FaRegCircle, // FaRegCircleCheck,
-} from 'react-icons/fa';
-// import { FaRegCircleDot } from 'react-icons/fa6';
+import { FaRegCircle } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
 import { IoIosClose } from 'react-icons/io';
@@ -11,8 +8,6 @@ import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
 import Input from '@components/common/Input';
-
-// import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
@@ -24,11 +19,9 @@ export default function MyScrapList() {
   const [isSelecting, setIsSelecting] = useState(false);
 
   const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption);
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/mypage');
   };
@@ -39,7 +32,7 @@ export default function MyScrapList() {
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+    setIsDropdownOpen(false);
   };
 
   const toggleSelecting = () => {
@@ -48,20 +41,19 @@ export default function MyScrapList() {
 
   return (
     <>
-      <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "마이페이지" 글자 */}
-        <div className="mt-16 h-10 flex items-center justify-between w-full relative">
-          <div className="flex w-full items-center justify-center gap-2">
+      <div className="flex flex-col items-start w-full min-h-screen gap-4 px-6 mb-6">
+        <div className="relative flex items-center justify-between w-full h-10 mt-16">
+          <div className="flex items-center justify-center w-full gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
-              size={20} // 아이콘 크기 조정
+              size={20}
             />
             <div className="flex items-center space-x-2">
-              <span className="text-zp-lg font-bold">스크랩 글 목록</span>
+              <span className="font-bold text-zp-lg">스크랩 글 목록</span>
               <div
                 onClick={toggleDropdown}
-                className="cursor-pointer flex items-center space-x-2"
+                className="flex items-center space-x-2 cursor-pointer"
               >
                 <IoMdArrowDropdown
                   className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
@@ -70,18 +62,17 @@ export default function MyScrapList() {
               </div>
             </div>
           </div>
-          {/* 드롭다운 메뉴 */}
           {isDropdownOpen && (
-            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-gray-200 shadow-lg rounded-lg z-50">
+            <div className="absolute z-50 w-64 mt-2 border border-gray-200 rounded-lg shadow-lg top-full bg-zp-white">
               <button
                 onClick={() => handleNavigate('/mypage/myscraplist')}
-                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
+                className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
               >
                 스크랩 글 목록
               </button>
               <button
                 onClick={() => handleNavigate('/mypage/MyFindWorkerScrapList')}
-                className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
+                className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
               >
                 내가 쓴 글 목록
               </button>
@@ -89,8 +80,7 @@ export default function MyScrapList() {
           )}
         </div>
 
-        {/* 검색 input */}
-        <div className="w-full relative flex justify-center items-center">
+        <div className="relative flex items-center justify-center w-full">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
             type="text"
@@ -106,8 +96,7 @@ export default function MyScrapList() {
             size={30}
             className="absolute right-[7rem] cursor-pointer"
           />
-          {/* 정렬 버튼 셀렉트바*/}
-          <div className="relative top-3 flex justify-end items-center">
+          <div className="relative flex items-center justify-end top-3">
             <div>
               <Selectbar
                 backgroundColor="none"
@@ -126,18 +115,16 @@ export default function MyScrapList() {
           </div>
         </div>
 
-        {/* 전체 게시글 수 표시 부분 */}
-        <div className="text-zp-xl font-bold text-zp-gray">전체 3</div>
-        {/* 선택하기-삭제하기 버튼 */}
-        <div className="w-full flex justify-end items-center text-zp-2xs">
+        <div className="font-bold text-zp-xl text-zp-gray">전체 3</div>
+        <div className="flex items-center justify-end w-full text-zp-2xs">
           {isSelecting && (
-            <div className="flex items-center space-x-2 mr-2">
+            <div className="flex items-center mr-2 space-x-2">
               <FaRegCircle size={20} />
               <span>전체 선택</span>
             </div>
           )}
           <button
-            className="rounded-zp-radius-big p-2 px-3 bg-zp-light-gray flex items-center space-x-2"
+            className="flex items-center p-2 px-3 space-x-2 rounded-zp-radius-big bg-zp-light-gray"
             onClick={toggleSelecting}
           >
             {isSelecting ? (
@@ -150,14 +137,9 @@ export default function MyScrapList() {
             )}
           </button>
         </div>
-        {/* 가로선 */}
         <hr className="w-full border-zp-main-color" />
-        {/* 스크랩 글 목록 표시 */}
-        {/* 우측 상단에 클릭 버튼 만들기 */}
 
-        <div className="w-full mt-2 grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {/* <WorkerInfoListItem /> */}
-        </div>
+        <div className="grid w-full grid-cols-3 gap-4 mt-2 sm:grid-cols-3 md:grid-cols-4"></div>
       </div>
     </>
   );

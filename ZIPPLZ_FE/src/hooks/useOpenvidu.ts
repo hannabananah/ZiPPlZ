@@ -49,7 +49,6 @@ export default function useOpenVidu() {
       setSubscriber(null);
       setPublisher(null);
       setToken(null);
-      console.log('세션이 성공적으로 종료되었습니다');
     }
   }, [sessionId]);
 
@@ -115,7 +114,6 @@ export default function useOpenVidu() {
       return response.data.data;
     } catch (error) {
       if (axios.isAxiosError(error) && error.response?.status === 409) {
-        console.log('세션이 이미 존재합니다. 기존 세션을 사용합니다.');
         return sessionId;
       } else {
         console.error('세션 생성 실패:', error);
@@ -162,7 +160,6 @@ export default function useOpenVidu() {
       const sessionIds = await createSession(sessionId);
       const token = await createToken(sessionIds);
       setToken(token);
-      console.log('토큰을 성공적으로 받았습니다');
       return token;
     } catch (error) {
       throw new Error('토큰 받기 실패.');
@@ -215,9 +212,7 @@ export default function useOpenVidu() {
           publisher.stream
             .getMediaStream()
             .getVideoTracks()[0]
-            .addEventListener('ended', () => {
-              console.log('User pressed the "Stop sharing" button');
-            });
+            .addEventListener('ended', () => {});
           session.publish(publisher);
           setPublisher(publisher);
         });

@@ -5,25 +5,21 @@ import { useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-// import Selectbar from '@components/common/Selectbar';
 import HousePostListItem from '@components/community/HousePostListItem';
 import { useHousePostStore } from '@stores/housePostStore';
 
-// type SortOption = '평점순' | '최신순' | '과거순';
-
 export default function HousePost() {
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  // const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
   const [inputValue, setInputValue] = useState<string>('');
   const [bookmarkCounts] = useState<{
     [key: number]: number;
-  }>({}); // 각 포스트의 북마크 수를 저장하는 상태
+  }>({});
 
   const navigate = useNavigate();
   const { housePosts, fetchHousePosts } = useHousePostStore();
 
   useEffect(() => {
-    fetchHousePosts(); // 컴포넌트가 마운트될 때 API에서 데이터 가져오기
+    fetchHousePosts();
   }, [fetchHousePosts]);
 
   const handleWritePost = () => {
@@ -34,40 +30,25 @@ export default function HousePost() {
     setIsDropdownOpen((prev) => !prev);
   };
 
-  // const handleSortSelect = (sortOption: string) => {
-  //   console.log(`Selected sort option: ${sortOption}`);
-  //   setSelectedValue(sortOption as SortOption);
-  // };
-
   const handleNavigate = (path: string) => {
     navigate(path);
     setIsDropdownOpen(false);
   };
 
-  // const options: SortOption[] = ['평점순', '최신순', '과거순'];
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputValue(e.target.value);
   };
 
-  // const handleBookmarkChange = (postId: number, isBookmarked: boolean) => {
-  //   setBookmarkCounts((prev) => ({
-  //     ...prev,
-  //     [postId]: (prev[postId] || 0) + (isBookmarked ? 1 : -1),
-  //   }));
-  // };
-
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6">
+      <div className="flex items-start justify-center min-h-screen p-6">
         <div className="w-full">
-          {/* 드롭다운 버튼 */}
-          <div className="mt-16 relative flex justify-center items-center">
+          <div className="relative flex items-center justify-center mt-16">
             <div
               onClick={toggleDropdown}
-              className="cursor-pointer flex items-center space-x-2"
+              className="flex items-center space-x-2 cursor-pointer"
             >
-              <div className="font-bold text-zp-lg text-zp-black text-center">
+              <div className="font-bold text-center text-zp-lg text-zp-black">
                 집들이
               </div>
               <IoMdArrowDropdown
@@ -78,43 +59,25 @@ export default function HousePost() {
               />
             </div>
 
-            {/* 드롭다운 메뉴 */}
             {isDropdownOpen && (
-              <div className="absolute top-full border border-zp-light-gray rounded-zp-radius-btn font-bold hover:bg-zp-light-beige ">
+              <div className="absolute font-bold border top-full border-zp-light-gray rounded-zp-radius-btn hover:bg-zp-light-beige ">
                 <button
                   onClick={() => handleNavigate('/HousePost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
+                  className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
                 >
                   집들이
                 </button>
                 <button
                   onClick={() => handleNavigate('/QuestionPost')}
-                  className="block w-full text-left px-4 py-2 hover:bg-zp-gray"
+                  className="block w-full px-4 py-2 text-left hover:bg-zp-gray"
                 >
                   질문글
                 </button>
               </div>
             )}
           </div>
-          {/* 정렬 버튼 */}
-          {/* <div className="relative left-3 flex justify-end">
-            <Selectbar
-              backgroundColor="none"
-              fontColor="black"
-              options={options}
-              selectedValue={selectedValue}
-              setSelectedValue={handleSortSelect}
-              width={5}
-              height={2}
-              fontSize="xs"
-              radius="btn"
-              border="none"
-              hover="light-gray"
-            />
-          </div> */}
-          {/* 글 작성하기 버튼 */}
           <div className="flex justify-end mb-4">
-            <div className="mt-8 text-zp-2xs py-2 rounded-zp-radius-btn border border-zp-main-color bg-white text-center">
+            <div className="py-2 mt-8 text-center bg-white border text-zp-2xs rounded-zp-radius-btn border-zp-main-color">
               <Button
                 children="작성하기"
                 buttonType="light"
@@ -126,8 +89,7 @@ export default function HousePost() {
               />
             </div>
           </div>
-          {/* 글의 제목이나 작성자 이름을 입력하세요. */}
-          <div className="w-full relative flex justify-center items-center">
+          <div className="relative flex items-center justify-center w-full">
             <HiMagnifyingGlass className="relative left-4" />
             <Input
               placeholder="글의 제목이나 작성자 이름을 입력하세요."
@@ -143,7 +105,7 @@ export default function HousePost() {
             />
           </div>
 
-          <div className="mt-6 grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3 mt-6 sm:grid-cols-2 md:grid-cols-3">
             {housePosts && housePosts.length > 0 ? (
               housePosts.map((post) => (
                 <HousePostListItem
@@ -151,7 +113,7 @@ export default function HousePost() {
                   post_serial={post.board_serial}
                   post_image={post.img}
                   title={post.title}
-                  profile_image={null} // 기본 이미지 사용
+                  profile_image={null}
                   nickname={post.nickname}
                   upload_date={new Date(post.board_date)}
                   view_cnt={post.hit}
@@ -171,8 +133,6 @@ export default function HousePost() {
           </div>
         </div>
       </div>
-      {/* HousePostDetail를 사용해 북마크 변경 시 이벤트 전달 */}
-      {/* <HousePostDetail onBookmarkChange={handleBookmarkChange} /> */}
     </>
   );
 }
