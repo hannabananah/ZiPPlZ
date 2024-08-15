@@ -2,8 +2,11 @@ import { useEffect, useState } from 'react';
 import { ImCancelCircle } from 'react-icons/im';
 import { useNavigate, useParams } from 'react-router-dom';
 
+import { getChatRooms, makeChatRoom } from '@/apis/chatroom/chatApi';
 import { getContract } from '@/apis/member/MemberApi';
 import Button from '@/components/common/Button';
+import UpdateContract from '@components/chat/UpdateContract';
+import FullModal from '@components/common/FullModal';
 import { formatDate } from '@utils/formatDateWithTime';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
@@ -22,7 +25,49 @@ interface Contract {
   asPeriod: number;
   materialList: string[];
 }
-export default function Contract() {
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
+export default function ContractPage() {
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const fetchChatRooms = async () => {
+    const response = await getChatRooms();
+    setChatRoomList(response.data.data);
+  };
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
+  const [selectedChatRoomSerial, setSelectedChatRoomSerial] =
+    useState<number>(-1);
+
+  useEffect(() => {
+    if (chatRoomList && chatRoomList.length > 0 && contract) {
+      const chatRoomSerial: string = chatRoomList.filter(
+        (room) =>
+          room.fieldName === contract.fieldName &&
+          room.workerName === contract.workerName &&
+          room.customerName === contract.customerName
+      )[0].chatroomSerial;
+      console.log(chatRoomSerial);
+      if (chatRoomSerial) setSelectedChatRoomSerial(parseInt(chatRoomSerial));
+    }
+  });
+
   const [contract, setContract] = useState<Contract | null>(null);
   const navigate = useNavigate();
   const { workserial } = useParams<{ workserial: string }>();
@@ -33,6 +78,13 @@ export default function Contract() {
   useEffect(() => {
     if (workserial) fetchContract(parseInt(workserial));
   }, []);
+  const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+  const closeContractModal = () => {
+    setIsContractModalOpen(false);
+  };
+  const handleSharingContract = () => {
+    setIsContractModalOpen(true);
+  };
   return (
     <>
       {contract && contract !== null && (
@@ -213,10 +265,25 @@ export default function Contract() {
               height={2}
               fontSize="2xs"
               radius="btn"
+              onClick={handleSharingContract}
             />
           </div>
         </div>
       )}
+      <FullModal
+        isOpen={isContractModalOpen}
+        onRequestClose={closeContractModal}
+        height="65%"
+        maxWidth="400px"
+      >
+        {contract && (
+          <UpdateContract
+            closeContractModal={closeContractModal}
+            contract={contract}
+            selectedChatRoomSerial={selectedChatRoomSerial}
+          />
+        )}
+      </FullModal>
     </>
   );
 }
