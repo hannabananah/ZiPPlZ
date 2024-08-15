@@ -67,7 +67,7 @@ export default function MyPage() {
   };
 
   const handleNavigateToMyFindWorkerScrapList = () => {
-    navigate('/mypage/MyFindWorkerScrapList');
+    navigate('/mypage/myfindworkerscraplist');
   };
 
   const handleNavigateToWishWorkerList = () => {

@@ -44,9 +44,9 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
   useEffect(() => {
     if (id) {
       fetchPostDetails(Number(id)).then((data) => {
-        setIsBookmarked(data?.wish_cnt > 0);
+        // setIsBookmarked(data?.wish_cnt > 0);
         if (data && data.tags) {
-          setSelectedWorkers(data.tags); // fetchPostDetails에서 이미 설정된 selectedWorkers 사용
+          // setSelectedWorkers(data.tags); // fetchPostDetails에서 이미 설정된 selectedWorkers 사용
         }
       });
     }

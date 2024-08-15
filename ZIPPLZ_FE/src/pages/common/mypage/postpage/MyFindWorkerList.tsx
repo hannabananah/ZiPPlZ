@@ -21,7 +21,19 @@ export interface WorkerInfo {
   nickname: string;
   comment_cnt: number;
   wish_cnt: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
 }
+
+type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function MyFindWorkerList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -90,6 +102,11 @@ export default function MyFindWorkerList() {
     navigate(`/workers/findworker/${user_serial}`);
   };
 
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+  };
+
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
@@ -119,6 +136,28 @@ export default function MyFindWorkerList() {
               size={24}
             />
           </div>
+          {isDropdownOpen && (
+            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
+              <button
+                onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                시공자 구하기
+              </button>
+              <button
+                onClick={() => handleNavigate('/mypage/MyHousePostList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                집들이
+              </button>
+              <button
+                onClick={() => handleNavigate('/mypage/MyQuestionPostList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                질문글
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="w-full relative flex justify-center items-center">
@@ -130,6 +169,8 @@ export default function MyFindWorkerList() {
             width="full"
             height={2}
             className="pl-8"
+            fontSize=""
+            radius=""
           />
           <IoIosClose
             size={30}

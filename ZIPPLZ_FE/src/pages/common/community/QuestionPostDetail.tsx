@@ -343,7 +343,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                       />
                       {dropdownOpen ===
                         comment.parent_comment.commentSerial && (
-                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                        <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
                           <div className="flex justify-center items-center">
                             <div className="p-2">
                               <GoPencil />
@@ -509,7 +509,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
                                   }
                                 />
                                 {dropdownOpen === child.commentSerial && (
-                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg hover: bg-zp-main-color">
+                                  <div className="absolute right-0 mt-2 w-24 bg-zp-sub-color border border-zp-main-color rounded-zp-radius-big shadow-lg">
                                     <div className="flex justify-center items-center">
                                       <div className="p-2">
                                         <GoPencil />

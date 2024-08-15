@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
@@ -9,38 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import Selectbar from '@/components/common/Selectbar';
 import QuestionPostListItem from '@/components/community/QuestionPostListItem';
 import Input from '@components/common/Input';
+import { useMyPageStore } from '@stores/myPageStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
-
-const list = [
-  {
-    post_serial: 1,
-    title: '전기 문제 질문',
-    content: '전기 작업 중 발생한 문제에 대한 질문입니다.',
-    profile_image: null,
-    nickname: '전기장인',
-    calendar_image: null,
-    upload_date: new Date(),
-    view_cnt: 123,
-    bookmark_cnt: 12,
-    comment_cnt: 5,
-    post_image: null,
-  },
-  {
-    post_serial: 2,
-    title: '철거 작업 질문',
-    content: '철거 작업 중 발생한 문제에 대한 질문입니다.',
-    profile_image: null,
-    nickname: '철거마스터',
-    calendar_image: null,
-    upload_date: new Date(),
-    view_cnt: 98,
-    bookmark_cnt: 8,
-    comment_cnt: 3,
-    post_image: null,
-  },
-  // 다른 질문글 정보 추가
-];
 
 export default function MyQuestionPostList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -51,7 +22,19 @@ export default function MyQuestionPostList() {
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
-  const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([]); // 북마크된 게시물 상태 추가
+  const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([]);
+
+  const { fetchMyQuestionPostList } = useMyPageStore();
+  const [list, setList] = useState([]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const posts = await fetchMyQuestionPostList();
+      setList(posts);
+    };
+
+    fetchData();
+  }, [fetchMyQuestionPostList]);
 
   const handleSortSelect = (sortOption: string) => {
     console.log(`Selected sort option: ${sortOption}`);
@@ -75,16 +58,16 @@ export default function MyQuestionPostList() {
     if (isAllSelected) {
       setSelectedWorkers([]);
     } else {
-      setSelectedWorkers(list.map((post) => post.post_serial));
+      setSelectedWorkers(list.map((post) => post.board_serial));
     }
     setIsAllSelected(!isAllSelected);
   };
 
-  const handleWorkerSelect = (post_serial: number) => {
-    if (selectedWorkers.includes(post_serial)) {
-      setSelectedWorkers(selectedWorkers.filter((id) => id !== post_serial));
+  const handleWorkerSelect = (board_serial: number) => {
+    if (selectedWorkers.includes(board_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== board_serial));
     } else {
-      setSelectedWorkers([...selectedWorkers, post_serial]);
+      setSelectedWorkers([...selectedWorkers, board_serial]);
     }
   };
 
@@ -100,15 +83,18 @@ export default function MyQuestionPostList() {
     setIsModalOpen(true);
   };
 
-  const handleWorkerClick = (post_serial: number) => {
-    navigate(`/QuestionPostDetail/${post_serial}`);
+  const handleWorkerClick = (board_serial: number) => {
+    navigate(`/QuestionPostDetail/${board_serial}`);
   };
 
-  const handleBookmarkToggle = (post_serial: number, isBookmarked: boolean) => {
+  const handleBookmarkToggle = (
+    board_serial: number,
+    isBookmarked: boolean
+  ) => {
     if (isBookmarked) {
-      setBookmarkedPosts([...bookmarkedPosts, post_serial]);
+      setBookmarkedPosts([...bookmarkedPosts, board_serial]);
     } else {
-      setBookmarkedPosts(bookmarkedPosts.filter((id) => id !== post_serial));
+      setBookmarkedPosts(bookmarkedPosts.filter((id) => id !== board_serial));
     }
   };
 
@@ -246,9 +232,9 @@ export default function MyQuestionPostList() {
         <div className="w-full mt-2 grid grid-cols-1 gap-4">
           {list.map((post) => (
             <div
-              key={post.post_serial}
+              key={post.board_serial}
               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
-                selectedWorkers.includes(post.post_serial)
+                selectedWorkers.includes(post.board_serial)
                   ? 'bg-zp-light-gray'
                   : ''
               }`}
@@ -258,10 +244,10 @@ export default function MyQuestionPostList() {
                   className="absolute top-2 right-2 z-10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleWorkerSelect(post.post_serial);
+                    handleWorkerSelect(post.board_serial);
                   }}
                 >
-                  {selectedWorkers.includes(post.post_serial) ? (
+                  {selectedWorkers.includes(post.board_serial) ? (
                     <FaRegCircleCheck />
                   ) : (
                     <FaRegCircle />
@@ -272,11 +258,21 @@ export default function MyQuestionPostList() {
                 className={`w-full h-full ${
                   isSelecting ? 'pointer-events-none' : ''
                 }`}
-                onClick={() => handleWorkerClick(post.post_serial)}
+                onClick={() => handleWorkerClick(post.board_serial)}
               >
                 <QuestionPostListItem
-                  {...post}
-                  isBookmarked={bookmarkedPosts.includes(post.post_serial)}
+                  post_serial={post.board_serial}
+                  title={post.title}
+                  content={post.board_content}
+                  profile_image={null}
+                  nickname={post.nickname}
+                  calendar_image={null}
+                  upload_date={new Date(post.board_date)}
+                  view_cnt={post.hit}
+                  bookmark_cnt={post.wish_cnt}
+                  comment_cnt={post.comment_cnt}
+                  post_image={null}
+                  isBookmarked={bookmarkedPosts.includes(post.board_serial)}
                   onBookmarkToggle={handleBookmarkToggle}
                 />
               </div>

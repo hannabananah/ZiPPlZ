@@ -69,7 +69,7 @@ const list: WorkerInfo[] = [
   // 다른 worker 정보 추가
 ];
 
-export default function MyFindWorkerList() {
+export default function MyFindWorkerScrapList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
   const navigate = useNavigate();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -299,7 +299,8 @@ export default function MyFindWorkerList() {
                 }`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                <FindWorkerListItem />
+                {/* 여기서 worker 정보를 board prop으로 전달 */}
+                <FindWorkerListItem board={worker} />
               </div>
             </div>
           ))}

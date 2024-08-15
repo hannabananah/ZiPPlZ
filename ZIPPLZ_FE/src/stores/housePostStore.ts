@@ -241,6 +241,13 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   },
   createPost: async (token: string, formData: FormData) => {
     try {
+      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
+      const hasNullImages = formData.get('images') === 'null';
+      if (hasNullImages) {
+        formData.delete('images'); // 기존 'images' 필드를 제거
+        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+      }
+
       const response = await axios.post(
         'http://localhost:5000/board/showoff/add',
         formData,
@@ -398,6 +405,24 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
         console.error('Response data:', error.response?.data);
       }
       return { code: 500, message: '댓글 삭제 실패' };
+    }
+  },
+
+  searchWorkers: async (searchContent: string) => {
+    try {
+      const response = await axios.get(
+        `http://localhost:5000/board/find/findworker/${searchContent}`
+      );
+
+      if (response.data.proc.code === 200) {
+        return response.data.data;
+      } else {
+        console.error('Worker search failed:', response.data.proc.message);
+        return [];
+      }
+    } catch (error) {
+      console.error('Error searching for workers:', error);
+      return [];
     }
   },
 }));

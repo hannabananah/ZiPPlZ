@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
@@ -9,65 +9,9 @@ import { useNavigate } from 'react-router-dom';
 import Selectbar from '@/components/common/Selectbar';
 import HousePostListItem from '@/components/community/HousePostListItem';
 import Input from '@components/common/Input';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
+import { useMyPageStore } from '@stores/myPageStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
-
-const list: WorkerInfo[] = [
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 2,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '철거',
-    career: 4,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 3,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '설비',
-    career: 5,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 4,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '타일',
-    career: 6,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  // 다른 worker 정보 추가
-];
 
 export default function MyHousePostScrapList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -78,6 +22,20 @@ export default function MyHousePostScrapList() {
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+
+  const fetchMyHousePostScrapList = useMyPageStore(
+    (state) => state.fetchMyHousePostScrapList
+  );
+  const [list, setList] = useState<HousePost[]>([]);
+
+  useEffect(() => {
+    const loadScrapList = async () => {
+      const data = await fetchMyHousePostScrapList();
+      setList(data);
+    };
+
+    loadScrapList();
+  }, [fetchMyHousePostScrapList]);
 
   const handleSortSelect = (sortOption: string) => {
     console.log(`Selected sort option: ${sortOption}`);
@@ -102,18 +60,19 @@ export default function MyHousePostScrapList() {
     if (isAllSelected) {
       setSelectedWorkers([]);
     } else {
-      setSelectedWorkers(list.map((worker) => worker.user_serial));
+      setSelectedWorkers(list.map((worker) => worker.board_serial));
     }
     setIsAllSelected(!isAllSelected);
   };
 
-  const handleWorkerSelect = (user_serial: number) => {
-    if (selectedWorkers.includes(user_serial)) {
-      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+  const handleWorkerSelect = (board_serial: number) => {
+    if (selectedWorkers.includes(board_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== board_serial));
     } else {
-      setSelectedWorkers([...selectedWorkers, user_serial]);
+      setSelectedWorkers([...selectedWorkers, board_serial]);
     }
   };
+
   const toggleSelecting = () => {
     if (isSelecting) {
       setSelectedWorkers([]);
@@ -126,8 +85,8 @@ export default function MyHousePostScrapList() {
     setIsModalOpen(true);
   };
 
-  const handleWorkerClick = (user_serial: number) => {
-    navigate(`/housepost/${user_serial}`);
+  const handleWorkerClick = (board_serial: number) => {
+    navigate(`/housepost/${board_serial}`);
   };
 
   return (
@@ -139,7 +98,7 @@ export default function MyHousePostScrapList() {
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
-              size={20} // 아이콘 크기 조정
+              size={20}
             />
             <div className="flex items-center space-x-2">
               <span className="font-bold text-zp-lg">스크랩 글 목록</span>
@@ -269,25 +228,25 @@ export default function MyHousePostScrapList() {
         {/* HousePostListItem 컴포넌트 */}
         {/* 화면 width 따라 grid 개수 변화 */}
         <div className="grid w-full grid-cols-2 gap-3 mt-2 sm:grid-cols-2 md:grid-cols-3">
-          {list.map((worker) => (
+          {list.map((post) => (
             <div
-              key={worker.user_serial}
+              key={post.board_serial}
               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
-                selectedWorkers.includes(worker.user_serial)
+                selectedWorkers.includes(post.board_serial)
                   ? 'bg-zp-light-gray'
                   : ''
               }`}
-              onClick={() => handleWorkerClick(worker.user_serial)}
+              onClick={() => handleWorkerClick(post.board_serial)}
             >
               {isSelecting && (
                 <div
                   className="absolute z-10 top-2 right-2"
                   onClick={(e) => {
                     e.stopPropagation();
-                    handleWorkerSelect(worker.user_serial);
+                    handleWorkerSelect(post.board_serial);
                   }}
                 >
-                  {selectedWorkers.includes(worker.user_serial) ? (
+                  {selectedWorkers.includes(post.board_serial) ? (
                     <FaRegCircleCheck />
                   ) : (
                     <FaRegCircle />
@@ -295,15 +254,15 @@ export default function MyHousePostScrapList() {
                 </div>
               )}
               <HousePostListItem
-                post_serial={worker.user_serial}
-                post_image={worker.img}
-                title={worker.field_name}
-                profile_image={null} // 프로필 이미지가 없을 경우 null 전달
-                nickname={worker.name}
-                upload_date={new Date()} // 임시로 현재 시간 사용
-                view_cnt={100} // 예시 값
-                bookmark_cnt={50} // 예시 값
-                comment_cnt={10} // 예시 값
+                post_serial={post.board_serial}
+                post_image={post.img}
+                title={post.title}
+                profile_image={null}
+                nickname={post.nickname}
+                upload_date={new Date(post.board_date)}
+                view_cnt={post.hit}
+                bookmark_cnt={post.wish_cnt}
+                comment_cnt={post.comment_cnt}
               />
             </div>
           ))}

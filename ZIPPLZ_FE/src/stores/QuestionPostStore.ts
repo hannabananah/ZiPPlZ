@@ -174,6 +174,13 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   createPost: async (token: string, formData: FormData) => {
     try {
+      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
+      const hasNullImages = formData.get('images') === 'null';
+      if (hasNullImages) {
+        formData.delete('images'); // 기존 'images' 필드를 제거
+        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+      }
+
       const response = await axios.post(
         'http://localhost:5000/board/question/add',
         formData,
@@ -205,6 +212,13 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
     formData: FormData // FormData를 받을 수 있도록 수정
   ) => {
     try {
+      // images 필드가 'null' 문자열을 포함하고 있는지 확인하여 처리
+      const hasNullImages = formData.get('images') === 'null';
+      if (hasNullImages) {
+        formData.delete('images'); // 기존 'images' 필드를 제거
+        formData.append('images', ''); // 빈 문자열로 대체하여 null을 나타냄
+      }
+
       const response = await axios.patch(
         `http://localhost:5000/board/question/list/${id}`,
         formData,

@@ -61,9 +61,13 @@ export default function QuestionPostCreate() {
     formData.append('title', title);
     formData.append('board_content', workDetail);
 
-    images.forEach((image) => {
-      formData.append('images', image);
-    });
+    if (images.length === 0) {
+      formData.append('images', 'null');
+    } else {
+      images.forEach((image) => {
+        formData.append('images', image);
+      });
+    }
 
     try {
       let response;

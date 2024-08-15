@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
-interface FindWorker {
+interface WorkerPost {
   board_serial: number;
   board_type: number;
   user_serial: number;
@@ -26,10 +26,14 @@ interface MyPageState {
     nickname: string,
     currentAddress: string
   ) => Promise<void>;
-  uploadProfileImage: (file: File | string) => Promise<void>;
+  uploadProfileImage: (file: File | Blob) => Promise<void>;
   deleteProfileImage: () => Promise<void>;
   changePassword: (newPassword: string) => Promise<void>;
-  fetchMyFindWorkerList: () => Promise<FindWorker[]>; // 구인구직글 목록 가져오기 함수 추가
+  fetchMyHousePostList: () => Promise<HousePost[]>;
+  fetchMyQuestionPostList: () => Promise<QuestionPost[]>;
+  fetchMyHousePostScrapList: () => Promise<HousePost[]>;
+  fetchMyQuestionPostScrapList: () => Promise<QuestionPost[]>;
+  fetchMyFindWorkerList: () => Promise<WorkerPost[]>; // 내가 쓴 구인구직글 목록 가져오기 함수 추가
 }
 
 export const useMyPageStore = create<MyPageState>((set) => ({
@@ -99,14 +103,12 @@ export const useMyPageStore = create<MyPageState>((set) => ({
     }
   },
 
-  uploadProfileImage: async (file: File | string) => {
-    let formData;
+  uploadProfileImage: async (file: File | Blob) => {
+    let formData = new FormData();
 
-    if (typeof file === 'string') {
-      formData = new FormData();
-      formData.append('icon', file);
+    if (file instanceof Blob) {
+      formData.append('image', file);
     } else {
-      formData = new FormData();
       formData.append('image', file);
     }
 
@@ -184,7 +186,128 @@ export const useMyPageStore = create<MyPageState>((set) => ({
     }
   },
 
+  fetchMyHousePostList: async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/mypage/showboards',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        return response.data.data;
+      } else {
+        console.error(
+          '내가 쓴 자랑글 목록을 가져오는데 실패했습니다:',
+          response.data.proc.message
+        );
+        return [];
+      }
+    } catch (error) {
+      console.error(
+        '내가 쓴 자랑글 목록을 가져오는 중 오류가 발생했습니다:',
+        error
+      );
+      return [];
+    }
+  },
+
+  fetchMyQuestionPostList: async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/mypage/questions',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        return response.data.data;
+      } else {
+        console.error(
+          '내가 쓴 질문글 목록을 가져오는데 실패했습니다:',
+          response.data.proc.message
+        );
+        return [];
+      }
+    } catch (error) {
+      console.error(
+        '내가 쓴 질문글 목록을 가져오는 중 오류가 발생했습니다:',
+        error
+      );
+      return [];
+    }
+  },
+
+  fetchMyHousePostScrapList: async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/mypage/wish/showboards',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        return response.data.data;
+      } else {
+        console.error(
+          '찜한 자랑글 목록을 가져오는데 실패했습니다:',
+          response.data.proc.message
+        );
+        return [];
+      }
+    } catch (error) {
+      console.error(
+        '찜한 자랑글 목록을 가져오는 중 오류가 발생했습니다:',
+        error
+      );
+      return [];
+    }
+  },
+
+  fetchMyQuestionPostScrapList: async () => {
+    const token = localStorage.getItem('token');
+    try {
+      const response = await axios.get(
+        'http://localhost:5000/mypage/wish/questions',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.data.proc.code === 200) {
+        return response.data.data;
+      } else {
+        console.error(
+          '찜한 질문글 목록을 가져오는데 실패했습니다:',
+          response.data.proc.message
+        );
+        return [];
+      }
+    } catch (error) {
+      console.error(
+        '찜한 질문글 목록을 가져오는 중 오류가 발생했습니다:',
+        error
+      );
+      return [];
+    }
+  },
+
   fetchMyFindWorkerList: async () => {
+    // 구인구직글 목록을 가져오는 함수 추가
     const token = localStorage.getItem('token');
     try {
       const response = await axios.get(
@@ -200,14 +323,14 @@ export const useMyPageStore = create<MyPageState>((set) => ({
         return response.data.data;
       } else {
         console.error(
-          '구인구직글 목록을 가져오는데 실패했습니다:',
+          '내가 쓴 구인구직글 목록을 가져오는데 실패했습니다:',
           response.data.proc.message
         );
         return [];
       }
     } catch (error) {
       console.error(
-        '구인구직글 목록을 가져오는 중 오류가 발생했습니다:',
+        '내가 쓴 구인구직글 목록을 가져오는 중 오류가 발생했습니다:',
         error
       );
       return [];
