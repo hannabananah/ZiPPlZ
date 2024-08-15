@@ -6,15 +6,12 @@ import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.portfolio.dto.PortfolioViewDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-<<<<<<< HEAD
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-=======
 import org.springframework.web.bind.annotation.*;
->>>>>>> 0565e5dbc386ddf70fe873fd152dd59b1fe3bdd6
 
 import java.util.*;
 

@@ -11,9 +11,22 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import WorkerInfoListItem from '@components/worker/WorkerInfoListItem';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
 import { useHousePostStore } from '@stores/housePostStore';
 import axios from 'axios';
+
+interface WorkerInfo {
+  user_serial: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+}
 
 export default function HousePostUpdate() {
   type Image = File | string;
@@ -34,7 +47,7 @@ export default function HousePostUpdate() {
   const location = useLocation();
   const maxImages = 10;
 
-  const { updatePost, postDetails, selectedWorkers, setSelectedWorkers } =
+  const { updatePost, selectedWorkers, setSelectedWorkers } =
     useHousePostStore();
 
   useEffect(() => {
@@ -52,9 +65,7 @@ export default function HousePostUpdate() {
 
   const fetchWorkerInfoList = async () => {
     try {
-      const response = await axios.get(
-        'http://localhost:5000/workerlist/portfolios'
-      );
+      const response = await axios.get('/api/workerlist/portfolios');
       if (response.data.proc.code === 200) {
         setWorkerInfoList(response.data.data);
       } else {
@@ -94,12 +105,10 @@ export default function HousePostUpdate() {
     const postData = {
       title,
       board_content: boardContent,
-      selectedWorkers: JSON.stringify(
-        selectedWorkers.map((worker) => ({
-          portfolio_serial: worker.portfolio_serial,
-          worker: worker.worker,
-        }))
-      ),
+      selectedWorkers: selectedWorkers.map((worker) => ({
+        portfolio_serial: worker.portfolio_serial,
+        worker: worker.worker,
+      })),
     };
 
     console.log('postData to send:', postData);
@@ -137,9 +146,16 @@ export default function HousePostUpdate() {
   };
 
   const handleWorkerModalConfirm = () => {
-    setSelectedWorkers(tempSelectedWorkers);
+    const cleanedWorkers = tempSelectedWorkers.map((worker) => ({
+      ...worker,
+      worker: 0, // 기본값 할당
+      user_name: '김현태', // 기본값 할당
+      temperature: 36.5, // 기본값 할당
+    }));
+    setSelectedWorkers(cleanedWorkers);
     setIsWorkerModalOpen(false);
   };
+
   return (
     <>
       <div className="flex justify-center items-start min-h-screen p-6">
@@ -284,12 +300,16 @@ export default function HousePostUpdate() {
               </div>
               {selectedWorkers.length > 0 && (
                 <div className="mt-2 grid grid-cols-2 gap-4">
-                  {selectedWorkers.map((worker) => (
+                  {/* {selectedWorkers.map((worker) => (
                     <WorkerInfoListItem
                       key={worker.portfolio_serial}
-                      worker={worker}
+                      worker={{
+                        ...worker,
+                        name: worker.user_name || '',
+                        temperature: worker.temperature || 0,
+                      }}
                     />
-                  ))}
+                  ))} */}
                 </div>
               )}
             </div>

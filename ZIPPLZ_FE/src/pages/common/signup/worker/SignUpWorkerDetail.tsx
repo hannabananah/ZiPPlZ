@@ -63,13 +63,7 @@ export default function SignupWorkerDetail({
   };
   const [groupName, setGroupName] = useState<string>('');
   const [address, setAddress] = useState<string>('');
-  function validateInfo() {
-    if (address && groupName) {
-      if (phrase === 'detail') setLink('/member/join/worker/3/region');
-      else setLink('/member/join/worker/3/extraregion');
-      return true;
-    }
-  }
+
   const checkBusinessNumber = async (data: string) => {
     const inputData: Data = {
       b_no: [data],
@@ -83,12 +77,10 @@ export default function SignupWorkerDetail({
     }
   };
   useEffect(() => {
-    if (validateInfo()) {
-      setNext(true);
-    } else {
-      setNext(false);
-    }
-  }, [address, groupName]);
+    if (phrase === 'detail') setLink('/member/join/worker/3/region');
+    else setLink('/member/join/worker/3/extraregion');
+    setNext(true);
+  }, []);
   return (
     <>
       <div className="relative flex flex-col w-full gap-4 p-4 bg-zp-white">
@@ -129,6 +121,7 @@ export default function SignupWorkerDetail({
           placeholder="업체을 입력하세요"
           width="full"
           height={2}
+          value={groupName}
           onChange={(e: React.ChangeEvent) => {
             setGroupName((e.target as HTMLInputElement).value);
             setWorker((prev: Worker) => ({
@@ -149,6 +142,7 @@ export default function SignupWorkerDetail({
           placeholder="업체 주소를 입력하세요"
           width="full"
           height={2}
+          value={address}
           onChange={(e: React.ChangeEvent) => {
             setAddress((e.target as HTMLInputElement).value);
             setWorker((prev: Worker) => ({
@@ -182,6 +176,7 @@ export default function SignupWorkerDetail({
             radius="big"
             onClick={() => {
               closeModal();
+              setRegistrationNumber('');
               if (isOk) {
                 setWorker((prev: Worker) => ({
                   ...prev,

@@ -106,9 +106,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   fetchQuestionPosts: async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/board/question/list'
-      );
+      const response = await axios.post('/api/board/question/list');
       console.log('Fetched question posts:', response.data.data);
       set({ questionPosts: response.data.data });
     } catch (error) {
@@ -118,9 +116,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   fetchPostDetails: async (id: number) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/board/question/list/${id}`
-      );
+      const response = await axios.post(`/api/board/question/list/${id}`);
 
       if (response.data.proc.code === 200) {
         const data = response.data.data;
@@ -174,16 +170,12 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   createPost: async (token: string, formData: FormData) => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/board/question/add',
-        formData,
-        {
-          headers: {
-            Authorization: token,
-            'Content-Type': 'multipart/form-data',
-          },
-        }
-      );
+      const response = await axios.post('/api/board/question/add', formData, {
+        headers: {
+          Authorization: token,
+          'Content-Type': 'multipart/form-data',
+        },
+      });
 
       const { code, message } = response.data.proc;
       if (code === 200) {
@@ -206,7 +198,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   ) => {
     try {
       const response = await axios.patch(
-        `http://localhost:5000/board/question/list/${id}`,
+        `/api/board/question/list/${id}`,
         formData,
         {
           headers: {
@@ -232,14 +224,11 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
 
   deletePost: async (token: string, id: number) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/board/delete/${id}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.delete(`/api/board/delete/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
 
       const { code, message } = response.data.proc;
       if (code === 200) {
@@ -258,7 +247,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   addComment: async (token: string, comment: Comment) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/comment/add',
+        '/api/comment/add',
         { ...comment },
         {
           headers: {
@@ -281,7 +270,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   addReply: async (token: string, reply: Comment) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/comment/add',
+        '/api/comment/add',
         { ...reply },
         {
           headers: {
@@ -307,7 +296,7 @@ export const useQuestionPostStore = create<QuestionPostState>((set, get) => ({
   ): Promise<{ code: number; message: string }> => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/comment/delete/${commentSerial}`,
+        `/api/comment/delete/${commentSerial}`,
         {
           headers: {
             Authorization: token,

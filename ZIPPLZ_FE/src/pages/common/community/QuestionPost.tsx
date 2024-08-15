@@ -151,7 +151,7 @@ export default function QuestionPost() {
                 post_serial={post.board_serial}
                 post_image={post.images?.[0] || ''}
                 title={post.title}
-                content={post.content || ''} // content 속성을 사용하여 게시글 내용 표시
+                content={''} // content 속성을 사용하여 게시글 내용 표시
                 calendar_image={null} // calendar_image는 null로 설정
                 profile_image={null} // 기본 이미지 사용
                 nickname={post.nickname}

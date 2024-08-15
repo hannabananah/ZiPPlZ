@@ -64,7 +64,7 @@ export default function SignUpWorkerSkill({
     <>
       <div className="flex flex-col gap-6">
         <p className="font-bold text-zp-2xl">작업 분야 선택</p>
-        {fieldList.length > 0 && (
+        {fieldList.length > 0 && fieldList && (
           <div className="grid w-full grid-cols-4 gap-4">
             {fieldList.map((field) => (
               <Button

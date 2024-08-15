@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
@@ -31,7 +30,6 @@ const getRandomColor = (): string => {
   return color;
 };
 const ScheduleCalendar = function ({ workList }: Props) {
-  const navigate = useNavigate();
   const [eventList, setEventList] = useState<Event[]>([]);
   useEffect(() => {
     if (Array.isArray(workList)) {
@@ -42,7 +40,7 @@ const ScheduleCalendar = function ({ workList }: Props) {
       const newEventList: Event[] = workList
         .filter((work: any) => work !== null && work !== undefined)
         .map((work: any) => ({
-          title: isWorkArray ? work.field : work.fieldCode.fieldName,
+          title: isWorkArray ? work.field : work.fieldName,
           start: new Date(work.startDate),
           end: new Date(work.endDate),
           workSerial: work.workSerial,
@@ -96,8 +94,6 @@ const ScheduleCalendar = function ({ workList }: Props) {
               'workSerial',
               event.event.extendedProps.workSerial
             );
-          navigate('/schedule');
-          console.log(event.jsEvent.target);
         }}
       />
     </div>
