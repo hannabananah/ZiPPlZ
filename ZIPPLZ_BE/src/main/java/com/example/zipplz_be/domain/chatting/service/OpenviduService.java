@@ -41,18 +41,20 @@ public class OpenviduService {
         //2. 있다면, 업데이트
         //3. 없다면, 새로 생성
 
-        //UserToChatroom userToChatroom = userToChatroomRepository.findToken(chatroomSerial, userSerial);
-        UserToChatroom userToChatroom = userToChatroomRepository.findByuserSerialAndChatroomSerial(userSerial, chatroomSerial);
 
-        if(userToChatroom == null) {
-            //새로 생성
             userToChatroomRepository.insertToken(token, userSerial, chatroomSerial);
-        }
-        else {
+
             //업데이트
             //userToChatroomRepository.updateToken(token, userSerial, chatroomSerial);
-        }
 
+
+    }
+
+    @Transactional
+    public Boolean checkToken(int userSerial, Integer chatroomSerial) {
+        UserToChatroom userToChatroom = userToChatroomRepository.findByuserSerialAndChatroomSerial(userSerial, chatroomSerial);
+
+        return userToChatroom != null;
     }
 
     @Transactional
@@ -104,4 +106,5 @@ public class OpenviduService {
         return recordingFileList;
 
     }
+
 }
