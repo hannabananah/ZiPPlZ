@@ -20,18 +20,18 @@ public interface WorkRepository extends JpaRepository<Work, Integer> {
     Work findByWorkSerial(int workSerial);
     Boolean existsByFieldNameAndPlanSerial(String fieldName, Plan planSerial);
 
-    @Query(value="SELECT SUM(WORK_PRICE) FROM WORK WHERE PLAN_SERIAL = :planSerial", nativeQuery = true)
+    @Query(value="SELECT sum(work_price) FROM Work WHERE plan_serial = :planSerial", nativeQuery = true)
     Integer sumWorkPrice(@Param("planSerial") int planSerial);
 
     List<Work> findByPlanSerialAndFieldNameAndStatus(Plan plan, String fieldName, String awaiting);
     Page<Work> findByPlanSerialAndStatusIn(Plan plan, List<String> statuses, Pageable pageable);
 
-    @Query(value="select * from work where status= 'confirmed' and worker_serial= :workerSerial and now() between start_date and end_date", nativeQuery = true)
+    @Query(value="select * from Work where status= 'confirmed' and worker_serial= :workerSerial and now() between start_date and end_date", nativeQuery = true)
     List<Work> getTodayWork(int workerSerial);
 
-    @Query(value="select * from work where status= 'confirmed' and plan_serial= :planSerial and now() between start_date and end_date", nativeQuery = true)
+    @Query(value="select * from Work where status= 'confirmed' and plan_serial= :planSerial and now() between start_date and end_date", nativeQuery = true)
     List<Work> getTodayWorkByPlan(int planSerial);
 
-    @Query(value="select count(*) from work where is_completed= 1 and worker_serial = :workerSerial and field_code= :fieldCode", nativeQuery = true)
+    @Query(value="select count(*) from Work where is_completed= 1 and worker_serial = :workerSerial and field_code= :fieldCode", nativeQuery = true)
     int getWorkCount(int workerSerial, int fieldCode);
 }

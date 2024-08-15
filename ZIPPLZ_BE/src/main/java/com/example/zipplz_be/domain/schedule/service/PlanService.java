@@ -101,7 +101,7 @@ public class PlanService {
 
         String planName = (String) params.get("planName");
 
-        if(planName == null) {
+        if(planName == null || planName.equals("")) {
             planName = customer.getNickname() + "의 계획";
         }
 

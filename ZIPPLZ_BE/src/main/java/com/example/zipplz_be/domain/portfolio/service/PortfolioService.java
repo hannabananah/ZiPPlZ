@@ -571,9 +571,9 @@ public class PortfolioService {
         Portfolio portfolio = portfolioRepository.findByPortfolioSerial(portfolioSerial);
         File file = fileRepository.findByFileSerial(fileSerial);
 
-//        if(userSerial != portfolio.getWorker().getUserSerial().getUserSerial()) {
-//            throw new UnauthorizedUserException("삭제할 권한이 없습니다.");
-//        }
+        if(userSerial != portfolio.getWorker().getUserSerial().getUserSerial()) {
+            throw new UnauthorizedUserException("삭제할 권한이 없습니다.");
+        }
 
         PortfolioFileRelation portfolioFileRelation = portfolioFileRelationRepository.findByPortfolioSerialAndFileSerial(portfolio, file);
         portfolioFileRelationRepository.delete(portfolioFileRelation);

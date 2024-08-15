@@ -9,15 +9,15 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface UserToChatroomRepository extends JpaRepository<UserToChatroom, Integer> {
-    @Query(value= "SELECT * FROM usertochatroom WHERE (chatroom_serial = :chatroomSerial) and (user_serial = :userSerial)", nativeQuery = true)
+    @Query(value= "SELECT * FROM Usertochatroom WHERE (chatroom_serial = :chatroomSerial) and (user_serial = :userSerial)", nativeQuery = true)
     UserToChatroom findToken(@Param("chatroomSerial") int chatroomSerial, @Param("userSerial") int userSerial);
 
     @Modifying
-    @Query(value = "INSERT INTO usertochatroom (chatroom_serial,user_serial, token) VALUES (:chatroomSerial, :userSerial, :token)", nativeQuery = true)
+    @Query(value = "INSERT INTO Usertochatroom (chatroom_serial,user_serial, token) VALUES (:chatroomSerial, :userSerial, :token)", nativeQuery = true)
     void insertToken(@Param("token") String token, @Param("userSerial")  int userSerial, @Param("chatroomSerial") int chatroomSerial);
 
     @Modifying
-    @Query(value = "UPDATE usertochatroom set token = :token where (chatroom_serial = :chatroomSerial) and (user_serial = :userSerial)",  nativeQuery = true)
+    @Query(value = "UPDATE Usertochatroom set token = :token where (chatroom_serial = :chatroomSerial) and (user_serial = :userSerial)",  nativeQuery = true)
     void updateToken(@Param("token") String token, @Param("userSerial")  int userSerial, @Param("chatroomSerial") int chatroomSerial);
 
 }

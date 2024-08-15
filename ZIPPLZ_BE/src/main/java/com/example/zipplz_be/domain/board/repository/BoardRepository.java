@@ -66,7 +66,7 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
     int getLastInsertId();
 
     @Query(value = "SELECT user_serial " +
-            "FROM board " +
+            "FROM Board " +
             "WHERE board_type = :boardType and board_serial = :boardSerial", nativeQuery = true)
     int getBoardUser(@Param("boardType") int boardType, @Param("boardSerial") int boardSerial);
 
