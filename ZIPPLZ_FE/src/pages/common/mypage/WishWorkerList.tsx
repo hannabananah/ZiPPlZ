@@ -203,11 +203,11 @@ export default function WishWorkerList() {
         </div>
         <hr className="w-full border-zp-main-color" />
 
-        <div className="w-full mt-2 overflow-x-auto gap-4">
+        <div className="w-full mt-2 overflow-x-auto gap-4 grid grid-cols-3">
           {list.map((worker, index) => (
             <div
               key={index}
-              className={`relative h-36 rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
+              className={`relative h-36 rounded-zp-radius-big border border-zp-light-beige  items-center ${
                 selectedWorkers.includes(index) ? '' : ''
               }`}
               onClick={() => handleWorkerSelect(index)}

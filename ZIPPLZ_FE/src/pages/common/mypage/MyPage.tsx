@@ -98,6 +98,7 @@ export default function MyPage() {
   // 로그아웃: localstorage에서 해당 유저 토큰 제거 후 로그인 페이지로 이동
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('login-user');
     setShowLogoutModal(false);
     navigate('/member/login');
   };
@@ -217,8 +218,9 @@ export default function MyPage() {
                 <MdOutlinePhotoCamera size={24} />
               </div>
             </div>
+            {/* 임시로 고객, 시공업자 둘다 이름 */}
             <div className="w-36 h-8 grid place-items-center text-zp-lg font-bold">
-              {role === 'customer' ? name : '익명 사용자'}
+              {name}
             </div>
           </div>
         </div>

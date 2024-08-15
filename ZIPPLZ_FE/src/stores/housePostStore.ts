@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
+const BASE_URL: string = 'http://localhost:5000/';
+// '/api/'
+
 // 자랑글 인터페이스
 interface HousePost {
   board_serial: number;
@@ -157,7 +160,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   fetchHousePosts: async () => {
     try {
-      const response = await axios.post('/api/board/showoff/list');
+      const response = await axios.post(`${BASE_URL}board/showoff/list`);
       set({ housePosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch house posts:', error);
@@ -166,7 +169,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   fetchPostDetails: async (id: number) => {
     try {
-      const response = await axios.post(`/api/board/showoff/list/${id}`);
+      const response = await axios.post(`${BASE_URL}board/showoff/list/${id}`);
 
       if (response.data.proc.code === 200) {
         const data = response.data.data;
@@ -259,7 +262,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
       }
 
       const response = await axios.post(
-        'http://localhost:5000/board/showoff/add',
+        `${BASE_URL}board/showoff/add`,
         formData,
         {
           headers: {
@@ -294,7 +297,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   ) => {
     try {
       const response = await axios.patch(
-        `/api/board/showoff/list/${id}`,
+        `${BASE_URL}board/showoff/list/${id}`,
         postData,
         {
           headers: {
@@ -324,7 +327,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   deletePost: async (token: string, id: number) => {
     try {
-      const response = await axios.delete(`/api/board/delete/${id}`, {
+      const response = await axios.delete(`${BASE_URL}board/delete/${id}`, {
         headers: {
           Authorization: token,
         },
@@ -347,7 +350,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addComment: async (token: string, comment: Comment) => {
     try {
       const response = await axios.post(
-        '/api/comment/add',
+        `${BASE_URL}comment/add`,
         { ...comment },
         {
           headers: {
@@ -370,7 +373,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addReply: async (token: string, reply: Comment) => {
     try {
       const response = await axios.post(
-        '/api/comment/add',
+        `${BASE_URL}comment/add`,
         { ...reply },
         {
           headers: {
@@ -396,7 +399,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   ): Promise<{ code: number; message: string }> => {
     try {
       const response = await axios.delete(
-        `/api/comment/delete/${commentSerial}`,
+        `${BASE_URL}comment/delete/${commentSerial}`,
         {
           headers: {
             Authorization: token,
@@ -418,7 +421,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   searchWorkers: async (searchContent: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:5000/board/find/findworker/${searchContent}`
+        `${BASE_URL}board/find/findworker/${searchContent}`
       );
 
       if (response.data.proc.code === 200) {
@@ -436,7 +439,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addWish: async (token, wish_serial, wish_type) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/wish/addWish',
+        `${BASE_URL}wish/addWish`,
         { wish_serial, wish_type },
         {
           headers: {
@@ -454,15 +457,12 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   deleteWish: async (token, wish_serial) => {
     try {
-      const response = await axios.delete(
-        'http://localhost:5000/wish/deleteWish',
-        {
-          headers: {
-            Authorization: token,
-          },
-          data: { wish_serial },
-        }
-      );
+      const response = await axios.delete(`${BASE_URL}wish/deleteWish`, {
+        headers: {
+          Authorization: token,
+        },
+        data: { wish_serial },
+      });
       const { code, message } = response.data.proc;
       return { code, message };
     } catch (error) {
@@ -474,7 +474,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   searchWish: async (token, wish_serial) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/wish/searchWish',
+        `${BASE_URL}wish/searchWish`,
         { wish_serial },
         {
           headers: {

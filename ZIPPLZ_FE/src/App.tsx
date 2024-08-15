@@ -39,6 +39,7 @@ import ImageChangePage from './pages/common/home/ImageChangePage';
 import Login from './pages/common/login/LogIn';
 import SocialLoginCheck from './pages/common/login/SocialLoginCheck';
 import FindIdPw from './pages/common/login/find/FindIdPw';
+import WorkerInfoLocationDetail from './pages/common/mypage/WorkerInfoLocationDetail';
 import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
 import MyQuestionPostList from './pages/common/mypage/postpage/MyQuestionPostList';
 import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
@@ -104,6 +105,10 @@ export default function App() {
         <Route
           path="mypage/myinformationmodify"
           element={<MyInformationModify />}
+        />
+        <Route
+          path="mypage/workerinfolocationdetail"
+          element={<WorkerInfoLocationDetail />}
         />
         <Route path="mypage/mypasswordmodify" element={<MyPasswordModify />} />
         <Route path="mypage/policy" element={<Policy />} />

@@ -8,7 +8,6 @@ import AiInteriorIcon from '@assets/ai-interior-icon.svg';
 // SVG 파일 import
 
 export default function DontUseZIPPLZ() {
-  let user: string = '강신구';
   const navigate = useNavigate();
 
   // 페이지 돌아가기 핸들러
@@ -37,7 +36,7 @@ export default function DontUseZIPPLZ() {
       <div className="flex flex-col min-h-screen p-6 bg-gray-100">
         <div className="w-full">
           {/* 뒤로가기 버튼 */}
-          <div className="mt-6 flex items-center">
+          <div className="mt-8 flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
               onClick={handleGoBack}
@@ -46,7 +45,6 @@ export default function DontUseZIPPLZ() {
           </div>
 
           <div className="mt-6 w-full">
-            <div className="text-zp-2xl font-bold">{user}님,</div>
             <div className="text-zp-2xl font-bold">이런 기능도 써보셨나요?</div>
           </div>
 
