@@ -1,5 +1,6 @@
 package com.example.zipplz_be.domain.chatting.entity;
 
+import com.example.zipplz_be.domain.chatting.dto.ContractRequestDTO;
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.model.BaseTimeEntity;
 import com.example.zipplz_be.domain.model.entity.MessageType;
@@ -41,6 +42,9 @@ public class ChatMessage extends BaseTimeEntity implements Comparable<ChatMessag
 
     @JsonProperty("is_contract")
     private boolean isContract;
+
+    @JsonProperty("contract_content")
+    private ContractRequestDTO contractContent;
 
     // 시간은 BaseTimeEntity에서 자동으로 컬럼 생성됨
 
