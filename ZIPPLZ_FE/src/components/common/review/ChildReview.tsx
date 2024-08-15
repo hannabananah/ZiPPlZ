@@ -1,3 +1,8 @@
+import { FaRegTrashCan } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
+
+import { deleteReview } from '@/apis/board/reviewApi';
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import { formatDate } from '@utils/formatDateWithTime';
 
 interface Comment {
@@ -17,6 +22,14 @@ interface Props {
   comment: Comment;
 }
 export default function ChildReview({ comment }: Props) {
+  const navigate = useNavigate();
+  const { loginUser } = useLoginUserStore();
+  const removeReview = async () => {
+    if (comment) {
+      await deleteReview(comment.commentSerial);
+      navigate(0);
+    }
+  };
   return (
     <>
       <div className="pl-8">
@@ -27,6 +40,13 @@ export default function ChildReview({ comment }: Props) {
               <p className="font-bold">
                 {comment.nickName ? comment.nickName : comment.userName}
               </p>
+              {comment?.userSerial === loginUser?.userSerial && (
+                <FaRegTrashCan
+                  size={12}
+                  className="cursor-pointer"
+                  onClick={removeReview}
+                />
+              )}
             </div>
             <p className="text-zp-gray">{formatDate(comment.commentDate)}</p>
           </div>
