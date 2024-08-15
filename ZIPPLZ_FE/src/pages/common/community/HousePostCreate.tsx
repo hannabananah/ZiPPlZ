@@ -81,7 +81,9 @@ export default function HousePostCreate() {
 
     if (query) {
       const results = await searchWorkers(query);
-      setFilteredWorkers(results);
+
+      // 타입 단언을 사용하여 TypeScript에게 이 데이터가 WorkerInfo[]라고 알림
+      setFilteredWorkers(results as WorkerInfo[]);
     } else {
       setFilteredWorkers(workerInfoList); // 검색어가 없을 때는 전체 목록 표시
     }

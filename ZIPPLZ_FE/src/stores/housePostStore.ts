@@ -139,6 +139,7 @@ interface HousePostState {
     token: string,
     wish_serial: number
   ) => Promise<{ code: number; wish_count: number }>;
+  searchWorkers: (searchContent: string) => Promise<WorkerInfo[]>;
 }
 
 export const useHousePostStore = create<HousePostState>((set, get) => ({

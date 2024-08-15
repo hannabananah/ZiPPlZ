@@ -46,7 +46,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
 
   useEffect(() => {
     if (id) {
-      fetchPostDetails(Number(id)).then((data) => {
+      fetchPostDetails(Number(id)).then(() => {
         // 관심 목록 상태 확인
         const token = `Bearer ${localStorage.getItem('token')}`;
         searchWish(token, Number(id)).then((response) => {

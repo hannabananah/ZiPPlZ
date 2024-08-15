@@ -31,6 +31,7 @@ export interface WorkerInfo {
   certificated_badge: number;
   locations: string[];
   img: string;
+  user_name: string; // user_name 속성 추가
 }
 
 type SortOption = '평점순' | '최신순' | '과거순';
@@ -97,6 +98,7 @@ export default function MyFindWorkerList() {
         certificated_badge: worker.certificated_badge || 0, // 기본값 설정
         locations: worker.locations || [], // 기본값 설정
         img: worker.img || '', // 기본값 설정
+        user_name: worker.name || '', // user_name 설정 (name과 동일한 값으로)
       }));
 
       setWorkerList(workerInfoList);

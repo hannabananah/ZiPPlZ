@@ -69,7 +69,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
       const { code } = await addWish(token, Number(id), 1); // 1은 질문글에 대한 타입
       if (code === 200) {
         setIsBookmarked(true);
-        onBookmarkChange(Number(id), true); // 북마크 추가 시 true
+        onBookmarkChange(); // 북마크 추가 시 true
       } else {
         alert('관심 목록 추가에 실패했습니다.');
       }
@@ -77,7 +77,7 @@ export default function QuestionPostDetail({ onBookmarkChange = () => {} }) {
       const { code } = await deleteWish(token, Number(id));
       if (code === 200) {
         setIsBookmarked(false);
-        onBookmarkChange(Number(id), false); // 북마크 삭제 시 false
+        onBookmarkChange(); // 북마크 삭제 시 false
       } else {
         alert('관심 목록 삭제에 실패했습니다.');
       }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
@@ -9,65 +9,24 @@ import { useNavigate } from 'react-router-dom';
 import Selectbar from '@/components/common/Selectbar';
 import FindWorkerListItem from '@/components/worker/findworker/FindWorkerListItem';
 import Input from '@components/common/Input';
-import { WorkerInfo } from '@pages/common/workerinfo/WorkerInfoList';
+import { useMyPageStore } from '@stores/myPageStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
-const list: WorkerInfo[] = [
-  {
-    user_serial: 1,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '전기',
-    career: 3,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 2,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '철거',
-    career: 4,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 3,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '설비',
-    career: 5,
-    certificated_badge: 1,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  {
-    user_serial: 4,
-    portfolio_serial: 1,
-    name: '김현태',
-    birth_date: 1990,
-    temp: 36.5,
-    field_id: 1,
-    field_name: '타일',
-    career: 6,
-    certificated_badge: 0,
-    locations: ['서울 강남구'],
-    img: '/',
-  },
-  // 다른 worker 정보 추가
-];
+// WorkerPost 타입 추가
+interface WorkerPost {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+  user_name: string; // user_name 속성 추가
+}
 
 export default function MyFindWorkerScrapList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -78,31 +37,43 @@ export default function MyFindWorkerScrapList() {
   const [isAllSelected, setIsAllSelected] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+  const [workerList, setWorkerList] = useState<WorkerPost[]>([]);
 
-  const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
-    setSelectedValue(sortOption as SortOption);
-  };
+  const { fetchMyFindWorkerScrapList } = useMyPageStore();
 
-  // 페이지 돌아가기 핸들러
+  useEffect(() => {
+    const loadWorkers = async () => {
+      const workers = await fetchMyFindWorkerScrapList();
+
+      // user_name 속성이 없다면 기본 값을 설정 (예: nickname을 user_name으로 사용)
+      const updatedWorkers = workers.map((worker) => ({
+        ...worker,
+        user_name: worker.nickname || '', // 'nickname'을 'user_name'으로 대체
+      }));
+
+      setWorkerList(updatedWorkers);
+    };
+
+    loadWorkers();
+  }, [fetchMyFindWorkerScrapList]);
+
   const handleGoBack = () => {
     navigate('/mypage');
+  };
+
+  const handleSortSelect = (sortOption: string) => {
+    setSelectedValue(sortOption as SortOption);
   };
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
-  const handleNavigate = (path: string) => {
-    navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
-  };
-
   const toggleAllSelected = () => {
     if (isAllSelected) {
       setSelectedWorkers([]);
     } else {
-      setSelectedWorkers(list.map((worker) => worker.user_serial));
+      setSelectedWorkers(workerList.map((worker) => worker.user_serial));
     }
     setIsAllSelected(!isAllSelected);
   };
@@ -131,16 +102,21 @@ export default function MyFindWorkerScrapList() {
     navigate(`/findworkers/${user_serial}`);
   };
 
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+  };
+
   return (
     <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
-        {/* 뒤로가기 버튼 + "내가 쓴 글 목록" 글자 */}
+        {/* 뒤로가기 버튼 + "스크랩 글 목록" 글자 */}
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
-              size={20} // 아이콘 크기 조정
+              size={20}
             />
             <div className="flex items-center space-x-2">
               <span className="text-zp-lg font-bold">스크랩 글 목록</span>
@@ -155,7 +131,9 @@ export default function MyFindWorkerScrapList() {
             className="cursor-pointer flex items-center space-x-2"
           >
             <IoMdArrowDropdown
-              className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              className={`transition-transform ${
+                isDropdownOpen ? 'rotate-180' : ''
+              }`}
               size={24}
             />
           </div>
@@ -222,7 +200,7 @@ export default function MyFindWorkerScrapList() {
         </div>
         {/* 전체 게시글 수 표시 부분 */}
         <div className="text-zp-xl font-bold text-zp-gray">
-          전체 {list.length}
+          전체 {workerList.length}
         </div>
 
         {/* 선택하기-삭제하기 버튼 */}
@@ -269,7 +247,7 @@ export default function MyFindWorkerScrapList() {
 
         {/* FindWorkerListItem 컴포넌트 */}
         <div className="w-full mt-2 grid grid-cols-1 gap-4">
-          {list.map((worker) => (
+          {workerList.map((worker) => (
             <div
               key={worker.user_serial}
               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
@@ -299,7 +277,6 @@ export default function MyFindWorkerScrapList() {
                 }`}
                 onClick={() => handleWorkerClick(worker.user_serial)}
               >
-                {/* 여기서 worker 정보를 board prop으로 전달 */}
                 <FindWorkerListItem board={worker} />
               </div>
             </div>

@@ -26,6 +26,19 @@ export default function MyHousePostList() {
   const { fetchMyHousePostList } = useMyPageStore();
   const [list, setList] = useState<HousePost[]>([]);
 
+  interface HousePost {
+    board_serial: number;
+    user_serial: number; // user_serial 속성 추가
+    title: string;
+    board_content: string;
+    board_date: string;
+    hit: number;
+    nickname: string;
+    comment_cnt: number;
+    wish_cnt: number;
+    img?: string;
+  }
+
   useEffect(() => {
     const fetchData = async () => {
       const posts = await fetchMyHousePostList();
@@ -249,7 +262,7 @@ export default function MyHousePostList() {
               )}
               <HousePostListItem
                 post_serial={post.board_serial}
-                post_image={post.img}
+                post_image={post.img ?? null}
                 title={post.title}
                 profile_image={null}
                 nickname={post.nickname}

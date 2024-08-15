@@ -255,7 +255,7 @@ export default function MyHousePostScrapList() {
           {list.map((post) => (
             <div
               key={post.board_serial}
-              className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
+              className={`relative rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
                 selectedWorkers.includes(post.board_serial)
                   ? 'bg-zp-light-gray'
                   : ''
@@ -279,7 +279,7 @@ export default function MyHousePostScrapList() {
               )}
               <HousePostListItem
                 post_serial={post.board_serial}
-                post_image={post.img}
+                post_image={post.img ?? null}
                 title={post.title}
                 profile_image={null}
                 nickname={post.nickname}
