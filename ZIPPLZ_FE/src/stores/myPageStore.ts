@@ -14,6 +14,32 @@ interface WorkerPost {
   wish_cnt: number;
 }
 
+interface QuestionPost {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+}
+
+interface HousePost {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+}
+
 interface MyPageState {
   profileImg: string | null;
   name: string;

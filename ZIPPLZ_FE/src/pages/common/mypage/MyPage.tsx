@@ -47,8 +47,13 @@ export default function MyPage() {
   const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null); // 아이콘 선택 상태
 
   useEffect(() => {
-    fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
-  }, [fetchMyPageData]);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      navigate('/member/login'); // 토큰이 없으면 로그인 페이지로 이동
+    } else {
+      fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
+    }
+  }, [fetchMyPageData, navigate]);
 
   const handleGoBack = () => {
     navigate('-1');
@@ -90,11 +95,11 @@ export default function MyPage() {
     setShowLogoutModal(false);
   };
 
-  // 로그아웃: localstorage에서 해당 유저 토큰 제거
+  // 로그아웃: localstorage에서 해당 유저 토큰 제거 후 로그인 페이지로 이동
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
     setShowLogoutModal(false);
-    navigate('/');
+    navigate('/member/login');
   };
 
   const handleNavigateToResign = () => {
@@ -191,7 +196,7 @@ export default function MyPage() {
                   {selectedIcon}
                 </div>
               ) : profileImg ? (
-                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify-center">
+                <div className="w-full h-full rounded-zp-radius-full overflow-hidden flex items-center justify=center">
                   <img
                     src={profileImg}
                     alt="Profile"

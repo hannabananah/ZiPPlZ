@@ -11,8 +11,6 @@ import QuestionPostListItem from '@/components/community/QuestionPostListItem';
 import { useMyPageStore } from '@/stores/myPageStore';
 import Input from '@components/common/Input';
 
-// zustand 스토어 가져오기
-
 type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function MyQuestionPostScrapList() {
@@ -25,7 +23,7 @@ export default function MyQuestionPostScrapList() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
   const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([]);
-  const [list, setList] = useState<any[]>([]); // 게시글 목록 상태
+  const [list, setList] = useState<any[]>([]);
 
   const fetchMyQuestionPostScrapList = useMyPageStore(
     (state) => state.fetchMyQuestionPostScrapList
@@ -34,7 +32,7 @@ export default function MyQuestionPostScrapList() {
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchMyQuestionPostScrapList();
-      setList(data); // API로 받은 데이터를 상태에 저장
+      setList(data);
     };
 
     fetchData();
