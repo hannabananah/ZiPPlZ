@@ -122,8 +122,7 @@ public class ChatroomServiceImpl implements ChatroomService {
     private ChatroomListDTO createChatroomListDto(Chatroom chatroom, int userSerial) {
         int chatroomSerial = chatroom.getChatroomSerial();
         String roomSerial = Integer.toString(chatroomSerial);
-        // int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomSerial, userSerial);
-        int unReadMessageCount = 0;
+        int unReadMessageCount = redisRepository.getChatRoomMessageCount(roomSerial, userSerial);
 
         Optional<ChatMessage> lastMessageOpt = chatMessageRepository
                 .findFirstByChatroomSerialOrderByCreatedAtDesc(chatroomSerial);

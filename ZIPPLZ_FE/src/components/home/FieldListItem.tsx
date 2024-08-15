@@ -4,7 +4,6 @@ interface Props {
 }
 export default function FieldListItem({ field, handleClickField }: Props) {
   const imageSrc = `/svg/mainpage/${field}.svg`;
-  console.log(`${field}`);
 
   return (
     <>

@@ -52,6 +52,7 @@ export default function Options({
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
   // const { startRecording, stopRecording } = useOpenVidu();
+  const { startScreenShare } = useOpenVidu();
   // const [onRecord, setOnRecord] = useState(false);
   const { loginUser } = useLoginUserStore();
   const userRole: string | undefined = loginUser?.role;
@@ -136,7 +137,7 @@ export default function Options({
 
   const handleSharingContract = () => {
     console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
-    // startScreenShare();
+    startScreenShare();
     setIsContractModalOpen(true);
   };
 
