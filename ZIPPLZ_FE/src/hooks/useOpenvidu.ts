@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 
 import axios from 'axios';
 import {
@@ -19,8 +19,7 @@ export default function useOpenVidu() {
   const [subscriber, setSubscriber] = useState<Subscriber | null>(null);
   const [publisher, setPublisher] = useState<Publisher | null>(null);
   const [OV, setOV] = useState<OpenVidu | null>(null);
-  const [token, setToken] = useState<string | null>(null); // Manage token here
-  const navigate = useNavigate();
+  const [token, setToken] = useState<string | null>(null);
 
   const joinSession = useCallback(() => {
     const OVs = new OpenVidu();
@@ -49,7 +48,7 @@ export default function useOpenVidu() {
       setSessionId('');
       setSubscriber(null);
       setPublisher(null);
-      setToken(null); // Clear token on leave
+      setToken(null);
       console.log('세션이 성공적으로 종료되었습니다');
     }
   }, [sessionId]);
@@ -94,7 +93,7 @@ export default function useOpenVidu() {
       session.off('streamDestroyed', handleStreamDestroyed);
       session.off('streamCreated', handleStreamCreated);
     };
-  }, [session, publisher, subscriber]);
+  }, [session, token, publisher, subscriber]);
 
   const createSession = async (sessionId: string) => {
     try {
@@ -158,6 +157,7 @@ export default function useOpenVidu() {
   };
 
   const getToken = async (): Promise<string> => {
+    if (token) return token;
     try {
       const sessionIds = await createSession(sessionId);
       const token = await createToken(sessionIds);
@@ -171,7 +171,7 @@ export default function useOpenVidu() {
 
   useEffect(() => {
     if (!session) return;
-
+    if (token) return;
     getToken()
       .then((token) => {
         session
@@ -196,35 +196,6 @@ export default function useOpenVidu() {
       .catch((error) => console.error('토큰 받기 오류:', error));
   }, [session, OV, sessionId]);
 
-  useEffect(() => {
-    const getDetailSession = async () => {
-      if (sessionId) {
-        try {
-          const response = await axios.post(
-            `${base_url}/openvidu/api/sessions/info`,
-            JSON.stringify({ sessionId }),
-            {
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-        } catch (error) {
-          if (axios.isAxiosError(error)) {
-            console.error('오류 상태:', error.response?.status);
-            console.error('오류 데이터:', error.response?.data);
-          } else {
-            console.error('예상치 못한 오류:', error);
-          }
-        }
-      } else {
-        console.error('세션 ID가 없습니다');
-      }
-    };
-
-    getDetailSession();
-  }, [sessionId]);
-
   const startScreenShare = async () => {
     if (!token) {
       console.warn('Token not available for screen sharing.');
@@ -246,7 +217,6 @@ export default function useOpenVidu() {
             .getVideoTracks()[0]
             .addEventListener('ended', () => {
               console.log('User pressed the "Stop sharing" button');
-              // Optionally, you can send a signal to notify others
             });
           session.publish(publisher);
           setPublisher(publisher);
@@ -256,7 +226,7 @@ export default function useOpenVidu() {
           console.warn('ScreenShare: Access Denied');
         });
 
-        await session.connect(token); // Use existing token
+        session.connect(token);
       }
     } catch (error) {
       console.error('Failed to start screen share:', error);
