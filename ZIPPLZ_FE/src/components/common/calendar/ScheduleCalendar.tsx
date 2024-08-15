@@ -7,7 +7,7 @@ import './Calendar.css';
 
 interface Work {
   workSerial?: number;
-  starDate: string;
+  startDate: string;
   endDate: string;
   field: string;
 }
@@ -19,6 +19,7 @@ interface Event {
 }
 interface Props {
   workList: any | Work[];
+  onEventClick?: (workSerial: string) => void;
 }
 
 const predefinedColors = [
@@ -34,23 +35,23 @@ const getRandomColor = (): string => {
   const randomIndex = Math.floor(Math.random() * predefinedColors.length);
   return predefinedColors[randomIndex];
 };
-const ScheduleCalendar = function ({ workList }: Props) {
+const ScheduleCalendar = function ({ workList, onEventClick }: Props) {
+  useEffect(() => {
+    console.log(workList);
+  }, []);
   const [eventList, setEventList] = useState<Event[]>([]);
   useEffect(() => {
     if (Array.isArray(workList)) {
-      const isWorkArray = workList.every(
-        (item) => 'startDate' in item && 'endDate' in item && 'field' in item
-      );
-
       const newEventList: Event[] = workList
         .filter((work: any) => work !== null && work !== undefined)
         .map((work: any) => ({
-          title: isWorkArray ? work.field : work.fieldName,
+          title: work.field,
           start: new Date(work.startDate),
           end: new Date(work.endDate),
           workSerial: work.workSerial,
         }));
-      setEventList(newEventList);
+
+      setEventList(newEventList); // 새로 생성된 eventList를 상태로 설정
     }
   }, [workList]);
   return (
@@ -94,11 +95,14 @@ const ScheduleCalendar = function ({ workList }: Props) {
           </div>
         )}
         eventClick={(event) => {
-          if (event.event.extendedProps.workSerial)
+          if (event.event.extendedProps.workSerial) {
             localStorage.setItem(
               'workSerial',
               event.event.extendedProps.workSerial
             );
+            if (onEventClick)
+              onEventClick(event.event.extendedProps.workSerial);
+          }
         }}
       />
     </div>

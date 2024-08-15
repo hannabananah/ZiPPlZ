@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { CiLocationOn } from 'react-icons/ci';
 import { GrTools } from 'react-icons/gr';
-// import { IoBookmark, IoBookmarkOutline } from 'react-icons/io5';
+import { IoChatbubblesOutline } from 'react-icons/io5';
 import { IoCallOutline } from 'react-icons/io5';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
@@ -10,26 +10,66 @@ import {
   getPortfolioDetail,
   getPortfolioList,
 } from '@/apis/worker/PortfolioApi';
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import { usePortfolioStore } from '@/stores/portfolioStore';
+import { getChatRooms, makeChatRoom } from '@apis/chatroom/chatApi';
 import Button from '@components/common/Button';
 
 import OverView from './tabs/OverView';
 import WorkerReview from './tabs/WorkerReview';
 import WorkerSchedule from './tabs/WorkerSchedule';
 
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
 export default function Portfolio() {
-  // const [isWish, setIsWish] = useState<number>(0);
-  // const checkWish = async (portfolioSerial: number) => {
-  //   const response = await getWish(portfolioSerial);
-  //   setIsWish(response.data.data);
-  // };
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const fetchChatRooms = async () => {
+    const response = await getChatRooms();
+    setChatRoomList(response.data.data);
+  };
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
+  const { loginUser } = useLoginUserStore();
+  const chatStart = async () => {
+    try {
+      if (id && field) return await makeChatRoom(parseInt(id), nowField);
+    } catch (error) {
+      if (chatRoomList.length > 0 && portfolioOverview) {
+        const chatRoomSerial: string = chatRoomList.filter(
+          (room) =>
+            room.fieldName === nowField &&
+            room.workerName === portfolioOverview.user.userName &&
+            room.customerName === loginUser?.userName
+        )[0].chatroomSerial;
+        navigate(`/chatrooms/${chatRoomSerial}`);
+      }
+    }
+  };
+
   const {
     portfolioList,
     portfolioOverview,
     setPortfolioList,
     setPortfolioOverview,
   } = usePortfolioStore();
-  const { id } = useParams<{ id: string }>();
+  const { id, field } = useParams<{ id: string; field: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -55,9 +95,13 @@ export default function Portfolio() {
   useEffect(() => {
     window.scrollTo(0, 0);
     if (id) fetchPortfolioList(parseInt(id));
-  }, [id]);
+    return () => {
+      setPortfolioList([]);
+      setPortfolioOverview(null);
+    };
+  }, []);
   useEffect(() => {
-    if (portfolioList.length > 0) {
+    if (portfolioList && portfolioList.length > 0) {
       fetchPortFolioOverView(portfolioList[0].portfolioSerial);
       setNowField(portfolioList[0].fieldId.fieldName);
     }
@@ -115,46 +159,32 @@ export default function Portfolio() {
 
               {/* Skills as buttons */}
               <div className="grid grid-cols-3 gap-4">
-                {portfolioList.map((item, index) => (
-                  <Button
-                    buttonType={
-                      nowField === item.fieldId.fieldName ? 'primary' : 'second'
-                    }
-                    disabled={nowField === item.fieldId.fieldName}
-                    width={4}
-                    height={2}
-                    fontSize="xs"
-                    radius="big"
-                    key={index}
-                    onClick={() => {
-                      fetchPortFolioOverView(item.portfolioSerial);
-                      setNowField(item.fieldId.fieldName);
-                    }}
-                  >
-                    {item.fieldId.fieldName}
-                  </Button>
-                ))}
+                {portfolioList &&
+                  portfolioList.map((item, index) => (
+                    <Button
+                      buttonType={
+                        nowField === item.fieldId.fieldName
+                          ? 'primary'
+                          : 'second'
+                      }
+                      disabled={nowField === item.fieldId.fieldName}
+                      width={4}
+                      height={2}
+                      fontSize="xs"
+                      radius="big"
+                      key={index}
+                      onClick={() => {
+                        fetchPortFolioOverView(item.portfolioSerial);
+                        setNowField(item.fieldId.fieldName);
+                      }}
+                    >
+                      {item.fieldId.fieldName}
+                    </Button>
+                  ))}
               </div>
             </div>
           </div>
-          {/* 북마크 이미지 */}
-          {/*{isWish > 0 ? (
-            <IoBookmark
-              size={24}
-              className="absolute cursor-pointer right-4"
-              color="#73744a"
-              // onClick={toggleBookmark}
-            />
-          ) : (
-            <IoBookmarkOutline
-              size={24}
-              className="absolute cursor-pointer right-4"
-              color="#73744a"
-              // onClick={toggleBookmark}
-            />
-          )}*/}
         </div>
-        {/* 버튼 섹션 */}
         <div className="grid w-full grid-cols-3 font-bold text-zp-sm">
           <div
             className={`p-2 cursor-pointer ${
@@ -198,12 +228,34 @@ export default function Portfolio() {
           {activeTab === 'workerschedule' && (
             <WorkerSchedule
               workerSerial={portfolioOverview?.worker.workerSerial}
+              chatRoomList={chatRoomList}
             />
           )}
           {activeTab === 'review' && portfolioOverview && (
             <WorkerReview portfolio={portfolioOverview} />
           )}
         </div>
+      </div>
+      <div
+        className="fixed flex flex-col w-full gap-4 px-4 bg-zp-light-beige"
+        style={{ bottom: '3.6rem', left: 0 }}
+      >
+        {loginUser?.role === 'customer' && (
+          <div className="flex flex-col items-center w-full gap-4 mb-4">
+            <hr className="w-full text-zp-light-gray" />
+            <Button
+              buttonType="second"
+              width="full"
+              height={3}
+              fontSize="lg"
+              radius="btn"
+              onClick={chatStart}
+            >
+              <IoChatbubblesOutline size={24} />
+              <span className="font-bold">채팅하기</span>
+            </Button>
+          </div>
+        )}
       </div>
     </>
   );

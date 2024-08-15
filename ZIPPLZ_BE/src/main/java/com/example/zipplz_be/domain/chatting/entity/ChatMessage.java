@@ -43,9 +43,6 @@ public class ChatMessage extends BaseTimeEntity implements Comparable<ChatMessag
     @JsonProperty("is_contract")
     private boolean isContract;
 
-    @JsonProperty("contract_content")
-    private ContractRequestDTO contractContent;
-
     // 시간은 BaseTimeEntity에서 자동으로 컬럼 생성됨
 
     @Builder

@@ -1,3 +1,4 @@
+//
 import React, { useEffect, useState } from 'react';
 
 import { Worker } from '@apis/member/MemberApi';
@@ -13,7 +14,7 @@ interface Gugun {
   sidoCode: number;
   gugunName: string;
 }
-interface location {
+interface Location {
   sidoCode: number;
   gugunCode: number;
   localName: string;
@@ -24,6 +25,7 @@ interface Props {
   setWorker: React.Dispatch<React.SetStateAction<Worker>>;
   phrase: string;
 }
+
 export default function SignUpWorkerRegion({
   setNext,
   setLink,
@@ -33,7 +35,11 @@ export default function SignUpWorkerRegion({
   const [sidoList, setSidoList] = useState<Sido[]>([]);
   const [guguns, setGuguns] = useState<Gugun[]>([]);
   const [selectedSido, setSelectedSido] = useState<number>(-1);
-  const [selectedLocation, setSelectedLocation] = useState<location[]>([]);
+  const [selectedLocation, setSelectedLocation] = useState<{
+    [sidoCode: number]: Location[];
+  }>({});
+  const [isFull, setIsFull] = useState<boolean>(false);
+
   const fetchSido = async () => {
     try {
       const response = await getSido();
@@ -42,6 +48,7 @@ export default function SignUpWorkerRegion({
       console.error('Error fetching Sido list: ', error);
     }
   };
+
   const fetchGugun = async (sidoCode: number) => {
     try {
       const response = await getGugun(sidoCode);
@@ -50,55 +57,87 @@ export default function SignUpWorkerRegion({
       console.error('Error fetching Gugun list: ', error);
     }
   };
+
   useEffect(() => {
     fetchSido();
   }, []);
+
   useEffect(() => {
     if (selectedSido > 0) fetchGugun(selectedSido);
   }, [selectedSido]);
+
   const handleButtonClick = (sidoCode: number) => {
     setSelectedSido(sidoCode);
+    // 새로운 Sido 선택 시 해당 Sido의 Gugun 초기화
+    if (!selectedLocation[sidoCode]) {
+      setSelectedLocation((prev) => ({
+        ...prev,
+        [sidoCode]: [],
+      }));
+    }
   };
-  const [isFull, setIsFull] = useState<boolean>(false);
 
   const handleGugunClick = (gugun: Gugun) => {
-    const sidoName = sidoList[gugun.sidoCode - 1].sidoName;
-    setSelectedLocation((prev: location[]) => {
-      if (prev.some((loc) => loc.gugunCode === gugun.gugunCode)) {
-        return prev.filter((l: location) => l.gugunCode !== gugun.gugunCode);
-      } else {
-        return [
+    const sidoName =
+      sidoList.find((sido) => sido.sidoCode === gugun.sidoCode)?.sidoName || '';
+
+    setSelectedLocation((prev) => {
+      const currentLocations = prev[gugun.sidoCode] || [];
+      if (currentLocations.some((loc) => loc.gugunCode === gugun.gugunCode)) {
+        // 이미 선택된 Gugun 제거
+        return {
           ...prev,
-          {
-            sidoCode: gugun.sidoCode,
-            gugunCode: gugun.gugunCode,
-            localName: `${sidoName} ${gugun.gugunName}`,
-          },
-        ];
+          [gugun.sidoCode]: currentLocations.filter(
+            (loc) => loc.gugunCode !== gugun.gugunCode
+          ),
+        };
+      } else {
+        // 새로운 Gugun 추가
+        return {
+          ...prev,
+          [gugun.sidoCode]: [
+            ...currentLocations,
+            {
+              sidoCode: gugun.sidoCode,
+              gugunCode: gugun.gugunCode,
+              localName: `${sidoName} ${gugun.gugunName}`,
+            },
+          ],
+        };
       }
     });
   };
-  const handleDeleteClick = (region: location) => {
-    setSelectedLocation((prev: location[]) => {
-      return prev.filter((l) => l.gugunCode !== region.gugunCode);
+
+  const handleDeleteClick = (region: Location) => {
+    setSelectedLocation((prev) => {
+      return {
+        ...prev,
+        [region.sidoCode]: prev[region.sidoCode].filter(
+          (loc) => loc.gugunCode !== region.gugunCode
+        ),
+      };
     });
   };
+
+  const currentSelectedLocations = selectedLocation[selectedSido] || [];
+  const totalSelectedCount = Object.values(selectedLocation).reduce(
+    (acc, locArray) => acc + locArray.length,
+    0
+  );
+
   useEffect(() => {
-    if (setSelectedLocation.length > 0) setNext(true);
-    else setNext(false);
-    if (setSelectedLocation.length === 8) {
-      setIsFull(true);
-    } else {
-      setIsFull(false);
-    }
+    setNext(totalSelectedCount > 0);
+    setIsFull(totalSelectedCount === 8);
+
     if (phrase === 'region') setLink('/member/join/worker/3/skills');
     else setLink('/member/join/worker/3/extraskills');
+
     setWorker((prev: Worker) => ({
       ...prev,
-      locationList: selectedLocation,
+      locationList: Object.values(selectedLocation).flat(),
     }));
   }, [selectedLocation]);
-  useEffect(() => {});
+
   return (
     <div className="flex flex-col gap-4 overflow-auto mb-[6rem]">
       <p className="font-bold text-zp-xl">
@@ -132,7 +171,7 @@ export default function SignUpWorkerRegion({
             {guguns.map((gugun) => (
               <Button
                 buttonType={
-                  selectedLocation.some(
+                  currentSelectedLocations.some(
                     (loc) => loc.gugunCode === gugun.gugunCode
                   )
                     ? 'second'
@@ -146,7 +185,7 @@ export default function SignUpWorkerRegion({
                 children={gugun.gugunName}
                 disabled={
                   isFull &&
-                  !selectedLocation.some(
+                  !currentSelectedLocations.some(
                     (loc) => loc.gugunCode === gugun.gugunCode
                   )
                 }
@@ -155,25 +194,25 @@ export default function SignUpWorkerRegion({
           </div>
         </>
       )}
-      {selectedLocation.length > 0 && (
+      {totalSelectedCount > 0 && (
         <>
           <div className="relative grid w-full grid-cols-4 gap-4 p-4">
             <div className="absolute top-0 left-0 w-full h-[18px] backdrop-blur-lg bg-gradient-to-b from-white to-transparent z-0"></div>
-            {selectedLocation.map((location) => (
-              <Button
-                buttonType="primary" // 또는 원하는 버튼 타입
-                height={3}
-                radius="big"
-                fontSize="xs"
-                key={location.localName}
-                children={location.localName}
-                onClick={() => {
-                  handleDeleteClick(location);
-                }}
-              />
-            ))}
+            {Object.values(selectedLocation)
+              .flat()
+              .map((location) => (
+                <Button
+                  buttonType="primary"
+                  height={3}
+                  radius="big"
+                  fontSize="xs"
+                  key={location.localName}
+                  children={location.localName}
+                  onClick={() => handleDeleteClick(location)}
+                />
+              ))}
             <p className="absolute bottom-0 right-0 text-zp-light-gray text-zp-lg">
-              {selectedLocation.length}/8
+              {totalSelectedCount}/8
             </p>
           </div>
         </>

@@ -1,8 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 
+import { writeReview } from '@/apis/scheduler/schedulerApi';
+
 import Button from '../common/Button';
 
+interface Props {
+  planSerial: number;
+  workSerial: number;
+  isModalOpen: boolean;
+  closeModal: () => void;
+}
 const question = [
   {
     type: 'professionalStar',
@@ -66,8 +74,12 @@ interface Review {
   isVisible: number;
 }
 Modal.setAppElement('#root');
-export default function ScheduleReviewModal() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+export default function ScheduleReviewModal({
+  planSerial,
+  workSerial,
+  isModalOpen,
+  closeModal,
+}: Props) {
   const [step, setStep] = useState<number>(1);
   const currentType = question[step - 1].type as keyof Review;
   const [content, setContent] = useState<string>('');
@@ -79,11 +91,8 @@ export default function ScheduleReviewModal() {
     professionalStar: 0,
     isVisible: 1,
   });
-  const openModal = function () {
-    setIsModalOpen(true);
-  };
-  const closeModal = function () {
-    setIsModalOpen(false);
+  const registReview = async (data: Review) => {
+    return await writeReview(planSerial, workSerial, data);
   };
   const handleButtonClick = (rating: number) => {
     setReview((prev) => ({
@@ -98,69 +107,62 @@ export default function ScheduleReviewModal() {
     }));
   }, [content]);
   return (
-    <div className="mt-[4rem]">
-      <button onClick={openModal}>모달열기</button>
-
-      <Modal
-        isOpen={isModalOpen}
-        onRequestClose={closeModal}
-        style={customModalStyles}
-      >
-        <hr className="absolute top-[1.5rem] w-full border border-zp-sub-color" />
-        <div className="flex flex-col gap-[1.5rem] w-full mt-[1.5rem] overflow-auto">
-          <div className="flex flex-col w-full gap-4">
-            <p className="font-bold text-zp-sm">
-              {question[step - 1].question}
-            </p>
-            <p className="text-zp-xs text-wrap text-zp-gray">
-              {question[step - 1].msg}
-            </p>
-            {step < 5 ? (
-              <div className="w-full mt-[2rem] grid grid-cols-5 place-items-center">
-                {Array.from({ length: 5 }, (_, idx) => (
-                  <Button
-                    key={idx}
-                    buttonType={
-                      review[currentType] === idx + 1 ? 'primary' : 'second'
-                    }
-                    children={idx + 1}
-                    fontSize="sm"
-                    radius="full"
-                    width={3}
-                    height={3}
-                    onClick={() => handleButtonClick(idx + 1)}
-                  />
-                ))}
-              </div>
-            ) : (
-              <textarea
-                className="relative w-full h-[5rem] border  p-2 text-zp-xs"
-                placeholder="150자 이내로 작성해주세요."
-                onChange={(e: React.ChangeEvent) => {
-                  setContent((e.target as HTMLInputElement).value);
-                }}
-                value={content}
-              />
-            )}
-            <Button
-              buttonType="primary"
-              children={step < 5 ? 'Next' : '평가 완료'}
-              fontSize="sm"
-              radius="big"
-              width="full"
-              height={3}
-              onClick={() => {
-                if (step < 5) setStep(step + 1);
-                else {
-                  alert('리뷰종료');
-                  console.log(review);
-                  closeModal();
-                }
+    <Modal
+      isOpen={isModalOpen}
+      onRequestClose={closeModal}
+      style={customModalStyles}
+    >
+      <hr className="absolute top-[1.5rem] w-full border border-zp-sub-color" />
+      <div className="flex flex-col gap-[1.5rem] w-full mt-[1.5rem] overflow-auto">
+        <div className="flex flex-col w-full gap-4">
+          <p className="font-bold text-zp-sm">{question[step - 1].question}</p>
+          <p className="text-zp-xs text-wrap text-zp-gray">
+            {question[step - 1].msg}
+          </p>
+          {step < 5 ? (
+            <div className="w-full mt-[2rem] grid grid-cols-5 place-items-center">
+              {Array.from({ length: 5 }, (_, idx) => (
+                <Button
+                  key={idx}
+                  buttonType={
+                    review[currentType] === idx + 1 ? 'primary' : 'second'
+                  }
+                  children={idx + 1}
+                  fontSize="sm"
+                  radius="full"
+                  width={3}
+                  height={3}
+                  onClick={() => handleButtonClick(idx + 1)}
+                />
+              ))}
+            </div>
+          ) : (
+            <textarea
+              className="relative w-full h-[5rem] border  p-2 text-zp-xs"
+              placeholder="150자 이내로 작성해주세요."
+              onChange={(e: React.ChangeEvent) => {
+                setContent((e.target as HTMLInputElement).value);
               }}
+              value={content}
             />
-          </div>
+          )}
+          <Button
+            buttonType="primary"
+            children={step < 5 ? 'Next' : '평가 완료'}
+            fontSize="sm"
+            radius="big"
+            width="full"
+            height={3}
+            onClick={() => {
+              if (step < 5) setStep(step + 1);
+              else {
+                registReview(review);
+                closeModal();
+              }
+            }}
+          />
         </div>
-      </Modal>
-    </div>
+      </div>
+    </Modal>
   );
 }

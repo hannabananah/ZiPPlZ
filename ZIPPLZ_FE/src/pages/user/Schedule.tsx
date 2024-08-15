@@ -4,6 +4,8 @@ import { FaTrashAlt } from 'react-icons/fa';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
 import { useLocation, useNavigate } from 'react-router-dom';
 
+import { getChatRooms } from '@/apis/chatroom/chatApi';
+import ScheduleReviewModal from '@/components/scheduler/ScheduleReviewModal';
 import {
   activePlan,
   deletePlan,
@@ -30,12 +32,42 @@ import { useModalActions } from '@stores/modalStore';
 import { useScheduleStore } from '@stores/scheduleStore';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
+
 interface Plan {
   planSerial: number;
   planName: string;
   status: number;
 }
 export default function Schedule() {
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const fetchChatRooms = async () => {
+    const response = await getChatRooms();
+    setChatRoomList(response.data.data);
+  };
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
+  useEffect(() => {
+    console.log(chatRoomList);
+  }, [chatRoomList]);
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const param: string | null = queryParams.get('plan');
@@ -57,6 +89,15 @@ export default function Schedule() {
   } = useScheduleStore();
   const { openModal, closeModal } = useModalActions();
   const [totalPrice, setTotalPrice] = useState<number>(0);
+  const [isOpenReviewModal, setIsOpenReviewModal] = useState<boolean>(false);
+  const openReviewModal = () => {
+    setIsOpenReviewModal(true);
+  };
+  const closeReviewModal = () => {
+    setIsOpenReviewModal(false);
+  };
+  const [selectedWorkSerialForReview, setSelectedWorkSerialForReview] =
+    useState<number | null>(null);
   const [options, setOptions] = useState<Plan[]>([]);
   const [selectedWorkSerial, setSelectedWorkSerial] = useState<number>(0);
   const handleConfirmDelete = async (
@@ -108,6 +149,13 @@ export default function Schedule() {
     } else {
       setSelectedValue('계획을 선택해주세요.');
     }
+    return () => {
+      setPlanList(null);
+      setWorkList(null);
+      setPlan(null);
+      setFileList(null);
+      // setSelectedValue(null);
+    };
   }, []);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -223,7 +271,16 @@ export default function Schedule() {
           )}
         </div>
         <div className="w-full p-4 bg-zp-white rounded-zp-radius-big">
-          <ScheduleCalendar workList={workList} />
+          <ScheduleCalendar
+            workList={
+              workList &&
+              workList.map((work) => ({
+                startDate: work.startDate,
+                endDate: work.endDate,
+                field: work.fieldCode.fieldName,
+              }))
+            }
+          />
         </div>
         {selectedValue !== '계획을 선택해주세요.' && (
           <>
@@ -248,6 +305,11 @@ export default function Schedule() {
                     idx={idx + 1}
                     planSerial={plan?.planSerial}
                     updateContent={updateWork}
+                    chatRoomList={chatRoomList}
+                    openReviewModal={(workSerial: number) => {
+                      setSelectedWorkSerialForReview(workSerial);
+                      openReviewModal();
+                    }}
                   />
                 ) : item.fieldCode.fieldCode === 0 ? (
                   <SchedulerCardCustom
@@ -290,6 +352,14 @@ export default function Schedule() {
           if (plan) removePlan(plan.planSerial);
         }}
       />
+      {plan && selectedWorkSerialForReview !== null && (
+        <ScheduleReviewModal
+          isModalOpen={isOpenReviewModal}
+          closeModal={closeReviewModal}
+          planSerial={plan && plan.planSerial}
+          workSerial={selectedWorkSerialForReview}
+        />
+      )}
     </>
   );
 }

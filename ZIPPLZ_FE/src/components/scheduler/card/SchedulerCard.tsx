@@ -26,7 +26,7 @@ export default function SchedulerCard({ schedule, idx, onClickTrash }: Props) {
   return (
     <>
       <div
-        className="relative flex flex-col items-center justify-center w-full rounded-zp-radius-big bg-zp-white"
+        className="relative flex flex-col w-full justify-center items-center rounded-zp-radius-big bg-zp-white drop-shadow-zp-normal"
         style={{ height: cardHeight }}
       >
         <div className="absolute flex items-center justify-between w-full px-6 top-5 ">

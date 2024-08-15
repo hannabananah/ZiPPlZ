@@ -4,7 +4,6 @@ import { IoAlertCircleOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 export default function BeforeResign() {
-  let user: string = '강신구';
   const navigate = useNavigate();
   const [showModal, setShowModal] = useState(false);
 
@@ -15,12 +14,14 @@ export default function BeforeResign() {
 
   // 탈퇴하기 핸들러
   const handleResign = () => {
+    localStorage.removeItem('token'); // JWT 토큰 제거
+    navigate('/');
     setShowModal(true);
   };
 
   // 모달 확인 버튼 핸들러
-  // 확인 버튼 누르면 로그아웃이 되고 홈 화면으로 이동하게 수정
-  // 로그아웃 추후 구현 필요
+  // 확인 버튼 누르면 홈 화면 이동
+  // 로그아웃은 회원탈퇴 되면서 자동으로 됨
   const handleConfirm = () => {
     navigate('/');
   };
@@ -38,7 +39,6 @@ export default function BeforeResign() {
             />
           </div>
           <div className="mt-6 w-[400px] h-24">
-            <div className="text-zp-3xl font-bold">{user}님,</div>
             <div className="text-zp-3xl font-bold">
               탈퇴하기 전에 확인해주세요!
             </div>

@@ -1,157 +1,171 @@
-// import { useState } from 'react';
-// import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
-// import { GoArrowLeft } from 'react-icons/go';
-// import { HiMagnifyingGlass } from 'react-icons/hi2';
-// import { IoIosClose } from 'react-icons/io';
-// import { IoMdArrowDropdown } from 'react-icons/io';
-// import { useNavigate } from 'react-router-dom';
-// import Input from '@components/common/Input';
-// import Selectbar from '@components/common/Selectbar';
+import { useEffect, useState } from 'react';
+import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
+import { GoArrowLeft } from 'react-icons/go';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
+import { IoIosClose, IoMdArrowDropdown } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 
-// import FindWorkerListItem from '@components/worker/WorkerInfoListItem';
-// interface WorkerInfo {
-// user_serial: number;
-// portfolio_serial: number;
-// name: string;
-// birth_date: number;
-// temp: number;
-// field_id: number;
-// field_name: string;
-// career: number;
-// certificated_badge: number;
-// locations: string[];
-// img: string;
-// }
-// type SortOption = '평점순' | '최신순' | '과거순';
+import FindWorkerListItem from '@/components/worker/findworker/FindWorkerListItem';
+import Input from '@components/common/Input';
+import Selectbar from '@components/common/Selectbar';
+import { useMyPageStore } from '@stores/myPageStore';
 
-// const list: WorkerInfo[] = [
-//   {
-//     user_serial: 1,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '전기',
-//     career: 3,
-//     certificated_badge: 1,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 2,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '철거',
-//     career: 4,
-//     certificated_badge: 0,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 3,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '설비',
-//     career: 5,
-//     certificated_badge: 1,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   {
-//     user_serial: 4,
-//     portfolio_serial: 1,
-//     name: '김현태',
-//     birth_date: 1990,
-//     temp: 36.5,
-//     field_id: 1,
-//     field_name: '타일',
-//     career: 6,
-//     certificated_badge: 0,
-//     locations: ['서울 강남구'],
-//     img: '/',
-//   },
-//   // 다른 worker 정보 추가
-// ];
+type SortOption = '평점순' | '최신순' | '과거순';
 
-// export default function MyFindWorkerList() {
-//   const options: SortOption[] = ['평점순', '최신순', '과거순'];
-//   const navigate = useNavigate();
-//   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-//   const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
-//   const [isSelecting, setIsSelecting] = useState(false);
-//   const [isAllSelected, setIsAllSelected] = useState(false);
-//   const [isModalOpen, setIsModalOpen] = useState(false);
-//   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+export interface WorkerInfo {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+  user_name: string; // user_name 속성 추가
+}
 
-//   const handleSortSelect = (sortOption: string) => {
-//     console.log(`Selected sort option: ${sortOption}`);
-//     setSelectedValue(sortOption as SortOption);
-//   };
+export default function MyFindWorkerList() {
+  const options: SortOption[] = ['평점순', '최신순', '과거순'];
+  const navigate = useNavigate();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+  const [workerList, setWorkerList] = useState<WorkerInfo[]>([]);
 
-//   // 페이지 돌아가기 핸들러
-//   const handleGoBack = () => {
-//     navigate('/mypage');
-//   };
+  const { fetchMyFindWorkerList } = useMyPageStore();
 
-//   const toggleDropdown = () => {
-//     setIsDropdownOpen(!isDropdownOpen);
-//   };
+  interface WorkerPost {
+    board_serial: number;
+    board_type: number;
+    user_serial: number;
+    title: string;
+    board_content: string;
+    board_date: string;
+    hit: number;
+    nickname: string;
+    comment_cnt: number;
+    wish_cnt: number;
+    portfolio_serial?: number; // 선택적 속성으로 정의
+    name?: string;
+    birth_date?: number;
+    temp?: number;
+    field_id?: number;
+    field_name?: string;
+    career?: number;
+    certificated_badge?: number;
+    locations?: string[];
+    img?: string;
+  }
 
-//   const handleNavigate = (path: string) => {
-//     navigate(path);
-//     setIsDropdownOpen(false); // 드롭다운을 닫습니다.
-//   };
+  useEffect(() => {
+    const loadWorkers = async () => {
+      const workers: WorkerPost[] = await fetchMyFindWorkerList();
 
-//   const toggleAllSelected = () => {
-//     if (isAllSelected) {
-//       setSelectedWorkers([]);
-//     } else {
-//       setSelectedWorkers(list.map((worker) => worker.user_serial));
-//     }
-//     setIsAllSelected(!isAllSelected);
-//   };
+      // WorkerPost 객체를 WorkerInfo 타입으로 변환
+      const workerInfoList: WorkerInfo[] = workers.map((worker) => ({
+        board_serial: worker.board_serial,
+        board_type: worker.board_type,
+        user_serial: worker.user_serial,
+        title: worker.title,
+        board_content: worker.board_content,
+        board_date: worker.board_date,
+        hit: worker.hit,
+        nickname: worker.nickname,
+        comment_cnt: worker.comment_cnt,
+        wish_cnt: worker.wish_cnt,
+        portfolio_serial: worker.portfolio_serial || 0, // 기본값 설정
+        name: worker.name || '', // 기본값 설정
+        birth_date: worker.birth_date || 0, // 기본값 설정
+        temp: worker.temp || 0, // 기본값 설정
+        field_id: worker.field_id || 0, // 기본값 설정
+        field_name: worker.field_name || '', // 기본값 설정
+        career: worker.career || 0, // 기본값 설정
+        certificated_badge: worker.certificated_badge || 0, // 기본값 설정
+        locations: worker.locations || [], // 기본값 설정
+        img: worker.img || '', // 기본값 설정
+        user_name: worker.name || '', // user_name 설정 (name과 동일한 값으로)
+      }));
 
-//   const handleWorkerSelect = (user_serial: number) => {
-//     if (selectedWorkers.includes(user_serial)) {
-//       setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
-//     } else {
-//       setSelectedWorkers([...selectedWorkers, user_serial]);
-//     }
-//   };
+      setWorkerList(workerInfoList);
+    };
 
-//   const toggleSelecting = () => {
-//     if (isSelecting) {
-//       setSelectedWorkers([]);
-//     }
-//     setIsSelecting(!isSelecting);
-//     setIsAllSelected(false);
-//   };
+    loadWorkers();
+  }, [fetchMyFindWorkerList]);
 
-//   const handleDeleteConfirmation = () => {
-//     setIsModalOpen(true);
-//   };
+  const handleWorkerSelect = (user_serial: number) => {
+    if (selectedWorkers.includes(user_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+    } else {
+      setSelectedWorkers([...selectedWorkers, user_serial]);
+    }
+  };
 
-//   const handleWorkerClick = (user_serial: number) => {
-//     navigate(`/findworkers/${user_serial}`);
-//   };
+  const handleGoBack = () => {
+    navigate('/mypage');
+  };
 
-// return (
-{
-  /* <>
+  const handleSortSelect = (sortOption: string) => {
+    setSelectedValue(sortOption as SortOption);
+  };
+
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleAllSelected = () => {
+    if (isAllSelected) {
+      setSelectedWorkers([]);
+    } else {
+      setSelectedWorkers(workerList.map((worker) => worker.user_serial));
+    }
+    setIsAllSelected(!isAllSelected);
+  };
+
+  const toggleSelecting = () => {
+    if (isSelecting) {
+      setSelectedWorkers([]);
+    }
+    setIsSelecting(!isSelecting);
+    setIsAllSelected(false);
+  };
+
+  const handleDeleteConfirmation = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleWorkerClick = (user_serial: number) => {
+    navigate(`/findworkers/${user_serial}`);
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+  };
+
+  return (
+    <>
       <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
         <div className="mt-16 h-10 flex items-center justify-between w-full relative">
           <div className="flex w-full items-center justify-center gap-2">
             <GoArrowLeft
               className="absolute left-0 cursor-pointer"
               onClick={handleGoBack}
-              size={20} // 아이콘 크기 조정
+              size={20}
             />
             <div className="flex items-center space-x-2">
               <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
@@ -166,7 +180,9 @@
             className="cursor-pointer flex items-center space-x-2"
           >
             <IoMdArrowDropdown
-              className={`transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
+              className={`transition-transform ${
+                isDropdownOpen ? 'rotate-180' : ''
+              }`}
               size={24}
             />
           </div>
@@ -192,14 +208,9 @@
               </button>
             </div>
           )}
-        </div>*/
-}
+        </div>
 
-{
-  /* 검색 input */
-}
-{
-  /*<div className="w-full relative flex justify-center items-center">
+        <div className="w-full relative flex justify-center items-center">
           <HiMagnifyingGlass className="absolute left-[1rem]" />
           <Input
             type="text"
@@ -214,13 +225,8 @@
           <IoIosClose
             size={30}
             className="absolute right-[7rem] cursor-pointer"
-          />*/
-}
-{
-  /* 정렬 버튼 셀렉트바*/
-}
-{
-  /*  <div className="relative top-3 flex justify-end items-center">
+          />
+          <div className="relative top-3 flex justify-end items-center">
             <div>
               <Selectbar
                 backgroundColor="none"
@@ -237,20 +243,13 @@
               />
             </div>
           </div>
-        </div>*/
-}
-{
-  /* 전체 게시글 수 표시 부분 */
-}
-{
-  /* <div className="text-zp-xl font-bold text-zp-gray">
-          전체 {list.length}
-        </div>*/
-}
+        </div>
 
-//         {/* 선택하기-삭제하기 버튼 */}
-{
-  /* <div className="w-full flex justify-between items-center text-zp-2xs">
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {workerList.length}
+        </div>
+
+        <div className="w-full flex justify-between items-center text-zp-2xs">
           {isSelecting && (
             <div
               className="flex items-center space-x-2 cursor-pointer"
@@ -287,23 +286,14 @@
               )}
             </button>
           </div>
-        </div>*/
-}
-{
-  /* 가로선 */
-}
-{
-  /* <hr className="w-full border-zp-main-color" />*/
-}
+        </div>
 
-{
-  /* FindWorkerListItem 컴포넌트 */
-}
-{
-  /* <div className="w-full mt-2 grid grid-cols-1 gap-4">
-          {list.map((worker) => (
+        <hr className="w-full border-zp-main-color" />
+
+        <div className="w-full mt-2 grid grid-cols-1 gap-4">
+          {workerList.map((worker) => (
             <div
-              key={worker.user_serial}
+              key={worker.board_serial} // board_serial을 key로 사용
               className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
                 selectedWorkers.includes(worker.user_serial)
                   ? 'bg-zp-light-gray'
@@ -326,24 +316,19 @@
                 </div>
               )}
               <div
-                className={`w-full h-full ${isSelecting ? 'pointer-events-none' : ''}`}
-                onClick={() => handleWorkerClick(worker.user_serial)}
-              >*/
-}
-{
-  /* <FindWorkerListItem /> */
-}
-{
-  /*</div>
+                className={`w-full h-full ${
+                  isSelecting ? 'pointer-events-none' : ''
+                }`}
+                onClick={() => handleWorkerClick(worker.board_serial)}
+              >
+                <FindWorkerListItem board={worker} />
+              </div>
             </div>
           ))}
         </div>
-      </div>*/
-}
+      </div>
 
-//       {/* 모달 */}
-{
-  /* {isModalOpen && (
+      {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
           <div className="bg-zp-white rounded-zp-radius-big p-6">
             <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
@@ -373,5 +358,4 @@
       )}
     </>
   );
-}*/
 }
