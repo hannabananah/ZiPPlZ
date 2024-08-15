@@ -1,224 +1,362 @@
 import { useEffect, useState } from 'react';
-import DaumPostcode from 'react-daum-postcode';
+import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
-import { IoIosCloseCircleOutline } from 'react-icons/io';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { HiMagnifyingGlass } from 'react-icons/hi2';
+import { IoIosClose, IoMdArrowDropdown } from 'react-icons/io';
+import { useNavigate } from 'react-router-dom';
 
+import FindWorkerListItem from '@/components/worker/findworker/FindWorkerListItem';
+import Input from '@components/common/Input';
+import Selectbar from '@components/common/Selectbar';
 import { useMyPageStore } from '@stores/myPageStore';
 
-export default function MyInformationModify() {
+export interface WorkerInfo {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+  user_name: string; // 추가된 부분
+}
+
+type SortOption = '평점순' | '최신순' | '과거순';
+
+export default function MyFindWorkerList() {
+  const options: SortOption[] = ['평점순', '최신순', '과거순'];
   const navigate = useNavigate();
-  const location = useLocation();
-  const { name, phoneNumber, address, fetchMyPageData, updateCustomerInfo } =
-    useMyPageStore();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedValue, setSelectedValue] = useState<SortOption>('평점순');
+  const [isSelecting, setIsSelecting] = useState(false);
+  const [isAllSelected, setIsAllSelected] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
+  const [workerList, setWorkerList] = useState<WorkerInfo[]>([]);
 
-  // 사용자가 고객인지 시공업자인지 상태를 설정합니다.
-  const [userType] = useState<'customer' | 'worker'>('customer');
+  const { fetchMyFindWorkerList } = useMyPageStore();
 
-  // 각 입력 필드의 상태를 관리합니다.
-  const [nickname, setNickname] = useState(name || '');
-  const [phone, setPhone] = useState(phoneNumber || '');
-  const [addr, setAddr] = useState(address || '');
-  const [businessNumber, setBusinessNumber] = useState('');
-  const [locationDetails, setLocationDetails] = useState<string[]>([]);
-  const [isPostcodeOpen, setIsPostcodeOpen] = useState(false);
+  interface WorkerPost {
+    board_serial: number;
+    board_type: number;
+    user_serial: number;
+    title: string;
+    board_content: string;
+    board_date: string;
+    hit: number;
+    nickname: string;
+    comment_cnt: number;
+    wish_cnt: number;
+    portfolio_serial?: number; // 선택적 속성으로 정의
+    name?: string;
+    birth_date?: number;
+    temp?: number;
+    field_id?: number;
+    field_name?: string;
+    career?: number;
+    certificated_badge?: number;
+    locations?: string[];
+    img?: string;
+    user_name?: string; // 선택적 속성으로 정의
+  }
 
-  // 오류 메시지 상태를 관리합니다.
-  const [nicknameError, setNicknameError] = useState('');
-  const [phoneNumberError, setPhoneNumberError] = useState('');
-  const [addressError, setAddressError] = useState('');
-
-  // 페이지 초기 로드 시 기존 정보 가져오기
   useEffect(() => {
-    fetchMyPageData();
-    setNickname(name || '');
-    setPhone(phoneNumber || '');
-    setAddr(address || '');
-  }, [fetchMyPageData, name, phoneNumber, address]);
+    const loadWorkers = async () => {
+      const workers: WorkerPost[] = await fetchMyFindWorkerList();
 
-  // 페이지 돌아가기 핸들러
+      // WorkerPost 객체를 WorkerInfo 타입으로 변환
+      const workerInfoList: WorkerInfo[] = workers.map((worker) => ({
+        board_serial: worker.board_serial,
+        board_type: worker.board_type,
+        user_serial: worker.user_serial,
+        title: worker.title,
+        board_content: worker.board_content,
+        board_date: worker.board_date,
+        hit: worker.hit,
+        nickname: worker.nickname,
+        comment_cnt: worker.comment_cnt,
+        wish_cnt: worker.wish_cnt,
+        portfolio_serial: worker.portfolio_serial || 0, // 기본값 설정
+        name: worker.name || '', // 기본값 설정
+        birth_date: worker.birth_date || 0, // 기본값 설정
+        temp: worker.temp || 0, // 기본값 설정
+        field_id: worker.field_id || 0, // 기본값 설정
+        field_name: worker.field_name || '', // 기본값 설정
+        career: worker.career || 0, // 기본값 설정
+        certificated_badge: worker.certificated_badge || 0, // 기본값 설정
+        locations: worker.locations || [], // 기본값 설정
+        img: worker.img || '', // 기본값 설정
+        user_name: worker.user_name || '', // user_name 추가
+      }));
+
+      setWorkerList(workerInfoList);
+    };
+
+    loadWorkers();
+  }, [fetchMyFindWorkerList]);
+
   const handleGoBack = () => {
     navigate('/mypage');
   };
 
-  // WorkerInfoLocationDetail에서 전달된 데이터를 수신하여 설정합니다.
-  useEffect(() => {
-    if (location.state && location.state.locations) {
-      const locations = location.state.locations.map(
-        (loc: any) => `${loc.city} ${loc.district}`
-      );
-      setLocationDetails(locations);
-    }
-  }, [location.state]);
+  const handleSortSelect = (sortOption: string) => {
+    setSelectedValue(sortOption as SortOption);
+  };
 
-  // 수정완료 버튼 핸들러
-  const handleSubmit = async () => {
-    if (userType === 'customer' && !nickname) {
-      setNicknameError('닉네임을 적어주세요');
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleAllSelected = () => {
+    if (isAllSelected) {
+      setSelectedWorkers([]);
     } else {
-      setNicknameError('');
+      setSelectedWorkers(workerList.map((worker) => worker.user_serial));
     }
+    setIsAllSelected(!isAllSelected);
+  };
 
-    if (!phone) {
-      setPhoneNumberError('휴대폰 번호를 적어주세요');
+  const handleWorkerSelect = (user_serial: number) => {
+    if (selectedWorkers.includes(user_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
     } else {
-      setPhoneNumberError('');
-    }
-
-    if (userType === 'customer' && !addr) {
-      setAddressError('자택 주소를 적어주세요');
-    } else {
-      setAddressError('');
-    }
-
-    if (
-      (userType === 'customer' && nickname && phone && addr) ||
-      (userType === 'worker' && phone)
-    ) {
-      await updateCustomerInfo(phone, nickname, addr);
-      // 변경 사항이 반영되었는지 확인하고 반영하기 위해 상태를 다시 가져옴
-      await fetchMyPageData();
-      navigate('/mypage');
+      setSelectedWorkers([...selectedWorkers, user_serial]);
     }
   };
 
-  // Daum Postcode Complete Handler
-  const handleComplete = (data: any) => {
-    let fullAddress = data.address;
-    let extraAddress = '';
-
-    if (data.addressType === 'R') {
-      if (data.bname !== '') {
-        extraAddress += data.bname;
-      }
-      if (data.buildingName !== '') {
-        extraAddress += (extraAddress !== '' ? ', ' : '') + data.buildingName;
-      }
-      fullAddress += extraAddress !== '' ? `(${extraAddress})` : '';
+  const toggleSelecting = () => {
+    if (isSelecting) {
+      setSelectedWorkers([]);
     }
+    setIsSelecting(!isSelecting);
+    setIsAllSelected(false);
+  };
 
-    setAddr(fullAddress);
-    setIsPostcodeOpen(false);
+  const handleDeleteConfirmation = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleWorkerClick = (user_serial: number) => {
+    navigate(`/workers/findworker/${user_serial}`);
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
   };
 
   return (
     <>
-      <div className="flex justify-center items-start min-h-screen p-6">
-        <div className="w-full">
-          <div className="mt-12 h-12 flex items-center justify-between w-full relative">
-            <div className="flex items-center">
-              <GoArrowLeft
-                className="mr-6 cursor-pointer"
-                onClick={handleGoBack}
-                size={20}
-              />
-            </div>
-            <div className="absolute left-1/2 transform -translate-x-1/2 text-zp-xl font-bold text-center">
-              내 정보 수정하기
-            </div>
-          </div>
-
-          {userType === 'customer' && (
-            <>
-              <div className="mt-6 font-bold text-zp-xl text-zp-gray">
-                닉네임
-              </div>
-              <div className="relative">
-                <input
-                  className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
-                  placeholder="닉네임을 입력하세요"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value)}
-                />
-                <IoIosCloseCircleOutline
-                  className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => setNickname('')}
-                  style={{ width: '24px', height: '24px' }}
-                />
-                {nicknameError && (
-                  <div className="text-zp-red font-bold text-zp-xs mt-1">
-                    {nicknameError}
-                  </div>
-                )}
-              </div>
-              <ul className="mt-2 list-disc pl-6 text-zp-2xs">
-                <li>
-                  일부 특수문자 사용 불가 (&, &lt;, &gt;, (, ), ‘, /, “, 콤마),
-                  이모티콘 사용 불가
-                </li>
-                <li>최대 10자 이내</li>
-                <li>띄어쓰기 불가능</li>
-              </ul>
-
-              <div className="mt-6 font-bold text-zp-xl text-zp-gray">
-                자택 주소
-              </div>
-              <div className="relative">
-                <input
-                  className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
-                  placeholder="자택 주소를 입력하세요"
-                  value={addr}
-                  onClick={() => setIsPostcodeOpen(true)}
-                  readOnly
-                />
-                <IoIosCloseCircleOutline
-                  className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
-                  onClick={() => setAddr('')}
-                  style={{ width: '24px', height: '24px' }}
-                />
-                {addressError && (
-                  <div className="text-zp-red font-bold text-zp-xs mt-1">
-                    {addressError}
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          <div className="mt-6 font-bold text-zp-xl text-zp-gray">
-            휴대폰 번호
-          </div>
-          <div className="relative">
-            <input
-              className="mt-2 w-full h-12 px-4 font-bold text-zp-xl text-zp-black bg-zp-light-beige border border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color pr-10"
-              placeholder="010-1234-5678"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+      <div className="flex flex-col w-full items-start min-h-screen px-6 gap-4 mb-6">
+        <div className="mt-16 h-10 flex items-center justify-between w-full relative">
+          <div className="flex w-full items-center justify-center gap-2">
+            <GoArrowLeft
+              className="absolute left-0 cursor-pointer"
+              onClick={handleGoBack}
+              size={20}
             />
-            <IoIosCloseCircleOutline
-              className="absolute right-4 top-8 transform -translate-y-1/2 cursor-pointer"
-              onClick={() => setPhone('')}
-              style={{ width: '24px', height: '24px' }}
-            />
-            {phoneNumberError && (
-              <div className="text-zp-red font-bold text-zp-xs mt-1">
-                {phoneNumberError}
-              </div>
-            )}
-          </div>
-
-          {isPostcodeOpen && (
-            <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-              <div className="bg-zp-white p-4 rounded-zp-radius-btn shadow-lg">
-                <DaumPostcode onComplete={handleComplete} />
-                <button
-                  className="mt-2 w-full bg-zp-sub-color rounded-zp-radius-btn font-bold text-white p-2 rounded-md"
-                  onClick={() => setIsPostcodeOpen(false)}
-                >
-                  닫기
-                </button>
-              </div>
+            <div className="flex items-center space-x-2">
+              <span className="text-zp-lg font-bold">내가 쓴 글 목록</span>
             </div>
-          )}
-
-          <div
-            className="mt-6 w-full h-10 text-zp-xl font-bold bg-zp-sub-color rounded-zp-radius-btn flex justify-center items-center cursor-pointer"
-            onClick={handleSubmit}
-          >
-            수정완료
           </div>
         </div>
+
+        <div className="flex justify-center space-x-2 w-full relative">
+          <span className="text-zp-lg font-bold">시공자 구하기</span>
+          <div
+            onClick={toggleDropdown}
+            className="cursor-pointer flex items-center space-x-2"
+          >
+            <IoMdArrowDropdown
+              className={`transition-transform ${
+                isDropdownOpen ? 'rotate-180' : ''
+              }`}
+              size={24}
+            />
+          </div>
+          {isDropdownOpen && (
+            <div className="absolute top-full mt-2 w-64 bg-zp-white border border-zp-light-gray shadow-lg rounded-zp-radius-big z-50">
+              <button
+                onClick={() => handleNavigate('/mypage/MyFindWorkerList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                시공자 구하기
+              </button>
+              <button
+                onClick={() => handleNavigate('/mypage/MyHousePostList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                집들이
+              </button>
+              <button
+                onClick={() => handleNavigate('/mypage/MyQuestionPostList')}
+                className="block w-full text-left px-4 py-2 hover:bg-gray-100 font-bold text-zp-sm hover:bg-zp-light-beige rounded-zp-radius-big"
+              >
+                질문글
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="w-full relative flex justify-center items-center">
+          <HiMagnifyingGlass className="absolute left-[1rem]" />
+          <Input
+            type="text"
+            placeholder="검색어를 입력해주세요."
+            inputType="search"
+            width="full"
+            height={2}
+            className="pl-8"
+            fontSize="sm"
+            radius="big"
+          />
+          <IoIosClose
+            size={30}
+            className="absolute right-[7rem] cursor-pointer"
+          />
+          <div className="relative top-3 flex justify-end items-center">
+            <div>
+              <Selectbar
+                backgroundColor="none"
+                fontColor="black"
+                options={options}
+                selectedValue={selectedValue}
+                setSelectedValue={handleSortSelect}
+                width={6}
+                height={2.5}
+                fontSize="xs"
+                radius="btn"
+                border="none"
+                hover="main"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="text-zp-xl font-bold text-zp-gray">
+          전체 {workerList.length}
+        </div>
+
+        <div className="w-full flex justify-between items-center text-zp-2xs">
+          {isSelecting && (
+            <div
+              className="flex items-center space-x-2 cursor-pointer"
+              onClick={toggleAllSelected}
+            >
+              {isAllSelected ? (
+                <FaRegCircleCheck size={20} />
+              ) : (
+                <FaRegCircle size={20} />
+              )}
+              <span>전체 선택</span>
+            </div>
+          )}
+          <div className="ml-auto">
+            <button
+              className="rounded-zp-radius-big p-2 px-3 bg-zp-light-gray flex items-center space-x-2"
+              onClick={
+                isSelecting && selectedWorkers.length > 0
+                  ? handleDeleteConfirmation
+                  : toggleSelecting
+              }
+            >
+              {isSelecting ? (
+                selectedWorkers.length === 0 ? (
+                  <span>선택 취소</span>
+                ) : (
+                  <>
+                    <IoIosClose size={14} />
+                    <span>삭제</span>
+                  </>
+                )
+              ) : (
+                <span>선택하기</span>
+              )}
+            </button>
+          </div>
+        </div>
+
+        <hr className="w-full border-zp-main-color" />
+
+        <div className="w-full mt-2 grid grid-cols-1 gap-4">
+          {workerList.map((worker) => (
+            <div
+              key={worker.board_serial} // board_serial을 key로 사용
+              className={`relative rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col items-center ${
+                selectedWorkers.includes(worker.user_serial)
+                  ? 'bg-zp-light-gray'
+                  : ''
+              }`}
+            >
+              {isSelecting && (
+                <div
+                  className="absolute top-2 right-2 z-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleWorkerSelect(worker.user_serial);
+                  }}
+                >
+                  {selectedWorkers.includes(worker.user_serial) ? (
+                    <FaRegCircleCheck />
+                  ) : (
+                    <FaRegCircle />
+                  )}
+                </div>
+              )}
+              <div
+                className={`w-full h-full ${
+                  isSelecting ? 'pointer-events-none' : ''
+                }`}
+                onClick={() => handleWorkerClick(worker.board_serial)}
+              >
+                <FindWorkerListItem board={worker} />
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-zp-white rounded-zp-radius-big p-6">
+            <div className="text-zp-2xl font-bold mb-4">삭제 확인</div>
+            <div className="mb-4 font-bold">
+              선택한 항목을 삭제하시겠습니까?
+            </div>
+            <div className="flex justify-end space-x-2">
+              <button
+                className="w-full font-bold px-4 py-2 bg-zp-light-beige rounded-zp-radius-big"
+                onClick={() => setIsModalOpen(false)}
+              >
+                취소
+              </button>
+              <button
+                className="w-full font-bold px-4 py-2 bg-zp-sub-color rounded-zp-radius-big"
+                onClick={() => {
+                  setSelectedWorkers([]);
+                  setIsSelecting(false);
+                  setIsModalOpen(false);
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

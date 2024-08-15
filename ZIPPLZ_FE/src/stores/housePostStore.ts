@@ -489,7 +489,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
           },
         }
       );
-      const { code, message } = response.data.proc;
+      const { code } = response.data.proc;
       const wish_count = response.data.data;
       return { code, wish_count };
     } catch (error) {

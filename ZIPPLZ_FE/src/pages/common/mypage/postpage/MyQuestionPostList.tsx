@@ -2,8 +2,7 @@ import { useEffect, useState } from 'react';
 import { FaRegCircle, FaRegCircleCheck } from 'react-icons/fa6';
 import { GoArrowLeft } from 'react-icons/go';
 import { HiMagnifyingGlass } from 'react-icons/hi2';
-import { IoIosClose } from 'react-icons/io';
-import { IoMdArrowDropdown } from 'react-icons/io';
+import { IoIosClose, IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
@@ -12,6 +11,17 @@ import Input from '@components/common/Input';
 import { useMyPageStore } from '@stores/myPageStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
+
+interface QuestionPost {
+  board_serial: number;
+  title: string;
+  board_content: string;
+  nickname: string;
+  board_date: string;
+  hit: number;
+  wish_cnt: number;
+  comment_cnt: number;
+}
 
 export default function MyQuestionPostList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -25,7 +35,7 @@ export default function MyQuestionPostList() {
   const [bookmarkedPosts, setBookmarkedPosts] = useState<number[]>([]);
 
   const { fetchMyQuestionPostList } = useMyPageStore();
-  const [list, setList] = useState([]);
+  const [list, setList] = useState<QuestionPost[]>([]); // 타입 지정
 
   useEffect(() => {
     const fetchData = async () => {
@@ -37,7 +47,6 @@ export default function MyQuestionPostList() {
   }, [fetchMyQuestionPostList]);
 
   const handleSortSelect = (sortOption: string) => {
-    console.log(`Selected sort option: ${sortOption}`);
     setSelectedValue(sortOption as SortOption);
   };
 

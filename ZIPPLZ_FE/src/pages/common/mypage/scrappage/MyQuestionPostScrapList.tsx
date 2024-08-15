@@ -264,6 +264,7 @@ export default function MyQuestionPostScrapList() {
                 onClick={() => handleWorkerClick(post.board_serial)}
               >
                 <QuestionPostListItem
+                  post_serial={post.board_serial} // post_serial 추가
                   title={post.title}
                   content={post.board_content}
                   profile_image={null} // 수정 필요

@@ -13,6 +13,18 @@ import { useMyPageStore } from '@stores/myPageStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
 
+interface HousePost {
+  board_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+  img?: string; // 선택적 속성으로 변경
+}
+
 export default function MyHousePostScrapList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
   const navigate = useNavigate();

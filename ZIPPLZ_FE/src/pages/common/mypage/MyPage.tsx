@@ -128,13 +128,15 @@ export default function MyPage() {
   };
 
   const convertIconToBlob = async (IconComponent: JSX.Element) => {
-    const svgElement = document.createElement('div');
-    svgElement.innerHTML = React.createElement(
-      IconComponent.type
-    ).props.children;
+    // ReactDOMServer를 이용하여 IconComponent를 문자열로 변환
     const svgString = new XMLSerializer().serializeToString(
-      svgElement.firstChild as Node
+      new DOMParser().parseFromString(
+        `<svg xmlns="http://www.w3.org/2000/svg">${IconComponent.props.children}</svg>`,
+        'image/svg+xml'
+      ).documentElement
     );
+
+    // 변환된 SVG 문자열을 Blob으로 변환
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     return blob;
   };

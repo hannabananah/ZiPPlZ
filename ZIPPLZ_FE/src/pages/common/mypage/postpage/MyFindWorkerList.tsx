@@ -48,10 +48,58 @@ export default function MyFindWorkerList() {
 
   const { fetchMyFindWorkerList } = useMyPageStore();
 
+  interface WorkerPost {
+    board_serial: number;
+    board_type: number;
+    user_serial: number;
+    title: string;
+    board_content: string;
+    board_date: string;
+    hit: number;
+    nickname: string;
+    comment_cnt: number;
+    wish_cnt: number;
+    portfolio_serial?: number; // 선택적 속성으로 정의
+    name?: string;
+    birth_date?: number;
+    temp?: number;
+    field_id?: number;
+    field_name?: string;
+    career?: number;
+    certificated_badge?: number;
+    locations?: string[];
+    img?: string;
+  }
+
   useEffect(() => {
     const loadWorkers = async () => {
-      const workers = await fetchMyFindWorkerList();
-      setWorkerList(workers);
+      const workers: WorkerPost[] = await fetchMyFindWorkerList();
+
+      // WorkerPost 객체를 WorkerInfo 타입으로 변환
+      const workerInfoList: WorkerInfo[] = workers.map((worker) => ({
+        board_serial: worker.board_serial,
+        board_type: worker.board_type,
+        user_serial: worker.user_serial,
+        title: worker.title,
+        board_content: worker.board_content,
+        board_date: worker.board_date,
+        hit: worker.hit,
+        nickname: worker.nickname,
+        comment_cnt: worker.comment_cnt,
+        wish_cnt: worker.wish_cnt,
+        portfolio_serial: worker.portfolio_serial || 0, // 기본값 설정
+        name: worker.name || '', // 기본값 설정
+        birth_date: worker.birth_date || 0, // 기본값 설정
+        temp: worker.temp || 0, // 기본값 설정
+        field_id: worker.field_id || 0, // 기본값 설정
+        field_name: worker.field_name || '', // 기본값 설정
+        career: worker.career || 0, // 기본값 설정
+        certificated_badge: worker.certificated_badge || 0, // 기본값 설정
+        locations: worker.locations || [], // 기본값 설정
+        img: worker.img || '', // 기본값 설정
+      }));
+
+      setWorkerList(workerInfoList);
     };
 
     loadWorkers();
