@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import type { ChatRoom } from '@/types';
 import Badge from '@assets/certified-icon.svg?react';
 import NothingIcon from '@assets/nothing-icon.svg?react';
@@ -20,7 +21,7 @@ export default function ChatRooms() {
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
   const { openModal, closeModal } = useModalActions();
-
+  const currUserRole = useLoginUserStore().loginUser?.role;
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
@@ -166,7 +167,9 @@ export default function ChatRooms() {
                 <div className="flex flex-col items-center justify-between flex-grow gap-1 basis-3/5 max-w-36">
                   <div className="flex items-center justify-start w-11/12 gap-1">
                     <span className="font-semibold truncate max-w-24 break-keep text-zp-sm">
-                      {room.customerName}
+                      {currUserRole === 'worker'
+                        ? room.customerName
+                        : room.workerName}
                     </span>
                     {room.certificated && <Badge />}
                   </div>

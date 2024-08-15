@@ -212,9 +212,11 @@ public class ContractService {
     }
 
     @Transactional
-    public void acceptRequestService(int userSerial, int requestSerial) {
-        Request request = requestRepository.findByRequestSerial(requestSerial);
+    public void acceptRequestService(int userSerial, Map<String, Object> params) {
+        Request request =  requestRepository.getPendingRequest((Integer)params.get("sender"), (Integer)params.get("receiver"));
 
+        System.out.println(userSerial);
+        
         if(request.getReceiver().getUserSerial() != userSerial) {
             throw new UnauthorizedUserException("수락할 권한이 없습니다.");
         }
@@ -293,8 +295,8 @@ public class ContractService {
     }
 
     @Transactional
-    public void rejectRequestService(int userSerial, int requestSerial) {
-        Request request = requestRepository.findByRequestSerial(requestSerial);
+    public void rejectRequestService(int userSerial, Map<String, Object> params) {
+        Request request = requestRepository.getPendingRequest((Integer)params.get("sender"), (Integer)params.get("receiver"));
 
         if(request.getReceiver().getUserSerial() != userSerial) {
             throw new UnauthorizedUserException("거절할 권한이 없습니다.");
