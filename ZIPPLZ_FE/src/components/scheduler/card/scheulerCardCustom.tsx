@@ -18,7 +18,7 @@ export default function SchedulerCardCustom({ schedule, idx }: Props) {
   return (
     <>
       <div
-        className="relative flex flex-col w-full justify-center items-center rounded-zp-radius-big bg-zp-white"
+        className="relative flex flex-col w-full justify-center items-center rounded-zp-radius-big bg-zp-white drop-shadow-zp-normal"
         style={{ height: cardHeight }}
       >
         <div className="absolute top-5 flex justify-between items-center w-full px-6 ">

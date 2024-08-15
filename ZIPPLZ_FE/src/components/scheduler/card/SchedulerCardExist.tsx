@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { FaPencilAlt, FaRegTrashAlt } from 'react-icons/fa';
+import { FaPencilAlt } from 'react-icons/fa';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
@@ -30,7 +30,7 @@ export default function SchedulerCardExist({
   return (
     <>
       <div
-        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white"
+        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-normals"
         style={{ height: cardHeight }}
       >
         <div className="absolute flex items-center justify-between w-full px-6 top-5 ">
@@ -75,8 +75,8 @@ export default function SchedulerCardExist({
               <div className="flex w-[30%] flex-col items-center gap-2">
                 <div className="w-[60%] aspect-square text-center border rounded-zp-radius-full">
                   <img
-                    className="object-cover w-full h-full rounded-zp-radius-full"
-                    src=""
+                    className="object-cover w-full h-full object-cover rounded-zp-radius-full"
+                    src="schedule.workerSerial.userSerial.fileSerial.saveFile"
                   />
                 </div>
                 <div className="flex gap-1">

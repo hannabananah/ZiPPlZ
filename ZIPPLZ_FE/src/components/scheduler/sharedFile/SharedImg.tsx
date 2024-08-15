@@ -1,10 +1,12 @@
 import React, { useRef, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
 import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
+import { MdCancel } from 'react-icons/md';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-import { addImg } from '@/apis/scheduler/schedulerApi';
+import { addImg, deleteImg, getOnePlan } from '@/apis/scheduler/schedulerApi';
+import { useScheduleStore } from '@/stores/scheduleStore';
 
 const customModalStyles: ReactModal.Styles = {
   overlay: {
@@ -39,22 +41,30 @@ interface Props {
 }
 export default function SharedImg({ fileList, planSerial }: Props) {
   const navigate = useNavigate();
+  const { setPlan, setFileList } = useScheduleStore();
+
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
-
   // const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fetchPlan = async (planSerial: number) => {
+    const response = await getOnePlan(planSerial);
+    setPlan(response.data.data.plan);
+    setFileList(response.data.data.fileList);
+  };
   const handleUpload = async (file: File) => {
     if (planSerial) {
       console.log(file);
-      return await addImg(planSerial, file);
+      await addImg(planSerial, file);
     }
   };
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const removeImg = async (fileSerial: number) => {
+    if (planSerial) return await deleteImg(planSerial, fileSerial);
+  };
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files ? e.target.files[0] : null;
     if (file && planSerial) {
-      // setSelectedFile(file);
-      handleUpload(file);
-      navigate(0);
+      await handleUpload(file);
+      await fetchPlan(planSerial);
     }
   };
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -75,10 +85,15 @@ export default function SharedImg({ fileList, planSerial }: Props) {
   const closeFullscreenImage = () => {
     setFullscreenImage(null);
   };
+  const handleClickDeleteImg = (fileSerial: number) => {
+    removeImg(fileSerial);
+    if (planSerial) fetchPlan(planSerial);
+    navigate(0);
+  };
   return (
     <>
       <div className="relative w-full h-[5rem] flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-2 min-h-[5rem] max-h-[7rem]">
-        {fileList.length === 0 ? (
+        {fileList && fileList.length === 0 ? (
           <>
             <div className="flex items-center justify-center w-full">
               <label
@@ -124,17 +139,17 @@ export default function SharedImg({ fileList, planSerial }: Props) {
             <div className="flex w-full items-center justify-center gap-4">
               <img
                 className="w-[20%] aspect-square"
-                src={fileList[0].saveFile}
+                src={fileList && fileList[0].saveFile}
                 onClick={() => openFullscreenImage(fileList[0].saveFile)}
               />
-              {fileList.length > 1 && (
+              {fileList && fileList.length > 1 && (
                 <img
                   className="w-[20%] aspect-square"
                   src={fileList[1].saveFile}
                   onClick={() => openFullscreenImage(fileList[1].saveFile)}
                 />
               )}
-              {fileList.length > 2 && (
+              {fileList && fileList.length > 2 && (
                 <img
                   className="w-[20%] aspect-square"
                   src={fileList[2].saveFile}
@@ -169,15 +184,24 @@ export default function SharedImg({ fileList, planSerial }: Props) {
           <hr className="absolute top-[3rem] w-full border border-zp-sub-color" />
           <div className="w-full mt-[4rem] px-[1rem] overflow-auto">
             <div className="grid grid-cols-3 gap-4">
-              {fileList.map((item: any) => (
-                <div className="border aspect-square" key={item.fileSerial}>
-                  <img
-                    className="w-full h-full"
-                    src={item.saveFile}
-                    onClick={() => openFullscreenImage(item.saveFile)}
-                  />
-                </div>
-              ))}
+              {fileList &&
+                fileList.map((item: any) => (
+                  <div
+                    className="relative border aspect-square"
+                    key={item.fileSerial}
+                  >
+                    <img
+                      className="w-full h-full"
+                      src={item.saveFile}
+                      onClick={() => openFullscreenImage(item.saveFile)}
+                    />
+                    <MdCancel
+                      size={12}
+                      className="absolute top-0 right-0"
+                      onClick={() => handleClickDeleteImg(item.fileSerial)}
+                    />
+                  </div>
+                ))}
             </div>
           </div>
         </Modal>

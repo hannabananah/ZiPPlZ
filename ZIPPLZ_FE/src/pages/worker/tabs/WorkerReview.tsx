@@ -3,11 +3,11 @@ import { FaRegSadTear, FaRegSmile } from 'react-icons/fa';
 
 import { getGPTReview, getPortfolioReview } from '@/apis/worker/PortfolioApi';
 import PortfolioReview from '@/components/worker/detail/review/PortfolioReview';
-import { PortfolitDetail, usePortfolioStore } from '@/stores/portfolioStore';
+import { PortfolioDetail, usePortfolioStore } from '@/stores/portfolioStore';
 import MannerTemperature from '@components/worker/detail/review/MannerTemperature';
 
 interface Props {
-  portfolio: PortfolitDetail;
+  portfolio: PortfolioDetail;
 }
 export default function WorkerReview({ portfolio }: Props) {
   const [goodReview, setGoodReview] = useState<string>('');

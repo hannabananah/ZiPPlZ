@@ -108,6 +108,13 @@ export default function Schedule() {
     } else {
       setSelectedValue('계획을 선택해주세요.');
     }
+    return () => {
+      setPlanList(null);
+      setWorkList(null);
+      setPlan(null);
+      setFileList(null);
+      setSelectedValue(null);
+    };
   }, []);
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -223,7 +230,16 @@ export default function Schedule() {
           )}
         </div>
         <div className="w-full p-4 bg-zp-white rounded-zp-radius-big">
-          <ScheduleCalendar workList={workList} />
+          <ScheduleCalendar
+            workList={
+              workList &&
+              workList.map((work) => ({
+                startDate: work.startDate,
+                endDate: work.endDate,
+                field: work.fieldCode.fieldName,
+              }))
+            }
+          />
         </div>
         {selectedValue !== '계획을 선택해주세요.' && (
           <>

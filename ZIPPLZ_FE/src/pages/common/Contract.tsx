@@ -167,7 +167,7 @@ export default function Contract() {
                   <td className="p-3 text-left">
                     <div className="w-full flex gap-2">
                       {contract.materialList.map((material) => (
-                        <p>material</p>
+                        <p>{material}</p>
                       ))}
                     </div>
                   </td>
