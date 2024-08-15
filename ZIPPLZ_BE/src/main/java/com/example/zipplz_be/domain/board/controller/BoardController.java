@@ -352,7 +352,7 @@ public class BoardController {
     // 구인구직글 추가하기
     @Transactional
     @PostMapping("/findworker/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("title") String title, @RequestPart("board_content") String board_content) {
+    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("title") String title, @RequestPart("board_content") String board_content, @RequestPart("user_address") String user_address) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
@@ -366,23 +366,32 @@ public class BoardController {
             int hit = 0;
 
             int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
+            System.out.println("result : "+result);
             int board_serial = boardService.getLastInsertId();
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "구인구직글 삽입 실패 없음");
             } else {
-                if (!images.isEmpty() && images.get(0).getSize() != 0) {
-                    int file_result = boardService.uploadImageService(images, board_serial);
-                    if (file_result == 0) {
-                        status = HttpStatus.NOT_FOUND;
-                        responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                int address_result = boardService.addBoardUserAddress(board_serial, user_address);
+                System.out.println("address_result :"+address_result);
+                if (address_result == 0  ) {
+                    status = HttpStatus.BAD_REQUEST;
+                    responseDTO = new ResponseDTO<>(status.value(), "주소 삽입 실패 없음");
+                } else {
+                    if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                        int file_result = boardService.uploadImageService(images, board_serial);
+                        System.out.println(file_result);
+                        if (file_result == 0) {
+                            status = HttpStatus.NOT_FOUND;
+                            responseDTO = new ResponseDTO<>(status.value(), "이미지 삽입 실패 없음");
+                        } else {
+                            status = HttpStatus.OK;
+                            responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
+                        }
                     } else {
                         status = HttpStatus.OK;
                         responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
                     }
-                } else {
-                    status = HttpStatus.OK;
-                    responseDTO = new ResponseDTO<>(status.value(), "삽입 성공", true);
                 }
             }
         } catch (Exception e) {
