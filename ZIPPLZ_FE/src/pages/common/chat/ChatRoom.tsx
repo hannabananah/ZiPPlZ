@@ -22,7 +22,6 @@ function ChatRoomContent() {
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
   const roomIdNumber = chatroomSerial ? parseInt(chatroomSerial, 10) : NaN;
   const isValidRoomId = !isNaN(roomIdNumber);
-
   const [isMenuVisible, setMenuVisible] = useState(false);
   const { selectedChatRoom, setSelectedChatRoom } = useChatStore();
   const [loading, setLoading] = useState(true);
@@ -35,7 +34,6 @@ function ChatRoomContent() {
 
   const { messages } = useContext(WebSocketContext) || { messages: [] };
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
-
   const handleClickVideo = () => {
     setIsVideoModalOpen(!isVideoModalOpen);
   };
@@ -91,6 +89,9 @@ function ChatRoomContent() {
     return <p className="py-4 text-center bg-gray-300">Loading...</p>;
   }
 
+  const handleCloseModal = () => {
+    setIsVideoModalOpen(false);
+  };
   return (
     <div className="relative flex flex-col h-screen bg-zp-light-orange">
       {isValidRoomId && selectedChatRoom && (
@@ -115,6 +116,7 @@ function ChatRoomContent() {
                   createdAt={msg.createdAt}
                   userSerial={msg.userSerial}
                   fileType={msg.fileType}
+                  contract={msg.contract}
                 />
               ))}
               <div ref={messagesEndRef} />
@@ -138,7 +140,7 @@ function ChatRoomContent() {
             )}
           </>
         ) : (
-          <p className="py-4 text-center bg-gray-300">Invalid room ID</p>
+          <p className="py-4 text-center bg-zp-gray">Invalid room ID</p>
         )}
       </div>
       <FullModal
@@ -147,7 +149,7 @@ function ChatRoomContent() {
         height="96%"
         maxWidth="580px"
       >
-        <VideoModal handleCloseVideo={() => setIsVideoModalOpen(false)} />
+        <VideoModal handleCloseVideo={handleCloseModal} />
       </FullModal>
     </div>
   );

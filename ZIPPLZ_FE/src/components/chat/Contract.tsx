@@ -89,7 +89,6 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
   const { chatroomSerial } = useParams<{
     chatroomSerial?: string | undefined;
   }>();
-
   useEffect(() => {
     const fetchMaterials = async () => {
       try {
@@ -110,7 +109,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
     }
 
     if (!startDate || !endDate || !fields[1].value || !fields[2].value) {
-      alert('All required fields must be filled in.');
+      alert('모든 양식을 채워주세요.');
       return;
     }
 
@@ -164,7 +163,13 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
     🛠 자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
         `;
         if (sendMessage) {
-          sendMessage(formattedMessage, userSerial as number);
+          sendMessage(
+            formattedMessage,
+            userSerial as number,
+            undefined,
+            'TALK',
+            true
+          );
         } else {
           console.error('메시지를 전송할 수 없습니다.');
         }
@@ -177,7 +182,6 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
       console.error('계약서 초안 작성 실패:', error);
     }
   };
-
   const handleFieldChange = (index: number, key: 'value', value: string) => {
     const newFields = fields.map((field, i) =>
       i === index ? { ...field, [key]: value } : field

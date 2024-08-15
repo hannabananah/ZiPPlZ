@@ -13,7 +13,8 @@ interface WebSocketContextType {
     msg: string,
     userSerial: number,
     file?: File,
-    type?: 'TALK' | 'IMAGE' | 'FILE'
+    type?: 'TALK' | 'IMAGE' | 'FILE',
+    contract?: boolean
   ) => void;
   messages: ChatMessageData[];
 }
@@ -105,7 +106,8 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     msg: string,
     userSerial: number,
     file?: File,
-    type: 'TALK' | 'IMAGE' | 'FILE' = 'TALK'
+    type: 'TALK' | 'IMAGE' | 'FILE' = 'TALK',
+    contract: boolean = false
   ) => {
     const storedToken = localStorage.getItem('token');
     if (!storedToken) {
@@ -120,6 +122,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       chatMessageContent: msg,
       isFile: type === 'IMAGE' || type === 'FILE',
       originalFileName: file?.name,
+      contract,
     };
 
     function arrayBufferToBase64(buffer: ArrayBuffer): string {
