@@ -1,16 +1,22 @@
 package com.example.zipplz_be.domain.chatting.controller;
 
+import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
 import com.example.zipplz_be.domain.chatting.dto.ContractDTO;
 import com.example.zipplz_be.domain.chatting.dto.ContractRequestDTO;
 import com.example.zipplz_be.domain.chatting.entity.Request;
 import com.example.zipplz_be.domain.chatting.exception.ContractNotFoundException;
 import com.example.zipplz_be.domain.chatting.exception.DuplicateContractException;
+import com.example.zipplz_be.domain.chatting.service.ChatMessageService;
 import com.example.zipplz_be.domain.chatting.service.ContractService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
+import com.example.zipplz_be.domain.model.entity.MessageType;
 import com.example.zipplz_be.domain.portfolio.exception.UnauthorizedUserException;
 import com.example.zipplz_be.domain.portfolio.service.PortfolioService;
 import com.example.zipplz_be.domain.schedule.exception.WorkerNotFoundException;
+import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
+import com.example.zipplz_be.domain.user.jwt.JWTUtil;
 import io.openvidu.java.client.Session;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -25,11 +31,13 @@ import java.util.Map;
 public class ContractController {
     private final ContractService contractService;
     private final PortfolioService portfolioService;
+    private final ChatMessageService chatMessageService;
 
-     public ContractController(PortfolioService portfolioService, ContractService contractService) {
+     public ContractController(PortfolioService portfolioService, ContractService contractService, ChatMessageService chatMessageService) {
          this.portfolioService = portfolioService;
          this.contractService = contractService;
-     }
+        this.chatMessageService = chatMessageService;
+    }
 
      //계약서 초본 작성
      @PostMapping("/draft/{chatroomSerial}")
@@ -139,8 +147,18 @@ public class ContractController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         try {
-            ContractRequestDTO contractRequestDTO = contractService.insertModifyRequestService(portfolioService.getUserSerial(authentication), chatroomSerial, params);
-
+            int userSerial = portfolioService.getUserSerial(authentication);
+            ContractRequestDTO contractRequestDTO = contractService.insertModifyRequestService(userSerial, chatroomSerial, params);
+            ChatMessageRequestDTO contractMsg = ChatMessageRequestDTO.builder()
+                    .type(MessageType.CONTRACT)
+                    .chatroomSerial(chatroomSerial)
+                    .userSerial(userSerial)
+                    .chatMessageContent("계약 수정")
+                    .isFile(false)
+                    .originalFileName("")
+                    .isContract(true)
+                    .contractContent(contractRequestDTO).build();
+            chatMessageService.sendMessage(contractMsg, userSerial, getUserRole(authentication));
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 요청 완료!", contractRequestDTO);
         } catch (DuplicateContractException e) {
@@ -205,6 +223,11 @@ public class ContractController {
         }
 
         return new ResponseEntity<>(responseDTO, status);
+    }
+
+    public String getUserRole(Authentication authentication) {
+        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        return customUserDetails.getRole();
     }
 
 
