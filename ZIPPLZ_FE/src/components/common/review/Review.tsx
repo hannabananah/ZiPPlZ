@@ -4,7 +4,7 @@ import { FaRegTrashCan } from 'react-icons/fa6';
 import { IoChatbubblesOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
-import { writeReview } from '@/apis/board/reviewApi';
+import { deleteReview, writeReview } from '@/apis/board/reviewApi';
 import { useLoginUserStore } from '@/stores/loginUserStore';
 import { Comment } from '@/stores/workerListStore';
 import Button from '@components/common/Button';
@@ -27,6 +27,12 @@ export default function Review({ comment, childComments }: Props) {
   };
   const showWriteReview = () => {
     setIsWriteReview(!isWriteReview);
+  };
+  const removeReview = async () => {
+    if (comment) {
+      await deleteReview(comment.commentSerial);
+      navigate(0);
+    }
   };
   const [review, setReview] = useState<string>('');
   const handleClickRegistReview = async (
@@ -53,7 +59,11 @@ export default function Review({ comment, childComments }: Props) {
               {comment?.nickName ? comment.nickName : comment?.userName}
             </p>
             {comment?.userSerial === loginUser?.userSerial && (
-              <FaRegTrashCan size={12} className="cursor-pointer" />
+              <FaRegTrashCan
+                size={12}
+                className="cursor-pointer"
+                onClick={removeReview}
+              />
             )}
           </div>
           {comment && (

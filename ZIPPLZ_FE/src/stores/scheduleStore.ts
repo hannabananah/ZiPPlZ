@@ -3,7 +3,13 @@ import { createJSONStorage, persist } from 'zustand/middleware';
 
 interface User {
   userSerial: number;
-  fileSerial: number;
+  fileSerial: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string | null;
+  };
   email: string;
   password: string;
   userName: string;

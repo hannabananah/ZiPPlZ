@@ -22,6 +22,7 @@ import java.util.List;
 public class ChatroomController {
 
     private final ChatroomService chatroomService;
+    private int chatroomSerial;
 
     @PostMapping("")
     public ResponseEntity<ResponseDTO> createChatroom(Authentication authentication, @RequestBody CreateChatroomDTO createChatroomDTO) {
@@ -83,6 +84,22 @@ public class ChatroomController {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "메세지들 조회 성공", chatroomDetail);
             }
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
+    @GetMapping("/{chatroomSerial}/name")
+    public ResponseEntity getOtherUserName(Authentication authentication, @PathVariable int chatroomSerial) {
+        ResponseDTO responseDTO;
+        HttpStatus status;
+        try {
+            String name = chatroomService.getOtherUserName(chatroomSerial, getUserSerial(authentication));
+
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "메세지들 조회 성공", name);
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             responseDTO = new ResponseDTO<>(status.value(), e.getMessage());

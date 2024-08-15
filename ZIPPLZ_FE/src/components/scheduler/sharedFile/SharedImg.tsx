@@ -2,6 +2,7 @@ import React, { useRef, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
 import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 import { addImg } from '@/apis/scheduler/schedulerApi';
 
@@ -37,7 +38,10 @@ interface Props {
   planSerial?: number;
 }
 export default function SharedImg({ fileList, planSerial }: Props) {
+  const navigate = useNavigate();
   const [modalIsOpen, setModalIsOpen] = useState<boolean>(false);
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+
   // const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const handleUpload = async (file: File) => {
     if (planSerial) {
@@ -50,6 +54,7 @@ export default function SharedImg({ fileList, planSerial }: Props) {
     if (file && planSerial) {
       // setSelectedFile(file);
       handleUpload(file);
+      navigate(0);
     }
   };
   const fileInputRef = useRef<HTMLInputElement | null>(null);
@@ -62,6 +67,13 @@ export default function SharedImg({ fileList, planSerial }: Props) {
   };
   const closeModal = function () {
     setModalIsOpen(false);
+  };
+  const openFullscreenImage = (imageUrl: string) => {
+    setFullscreenImage(imageUrl);
+  };
+
+  const closeFullscreenImage = () => {
+    setFullscreenImage(null);
   };
   return (
     <>
@@ -83,9 +95,9 @@ export default function SharedImg({ fileList, planSerial }: Props) {
                   >
                     <path
                       stroke="currentColor"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
                       d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
                     />
                   </svg>
@@ -113,17 +125,20 @@ export default function SharedImg({ fileList, planSerial }: Props) {
               <img
                 className="w-[20%] aspect-square"
                 src={fileList[0].saveFile}
+                onClick={() => openFullscreenImage(fileList[0].saveFile)}
               />
               {fileList.length > 1 && (
                 <img
                   className="w-[20%] aspect-square"
                   src={fileList[1].saveFile}
+                  onClick={() => openFullscreenImage(fileList[1].saveFile)}
                 />
               )}
               {fileList.length > 2 && (
                 <img
                   className="w-[20%] aspect-square"
                   src={fileList[2].saveFile}
+                  onClick={() => openFullscreenImage(fileList[2].saveFile)}
                 />
               )}
               <div>
@@ -156,11 +171,27 @@ export default function SharedImg({ fileList, planSerial }: Props) {
             <div className="grid grid-cols-3 gap-4">
               {fileList.map((item: any) => (
                 <div className="border aspect-square" key={item.fileSerial}>
-                  <img className="w-full h-full" src={item.saveFile} />
+                  <img
+                    className="w-full h-full"
+                    src={item.saveFile}
+                    onClick={() => openFullscreenImage(item.saveFile)}
+                  />
                 </div>
               ))}
             </div>
           </div>
+        </Modal>
+        <Modal
+          isOpen={fullscreenImage !== null}
+          onRequestClose={closeFullscreenImage}
+          style={customModalStyles}
+        >
+          <img
+            src={fullscreenImage || ''}
+            alt="Fullscreen"
+            style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+            onClick={closeFullscreenImage}
+          />
         </Modal>
       </div>
     </>

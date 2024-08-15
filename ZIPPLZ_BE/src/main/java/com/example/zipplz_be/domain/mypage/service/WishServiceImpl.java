@@ -37,6 +37,16 @@ public class WishServiceImpl implements WishService {
     }
 
     @Override
+    public int deleteWish(int wishSerial) {
+        return wishRepository.deleteWish(wishSerial);
+    }
+
+    @Override
+    public int searchWish(int userSerial, int wishSerial) {
+        return wishRepository.searchWish(userSerial, wishSerial);
+    }
+
+    @Override
     public List<PortfolioViewDTO> getWorkerWishList(int wishType, int userSerial) {
         List<PortfolioViewDTO> portfolioViews = new ArrayList<>();
         List<PortfolioJoinDTO> portfolios = wishRepository.getWorkerWishList(wishType, userSerial);

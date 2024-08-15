@@ -1,15 +1,17 @@
 interface Props {
   field: string;
-  handlClickField: () => void;
+  handleClickField: () => void;
 }
-export default function FieldListItem({ field, handlClickField }: Props) {
-  const imageSrc = `/public/svg/mainpage/${field}.svg`;
+export default function FieldListItem({ field, handleClickField }: Props) {
+  const imageSrc = `/svg/mainpage/${field}.svg`;
+  console.log(`${field}`);
+
   return (
     <>
       <div className="flex flex-col items-center w-full">
         <div
           className="flex p-2 cursor-pointer aspect-square bg-zp-white rounded-zp-radius-big"
-          onClick={handlClickField}
+          onClick={handleClickField}
         >
           <img src={imageSrc} />
         </div>

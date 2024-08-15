@@ -157,10 +157,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   fetchHousePosts: async () => {
     try {
-      const response = await axios.post(
-        'http://localhost:5000/board/showoff/list'
-      );
-      console.log('Fetched house posts:', response.data.data);
+      const response = await axios.post('/api/board/showoff/list');
       set({ housePosts: response.data.data });
     } catch (error) {
       console.error('Failed to fetch house posts:', error);
@@ -169,9 +166,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   fetchPostDetails: async (id: number) => {
     try {
-      const response = await axios.post(
-        `http://localhost:5000/board/showoff/list/${id}`
-      );
+      const response = await axios.post(`/api/board/showoff/list/${id}`);
 
       if (response.data.proc.code === 200) {
         const data = response.data.data;
@@ -299,7 +294,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   ) => {
     try {
       const response = await axios.patch(
-        `http://localhost:5000/board/showoff/list/${id}`,
+        `/api/board/showoff/list/${id}`,
         postData,
         {
           headers: {
@@ -329,14 +324,11 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
 
   deletePost: async (token: string, id: number) => {
     try {
-      const response = await axios.delete(
-        `http://localhost:5000/board/delete/${id}`,
-        {
-          headers: {
-            Authorization: token,
-          },
-        }
-      );
+      const response = await axios.delete(`/api/board/delete/${id}`, {
+        headers: {
+          Authorization: token,
+        },
+      });
 
       const { code, message } = response.data.proc;
       if (code === 200) {
@@ -355,7 +347,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addComment: async (token: string, comment: Comment) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/comment/add',
+        '/api/comment/add',
         { ...comment },
         {
           headers: {
@@ -378,7 +370,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   addReply: async (token: string, reply: Comment) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/comment/add',
+        '/api/comment/add',
         { ...reply },
         {
           headers: {
@@ -404,7 +396,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   ): Promise<{ code: number; message: string }> => {
     try {
       const response = await axios.delete(
-        `http://localhost:5000/comment/delete/${commentSerial}`,
+        `/api/comment/delete/${commentSerial}`,
         {
           headers: {
             Authorization: token,

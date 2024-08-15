@@ -20,3 +20,18 @@ html {
     @apply flex items-center justify-center w-12 border-zp-main-color aspect-square rounded-zp-radius-full bg-zp-white outline-none;
   }
 }
+
+@keyframes zoom-in {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.animate-zoom-in {
+  animation: zoom-in 0.5s ease-out forwards;
+}

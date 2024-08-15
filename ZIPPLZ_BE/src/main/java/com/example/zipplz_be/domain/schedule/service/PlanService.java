@@ -101,7 +101,7 @@ public class PlanService {
 
         String planName = (String) params.get("planName");
 
-        if(planName == null) {
+        if(planName == null || planName.equals("")) {
             planName = customer.getNickname() + "의 계획";
         }
 
@@ -248,7 +248,7 @@ public class PlanService {
         return file;
     }
 
-    private String uploadImage(MultipartFile image) {
+    public String uploadImage(MultipartFile image) {
         this.validateImageFileExtension(image.getOriginalFilename());
 
         try {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
+import { useNavigate } from 'react-router-dom';
 
 import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
@@ -48,6 +49,7 @@ export default function UpdatePlan({
   const closeModal = () => {
     setIsOpen(false);
   };
+  const navigate = useNavigate();
   const [newName, setNewName] = useState<string>(plan.planName);
   const [memo, setMemo] = useState<string>(plan.sharedContents || '');
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
@@ -145,6 +147,7 @@ export default function UpdatePlan({
               updatePlan(newName, plan.address, memo);
               setIsUpdate(true);
               closeModal();
+              navigate(0);
             }}
           />
         </div>

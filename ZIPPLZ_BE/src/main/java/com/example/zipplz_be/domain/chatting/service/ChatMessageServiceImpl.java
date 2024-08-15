@@ -8,8 +8,10 @@ import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepos
 import com.example.zipplz_be.domain.chatting.repository.jpa.ChatroomRepository;
 import com.example.zipplz_be.domain.chatting.repository.redis.RedisRepository;
 import com.example.zipplz_be.domain.file.entity.File;
+import com.example.zipplz_be.domain.file.repository.FileRepository;
 import com.example.zipplz_be.domain.model.entity.MessageType;
 import com.example.zipplz_be.domain.model.entity.Status;
+import com.example.zipplz_be.domain.model.repository.MessageFileRelationRepository;
 import com.example.zipplz_be.domain.model.service.S3Service;
 import com.example.zipplz_be.domain.model.service.S3ServiceImpl;
 import com.example.zipplz_be.domain.schedule.exception.S3Exception;
@@ -35,6 +37,8 @@ public class ChatMessageServiceImpl implements ChatMessageService {
     private final ChannelTopic channelTopic;
     private final RedisRepository redisRepository;
     private final S3Service s3Service;
+    private final FileRepository fileRepository;
+    private final MessageFileRelationRepository messageFileRelationRepository;
 
     @Override
     public void sendMessage(ChatMessageRequestDTO chatMessageRequestDTO, int userSerial, String role) {
@@ -57,9 +61,11 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                     .chatroomSerial(chatMessageRequestDTO.getChatroomSerial())
                     .userSerial(userSerial)
                     .userName(userRepository.findByUserSerial(userSerial).getUserName())
-                    .chatMessageContent(file.getFileName()) // return 받은 S3 file url
+//                    .chatMessageContent(file.getFileName()) // return 받은 S3 file url
+                    .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                     .fileType(chatMessageRequestDTO.getType())
                     .file(file)
+                    .isContract(chatMessageRequestDTO.isContract())
                     .build();
         } else {
             file = null;
@@ -71,6 +77,7 @@ public class ChatMessageServiceImpl implements ChatMessageService {
                     .chatMessageContent(chatMessageRequestDTO.getChatMessageContent())
                     .fileType(chatMessageRequestDTO.getType())
                     .file(file)
+                    .isContract(chatMessageRequestDTO.isContract())
                     .build();
         }
 

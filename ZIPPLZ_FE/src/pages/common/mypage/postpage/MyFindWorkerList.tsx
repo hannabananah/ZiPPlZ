@@ -10,6 +10,8 @@ import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 import { useMyPageStore } from '@stores/myPageStore';
 
+type SortOption = '평점순' | '최신순' | '과거순';
+
 export interface WorkerInfo {
   board_serial: number;
   board_type: number;
@@ -33,8 +35,6 @@ export interface WorkerInfo {
   img: string;
   user_name: string; // user_name 속성 추가
 }
-
-type SortOption = '평점순' | '최신순' | '과거순';
 
 export default function MyFindWorkerList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];
@@ -107,6 +107,14 @@ export default function MyFindWorkerList() {
     loadWorkers();
   }, [fetchMyFindWorkerList]);
 
+  const handleWorkerSelect = (user_serial: number) => {
+    if (selectedWorkers.includes(user_serial)) {
+      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
+    } else {
+      setSelectedWorkers([...selectedWorkers, user_serial]);
+    }
+  };
+
   const handleGoBack = () => {
     navigate('/mypage');
   };
@@ -128,14 +136,6 @@ export default function MyFindWorkerList() {
     setIsAllSelected(!isAllSelected);
   };
 
-  const handleWorkerSelect = (user_serial: number) => {
-    if (selectedWorkers.includes(user_serial)) {
-      setSelectedWorkers(selectedWorkers.filter((id) => id !== user_serial));
-    } else {
-      setSelectedWorkers([...selectedWorkers, user_serial]);
-    }
-  };
-
   const toggleSelecting = () => {
     if (isSelecting) {
       setSelectedWorkers([]);
@@ -149,7 +149,7 @@ export default function MyFindWorkerList() {
   };
 
   const handleWorkerClick = (user_serial: number) => {
-    navigate(`/workers/findworker/${user_serial}`);
+    navigate(`/findworkers/${user_serial}`);
   };
 
   const handleNavigate = (path: string) => {
