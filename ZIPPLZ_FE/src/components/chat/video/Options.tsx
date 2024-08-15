@@ -12,6 +12,7 @@ import { useParams } from 'react-router-dom';
 import Contract from '@components/chat/Contract';
 import FullModal from '@components/common/FullModal';
 import useOpenVidu from '@hooks/useOpenvidu';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import axios from 'axios';
 import {
   Session as OVSession,
@@ -50,6 +51,11 @@ export default function Options({
   const [name, setName] = useState('');
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
+  // const { startRecording, stopRecording } = useOpenVidu();
+  // const [onRecord, setOnRecord] = useState(false);
+  const { loginUser } = useLoginUserStore();
+  const userRole: string | undefined = loginUser?.role;
+  console.log('role:', userRole);
 
   const handleMute = () => {
     const newMuteState = !isMuted;
@@ -119,6 +125,7 @@ export default function Options({
 
   const closeContractModal = () => {
     console.log('녹화 중지 및 계약서 모달 닫기 시도!!!!');
+    // stopScreenShare();
     setIsContractModalOpen(false);
   };
 
@@ -129,6 +136,7 @@ export default function Options({
 
   const handleSharingContract = () => {
     console.log('녹화 시작 및 계약서 모달 열기 시도!!!!');
+    // startScreenShare();
     setIsContractModalOpen(true);
   };
 
@@ -167,12 +175,14 @@ export default function Options({
       >
         <MdOutlineCameraswitch size={24} />
       </button>
-      <button
-        className="drop-shadow-zp-deep btn hover:bg-zp-sub-color"
-        onClick={handleSharingContract}
-      >
-        <MdChecklistRtl size={28} />
-      </button>
+      {userRole == 'worker' && (
+        <button
+          className="drop-shadow-zp-deep btn hover:bg-zp-sub-color"
+          onClick={handleSharingContract}
+        >
+          <MdChecklistRtl size={28} />
+        </button>
+      )}
       <button
         className="drop-shadow-zp-deep bg-zp-red btn"
         onClick={handleExitLive}
