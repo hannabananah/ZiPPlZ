@@ -241,7 +241,7 @@ export default function Portfolio() {
         style={{ bottom: '3.6rem', left: 0 }}
       >
         {loginUser?.role === 'customer' && (
-          <div className="flex items-center w-full gap-4 mb-4">
+          <div className="flex flex-col items-center w-full gap-4 mb-4">
             <hr className="w-full text-zp-light-gray" />
             <Button
               buttonType="second"
