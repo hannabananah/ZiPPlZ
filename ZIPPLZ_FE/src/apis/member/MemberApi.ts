@@ -109,3 +109,11 @@ export const getGugun = async (sidocode: number) => {
 export const getFields = async () => {
   return await axiosInstance.get(END_POINT.DEFAULT + '/field');
 };
+//계약서 조회
+export const getContract = async (workSerial: number) => {
+  return await axiosInstance.get(`contract/${workSerial}`, {
+    headers: {
+      Authorization: `Bearer ${localStorage.getItem('token')}`,
+    },
+  });
+};

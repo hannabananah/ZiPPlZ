@@ -3,7 +3,7 @@ import ImageChange from '@assets/svg/icons/ImageChange';
 interface Props {
   onClick: () => void;
 }
-export default function ImageChangeTab({ onClick }: Props) {
+export default function ImageChangeViewTab({ onClick }: Props) {
   return (
     <>
       <div

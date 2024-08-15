@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { getChatRooms } from '@/apis/chatroom/chatApi';
 import { getTopWorkerList } from '@/apis/worker/WorkerListApi';
 import { useWorkerListStore } from '@/stores/workerListStore';
 import { getTodayWork, getWorksByUser } from '@apis/scheduler/schedulerApi';
@@ -8,6 +9,7 @@ import Button from '@components/common/Button';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import FieldListItem from '@components/home/FieldListItem';
 import ImageChangeTab from '@components/home/ImageChangeTab';
+import ImageChangeViewTab from '@components/home/ImageChangeViewTab';
 import TodaySchedule from '@components/home/TodaySchedule';
 import WorkerCard from '@components/home/WorkerCard';
 import { useLoginUserStore } from '@stores/loginUserStore';
@@ -88,12 +90,38 @@ interface TodayWork {
     certificatedBadge: number;
   };
 }
+interface ChatRoom {
+  chatroomSerial: string;
+  lastMessage: string;
+  fieldName: string;
+  workerName: string;
+  customerName: string;
+  temperature: number;
+  createdAt: string;
+  unreadCount: number;
+  certificated: boolean;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+}
 export default function Home() {
   const [scheduleList, setScheduleList] = useState<Work[]>([]);
   const [todayWork, setTodayWork] = useState<TodayWork[]>([]);
   const navigate = useNavigate();
   const { loginUser } = useLoginUserStore();
   const { workerList, setWorkerList } = useWorkerListStore();
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const fetchChatRooms = async () => {
+    const response = await getChatRooms();
+    setChatRoomList(response.data.data);
+  };
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
   const handleClickImageChange = () =>
     navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
   const fetchWorks = async () => {
@@ -120,7 +148,12 @@ export default function Home() {
       fetchTodaySchedule();
     }
   }, []);
-  useEffect(() => {}, [workerList]);
+  useEffect(() => {
+    console.log(todayWork);
+  }, [todayWork]);
+  useEffect(() => {
+    console.log(chatRoomList);
+  }, [chatRoomList]);
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       <div className="relative w-full p-4 rounded-zp-radius-big bg-zp-white">
@@ -152,7 +185,12 @@ export default function Home() {
               todayWork
                 .filter((work) => work.worker !== null)
                 .map((work) => (
-                  <TodaySchedule role={loginUser?.role || ''} work={work} />
+                  <TodaySchedule
+                    key={work.workSerial}
+                    role={loginUser?.role || ''}
+                    work={work}
+                    chatRoomList={chatRoomList}
+                  />
                 ))
             ) : (
               <div className="w-full h-[8.3rem] rounded-zp-radius-big bg-zp-white flex items-center justify-center">
@@ -164,9 +202,10 @@ export default function Home() {
           </div>
           <div className="basis-5/12">
             <p className="font-extrabold text-zp-xl">Image Change</p>
-            {/* <div className="w-full h-[4rem]"> */}
-            <ImageChangeTab onClick={handleClickImageChange} />
-            {/* </div> */}
+            <div className="flex flex-col gap-2">
+              <ImageChangeTab onClick={handleClickImageChange} />
+              <ImageChangeViewTab onClick={handleClickImageChange} />
+            </div>
           </div>
         </div>
       )}

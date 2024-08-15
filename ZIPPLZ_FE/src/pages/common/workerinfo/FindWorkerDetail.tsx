@@ -197,7 +197,7 @@ export default function FindWorkerDetai() {
             <div className="flex items-center w-full gap-4 mb-4">
               <Button
                 buttonType={isWish > 0 ? 'primary' : 'normal'}
-                width={loginUser?.role === 'customer' ? '50%' : 'full'}
+                width={loginUser?.role === 'worker' ? '50%' : 'full'}
                 height={3}
                 fontSize="lg"
                 radius="btn"
@@ -206,7 +206,7 @@ export default function FindWorkerDetai() {
                 <IoBookmarkOutline size={24} />
                 <span className="font-bold"> 찜하기</span>
               </Button>
-              {loginUser?.role === 'customer' && (
+              {loginUser?.role === 'worker' && (
                 <Button
                   buttonType="second"
                   width="full"

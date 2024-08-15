@@ -16,9 +16,9 @@ export default function MannerTemperature({ scores }: Props) {
             <div className="w-full h-5 bg-zp-sub-color rounded-zp-radius-big">
               <div
                 className="flex items-center justify-end h-full bg-zp-main-color rounded-zp-radius-big"
-                style={{ width: `${scores[0]}%` }} // 퍼센트 단위로 설정
+                style={{ width: `${scores[0]}%` }}
               >
-                <span className="text-zp-xs text-zp-white">{scores[0]}%</span>{' '}
+                <span className="text-zp-xs text-zp-white">{scores[0]}°C</span>{' '}
                 {/* 퍼센트 값 표시 */}
               </div>
             </div>

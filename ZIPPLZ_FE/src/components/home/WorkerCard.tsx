@@ -21,13 +21,13 @@ export default function WorkerCard({ worker }: Props) {
         className="px-4 profile-card"
         style={{ width: '100%', height: '80%' }}
         onClick={() => {
-          navigate('/workers/1/portfolio?tab=overview');
+          navigate(`/workers/${worker.user_serial}/portfolio?tab=overview`);
         }}
       >
         <div className="profile-img absolute top-[-25%] w-[60%]">
           <img
-            className="object-cover w-full h-full border rounded-zp-radius-full"
-            src={worker.img}
+            className="object-cover w-full h-full  rounded-zp-radius-full"
+            src={worker.save_file}
           />
         </div>
         <p className="md:mt-[30%] mt-[50%] font-bold text-zp-2xs">

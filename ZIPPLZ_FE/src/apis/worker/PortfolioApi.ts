@@ -43,7 +43,12 @@ export const getWorkerScheduleDetail = async (
   workSerial: number
 ) => {
   return await axiosInstance.get(
-    END_POINT.PORTFOLIO_SCHEDULE(workerSerial) + `/view/${workSerial}`
+    END_POINT.PORTFOLIO_SCHEDULE(workerSerial) + `/view/${workSerial}`,
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
   );
 };
 //포트폴리오 리뷰 조회
@@ -69,5 +74,23 @@ export const wirteWorkerReview = async (
 export const getGPTReview = async (portfolioSerial: number) => {
   return await axiosInstance.get(
     END_POINT.PORTFOLIO_REVIEW(portfolioSerial) + '/chatgpt'
+  );
+};
+//포트폴리오 이미지 업로드
+export const addPortfolioImg = async (
+  portfolioSerial: number,
+  imageFile: File
+) => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  return await axiosInstance.post(
+    END_POINT.PORTFOLIO(portfolioSerial) + '/image',
+    formData,
+    {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+    }
   );
 };
