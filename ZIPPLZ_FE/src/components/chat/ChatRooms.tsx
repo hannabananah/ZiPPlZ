@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { useNavigate } from 'react-router-dom';
 
 import { useLoginUserStore } from '@/stores/loginUserStore';
@@ -20,8 +22,10 @@ export default function ChatRooms() {
   const [filteredChatRooms, setFilteredChatRooms] = useState<ChatRoom[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [selectedRoomId, setSelectedRoomId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(true);
   const { openModal, closeModal } = useModalActions();
   const currUserRole = useLoginUserStore().loginUser?.role;
+
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
@@ -57,6 +61,8 @@ export default function ChatRooms() {
         setFilteredChatRooms(fetchedChatRooms);
       } catch (error) {
         console.error('채팅방을 불러올 수 없습니다.', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -115,6 +121,7 @@ export default function ChatRooms() {
   const handleSearch = (text: string) => {
     setSearchText(text);
   };
+
   return (
     <div className="relative flex flex-col w-full pb-8 overflow-y-auto">
       <div className="sticky top-0 z-30 w-full px-8 pt-6 mb-4 bg-zp-white">
@@ -123,7 +130,28 @@ export default function ChatRooms() {
           placeholder="이름을 입력해주세요."
         />
       </div>
-      {filteredChatRooms.length === 0 ? (
+      {loading ? (
+        <ul className="grid w-full grid-cols-2 px-8 gap-x-5 gap-y-4 max-[460px]:grid-cols-1">
+          {Array.from({ length: 4 }).map((_, index) => (
+            <li
+              key={index}
+              className="flex flex-col items-center p-2.5 bg-zp-light-orange rounded-zp-radius-big drop-shadow-zp-normal"
+            >
+              <div className="self-end rounded-zp-radius-full">
+                <Skeleton circle={true} height={20} width={20} />
+              </div>
+              <div className="flex items-center justify-center w-full">
+                <Skeleton circle={true} height={48} width={48} />
+                <div className="flex flex-col items-center justify-between flex-grow gap-1 ml-3 basis-3/5 max-w-36">
+                  <Skeleton width={80} height={20} />
+                  <Skeleton width={60} height={15} />
+                </div>
+              </div>
+              <Skeleton width={180} height={30} className="mt-2" />
+            </li>
+          ))}
+        </ul>
+      ) : filteredChatRooms.length === 0 ? (
         <div className="flex flex-col items-center justify-center w-full h-full overflow-x-hidden">
           <p className="mb-4 text-center text-zp-gray text-zp-sm">
             해당하는 채팅방 상대가 없습니다.

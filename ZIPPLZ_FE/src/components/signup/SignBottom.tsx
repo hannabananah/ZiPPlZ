@@ -93,9 +93,7 @@ export default function SignBottom({
     }, 3000);
   };
   const registUser = async (user: User) => {
-    console.log(user);
     const response = await signUp(user);
-    console.log('유저========', response.data.data);
     setUserSerial(response.data.data.userSerial);
   };
   const registSocialUser = async (user: socialUser) => {
@@ -105,12 +103,10 @@ export default function SignBottom({
   };
   const registCustomer = async (customer: Customer) => {
     const response = await signUpCustomer(customer);
-    console.log('Customer registration response:', response);
     return response.data;
   };
   const registWorker = async (worker: Worker) => {
     const response = await signUpWorker(worker);
-    console.log('Customer registration response:', response);
     return response.data;
   };
   useEffect(() => {
@@ -128,7 +124,7 @@ export default function SignBottom({
   }, [userSerial]);
   return (
     <>
-      <div className="w-full flex flex-col gap-2 absolute bottom-0 left-0 p-4">
+      <div className="absolute bottom-0 left-0 flex flex-col w-full gap-2 p-4">
         <div className="grid grid-cols-3 gap-0 w-full h-[0.5rem] bg-zp-light-beige">
           <div className="bg-zp-sub-color" />
           <div
@@ -170,8 +166,6 @@ export default function SignBottom({
             setNext(false);
             setActive(false);
             if (phrase === 'extrainfo') {
-              console.log(socialUser);
-
               navigate(link);
             } else {
               if (
@@ -186,7 +180,6 @@ export default function SignBottom({
                 if (phrase == 'nickname' || phrase == 'skills')
                   registUser(user);
                 else registSocialUser(socialUser);
-                console.log(user);
                 openModal();
               }
             }
@@ -203,11 +196,11 @@ export default function SignBottom({
           {active ? '인증 완료' : '회원가입 완료'}
         </p>
         <div className="w-full flex flex-col mt-[4rem] items-center gap-6">
-          <div className="w-full flex flex-col items-center ">
-            <p className="text-zp-xl font-bold text-center">
+          <div className="flex flex-col items-center w-full ">
+            <p className="font-bold text-center text-zp-xl">
               {!active && '회원가입이 완료되었습니다.'}
             </p>
-            <p className="text-zp-xl font-bold text-center">
+            <p className="font-bold text-center text-zp-xl">
               {active
                 ? '인증이 완료되었습니다.'
                 : '로그인 페이지로 이동하시겠습니까?'}
@@ -227,7 +220,6 @@ export default function SignBottom({
                 closeModal();
               } else {
                 if (type === 'customer') {
-                  console.log(customer);
                   registCustomer(customer);
                 } else {
                   registWorker(worker);

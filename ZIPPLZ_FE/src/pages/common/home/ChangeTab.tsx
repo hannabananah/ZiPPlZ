@@ -6,8 +6,8 @@ import Selectbar from '@/components/common/Selectbar';
 import '@assets/scss/App.scss';
 import Stage from '@components/Stage';
 import { modelScaleProps } from '@components/helpers/Interfaces';
-import { onnxMaskToImage } from '@components/helpers/maskUtils';
-import { modelData } from '@components/helpers/onnxModelAPI';
+// import { onnxMaskToImage } from '@components/helpers/maskUtils';
+// import { modelData } from '@components/helpers/onnxModelAPI';
 import { handleImageScale } from '@components/helpers/scaleHelper';
 import AppContext from '@components/hooks/createContext';
 import MaterialList from '@components/imageChange/MaterialList';
@@ -28,7 +28,7 @@ export default function ChangeTab() {
   const {
     clicks: [clicks],
     image: [, setImage],
-    maskImg: [, setMaskImg],
+    // maskImg: [setMaskImg],
   } = useContext(AppContext)!;
   const [model, setModel] = useState<InferenceSession | null>(null); // ONNX model
   const [tensor, setTensor] = useState<Tensor | null>(null); // Image embedding tensor
@@ -42,6 +42,7 @@ export default function ChangeTab() {
     null
   );
   const [maskImage, setMaskImage] = useState<HTMLImageElement | null>(null);
+  console.log(setMaskImage);
   const [materialImage, setMaterialImage] = useState<HTMLImageElement | null>(
     null
   );
@@ -54,7 +55,6 @@ export default function ChangeTab() {
       try {
         fetchTest();
         if (MODEL_DIR === undefined) return;
-        console.log(`Loading model from: ${MODEL_DIR}`);
         const URL: string = MODEL_DIR;
         const model = await InferenceSession.create(URL);
         setModel(model);
@@ -70,9 +70,7 @@ export default function ChangeTab() {
       setTensor(embedding)
     );
   }, []);
-  useEffect(() => {
-    console.log(model);
-  }, [model]);
+  useEffect(() => {}, [model]);
   // EMDEDDING MODEL LOAD 시
   // Decode a Numpy file into a tensor.
   const loadNpyTensor = async (tensorFile: string) => {
@@ -104,9 +102,9 @@ export default function ChangeTab() {
       img.onload = () => {
         const { height, width, samScale } = handleImageScale(img);
         setModelScale({
-          height: height, // original image height
-          width: width, // original image width
-          samScale: samScale, // scaling factor for image which has been resized to longest side 1024
+          height: height,
+          width: width,
+          samScale: samScale,
         });
         img.width = width;
         img.height = height;
@@ -121,49 +119,6 @@ export default function ChangeTab() {
     }
   };
 
-  // // EMBEDDING MODEL LOAD 시
-  // const embeddingImageAPI = async (file: File) => {
-  //     const formData = new FormData();
-  //     formData.append("file", file);
-
-  //     try {
-  //         console.log("Embedding API request 요청 ... ");
-  //         const response = await fetch("http://localhost:5001/ai/segment", {
-  //             method: "POST",
-  //             body: formData,
-  //         });
-
-  //         if (!response.ok) {
-  //             throw new Error("Embedding API request failed");
-  //         }
-  //         console.log("Embedding API response 완료 !!!");
-  //         const data = await response.json();
-
-  //         const { embedding, shape } = data;
-  //         const embedding_img = await loadNpyTensor(
-  //             embedding,
-  //             shape,
-  //             "float32"
-  //         );
-  //         setTensor(embedding_img);
-  //     } catch (error) {
-  //         console.error("Error calling Embedding API:", error);
-  //     }
-  // };
-
-  // // EMBEDDING MODEL LOAD 시
-  // // Decode a Numpy file into a tensor.
-  // const loadNpyTensor = async (
-  //     data: number[],
-  //     shape: number[],
-  //     dType: string
-  // ) => {
-  //     const tensorData = new Float32Array(data);
-  //     const tensor = new ort.Tensor(dType, tensorData, shape);
-  //     return tensor;
-  // };
-
-  // Run the ONNX model every time clicks has changed
   useEffect(() => {
     runONNX();
   }, [clicks, tensor]);
@@ -177,36 +132,12 @@ export default function ChangeTab() {
         modelScale === null
       ) {
         return;
-      } else {
-        // Prepare the model input in the correct format for SAM.
-        const feeds = modelData({
-          clicks,
-          tensor,
-          modelScale,
-        });
-        console.log('-asdf');
-        if (feeds === undefined) return;
-        // Run the SAM ONNX model with the feeds returned from modelData()
-        const results = await model.run(feeds);
-        const output = results[model.outputNames[0]];
-
-        // The predicted mask returned from the ONNX model is an array which is
-        // rendered as an HTML image using onnxMaskToImage() from maskUtils.tsx.
-        const selectedImage = onnxMaskToImage(
-          output.data,
-          output.dims[2],
-          output.dims[3]
-        );
-
-        setMaskImage(selectedImage);
-        setMaskImg(selectedImage);
       }
     } catch (e) {
       console.log(e);
     }
   };
 
-  // Handle img edit
   const handleMaterialImgEditing = async (
     event: ChangeEvent<HTMLInputElement>
   ) => {
@@ -216,9 +147,6 @@ export default function ChangeTab() {
       await loadMaterialImage(file);
     }
   };
-  useEffect(() => {
-    console.log(isMainImgUpload);
-  }, [isMainImgUpload]);
   useEffect(() => {
     if (maskImage) {
       setIsFileUploaded(true);
@@ -233,9 +161,9 @@ export default function ChangeTab() {
       img.onload = () => {
         const { height, width, samScale } = handleImageScale(img);
         setModelScale({
-          height: height, // original image height
-          width: width, // original image width
-          samScale: samScale, // scaling factor for image which has been resized to longest side 1024
+          height: height,
+          width: width,
+          samScale: samScale,
         });
         img.width = width;
         img.height = height;
@@ -260,7 +188,6 @@ export default function ChangeTab() {
     }
 
     if (maskImage) {
-      // Convert maskImage to Blob
       const maskImageBlob = await imageToBlob(maskImage);
       formData.append('mask_image', maskImageBlob, 'mask_image.png');
     }
@@ -277,7 +204,6 @@ export default function ChangeTab() {
     }
 
     try {
-      console.log('Editing API request 요청 ... ');
       const response = await fetch('http://localhost:5001/ai/editing', {
         method: 'POST',
         body: formData,
@@ -286,14 +212,11 @@ export default function ChangeTab() {
       if (!response.ok) {
         throw new Error('Editing API request failed');
       }
-      console.log('Editing API response 완료 !!!');
       const data = await response.json();
-      // const maskUrl = `data:image/png;base64,${data.mask}`;
 
       if (data && data.editing.images && data.editing.images.length > 0) {
         setEditingImage(data.editing.images[0].image);
       } else {
-        console.log('No images found in API Response.');
         setEditingImage(null);
       }
     } catch (error) {
@@ -313,38 +236,30 @@ export default function ChangeTab() {
       }
       context.drawImage(image, 0, 0);
 
-      // Get the image data from the canvas
       const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
       const data = imageData.data;
 
-      // Define the threshold value
-      const threshold = 128; // Adjust this value as needed (0-255)
+      const threshold = 128;
 
-      // Convert image data to black and white
       for (let i = 0; i < data.length; i += 4) {
-        // Calculate the grayscale value
         const avg = (data[i] + data[i + 1] + data[i + 2]) / 3;
 
-        // Apply the threshold to convert to black or white
         const value = avg >= threshold ? 0 : 255;
 
-        data[i] = value; // Red channel
-        data[i + 1] = value; // Green channel
-        data[i + 2] = value; // Blue channel
-        // Alpha channel (data[i + 3]) is not changed
+        data[i] = value;
+        data[i + 1] = value;
+        data[i + 2] = value;
       }
 
-      // Put the modified image data back to the canvas
       context.putImageData(imageData, 0, 0);
 
-      // Convert the canvas to a Blob
       canvas.toBlob((blob) => {
         if (blob) {
           resolve(blob);
         } else {
           reject(new Error('Failed to convert image to blob'));
         }
-      }, 'image/png'); // Specify the MIME type if necessary
+      }, 'image/png');
     });
   };
 

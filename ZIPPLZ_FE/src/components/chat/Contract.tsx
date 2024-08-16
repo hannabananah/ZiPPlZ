@@ -275,14 +275,14 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
                 <Select
                   isMulti
                   name="materials"
-                  options={materials.map((material) => ({
+                  options={(materials || []).map((material) => ({
                     value: material.materialSerial,
                     label: material.materialName,
                   }))}
                   className="w-full basic-multi-select"
                   classNamePrefix="select"
                   styles={multiSelectBoxCustomStyles}
-                  value={selectedMaterials.map((material) => ({
+                  value={(selectedMaterials || []).map((material) => ({
                     value: material.materialSerial,
                     label: material.materialName,
                   }))}

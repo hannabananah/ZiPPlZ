@@ -22,7 +22,7 @@ interface HousePost {
   nickname: string;
   comment_cnt: number;
   wish_cnt: number;
-  img?: string; // 선택적 속성으로 변경
+  img?: string;
 }
 
 export default function MyHousePostScrapList() {
@@ -51,7 +51,6 @@ export default function MyHousePostScrapList() {
 
   const handleSortSelect = (sortOption: string) => {
     setSelectedValue(sortOption as SortOption);
-    // 정렬 로직 추가
     setList((prevList) =>
       [...prevList].sort((a, b) => {
         if (sortOption === '최신순') {
@@ -63,13 +62,12 @@ export default function MyHousePostScrapList() {
             new Date(a.board_date).getTime() - new Date(b.board_date).getTime()
           );
         } else {
-          return b.wish_cnt - a.wish_cnt; // 평점순
+          return b.wish_cnt - a.wish_cnt;
         }
       })
     );
   };
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/mypage');
   };
@@ -80,7 +78,7 @@ export default function MyHousePostScrapList() {
 
   const handleNavigate = (path: string) => {
     navigate(path);
-    setIsDropdownOpen(false); // 드롭다운을 닫습니다.
+    setIsDropdownOpen(false);
   };
 
   const toggleAllSelected = () => {

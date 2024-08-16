@@ -50,9 +50,9 @@ export default function MyPage() {
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/member/login'); // 토큰이 없으면 로그인 페이지로 이동
+      navigate('/member/login');
     } else {
-      fetchMyPageData(); // 컴포넌트가 마운트될 때 마이페이지 데이터 가져오기
+      fetchMyPageData();
     }
   }, [fetchMyPageData, navigate]);
 
@@ -96,7 +96,6 @@ export default function MyPage() {
     setShowLogoutModal(false);
   };
 
-  // 로그아웃: localstorage에서 해당 유저 토큰 제거 후 로그인 페이지로 이동
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('login-user');
@@ -124,14 +123,13 @@ export default function MyPage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewImg(reader.result as string);
-        setSelectedIcon(null); // 이미지 파일이 선택되면 아이콘 선택을 초기화
+        setSelectedIcon(null);
       };
       reader.readAsDataURL(file);
     }
   };
 
   const convertIconToBlob = async (IconComponent: JSX.Element) => {
-    // ReactDOMServer를 이용하여 IconComponent를 문자열로 변환
     const svgString = new XMLSerializer().serializeToString(
       new DOMParser().parseFromString(
         `<svg xmlns="http://www.w3.org/2000/svg">${IconComponent.props.children}</svg>`,
@@ -139,7 +137,6 @@ export default function MyPage() {
       ).documentElement
     );
 
-    // 변환된 SVG 문자열을 Blob으로 변환
     const blob = new Blob([svgString], { type: 'image/svg+xml' });
     return blob;
   };
@@ -147,26 +144,26 @@ export default function MyPage() {
   const handleSaveProfile = async () => {
     if (selectedFile) {
       await uploadProfileImage(selectedFile);
-      await fetchMyPageData(); // 프로필 이미지 업데이트 후 다시 불러오기
-      setPreviewImg(null); // 미리보기 이미지 초기화
+      await fetchMyPageData();
+      setPreviewImg(null);
     } else if (selectedIcon) {
       const iconBlob = await convertIconToBlob(selectedIcon);
-      await uploadProfileImage(iconBlob); // 아이콘을 이미지로 변환하여 저장
+      await uploadProfileImage(iconBlob);
       await fetchMyPageData();
     }
     setShowProfileModal(false);
   };
 
   const handleClearProfile = async () => {
-    await deleteProfileImage(); // 프로필 이미지를 삭제
-    setPreviewImg(null); // 미리보기 이미지 초기화
-    setSelectedIcon(null); // 아이콘 선택 초기화
+    await deleteProfileImage();
+    setPreviewImg(null);
+    setSelectedIcon(null);
   };
 
   const handleIconSelect = (IconComponent: JSX.Element) => {
     setSelectedIcon(IconComponent);
-    setPreviewImg(null); // 아이콘을 선택하면 미리보기 이미지 초기화
-    setSelectedFile(null); // 아이콘을 선택하면 이미지 파일 선택을 초기화
+    setPreviewImg(null);
+    setSelectedFile(null);
   };
 
   return (
@@ -220,7 +217,6 @@ export default function MyPage() {
                 <MdOutlinePhotoCamera size={24} />
               </div>
             </div>
-            {/* 임시로 고객, 시공업자 둘다 이름 */}
             <div className="grid h-8 font-bold w-36 place-items-center text-zp-lg">
               {name}
             </div>

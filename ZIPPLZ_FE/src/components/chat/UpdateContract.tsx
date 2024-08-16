@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-// import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { sendUpdateContract, updateContract } from '@/apis/member/MemberApi';

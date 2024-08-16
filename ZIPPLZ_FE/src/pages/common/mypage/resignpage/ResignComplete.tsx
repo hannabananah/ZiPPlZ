@@ -4,17 +4,16 @@ import { useNavigate } from 'react-router-dom';
 export default function ResignComplete() {
   const navigate = useNavigate();
 
-  // 홈으로 이동 핸들러
   const handleGoHome = () => {
     navigate('/');
   };
 
   return (
     <>
-      <div className="flex justify-center items-center min-h-screen p-6 bg-zp-gray">
+      <div className="flex items-center justify-center min-h-screen p-6 bg-zp-gray">
         <div className="text-center">
           {/* 체크 아이콘 */}
-          <div className="flex justify-center items-center mb-6">
+          <div className="flex items-center justify-center mb-6">
             <FaRegCheckCircle
               className="text-green-500"
               style={{ width: '167px', height: '167px' }}
@@ -22,7 +21,7 @@ export default function ResignComplete() {
           </div>
 
           {/* 탈퇴 완료 텍스트 */}
-          <div className="text-zp-3xl font-bold mb-4">탈퇴 완료</div>
+          <div className="mb-4 font-bold text-zp-3xl">탈퇴 완료</div>
 
           {/* 안내 문구 */}
           <div className="w-[360px] h-[60px] text-zp-sm font-bold mb-6">

@@ -61,7 +61,6 @@ export default function FindWorkerDetailCreate() {
   //리스트 이동
   const goList = () => navigate('/workers/findworker');
 
-  // 이미지 업로드 핸들러
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files || []);
 
@@ -71,7 +70,6 @@ export default function FindWorkerDetailCreate() {
     ]);
   };
 
-  // 이미지 삭제 핸들러
   const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
@@ -99,13 +97,11 @@ export default function FindWorkerDetailCreate() {
     <>
       <div className="flex flex-col w-full p-6 mt-[3rem] gap-4 mb-[4rem]">
         <div className="w-full relateive">
-          {/* 나가기 버튼, 구인 글쓰기 text */}
           <GoArrowLeft className="absolute cursor-pointer" onClick={goList} />
           <p className="w-full font-extrabold text-center align-text-top text-zp-xl">
             구인 글쓰기
           </p>
         </div>
-        {/* 게시판 가이드 */}
         <div className="flex flex-col w-full gap-1">
           <p className="font-bold text-zp-xl">
             현장이나 일과 관련된 사진을 올려주세요.(선택사항)
@@ -115,7 +111,6 @@ export default function FindWorkerDetailCreate() {
             있어요.
           </p>
         </div>
-        {/* 사진 첨부 버튼 */}
         <div className="flex items-start gap-1">
           <div className="flex flex-col items-center justify-center w-[5rem] aspect-square relative bg-zp-light-gray rounded-zp-radius-big">
             <label htmlFor="file-upload">
@@ -133,7 +128,6 @@ export default function FindWorkerDetailCreate() {
               multiple
             />
           </div>
-          {/* 사진 미리보기 */}
           <div className="flex overflow-x-auto">
             {images.map((image, index) => (
               <div key={index} className="relative w-[5rem] h-[5rem] ">
@@ -151,7 +145,6 @@ export default function FindWorkerDetailCreate() {
             ))}
           </div>
         </div>
-        {/* 제목 input */}
         <div className="flex flex-col w-full gap-1">
           <p className="font-bold text-zp-md">제목</p>
           <Input
@@ -169,7 +162,6 @@ export default function FindWorkerDetailCreate() {
             }
           />
         </div>
-        {/* 현장 주소 input */}
         <div className="relative flex flex-col w-full gap-1">
           <p className="font-bold text-zp-md">현장 주소</p>
           <Input
@@ -191,7 +183,6 @@ export default function FindWorkerDetailCreate() {
             onClick={() => setOpenDaum(true)}
           />
         </div>
-        {/* 작업 내용 input */}
         <div className="flex flex-col w-full gap-4">
           <p className="font-bold text-zp-md">작업내용</p>
           <textarea

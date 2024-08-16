@@ -90,7 +90,7 @@ export const requestLogin = async (email: string, pw: string) => {
     END_POINT.LOGIN,
     {},
     {
-      withCredentials: true,
+      // withCredentials: true,
       headers: {
         email: email,
         password: pw,

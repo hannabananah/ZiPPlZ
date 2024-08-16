@@ -10,9 +10,7 @@ export default function SocialLoginCheck() {
   const navigate = useNavigate();
   const login = async () => {
     try {
-      console.log('여기는 1번');
       const response = await requestSocialLogin();
-      console.log('여기는 2번');
       const authorizationHeader = response.headers.authorization;
       if (authorizationHeader) {
         let token: string = authorizationHeader.split(' ')[1];

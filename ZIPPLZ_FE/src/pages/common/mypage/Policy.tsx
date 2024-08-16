@@ -9,12 +9,10 @@ export default function Policy() {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
 
-  // 페이지 돌아가기 핸들러
   const handleGoBack = () => {
     navigate('/mypage');
   };
 
-  // "더보기" / "접기" 버튼 핸들러
   const handleToggleExpand = () => {
     setIsExpanded(!isExpanded);
   };
@@ -166,10 +164,10 @@ export default function Policy() {
 본 약관은 2024년 08월 02일부터 적용한다.`;
 
   return (
-    <div className="mt-16 flex justify-center items-start min-h-screen p-6">
+    <div className="flex items-start justify-center min-h-screen p-6 mt-16">
       <div className="w-full">
         {/* 뒤로가기 버튼 + "개인정보처리방침" 글자 */}
-        <div className="h-12 flex items-center justify-between w-full relative">
+        <div className="relative flex items-center justify-between w-full h-12">
           <div className="flex items-center">
             <GoArrowLeft
               className="mr-6 cursor-pointer"
@@ -177,12 +175,12 @@ export default function Policy() {
               size={20}
             />
           </div>
-          <div className="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-center">
+          <div className="absolute text-2xl font-bold text-center transform -translate-x-1/2 left-1/2">
             개인정보처리방침
           </div>
         </div>
 
-        <div className="mt-6 w-full text-zp-xs font-bold bg-zp-sub-color rounded-zp-radius-big p-6">
+        <div className="w-full p-6 mt-6 font-bold text-zp-xs bg-zp-sub-color rounded-zp-radius-big">
           <div
             className={`overflow-hidden transition-all duration-500 ${isExpanded ? 'h-auto' : 'h-[calc(20rem)]'} `}
           >

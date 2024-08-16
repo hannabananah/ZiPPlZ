@@ -148,12 +148,6 @@ export default function Home() {
       fetchTodaySchedule();
     }
   }, []);
-  useEffect(() => {
-    console.log(todayWork);
-  }, [todayWork]);
-  useEffect(() => {
-    console.log(chatRoomList);
-  }, [chatRoomList]);
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       <div className="relative w-full p-4 rounded-zp-radius-big bg-zp-white">

@@ -6,8 +6,8 @@ import PhoneInput from '@components/signup/PhoneInput';
 
 export default function FindId() {
   const [email, setEmail] = useState<string>('');
-  const [phone, setPhone] = useState<string>('');
   console.log(email);
+  const [phone, setPhone] = useState<string>('');
   return (
     <>
       <div className="flex flex-col gap-4">

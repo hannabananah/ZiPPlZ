@@ -68,7 +68,6 @@ export default function SignUpWorkerRegion({
 
   const handleButtonClick = (sidoCode: number) => {
     setSelectedSido(sidoCode);
-    // 새로운 Sido 선택 시 해당 Sido의 Gugun 초기화
     if (!selectedLocation[sidoCode]) {
       setSelectedLocation((prev) => ({
         ...prev,
@@ -84,7 +83,6 @@ export default function SignUpWorkerRegion({
     setSelectedLocation((prev) => {
       const currentLocations = prev[gugun.sidoCode] || [];
       if (currentLocations.some((loc) => loc.gugunCode === gugun.gugunCode)) {
-        // 이미 선택된 Gugun 제거
         return {
           ...prev,
           [gugun.sidoCode]: currentLocations.filter(
@@ -92,7 +90,6 @@ export default function SignUpWorkerRegion({
           ),
         };
       } else {
-        // 새로운 Gugun 추가
         return {
           ...prev,
           [gugun.sidoCode]: [

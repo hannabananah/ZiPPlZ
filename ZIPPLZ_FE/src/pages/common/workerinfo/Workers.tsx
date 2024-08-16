@@ -64,7 +64,7 @@ export default function Workers() {
     } else {
       navigate('/workers/findworker');
     }
-    setIsOpen(false); // 드롭다운을 닫기
+    setIsOpen(false);
   };
   const navigate = useNavigate();
 
