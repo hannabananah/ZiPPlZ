@@ -1,34 +1,27 @@
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { useNavigate } from 'react-router-dom';
 
+import type { ChatRoom } from '@/types';
 import { formatDate } from '@/utils/formatDateWithTime';
 
 import Button from '../common/Button';
 
-interface ChatRoom {
-  chatroomSerial: string;
-  lastMessage: string;
-  fieldName: string;
-  workerName: string;
-  customerName: string;
-  temperature: number;
-  createdAt: string;
-  unreadCount: number;
-  certificated: boolean;
-  file: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
 interface Props {
   role: string;
   work?: any;
   chatRoomList: ChatRoom[];
+  loading: boolean;
 }
-export default function TodaySchedule({ role, work, chatRoomList }: Props) {
+
+export default function TodaySchedule({
+  role,
+  work,
+  chatRoomList,
+  loading,
+}: Props) {
   const navigate = useNavigate();
+
   const chatStart = () => {
     if (chatRoomList.length > 0 && work) {
       const chatRoomSerial: string = chatRoomList.filter(
@@ -40,10 +33,38 @@ export default function TodaySchedule({ role, work, chatRoomList }: Props) {
       navigate(`/chatrooms/${chatRoomSerial}`);
     }
   };
+
+  if (loading) {
+    return (
+      <div className="w-full h-[8.3rem] rounded-zp-radius-big p-4 md:p-6 bg-zp-white drop-shadow-zp-slight">
+        <div className="flex items-start justify-between md:px-2">
+          <div className="flex flex-col ">
+            <div className="flex items-center gap-1">
+              <Skeleton circle width={16} height={16} />
+              <Skeleton width={100} height={20} />
+            </div>
+            <Skeleton width={150} height={14} />
+            {role === 'worker' && <Skeleton width={120} height={14} />}
+          </div>
+          {role === 'customer' && (
+            <div className="flex flex-col items-center gap-1">
+              <Skeleton circle width={60} height={60} />
+              <Skeleton width={80} height={14} />
+            </div>
+          )}
+        </div>
+        <div className="grid w-full grid-cols-2 gap-4 mt-4">
+          <Skeleton height={30} />
+          <Skeleton height={30} />
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {work && (
-        <div className="relative w-full h-[8.3rem] rounded-zp-radius-big sm: p-4 md:p-6 flex flex-col gap-4 bg-zp-white">
+        <div className="relative w-full h-[8.3rem] rounded-zp-radius-big sm: p-4 md:p-6 flex flex-col gap-4 bg-zp-white drop-shadow-zp-slight">
           <div className="flex items-start justify-between md:px-2">
             <div className="flex flex-col ">
               <div className="flex items-center gap-1">
@@ -63,10 +84,10 @@ export default function TodaySchedule({ role, work, chatRoomList }: Props) {
             {role === 'customer' && (
               <div className="flex flex-col items-center gap-1">
                 <div className="border w-[60%] aspect-square rounded-zp-radius-full">
-                  <img
+                  {/* <img
                     className="object-cover w-full h-full rounded-zp-radius-full"
                     src={work.worker.userSerial.fileSerial.saveFile}
-                  />
+                  /> */}
                 </div>
                 <p className="text-zp-2xs">{work.worker.userSerial.userName}</p>
               </div>

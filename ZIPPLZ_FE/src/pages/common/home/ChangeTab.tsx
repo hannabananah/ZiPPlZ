@@ -283,7 +283,7 @@ export default function ChangeTab() {
                   <label htmlFor="dropzone-file">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6 cursor-pointer">
                       <svg
-                        className="w-12 h-12 mb-4 text-gray-500 "
+                        className="w-12 h-12 mb-4 text-zp-gray"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"

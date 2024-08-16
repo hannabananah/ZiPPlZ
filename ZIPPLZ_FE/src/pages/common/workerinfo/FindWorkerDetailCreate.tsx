@@ -92,7 +92,7 @@ export default function FindWorkerDetailCreate() {
                 <MdClose
                   size={24}
                   onClick={() => handleImageRemove(index)}
-                  className="absolute text-white bg-red-500 rounded-full top-1 right-1"
+                  className="absolute rounded-zp-radius-full bg-zp-red text-zp-white top-1 right-1"
                 />
               </div>
             ))}

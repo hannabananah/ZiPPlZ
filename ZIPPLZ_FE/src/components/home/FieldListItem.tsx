@@ -9,7 +9,7 @@ export default function FieldListItem({ field, handleClickField }: Props) {
     <>
       <div className="flex flex-col items-center w-full gap-1">
         <div
-          className="flex p-2 cursor-pointer aspect-square bg-zp-white rounded-zp-radius-big"
+          className="flex p-2 cursor-pointer aspect-square bg-zp-white rounded-zp-radius-big drop-shadow-zp-slight"
           onClick={handleClickField}
         >
           <img src={imageSrc} />

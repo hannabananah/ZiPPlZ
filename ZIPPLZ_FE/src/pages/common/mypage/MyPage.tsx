@@ -215,7 +215,7 @@ export default function MyPage() {
                 <MdOutlinePhotoCamera size={24} />
               </div>
             </div>
-            <div className="grid h-8 font-bold w-36 place-items-center text-zp-lg">
+            <div className="grid h-8 font-bold w-36 place-items-center text-zp-md">
               {name}
             </div>
           </div>
@@ -224,7 +224,7 @@ export default function MyPage() {
         <hr className="w-full mt-6 border-zp-light-gray" />
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-lg">내 정보 수정하기</div>
+          <div className="text-zp-md">내 정보 수정하기</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -234,7 +234,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6 ">
-          <div className="text-zp-lg">비밀번호 변경</div>
+          <div className="text-zp-md">비밀번호 변경</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -244,7 +244,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6 ">
-          <div className="text-zp-lg">내가 쓴 글 목록</div>
+          <div className="text-zp-md">내가 쓴 글 목록</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -254,7 +254,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6 ">
-          <div className="text-zp-lg">스크랩 글 목록</div>
+          <div className="text-zp-md">스크랩 글 목록</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -266,7 +266,7 @@ export default function MyPage() {
         {role === 'customer' && (
           <>
             <div className="flex items-center justify-between w-full mt-6">
-              <div className="text-zp-lg">관심있는 시공업자 목록</div>
+              <div className="text-zp-md">관심있는 시공업자 목록</div>
               <div>
                 <HiChevronRight
                   className="cursor-pointer"
@@ -280,7 +280,7 @@ export default function MyPage() {
         <hr className="w-full mt-6 border-zp-light-gray" />
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-lg">이용약관 / 개인정보처리방침</div>
+          <div className="text-zp-md">이용약관 / 개인정보처리방침</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -290,7 +290,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-lg">버전</div>
+          <div className="text-zp-md">버전</div>
           <div className="flex align-middle">
             <div className="px-2">1.1.0</div>
             <HiChevronRight
@@ -301,7 +301,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-lg">로그아웃</div>
+          <div className="text-zp-md">로그아웃</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -311,7 +311,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-lg">탈퇴하기</div>
+          <div className="text-zp-md">탈퇴하기</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"

@@ -634,7 +634,7 @@ export default function HousePostDetail({ onBookmarkChange = () => {} }) {
       {isDeleteModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-50 bg-zp-black">
           <div className="p-6 shadow-lg bg-zp-white rounded-zp-radius-big">
-            <div className="mb-4 text-lg font-bold">삭제 확인</div>
+            <div className="mb-4 font-bold text-zp-lg">삭제 확인</div>
             <div className="mb-4">정말로 삭제하시겠습니까?</div>
             <div className="flex justify-end space-x-4">
               <div className="font-bold">

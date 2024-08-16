@@ -18,7 +18,7 @@ export default function WorkerCard({ worker }: Props) {
   return (
     <div className="relative flex flex-col justify-end flex-shrink-0 h-full px-5 cursor-pointer sm:w-1/3 md:w-1/3">
       <div
-        className="px-4 profile-card"
+        className="px-4 profile-card bg-zp-white drop-shadow-zp-slight"
         style={{ width: '100%', height: '80%' }}
         onClick={() => {
           navigate(`/workers/${worker.user_serial}/portfolio?tab=overview`);
@@ -26,7 +26,7 @@ export default function WorkerCard({ worker }: Props) {
       >
         <div className="profile-img absolute top-[-25%] w-[60%]">
           <img
-            className="object-cover w-full h-full  rounded-zp-radius-full"
+            className="object-cover w-full h-full rounded-zp-radius-full"
             src={worker.save_file}
           />
         </div>

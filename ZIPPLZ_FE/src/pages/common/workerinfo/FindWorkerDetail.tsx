@@ -21,7 +21,7 @@ import Review from '@components/common/review/Review';
 import { useModalActions } from '@stores/modalStore';
 import { useWorkerListStore } from '@stores/workerListStore';
 
-export default function FindWorkerDetai() {
+export default function FindWorkerDetail() {
   const checkWish = async (boardSerial: number) => {
     const response = await getWish(boardSerial);
     setIsWish(response.data.data);
@@ -136,7 +136,6 @@ export default function FindWorkerDetai() {
               </p>
             </div>
 
-            {/* 작업내용 */}
             <div className="flex flex-col gap-2">
               <p className="font-bold text-zp-lg">작업내용</p>
               <p className="w-full font-bold text-zp-xs text-zp-gray text-wrap">
@@ -189,11 +188,11 @@ export default function FindWorkerDetai() {
             </div>
           </div>
           <div
-            className="fixed flex flex-col w-full gap-4 px-4 bg-zp-light-beige"
-            style={{ bottom: '3.6rem', left: 0 }}
+            className="fixed flex flex-col w-full gap-4 px-4 bg-zp-light-beige max-w-[600px]"
+            style={{ bottom: '3.6rem' }}
           >
             <hr className="w-full text-zp-light-gray" />
-            <div className="flex items-center w-full gap-4 mb-4">
+            <div className="flex items-center w-full gap-4 mb-6">
               <Button
                 buttonType={isWish > 0 ? 'primary' : 'normal'}
                 width={loginUser?.role === 'worker' ? '50%' : 'full'}

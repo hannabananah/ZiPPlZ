@@ -50,7 +50,13 @@ export interface ChatRoom {
   createdAt: string;
   unreadCount: number;
   certificated: boolean;
-  file: File | null;
+  file: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  } | null;
 }
 
 // 채팅방 상세보기
@@ -154,3 +160,72 @@ export interface NotificationData {
   isChecked: number;
 }
 [];
+
+export interface Work {
+  starDate: string;
+  endDate: string;
+  field: string;
+}
+
+export interface TodayWork {
+  workSerial: number;
+  startDate: string;
+  endDate: string;
+  field: string;
+  address: string;
+  workerProfile: {
+    fileSerial: number;
+    saveFolder: string;
+    originalFile: string;
+    saveFile: string;
+    fileName: string;
+  };
+  customerProfile: string;
+  customer: {
+    customerSerial: number;
+    userSerial: {
+      userSerial: number;
+      fileSerial: number;
+      email: string;
+      password: string;
+      userName: string;
+      birthDate: string;
+      tel: string;
+      delYN: number;
+      role: string;
+    };
+    nickname: string;
+    currentAddress: string | null;
+  };
+  worker: {
+    workerSerial: number;
+    userSerial: {
+      userSerial: number;
+      fileSerial: {
+        fileSerial: number;
+        saveFolder: string;
+        originalFile: string;
+        saveFile: string;
+        fileName: string | null;
+      };
+      email: string;
+      password: string;
+      userName: string;
+      birthDate: string;
+      tel: string;
+      delYN: number;
+      role: string;
+    };
+    company: string;
+    companyAddress: string;
+    businessNumber: string;
+    hasAsBadge: number;
+    certificatedBadge: number;
+  };
+}
+
+export interface Plan {
+  planSerial: number;
+  planName: string;
+  status: number;
+}

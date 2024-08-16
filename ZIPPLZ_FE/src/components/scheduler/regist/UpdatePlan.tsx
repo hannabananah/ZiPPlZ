@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
@@ -12,6 +14,7 @@ interface Props {
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
   fetchPlan: (planSerial: number) => void;
 }
+
 const customModalStyles: ReactModal.Styles = {
   overlay: {
     position: 'fixed',
@@ -40,6 +43,7 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
+
 export default function UpdatePlan({
   isOpen,
   setIsOpen,
@@ -49,26 +53,36 @@ export default function UpdatePlan({
   const closeModal = () => {
     setIsOpen(false);
   };
+
   const navigate = useNavigate();
   const [newName, setNewName] = useState<string>(plan.planName);
   const [memo, setMemo] = useState<string>(plan.sharedContents || '');
   const [isUpdate, setIsUpdate] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
+
   const updatePlan = async (
     planName: string,
     address: string,
     memo: string
   ) => {
+    setLoading(true);
     if (plan.planSerial > 0) {
-      return await modifyPlan(plan.planSerial, {
+      await modifyPlan(plan.planSerial, {
         planName: planName,
         address: address,
         sharedContents: memo,
       });
+      setLoading(false);
     }
   };
+
   useEffect(() => {
-    if (isUpdate) fetchPlan(plan.planSerial);
-  }, [plan]);
+    if (isUpdate) {
+      fetchPlan(plan.planSerial);
+      setIsUpdate(false);
+    }
+  }, [isUpdate]);
+
   return (
     <>
       <Modal
@@ -82,74 +96,95 @@ export default function UpdatePlan({
         </p>
         <div className="flex flex-col w-full gap-2">
           <p className="text-zp-xs w-[2rem] font-bold">이름</p>
-          <Input
-            type="text"
-            inputType="normal"
-            placeholder="계획명을 입력해주세요."
-            width="full"
-            height={2}
-            radius="btn"
-            fontSize="xs"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setNewName((e.target as HTMLInputElement).value);
-            }}
-            value={newName}
-          />
+          {loading ? (
+            <Skeleton width="100%" height="2rem" />
+          ) : (
+            <Input
+              type="text"
+              inputType="normal"
+              placeholder="계획명을 입력해주세요."
+              width="full"
+              height={2}
+              radius="btn"
+              fontSize="xs"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setNewName((e.target as HTMLInputElement).value);
+              }}
+              value={newName}
+            />
+          )}
         </div>
         <div>
           <p className="text-zp-xs w-[2rem] font-bold">주소</p>
-          <Input
-            type="text"
-            inputType="normal"
-            placeholder="계획명을 입력해주세요."
-            width="full"
-            height={2}
-            radius="btn"
-            fontSize="xs"
-            value={plan.address}
-            additionalStyle="pointer-events-none"
-          />
+          {loading ? (
+            <Skeleton width="100%" height="2rem" />
+          ) : (
+            <Input
+              type="text"
+              inputType="normal"
+              placeholder="계획명을 입력해주세요."
+              width="full"
+              height={2}
+              radius="btn"
+              fontSize="xs"
+              value={plan.address}
+              additionalStyle="pointer-events-none"
+            />
+          )}
         </div>
         <div className="flex flex-col w-full gap-2">
           <p className="text-zp-xs w-[2rem] font-bold">메모</p>
-          <Input
-            type="text"
-            inputType="normal"
-            placeholder="공유 메모를 작성해주세요."
-            width="full"
-            height={2}
-            radius="btn"
-            fontSize="xs"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setMemo((e.target as HTMLInputElement).value);
-            }}
-            value={memo}
-          />
+          {loading ? (
+            <Skeleton width="100%" height="2rem" />
+          ) : (
+            <Input
+              type="text"
+              inputType="normal"
+              placeholder="공유 메모를 작성해주세요."
+              width="full"
+              height={2}
+              radius="btn"
+              fontSize="xs"
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                setMemo((e.target as HTMLInputElement).value);
+              }}
+              value={memo}
+            />
+          )}
         </div>
         <div className="flex items-center justify-center w-full gap-6">
-          <Button
-            buttonType="second"
-            fontSize="xs"
-            radius="btn"
-            width={4}
-            height={2}
-            children="취소"
-            onClick={closeModal}
-          />
-          <Button
-            buttonType="primary"
-            fontSize="xs"
-            radius="btn"
-            width={4}
-            height={2}
-            children="수정"
-            onClick={() => {
-              updatePlan(newName, plan.address, memo);
-              setIsUpdate(true);
-              closeModal();
-              navigate(0);
-            }}
-          />
+          {loading ? (
+            <>
+              <Skeleton width="4rem" height="2rem" />
+              <Skeleton width="4rem" height="2rem" />
+            </>
+          ) : (
+            <>
+              <Button
+                buttonType="second"
+                fontSize="xs"
+                radius="btn"
+                width={4}
+                height={2}
+                children="취소"
+                onClick={closeModal}
+              />
+              <Button
+                buttonType="primary"
+                fontSize="xs"
+                radius="btn"
+                width={4}
+                height={2}
+                children="수정"
+                onClick={() => {
+                  updatePlan(newName, plan.address, memo);
+                  setIsUpdate(true);
+                  closeModal();
+                  navigate(0);
+                }}
+              />
+            </>
+          )}
         </div>
       </Modal>
     </>
