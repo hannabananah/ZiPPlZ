@@ -26,5 +26,5 @@ public interface MaterialService {
 
     void insertMaterialService(Map<String, Object> params);
 
-    List<ElasticMaterial> searchMaterialService(Map<String, Object> params);
+    //List<ElasticMaterial> searchMaterialService(Map<String, Object> params);
 }
