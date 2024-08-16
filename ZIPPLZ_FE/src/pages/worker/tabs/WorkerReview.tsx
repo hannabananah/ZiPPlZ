@@ -31,7 +31,7 @@ export default function WorkerReview({ portfolio }: Props) {
   }, []);
   return (
     <>
-      <div className="flex flex-col h-full gap-6 py-4 overflow-scroll">
+      <div className="flex flex-col h-full gap-6 py-4 overflow-scroll mb-[5rem]">
         {portfolioReview ? (
           <>
             <MannerTemperature
