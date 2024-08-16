@@ -6,35 +6,12 @@ import { IoIosClose, IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import FindWorkerListItem from '@/components/worker/findworker/FindWorkerListItem';
+import type { WorkerInfo } from '@/types';
 import Input from '@components/common/Input';
 import Selectbar from '@components/common/Selectbar';
 import { useMyPageStore } from '@stores/myPageStore';
 
 type SortOption = '평점순' | '최신순' | '과거순';
-
-export interface WorkerInfo {
-  board_serial: number;
-  board_type: number;
-  user_serial: number;
-  title: string;
-  board_content: string;
-  board_date: string;
-  hit: number;
-  nickname: string;
-  comment_cnt: number;
-  wish_cnt: number;
-  portfolio_serial: number;
-  name: string;
-  birth_date: number;
-  temp: number;
-  field_id: number;
-  field_name: string;
-  career: number;
-  certificated_badge: number;
-  locations: string[];
-  img: string;
-  user_name: string;
-}
 
 export default function MyFindWorkerList() {
   const options: SortOption[] = ['평점순', '최신순', '과거순'];

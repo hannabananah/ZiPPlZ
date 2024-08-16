@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Select from 'react-select';
 
 import { sendUpdateContract, updateContract } from '@/apis/member/MemberApi';
+import type { Contract } from '@/types';
 import { Material } from '@/types';
 import { ContractRequestData } from '@apis/worker/ContractApi';
 import { getMaterials } from '@apis/worker/MaterialApi';
@@ -13,22 +14,6 @@ import { formatDateWithTime } from '@utils/formatDateWithTime';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 // import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
-
-interface Contract {
-  workerName: string;
-  company: string;
-  businessNumber: string;
-  workerTel: string;
-  customerName: string;
-  customerTel: string;
-  address: string;
-  startDate: string;
-  endDate: string;
-  workPrice: number;
-  fieldName: string;
-  asPeriod: number;
-  materialList: string[];
-}
 
 interface ContractProps {
   closeContractModal: () => void;

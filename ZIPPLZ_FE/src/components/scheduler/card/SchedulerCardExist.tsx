@@ -6,28 +6,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { makeChatRoom } from '@/apis/chatroom/chatApi';
 import { useLoginUserStore } from '@/stores/loginUserStore';
+import type { ChatRoom } from '@/types';
 import { CertificatedBadge } from '@assets/svg/icons';
 import Button from '@components/common/Button';
 import { formatDate } from '@utils/formatDateWithTime';
 
-interface ChatRoom {
-  chatroomSerial: string;
-  lastMessage: string;
-  fieldName: string;
-  workerName: string;
-  customerName: string;
-  temperature: number;
-  createdAt: string;
-  unreadCount: number;
-  certificated: boolean;
-  file: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
 interface Props {
   schedule: any;
   idx: number;
@@ -74,7 +57,7 @@ export default function SchedulerCardExist({
   return (
     <>
       <div
-        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white  drop-shadow-zp-normal"
+        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-normal"
         style={{ height: cardHeight }}
       >
         <div className="absolute flex items-center justify-between w-full px-6 top-5 ">
@@ -119,7 +102,7 @@ export default function SchedulerCardExist({
               <div className="flex w-[30%] flex-col items-center gap-2">
                 <div className="w-[60%] aspect-square text-center  rounded-zp-radius-full">
                   <img
-                    className="w-full h-full object-cover rounded-zp-radius-full"
+                    className="object-cover w-full h-full rounded-zp-radius-full"
                     src={schedule.workerSerial.userSerial.fileSerial.saveFile}
                   />
                 </div>

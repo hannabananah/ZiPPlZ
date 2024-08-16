@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Modal from 'react-modal';
 
 import { writeReview } from '@/apis/scheduler/schedulerApi';
+import type { Review } from '@/types';
 
 import Button from '../common/Button';
 
@@ -65,14 +66,7 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-interface Review {
-  reviewContent: string;
-  communicationStar: number;
-  attitudeStar: number;
-  qualityStar: number;
-  professionalStar: number;
-  isVisible: number;
-}
+
 Modal.setAppElement('#root');
 export default function ScheduleReviewModal({
   planSerial,

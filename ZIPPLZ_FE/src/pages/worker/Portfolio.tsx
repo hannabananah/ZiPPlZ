@@ -11,6 +11,7 @@ import {
 } from '@/apis/worker/PortfolioApi';
 import { useLoginUserStore } from '@/stores/loginUserStore';
 import { usePortfolioStore } from '@/stores/portfolioStore';
+import type { ChatRoom } from '@/types';
 import { getChatRooms, makeChatRoom } from '@apis/chatroom/chatApi';
 import Button from '@components/common/Button';
 
@@ -18,24 +19,6 @@ import OverView from './tabs/OverView';
 import WorkerReview from './tabs/WorkerReview';
 import WorkerSchedule from './tabs/WorkerSchedule';
 
-interface ChatRoom {
-  chatroomSerial: string;
-  lastMessage: string;
-  fieldName: string;
-  workerName: string;
-  customerName: string;
-  temperature: number;
-  createdAt: string;
-  unreadCount: number;
-  certificated: boolean;
-  file: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
 export default function Portfolio() {
   const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
   const fetchChatRooms = async () => {

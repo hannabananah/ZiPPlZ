@@ -1,23 +1,7 @@
 import { useState } from 'react';
 import { FaStar } from 'react-icons/fa';
 
-interface Reply {
-  id: number;
-  profilePic: string;
-  name: string;
-  date: string;
-  content: string;
-}
-
-interface Comment {
-  id: number;
-  profilePic: string;
-  name: string;
-  rating: number;
-  date: string;
-  content: string;
-  replies: Reply[];
-}
+import type { Comment } from '@/types';
 
 const comments: Comment[] = [
   {
@@ -49,7 +33,6 @@ export default function ReviewComments() {
   return (
     <>
       <div className="font-bold text-zp-xs">리뷰</div>
-      {/* 댓글 */}
       {comments.map((comment) => (
         <div
           key={comment.id}
@@ -75,7 +58,6 @@ export default function ReviewComments() {
             </div>
           </div>
           <div className="text-zp-2xs">{comment.content}</div>
-          {/* 대댓글 버튼 */}
           <div className="flex justify-end">
             <button
               onClick={() => handleReplyButtonClick(comment.id)}

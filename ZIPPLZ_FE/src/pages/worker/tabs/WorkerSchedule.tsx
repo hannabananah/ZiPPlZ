@@ -7,28 +7,11 @@ import {
 } from '@/apis/worker/PortfolioApi';
 import Button from '@/components/common/Button';
 import { useLoginUserStore } from '@/stores/loginUserStore';
+import type { ChatRoom } from '@/types';
 import { formatDate } from '@/utils/formatDateWithTime';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
 import { WorkerDate, usePortfolioStore } from '@stores/portfolioStore';
 
-interface ChatRoom {
-  chatroomSerial: string;
-  lastMessage: string;
-  fieldName: string;
-  workerName: string;
-  customerName: string;
-  temperature: number;
-  createdAt: string;
-  unreadCount: number;
-  certificated: boolean;
-  file: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
 interface Props {
   workerSerial?: number;
   chatRoomList: ChatRoom[];

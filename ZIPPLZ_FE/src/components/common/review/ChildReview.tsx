@@ -3,23 +3,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { deleteReview } from '@/apis/board/reviewApi';
 import { useLoginUserStore } from '@/stores/loginUserStore';
+import type { ReviewComment } from '@/types';
 import { formatDate } from '@utils/formatDateWithTime';
 
-interface Comment {
-  userName: string;
-  userSerial: number;
-  boardSerial: number;
-  commentSerial: number;
-  parentCommentSerial: number;
-  commentContent: string;
-  commentDate: string;
-  orderNumber: number;
-  isDeleted: number;
-  nickName?: string | null;
-}
-
 interface Props {
-  comment: Comment;
+  comment: ReviewComment;
 }
 export default function ChildReview({ comment }: Props) {
   const navigate = useNavigate();

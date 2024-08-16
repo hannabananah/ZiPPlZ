@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import Selectbar from '@/components/common/Selectbar';
 import FieldListItem from '@/components/home/FieldListItem';
 import WorkerCard from '@/components/home/WorkerCard';
+import type { HotWorker } from '@/types';
 import Input from '@components/common/Input';
 
 type SortOption = '평점순' | '최신순' | '과거순';
@@ -26,13 +27,6 @@ const fields: string[] = [
   '가구',
   '기타',
 ];
-
-export interface HotWorker {
-  name: string;
-  region: string;
-  field: string;
-  temp: string;
-}
 
 const list: HotWorker[] = [
   { name: '김현태', region: '서울 강남구', field: '전기', temp: '36.5도' },

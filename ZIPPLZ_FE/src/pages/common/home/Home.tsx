@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { getChatRooms } from '@/apis/chatroom/chatApi';
 import { getTopWorkerList } from '@/apis/worker/WorkerListApi';
 import { useWorkerListStore } from '@/stores/workerListStore';
+import { ChatRoom, TodayWork, Work } from '@/types';
 import { getTodayWork, getWorksByUser } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
@@ -29,85 +30,6 @@ const fields: string[] = [
   '기타',
 ];
 
-interface Work {
-  starDate: string;
-  endDate: string;
-  field: string;
-}
-interface TodayWork {
-  workSerial: number;
-  startDate: string;
-  endDate: string;
-  field: string;
-  address: string;
-  workerProfile: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-  customerProfile: string;
-  customer: {
-    customerSerial: number;
-    userSerial: {
-      userSerial: number;
-      fileSerial: number;
-      email: string;
-      password: string;
-      userName: string;
-      birthDate: string;
-      tel: string;
-      delYN: number;
-      role: string;
-    };
-    nickname: string;
-    currentAddress: string | null;
-  };
-  worker: {
-    workerSerial: number;
-    userSerial: {
-      userSerial: number;
-      fileSerial: {
-        fileSerial: number;
-        saveFolder: string;
-        originalFile: string;
-        saveFile: string;
-        fileName: string | null;
-      };
-      email: string;
-      password: string;
-      userName: string;
-      birthDate: string;
-      tel: string;
-      delYN: number;
-      role: string;
-    };
-    company: string;
-    companyAddress: string;
-    businessNumber: string;
-    hasAsBadge: number;
-    certificatedBadge: number;
-  };
-}
-interface ChatRoom {
-  chatroomSerial: string;
-  lastMessage: string;
-  fieldName: string;
-  workerName: string;
-  customerName: string;
-  temperature: number;
-  createdAt: string;
-  unreadCount: number;
-  certificated: boolean;
-  file: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
 export default function Home() {
   const [scheduleList, setScheduleList] = useState<Work[]>([]);
   const [todayWork, setTodayWork] = useState<TodayWork[]>([]);

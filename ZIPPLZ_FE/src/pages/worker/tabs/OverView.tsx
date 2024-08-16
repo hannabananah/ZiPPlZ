@@ -21,6 +21,7 @@ import Button from '@/components/common/Button';
 import Input from '@/components/common/Input';
 import { useLoginUserStore } from '@/stores/loginUserStore';
 import { PortfolioDetail, usePortfolioStore } from '@/stores/portfolioStore';
+import type { data } from '@/types';
 
 const postCodeStyle = {
   width: '200px',
@@ -57,14 +58,7 @@ const customModalStyles: ReactModal.Styles = {
     pointerEvents: 'auto',
   },
 };
-interface data {
-  publicRelation: string;
-  career: number;
-  asPeriod: number;
-  company: string;
-  companyAddress: string;
-  businessNumber: string;
-}
+
 interface Props {
   portfolio: PortfolioDetail;
 }

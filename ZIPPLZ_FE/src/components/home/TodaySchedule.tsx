@@ -1,27 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 
+import type { ChatRoom } from '@/types';
 import { formatDate } from '@/utils/formatDateWithTime';
 
 import Button from '../common/Button';
 
-interface ChatRoom {
-  chatroomSerial: string;
-  lastMessage: string;
-  fieldName: string;
-  workerName: string;
-  customerName: string;
-  temperature: number;
-  createdAt: string;
-  unreadCount: number;
-  certificated: boolean;
-  file: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
 interface Props {
   role: string;
   work?: any;

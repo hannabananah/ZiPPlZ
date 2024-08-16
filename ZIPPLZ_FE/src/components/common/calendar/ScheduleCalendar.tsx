@@ -1,22 +1,11 @@
 import { useEffect, useState } from 'react';
 
+import type { Event, Work } from '@/types';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import FullCalendar from '@fullcalendar/react';
 
 import './Calendar.css';
 
-interface Work {
-  workSerial?: number;
-  startDate: string;
-  endDate: string;
-  field: string;
-}
-interface Event {
-  title: string;
-  start: Date;
-  end: Date;
-  workSerial?: number;
-}
 interface Props {
   workList: any | Work[];
   onEventClick?: (workSerial: string) => void;

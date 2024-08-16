@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getChatRooms } from '@/apis/chatroom/chatApi';
 import ScheduleReviewModal from '@/components/scheduler/ScheduleReviewModal';
+import type { ChatRoom, Plan } from '@/types';
 import {
   activePlan,
   deletePlan,
@@ -32,30 +33,6 @@ import { useModalActions } from '@stores/modalStore';
 import { useScheduleStore } from '@stores/scheduleStore';
 import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
-interface ChatRoom {
-  chatroomSerial: string;
-  lastMessage: string;
-  fieldName: string;
-  workerName: string;
-  customerName: string;
-  temperature: number;
-  createdAt: string;
-  unreadCount: number;
-  certificated: boolean;
-  file: {
-    fileSerial: number;
-    saveFolder: string;
-    originalFile: string;
-    saveFile: string;
-    fileName: string;
-  };
-}
-
-interface Plan {
-  planSerial: number;
-  planName: string;
-  status: number;
-}
 export default function Schedule() {
   const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
   const fetchChatRooms = async () => {
