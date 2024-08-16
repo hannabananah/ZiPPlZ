@@ -192,7 +192,7 @@ export default function HousePostCreate() {
           <div className="flex items-center justify-start mt-6 font-bold">
             <div className="text-left">
               <div>현장이나 일과 관련된 사진을 올려주세요.(선택사항)</div>
-              <div className="text-zp-xs text-zp-light-gray">
+              <div className="text-zp-2xs text-zp-light-gray">
                 사진을 첨부하면 시공자가 작업내용에 대해 보다 상세하게 파악할 수
                 있어요.
               </div>

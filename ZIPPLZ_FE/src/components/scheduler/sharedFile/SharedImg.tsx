@@ -1,5 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { FiPlusCircle } from 'react-icons/fi';
+import { IoCloudUploadOutline } from 'react-icons/io5';
 import { LuMaximize2, LuMinimize2 } from 'react-icons/lu';
 import { MdCancel } from 'react-icons/md';
 import Modal from 'react-modal';
@@ -91,31 +92,17 @@ export default function SharedImg({ fileList, planSerial }: Props) {
   };
   return (
     <>
-      <div className="relative w-full h-[5rem] flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-2 min-h-[5rem] max-h-[7rem]">
+      <div className="relative w-full h-[5rem] flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-2 min-h-[5rem] max-h-[7rem] drop-shadow-zp-slight">
         {fileList && fileList.length === 0 ? (
           <>
             <div className="flex items-center justify-center w-full">
               <label
                 htmlFor="dropzone-file"
-                className="flex flex-col items-center justify-center w-full h-[5rem]  cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600"
+                className="flex flex-col items-center justify-center w-full h-[5rem] cursor-pointer hover:bg-gray-100 "
               >
                 <div className="flex flex-col items-center justify-center p-4">
-                  <svg
-                    className="w-8 h-8  text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 20 16"
-                  >
-                    <path
-                      stroke="currentColor"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth="2"
-                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                    />
-                  </svg>
-                  <p className="text-zp-sm text-center font-bold text-gray-500 dark:text-gray-400">
+                  <IoCloudUploadOutline size={28} />
+                  <p className="font-bold text-center text-zp-gray text-zp-xs break-keep">
                     공유할 이미지를 업로드 해주세요
                   </p>
                 </div>
@@ -135,7 +122,7 @@ export default function SharedImg({ fileList, planSerial }: Props) {
               size="10%"
               onClick={openModal}
             />
-            <div className="flex w-full items-center justify-center gap-4">
+            <div className="flex items-center justify-center w-full gap-4">
               <img
                 className="w-[20%] aspect-square"
                 src={fileList && fileList[0].saveFile}
@@ -157,7 +144,7 @@ export default function SharedImg({ fileList, planSerial }: Props) {
               )}
               <div>
                 <FiPlusCircle
-                  className="cursor-pointer w-auto h-auto aspect-square"
+                  className="w-auto h-auto cursor-pointer aspect-square"
                   onClick={handleClick}
                 />
                 <input

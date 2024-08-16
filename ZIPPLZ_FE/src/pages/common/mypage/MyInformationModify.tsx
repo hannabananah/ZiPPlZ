@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { GoArrowLeft } from 'react-icons/go';
-import { IoIosCloseCircleOutline } from 'react-icons/io';
+import { IoIosClose } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
+import Input from '@components/common/Input';
 import { useMyPageStore } from '@stores/myPageStore';
 
 export default function MyInformationModify() {
@@ -110,24 +111,29 @@ export default function MyInformationModify() {
                 size={20}
               />
             </div>
-            <div className="absolute font-bold text-center transform -translate-x-1/2 left-1/2 text-zp-xl">
+            <div className="absolute font-bold text-center transform -translate-x-1/2 left-1/2 text-zp-lg">
               내 정보 수정하기
             </div>
           </div>
 
           {userType === 'customer' && (
             <>
-              <div className="mt-6 font-bold text-zp-xl text-zp-gray">
+              <div className="mt-6 font-bold text-zp-sm text-zp-gray">
                 닉네임
               </div>
               <div className="relative">
-                <input
-                  className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-xl text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
+                <Input
+                  type="text"
+                  inputType="normal"
                   placeholder="닉네임을 입력하세요"
                   value={localNickname}
                   onChange={(e) => setLocalNickname(e.target.value)}
+                  width="full"
+                  height={2}
+                  fontSize="sm"
+                  radius="btn"
                 />
-                <IoIosCloseCircleOutline
+                <IoIosClose
                   className="absolute transform -translate-y-1/2 cursor-pointer right-4 top-8"
                   onClick={() => setLocalNickname('')}
                   style={{ width: '24px', height: '24px' }}
@@ -139,18 +145,18 @@ export default function MyInformationModify() {
                 )}
               </div>
 
-              <div className="mt-6 font-bold text-zp-xl text-zp-gray">
+              <div className="mt-6 font-bold text-zp-sm text-zp-gray">
                 자택 주소
               </div>
               <div className="relative">
                 <input
-                  className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-xl text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
+                  className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-sm text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
                   placeholder="자택 주소를 입력하세요"
                   value={userAddress}
                   onClick={() => setIsPostcodeOpen(true)}
                   readOnly
                 />
-                <IoIosCloseCircleOutline
+                <IoIosClose
                   className="absolute transform -translate-y-1/2 cursor-pointer right-4 top-8"
                   onClick={() => setUserAddress('')}
                   style={{ width: '24px', height: '24px' }}
@@ -164,17 +170,17 @@ export default function MyInformationModify() {
             </>
           )}
 
-          <div className="mt-6 font-bold text-zp-xl text-zp-gray">
+          <div className="mt-6 font-bold text-zp-sm text-zp-gray">
             휴대폰 번호
           </div>
           <div className="relative">
             <input
-              className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-xl text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
+              className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-sm text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
               placeholder="010-1234-5678"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
             />
-            <IoIosCloseCircleOutline
+            <IoIosClose
               className="absolute transform -translate-y-1/2 cursor-pointer right-4 top-8"
               onClick={() => setPhone('')}
               style={{ width: '24px', height: '24px' }}
@@ -188,12 +194,12 @@ export default function MyInformationModify() {
 
           {userType === 'worker' && (
             <>
-              <div className="mt-6 font-bold text-zp-xl text-zp-gray">
+              <div className="mt-6 font-bold text-zp-sm text-zp-gray">
                 활동 지역
               </div>
               <div className="relative">
                 <input
-                  className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-xl text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
+                  className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-sm text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
                   placeholder="활동 지역을 입력하세요"
                   value={locationDetails.join(', ')}
                   readOnly
@@ -201,23 +207,23 @@ export default function MyInformationModify() {
               </div>
 
               <div
-                className="flex items-center justify-center w-full h-10 mt-6 font-bold cursor-pointer text-zp-xl bg-zp-sub-color rounded-zp-radius-btn"
+                className="flex items-center justify-center w-full h-10 mt-6 font-bold cursor-pointer text-zp-sm bg-zp-sub-color rounded-zp-radius-btn"
                 onClick={() => navigate('/mypage/workerinfolocationdetail')}
               >
                 활동 지역 선택
               </div>
 
-              <div className="mt-6 font-bold text-zp-xl text-zp-gray">
+              <div className="mt-6 font-bold text-zp-sm text-zp-gray">
                 사업자 등록 번호
               </div>
               <div className="relative">
                 <input
-                  className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-xl text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
+                  className="w-full h-12 px-4 pr-10 mt-2 font-bold border text-zp-sm text-zp-black bg-zp-light-beige border-zp-sub-color rounded-zp-radius-big focus:border-zp-main-color"
                   placeholder="123-45-67890"
                   value={businessNumber}
                   onChange={(e) => setBusinessNumber(e.target.value)}
                 />
-                <IoIosCloseCircleOutline
+                <IoIosClose
                   className="absolute transform -translate-y-1/2 cursor-pointer right-4 top-8"
                   onClick={() => setBusinessNumber('')}
                   style={{ width: '24px', height: '24px' }}
@@ -241,7 +247,7 @@ export default function MyInformationModify() {
           )}
 
           <div
-            className="flex items-center justify-center w-full h-10 mt-6 font-bold cursor-pointer text-zp-xl bg-zp-sub-color rounded-zp-radius-btn"
+            className="flex items-center justify-center w-full h-10 mt-6 font-bold cursor-pointer text-zp-sm bg-zp-sub-color rounded-zp-radius-btn"
             onClick={handleSubmit}
           >
             수정완료

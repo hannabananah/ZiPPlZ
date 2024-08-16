@@ -173,16 +173,11 @@ export default function Schedule() {
     <>
       <div className="mt-[5rem] flex flex-col w-full items-center bg-zp-light-beige gap-4 sm lg px-6 mb-[5rem]">
         <div className="flex justify-end w-full gap-4">
-          <FaPlus
-            className="cursor-pointer"
-            size={16}
-            onClick={() => setIsOpenRegist(true)}
-          />
+          <FaPlus size={16} onClick={() => setIsOpenRegist(true)} />
           {selectedValue !== '계획을 선택해주세요.' &&
             plan &&
             plan.isActive === 1 && (
               <HiOutlinePencilAlt
-                className="cursor-pointer"
                 size={16}
                 onClick={() => {
                   setIsOpenUpdate(true);
@@ -191,7 +186,6 @@ export default function Schedule() {
             )}
           {selectedValue !== '계획을 선택해주세요.' && plan && (
             <FaTrashAlt
-              className="cursor-pointer"
               size={16}
               onClick={() => {
                 openModal('mini');
@@ -222,7 +216,7 @@ export default function Schedule() {
             setSelectedValue={setSelectedValue}
             width="full"
             height={2}
-            fontSize="lg"
+            fontSize="md"
             radius="btn"
             border="main"
             hover="sub"
@@ -234,7 +228,7 @@ export default function Schedule() {
               width={3.5}
               height={1.5}
               fontSize="2xs"
-              radius="big"
+              radius="btn"
               children={plan && plan.isActive === 1 ? '비활성화' : '활성화'}
               onClick={() => {
                 if (plan && plan.isActive === 0) setPlanActive();
@@ -243,7 +237,7 @@ export default function Schedule() {
             />
           )}
         </div>
-        <div className="w-full p-4 bg-zp-white rounded-zp-radius-big">
+        <div className="w-full p-4 bg-zp-white rounded-zp-radius-big drop-shadow-zp-slight">
           <ScheduleCalendar
             workList={
               workList &&

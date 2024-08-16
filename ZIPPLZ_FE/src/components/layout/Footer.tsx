@@ -2,12 +2,15 @@ import Logo from '@assets/logo.svg?react';
 
 export default function Footer() {
   return (
-    <footer className="bottom-0 flex justify-center w-full pt-2 pb-4 border-t border-zp-light-gray bg-zp-sub-color">
+    <footer className="bottom-0 flex justify-center w-full pt-2 pb-3 border-t border-zp-light-gray bg-zp-sub-color">
       <div className="w-full px-16">
-        <ul className="flex flex-col pb-3 text-left border-b text-zp-sm gap-y-1 border-zp-light-gray">
+        <ul className="flex flex-col pb-2 text-left border-b text-zp-sm gap-y-1 border-zp-light-gray">
           <li className="flex items-center -ml-2 text-black-color">
             <Logo width={40} height={40} />
-            <a target="_blank" href="#">
+            <a
+              target="_blank"
+              href="https://hilarious-thrill-0f0.notion.site/a4da3704344f4704a25df7c6ba2100b4?pvs=4"
+            >
               <strong className="text-zp-black text-zp-xs">
                 개인정보처리방침
               </strong>
@@ -15,7 +18,7 @@ export default function Footer() {
             &nbsp; &#124; &nbsp;
             <a
               target="_blank"
-              href="#"
+              href="https://hilarious-thrill-0f0.notion.site/9426295d13804c13989ba95a51397949?pvs=4"
               className="text-zp-black text-zp-xs hover:underline"
             >
               이용약관
@@ -25,7 +28,7 @@ export default function Footer() {
             <small className="text-zp-black">(주) </small>
             ZiPPlZ
           </li>
-          <li className="font-bold text-zp-xs text-zp-black">
+          <li className="font-bold text-zp-2xs text-zp-black">
             대표자: 이가은 &nbsp;|&nbsp; 대표전화:
             <a href="tel:0902-0817" className="hover:underline">
               0902-0817

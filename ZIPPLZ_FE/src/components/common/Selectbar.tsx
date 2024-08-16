@@ -120,11 +120,11 @@ export default function Selectbar({
     setIsShowOptions(false);
     onClick;
   };
-  const Select: string = `relative border ${borderClasses[border]} outline-none ${radiusClasses[radius]} px-1 ${bgClasses[backgroundColor]} ${fontClasses[fontColor]}`;
-  const Selected: string = `flex justify-between items-center px-[1rem] cursor-pointer font-bold `;
+  const Select: string = `relative border select-none ${borderClasses[border]} outline-none ${radiusClasses[radius]} pt-1 px-1 ${bgClasses[backgroundColor]} ${fontClasses[fontColor]}`;
+  const Selected: string = `flex justify-between items-center px-[1rem] cursor-pointer font-bold`;
   const SelectedValue: string = `${fontSizeClasses[fontSize]} bg-white`;
   const Options: string = `border ${borderClasses[border]} list-none  outline-none  absolute mt-2 left-0  z-[10]  ${bgClasses[backgroundColor]}`;
-  const Option: string = `flex items-center w-full px-[1rem] py-[0.5rem] w-full ${radiusClasses[radius]} cursor-pointer ${hoverClasses[hover]} font-bold z-[100] ${fontClasses[fontColor]}`;
+  const Option: string = `flex items-center px-[1rem] py-[0.5rem] w-full ${radiusClasses[radius]} cursor-pointer ${hoverClasses[hover]} font-bold z-[100] ${fontClasses[fontColor]}`;
   const nonActive: string = `flex items-center w-full px-[1rem] py-[0.5rem] w-full  cursor-pointer bg-zp-light-gray font-bold z-[100] ${fontClasses[fontColor]}`;
 
   const widthClass = width === 'full' ? 'w-full' : '';
@@ -156,7 +156,7 @@ export default function Selectbar({
         >
           {options.map((option, index) => (
             <li
-              className={` ${status && status[index] === 1 ? Option : nonActive}  ${widthClass} ${heightClass}`}
+              className={` ${status && status[index] === 1 ? Option : nonActive}  ${widthClass} ${heightClass} text-zp-2xs`}
               key={index}
               onClick={() => handleOptionClick(option)}
             >

@@ -72,7 +72,7 @@ export default function Home() {
   }, []);
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
-      <div className="relative w-full p-4 rounded-zp-radius-big bg-zp-white">
+      <div className="relative w-full p-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-slight">
         <ScheduleCalendar workList={scheduleList} />
         {(!loginUser || loginUser.role === '') && (
           <div className="absolute flex justify-center items-center w-full h-full top-0 left-0 rounded-zp-radius-big bg-[rgba(255,255,255,0.5)] z-10">
@@ -96,7 +96,7 @@ export default function Home() {
       {loginUser && loginUser.role !== '' && (
         <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
           <div className="basis-7/12">
-            <p className="font-extrabold text-zp-xl">Today</p>
+            <p className="mb-1 font-bold text-zp-xl font-noto">📆 Today</p>
             {todayWork && todayWork.length > 0 ? (
               todayWork
                 .filter((work) => work.worker !== null)
@@ -117,7 +117,9 @@ export default function Home() {
             )}
           </div>
           <div className="basis-5/12">
-            <p className="font-extrabold text-zp-xl">Image Change</p>
+            <p className="mb-1 font-bold text-zp-xl font-noto">
+              🤖 AI 자재 입히기
+            </p>
             <div className="flex flex-col gap-2">
               <ImageChangeTab onClick={handleClickImageChange} />
               <ImageChangeViewTab onClick={handleClickImageChange} />
@@ -126,7 +128,9 @@ export default function Home() {
         </div>
       )}
       <div className="w-full">
-        <p className="font-extrabold text-zp-xl">찾으시는 시공이 있으신가요?</p>
+        <p className="mb-1 font-bold text-zp-xl font-noto">
+          🔎 찾으시는 시공이 있으신가요?
+        </p>
         <p className="font-bold text-zp-2xs text-zp-gray">
           선택한 시공에 맞춰 인증된 전문 기술자를 추천해드립니다.
         </p>
@@ -140,7 +144,7 @@ export default function Home() {
           />
         ))}
       </div>
-      <p className="font-extrabold text-zp-xl">HOT한 시공업자</p>
+      <p className="mb-1 font-bold text-zp-xl font-noto">🔥 HOT한 시공업자</p>
       <div
         className="flex w-full overflow-x-auto"
         style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}

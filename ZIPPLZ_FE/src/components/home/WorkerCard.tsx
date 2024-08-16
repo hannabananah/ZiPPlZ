@@ -6,7 +6,6 @@ interface Props {
 
 export default function WorkerCard({ worker }: Props) {
   const navigate = useNavigate();
-
   // worker와 관련된 필드가 존재하는지 확인
   // const location =
   //   worker.locations && worker.locations.length > 0
