@@ -211,10 +211,10 @@ public class MaterialServiceImpl implements MaterialService {
         materialSearchRepository.save(elasticMaterial);
     }
 
-    @Override
-    public List<ElasticMaterial> searchMaterialService(Map<String, Object> params) {
-        List<ElasticMaterial> elasticMaterials =  materialSearchRepository.findByMaterialName((String) params.get("searchWord"));
+    // @Override
+    // public List<ElasticMaterial> searchMaterialService(Map<String, Object> params) {
+    //     List<ElasticMaterial> elasticMaterials =  materialSearchRepository.findByMaterialName((String) params.get("searchWord"));
 
-        return elasticMaterials;
-    }
+    //     return elasticMaterials;
+    // }
 }
