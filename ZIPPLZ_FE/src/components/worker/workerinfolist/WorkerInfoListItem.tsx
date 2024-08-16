@@ -10,21 +10,22 @@ export default function WorkerInfoListItem({ worker }: Props) {
 
   return (
     <div
-      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[10rem]"
+      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[11rem] overflow-hidden"
       onClick={() =>
-        navigate(
-          `/workers/${worker.user_serial}/portfolio?tab=overview&field=${worker.field_name}`
-        )
+        navigate(`/workers/${worker.user_serial}/portfolio?tab=overview`)
       }
     >
       {worker.img ? (
-        <img className="w-full h-[35%] rounded-t-zp-radius-big" src="" />
+        <img
+          className="w-full h-[35%] object-cover transform scale-125 origin-top"
+          src={worker.save_file}
+        />
       ) : (
         <div className="flex items-center justify-center w-full h-full">
           <CertificatedBadge width={'3rem'} height={'3rem'} />
         </div>
       )}
-      <div className="flex flex-col w-full p-2">
+      <div className="flex flex-col w-full p-2 mt-2">
         <div className="flex items-center gap-2">
           <p className="font-bold text-zp-sm">{worker.user_name}</p>
           <p className="text-zp-2xs text-zp-light-gray">{worker.birth_date}</p>
