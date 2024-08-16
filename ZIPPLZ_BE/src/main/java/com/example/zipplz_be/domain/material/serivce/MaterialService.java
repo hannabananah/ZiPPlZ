@@ -2,7 +2,7 @@ package com.example.zipplz_be.domain.material.serivce;
 
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
-import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
+//import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
