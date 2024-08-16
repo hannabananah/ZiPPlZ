@@ -15,7 +15,7 @@ import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
 // const base_url = import.meta.env.VITE_APP_BASE_URL;
-const base_url: string = 'https://zipplz.site/api/';
+const base_url: string = 'https://zipplz.site/api';
 
 export default function ChatRooms() {
   const navigate = useNavigate();
