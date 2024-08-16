@@ -2,7 +2,7 @@ package com.example.zipplz_be.domain.material.controller;
 
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
-import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
+//import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
 import com.example.zipplz_be.domain.material.serivce.MaterialService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
