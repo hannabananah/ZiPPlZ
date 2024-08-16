@@ -224,19 +224,21 @@ export default function OverView({ portfolio }: Props) {
                   src={image.saveFile}
                 />
               ))}
-              <div className=" flex items-center">
-                <FiPlusCircle
-                  size={24}
-                  className="cursor-pointer aspect-square"
-                  onClick={handleClick}
-                />
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  onChange={handleFileChange}
-                />
-              </div>
+              {id && loginUser?.userSerial === parseInt(id) && (
+                <div className="flex items-center ">
+                  <FiPlusCircle
+                    size={24}
+                    className="cursor-pointer aspect-square"
+                    onClick={handleClick}
+                  />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                  />
+                </div>
+              )}
             </>
           ) : (
             id &&
@@ -343,7 +345,7 @@ export default function OverView({ portfolio }: Props) {
             </div>
             <div className="flex flex-col text-zp-xs">
               <p className="font-bold">업체 주소</p>
-              <div className="w-full relative ">
+              <div className="relative w-full ">
                 <Input
                   inputType="normal"
                   type="text"
@@ -393,11 +395,11 @@ export default function OverView({ portfolio }: Props) {
                   />
                 </div>
                 {isOk ? (
-                  <p className="text-zp-2xs font-bold text-zp-main-color">
+                  <p className="font-bold text-zp-2xs text-zp-main-color">
                     사업자 번호가 인증되었습니다.
                   </p>
                 ) : (
-                  <p className="text-zp-2xs font-bold text-zp-red">
+                  <p className="font-bold text-zp-2xs text-zp-red">
                     사업자 번호를 인증해주세요.
                   </p>
                 )}

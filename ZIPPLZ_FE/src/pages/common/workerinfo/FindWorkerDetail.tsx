@@ -105,12 +105,16 @@ export default function FindWorkerDetai() {
               )}
             </div>
             {/* 사진 */}
-            <div className="flex w-full h-[220px] md:h-[300px]">
-              <img
-                src="/src/assets/data/cake.jpg"
-                className="w-full h-full rounded-zp-radius-big"
-              />
-            </div>
+            {findWorker.board_images && findWorker.board_images.length > 0 && (
+              <div className="flex w-full h-[220px] md:h-[300px] overflow-x-auto">
+                {findWorker.board_images.map((img) => (
+                  <img
+                    src={img.saveFile}
+                    className="w-full h-full rounded-zp-radius-big"
+                  />
+                ))}
+              </div>
+            )}
 
             <div className="flex flex-col w-full gap-2">
               {/* 글 제목 */}
@@ -133,7 +137,7 @@ export default function FindWorkerDetai() {
               </div>
 
               <p className="font-bold text-zp-xs text-wrap">
-                인천광역시 부평구 부평문화로 37 (부평동, 부평동아이파트)
+                {findWorker.user_address}
               </p>
             </div>
 

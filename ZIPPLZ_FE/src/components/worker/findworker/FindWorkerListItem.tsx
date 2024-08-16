@@ -16,7 +16,7 @@ export default function FindWorkerListItem({ board }: Props) {
   const navigate = useNavigate();
   return (
     <div
-      className="w-full rounded-zp-radius-big h-[7.5rem] shadow-lg flex items-center bg-zp-white cursor-pointer p-4"
+      className="w-full rounded-zp-radius-big h-[7.5rem] drop-shadow-zp-normal flex items-center bg-zp-white cursor-pointer p-4"
       onClick={() => navigate(`${board.board_serial}`)}
     >
       <div className="flex items-center w-full h-full gap-4">
