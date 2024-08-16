@@ -190,26 +190,26 @@ public class MaterialServiceImpl implements MaterialService {
         }
     }
 
-    @Override
-    @Transactional
-    public void insertMaterialService(Map<String, Object> params) {
-        Material material = Material.builder()
-                .description((String) params.get("description"))
-                .materialName((String) params.get("materialName"))
-                .materialPrice((Integer) params.get("materialPrice"))
-                .build();
+    // @Override
+    // @Transactional
+    // public void insertMaterialService(Map<String, Object> params) {
+    //     Material material = Material.builder()
+    //             .description((String) params.get("description"))
+    //             .materialName((String) params.get("materialName"))
+    //             .materialPrice((Integer) params.get("materialPrice"))
+    //             .build();
 
-        materialRepository.save(material);
+    //     materialRepository.save(material);
 
-        ElasticMaterial elasticMaterial = ElasticMaterial.builder()
-                .materialName(material.getMaterialName())
-                .materialPrice(material.getMaterialPrice())
-                .materialSerial(material.getMaterialSerial())
-                .description(material.getDescription())
-                .build();
+    //     ElasticMaterial elasticMaterial = ElasticMaterial.builder()
+    //             .materialName(material.getMaterialName())
+    //             .materialPrice(material.getMaterialPrice())
+    //             .materialSerial(material.getMaterialSerial())
+    //             .description(material.getDescription())
+    //             .build();
 
-        materialSearchRepository.save(elasticMaterial);
-    }
+    //     materialSearchRepository.save(elasticMaterial);
+    // }
 
     // @Override
     // public List<ElasticMaterial> searchMaterialService(Map<String, Object> params) {
