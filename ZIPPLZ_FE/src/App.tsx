@@ -1,54 +1,319 @@
+import { MagnifyingGlass, Radio } from 'react-loader-spinner';
 import { Navigate, Route, Routes } from 'react-router-dom';
 
 import Layout from '@components/layout/Layout';
-// 공통 컴포넌트
-// 구인 게시물 컴포넌트, 시공자 컴포넌트
-import Custom404 from '@pages/common/404';
-import ChatRoom from '@pages/common/chat/ChatRoom';
-import Community from '@pages/common/community/HousePost';
-import Home from '@pages/common/home/Home';
-import MyInformationModify from '@pages/common/mypage/MyInformationModify';
-import MyPage from '@pages/common/mypage/MyPage';
-import MyPasswordModify from '@pages/common/mypage/MyPasswordModify';
-import MyScrapList from '@pages/common/mypage/MyScrapList';
-import Policy from '@pages/common/mypage/Policy';
-import Version from '@pages/common/mypage/Version';
-import WishWorkerList from '@pages/common/mypage/WishWorkerList';
-import MyFindWorkerList from '@pages/common/mypage/postpage/MyFindWorkerList';
-import BeforeResign from '@pages/common/mypage/resignpage/BeforeResign';
-import DontUseZIPPLZ from '@pages/common/mypage/resignpage/DontUseZIPPLZ';
-import Resign from '@pages/common/mypage/resignpage/Resign';
-import ResignComplete from '@pages/common/mypage/resignpage/ResignComplete';
-import MyFindWorkerScrapList from '@pages/common/mypage/scrappage/MyFindWorkerScrapList';
-// 워커 찾기
-import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
-import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
-import Schedule from '@pages/user/Schedule';
-import Portfolio from '@pages/worker/Portfolio';
+import loadable from '@loadable/component';
 import GuardRoute from '@router/GuardRoute';
 
-import ContractPage from './pages/common/ContractPage';
-import HousePost from './pages/common/community/HousePost';
-import HousePostCreate from './pages/common/community/HousePostCreate';
-import HousePostDetail from './pages/common/community/HousePostDetail';
-import HousePostUpdate from './pages/common/community/HousePostUpdate';
-import QuestionPost from './pages/common/community/QuestionPost';
-import QuestionPostCreate from './pages/common/community/QuestionPostCreate';
-import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
-import QuestionPostUpdate from './pages/common/community/QuestionPostUpdate';
-import ImageChangePage from './pages/common/home/ImageChangePage';
-import Login from './pages/common/login/LogIn';
-import SocialLoginCheck from './pages/common/login/SocialLoginCheck';
-import FindIdPw from './pages/common/login/find/FindIdPw';
-import WorkerInfoLocationDetail from './pages/common/mypage/WorkerInfoLocationDetail';
-import MyHousePostList from './pages/common/mypage/postpage/MyHousePostList';
-import MyQuestionPostList from './pages/common/mypage/postpage/MyQuestionPostList';
-import RoughWorker from './pages/common/mypage/resignpage/RoughWorker';
-import MyHousePostScrapList from './pages/common/mypage/scrappage/MyHousePostScrapList';
-import MyQuestionPostScrapList from './pages/common/mypage/scrappage/MyQuestionPostScrapList';
-import SignUp from './pages/common/signup/SignUp';
-import UpdateFindWorker from './pages/common/workerinfo/UpdateFindWorker';
-import Workers from './pages/common/workerinfo/Workers';
+const Custom404 = loadable(() => import('@pages/common/404'), {
+  fallback: <div>Loading...</div>,
+});
+const ChatRoom = loadable(() => import('@pages/common/chat/ChatRoom'), {
+  fallback: <div>Loading chat room...</div>,
+});
+const Community = loadable(() => import('@pages/common/community/HousePost'), {
+  fallback: <div>Loading community...</div>,
+});
+const Home = loadable(() => import('@pages/common/home/Home'), {
+  fallback: <div>Loading home...</div>,
+});
+const MyInformationModify = loadable(
+  () => import('@pages/common/mypage/MyInformationModify'),
+  {
+    fallback: <div>Loading...</div>,
+  }
+);
+const MyPage = loadable(() => import('@pages/common/mypage/MyPage'), {
+  fallback: <div>Loading my page...</div>,
+});
+const MyPasswordModify = loadable(
+  () => import('@pages/common/mypage/MyPasswordModify'),
+  {
+    fallback: <div>Loading...</div>,
+  }
+);
+const MyScrapList = loadable(() => import('@pages/common/mypage/MyScrapList'), {
+  fallback: <div>Loading...</div>,
+});
+const Policy = loadable(() => import('@pages/common/mypage/Policy'), {
+  fallback: <div>Loading policy...</div>,
+});
+const Version = loadable(() => import('@pages/common/mypage/Version'), {
+  fallback: <div>Loading version...</div>,
+});
+const WishWorkerList = loadable(
+  () => import('@pages/common/mypage/WishWorkerList'),
+  {
+    fallback: <div>Loading wish worker list...</div>,
+  }
+);
+const MyFindWorkerList = loadable(
+  () => import('@pages/common/mypage/postpage/MyFindWorkerList'),
+  {
+    fallback: <div>Loading find worker list...</div>,
+  }
+);
+const BeforeResign = loadable(
+  () => import('@pages/common/mypage/resignpage/BeforeResign'),
+  {
+    fallback: <div>Loading before resign...</div>,
+  }
+);
+const DontUseZIPPLZ = loadable(
+  () => import('@pages/common/mypage/resignpage/DontUseZIPPLZ'),
+  {
+    fallback: <div>Loading...</div>,
+  }
+);
+const Resign = loadable(
+  () => import('@pages/common/mypage/resignpage/Resign'),
+  {
+    fallback: <div>Loading...</div>,
+  }
+);
+const ResignComplete = loadable(
+  () => import('@pages/common/mypage/resignpage/ResignComplete'),
+  {
+    fallback: <div>Loading...</div>,
+  }
+);
+const MyFindWorkerScrapList = loadable(
+  () => import('@pages/common/mypage/scrappage/MyFindWorkerScrapList'),
+  {
+    fallback: <div>Loading...</div>,
+  }
+);
+const FindWorkerDetail = loadable(
+  () => import('@pages/common/workerinfo/FindWorkerDetail'),
+  {
+    fallback: <div>Loading worker details...</div>,
+  }
+);
+const FindWorkerDetailCreate = loadable(
+  () => import('@pages/common/workerinfo/FindWorkerDetailCreate'),
+  {
+    fallback: <div>Loading worker detail creation...</div>,
+  }
+);
+const Schedule = loadable(() => import('@pages/user/Schedule'), {
+  fallback: <div>Loading schedule...</div>,
+});
+const Portfolio = loadable(() => import('@pages/worker/Portfolio'), {
+  fallback: <div>Loading portfolio...</div>,
+});
+
+const ContractPage = loadable(() => import('./pages/common/ContractPage'), {
+  fallback: <div>Loading contract page...</div>,
+});
+const HousePost = loadable(() => import('./pages/common/community/HousePost'), {
+  fallback: <div>Loading house post...</div>,
+});
+const HousePostCreate = loadable(
+  () => import('./pages/common/community/HousePostCreate'),
+  {
+    fallback: <div>Loading house post creation...</div>,
+  }
+);
+const HousePostDetail = loadable(
+  () => import('./pages/common/community/HousePostDetail'),
+  {
+    fallback: <div>Loading house post details...</div>,
+  }
+);
+const HousePostUpdate = loadable(
+  () => import('./pages/common/community/HousePostUpdate'),
+  {
+    fallback: <div>Loading house post update...</div>,
+  }
+);
+const QuestionPost = loadable(
+  () => import('./pages/common/community/QuestionPost'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <MagnifyingGlass
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="magnifying-glass-loading"
+          wrapperStyle={{}}
+          wrapperClass="magnifying-glass-wrapper"
+          glassColor="#c0efff"
+          color="#e15b64"
+        />
+      </div>
+    ),
+  }
+);
+const QuestionPostCreate = loadable(
+  () => import('./pages/common/community/QuestionPostCreate'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <Radio
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="radio-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    ),
+  }
+);
+const QuestionPostDetail = loadable(
+  () => import('./pages/common/community/QuestionPostDetail'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <Radio
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="radio-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    ),
+  }
+);
+const QuestionPostUpdate = loadable(
+  () => import('./pages/common/community/QuestionPostUpdate'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <Radio
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="radio-loading"
+          wrapperStyle={{}}
+          wrapperClass=""
+        />
+      </div>
+    ),
+  }
+);
+const ImageChangePage = loadable(
+  () => import('./pages/common/home/ImageChangePage'),
+  {
+    fallback: <div>Loading image change page...</div>,
+  }
+);
+const Login = loadable(() => import('./pages/common/login/LogIn'), {
+  fallback: <div>Loading login...</div>,
+});
+const SocialLoginCheck = loadable(
+  () => import('./pages/common/login/SocialLoginCheck'),
+  {
+    fallback: <div>Loading social login check...</div>,
+  }
+);
+const FindIdPw = loadable(() => import('./pages/common/login/find/FindIdPw'), {
+  fallback: <div>Loading find ID/PW...</div>,
+});
+const WorkerInfoLocationDetail = loadable(
+  () => import('./pages/common/mypage/WorkerInfoLocationDetail'),
+  {
+    fallback: <div>Loading worker info location details...</div>,
+  }
+);
+const MyHousePostList = loadable(
+  () => import('./pages/common/mypage/postpage/MyHousePostList'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <MagnifyingGlass
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="magnifying-glass-loading"
+          wrapperStyle={{}}
+          wrapperClass="magnifying-glass-wrapper"
+          glassColor="#c0efff"
+          color="#e15b64"
+        />
+      </div>
+    ),
+  }
+);
+const MyQuestionPostList = loadable(
+  () => import('./pages/common/mypage/postpage/MyQuestionPostList'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <MagnifyingGlass
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="magnifying-glass-loading"
+          wrapperStyle={{}}
+          wrapperClass="magnifying-glass-wrapper"
+          glassColor="#c0efff"
+          color="#e15b64"
+        />
+      </div>
+    ),
+  }
+);
+const RoughWorker = loadable(
+  () => import('./pages/common/mypage/resignpage/RoughWorker'),
+  {
+    fallback: <div>Loading rough worker...</div>,
+  }
+);
+const MyHousePostScrapList = loadable(
+  () => import('./pages/common/mypage/scrappage/MyHousePostScrapList'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <MagnifyingGlass
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="magnifying-glass-loading"
+          wrapperStyle={{}}
+          wrapperClass="magnifying-glass-wrapper"
+          glassColor="#c0efff"
+          color="#e15b64"
+        />
+      </div>
+    ),
+  }
+);
+const MyQuestionPostScrapList = loadable(
+  () => import('./pages/common/mypage/scrappage/MyQuestionPostScrapList'),
+  {
+    fallback: (
+      <div className="flex items-center justify-center">
+        <MagnifyingGlass
+          visible={true}
+          height="80"
+          width="80"
+          ariaLabel="magnifying-glass-loading"
+          wrapperStyle={{}}
+          wrapperClass="magnifying-glass-wrapper"
+          glassColor="#c0efff"
+          color="#e15b64"
+        />
+      </div>
+    ),
+  }
+);
+const SignUp = loadable(() => import('./pages/common/signup/SignUp'), {
+  fallback: <div>Loading sign up...</div>,
+});
+const UpdateFindWorker = loadable(
+  () => import('./pages/common/workerinfo/UpdateFindWorker'),
+  {
+    fallback: <div>Loading update find worker...</div>,
+  }
+);
+const Workers = loadable(() => import('./pages/common/workerinfo/Workers'), {
+  fallback: <div>Loading workers...</div>,
+});
 
 export default function App() {
   return (

@@ -78,6 +78,16 @@ export default {
         xl: '1280px',
       },
     },
+    animation: {
+      spinAndGrow: 'spinAndGrow 3s infinite',
+    },
+    keyframes: {
+      spinAndGrow: {
+        '0%': { transform: 'scale(1) rotate(0deg)' },
+        '50%': { transform: 'scale(1.5) rotate(360deg)' },
+        '100%': { transform: 'scale(1) rotate(720deg)' },
+      },
+    },
   },
   plugins: [],
 };

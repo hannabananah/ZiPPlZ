@@ -49,7 +49,7 @@ const ScheduleCalendar = function ({ workList, onEventClick, loading }: Props) {
   return (
     <div className="relative w-full">
       {loading ? (
-        <Skeleton height={400} />
+        <Skeleton height={300} />
       ) : (
         <FullCalendar
           plugins={[dayGridPlugin]}
