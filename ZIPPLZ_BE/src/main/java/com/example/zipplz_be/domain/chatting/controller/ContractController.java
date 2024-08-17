@@ -149,16 +149,7 @@ public class ContractController {
         try {
             int userSerial = portfolioService.getUserSerial(authentication);
             ContractRequestDTO contractRequestDTO = contractService.insertModifyRequestService(userSerial, chatroomSerial, params);
-            ChatMessageRequestDTO contractMsg = ChatMessageRequestDTO.builder()
-                    .type(MessageType.CONTRACT)
-                    .chatroomSerial(chatroomSerial)
-                    .userSerial(userSerial)
-                    .chatMessageContent("계약 수정")
-                    .isFile(false)
-                    .originalFileName("")
-                    .isContract(true)
-                    .contractContent(contractRequestDTO).build();
-            chatMessageService.sendMessage(contractMsg, userSerial, getUserRole(authentication));
+
             status = HttpStatus.OK;
             responseDTO = new ResponseDTO<>(status.value(), "수정 요청 완료!", contractRequestDTO);
         } catch (DuplicateContractException e) {
@@ -174,6 +165,39 @@ public class ContractController {
 
         return new ResponseEntity<>(responseDTO, status);
     }
+
+    @PostMapping("/{chatroomSerial}/modifiedmessage")
+    public ResponseEntity<?> sendModifiedMessage(Authentication authentication, @PathVariable int chatroomSerial, @RequestBody String message) {
+        ResponseDTO<?> responseDTO;
+        HttpStatus status = HttpStatus.ACCEPTED;
+
+        try {
+            int userSerial = portfolioService.getUserSerial(authentication);
+            ChatMessageRequestDTO contractMsg = ChatMessageRequestDTO.builder()
+                    .type(MessageType.CONTRACT)
+                    .chatroomSerial(chatroomSerial)
+                    .userSerial(userSerial)
+                    .chatMessageContent(message)
+                    .isFile(false)
+                    .originalFileName("")
+                    .isContract(true).build();
+            chatMessageService.sendMessage(contractMsg, userSerial, getUserRole(authentication));
+            status = HttpStatus.OK;
+            responseDTO = new ResponseDTO<>(status.value(), "수정 요청 완료!", message);
+        } catch (DuplicateContractException e) {
+            status = HttpStatus.BAD_REQUEST;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (UnauthorizedUserException e) {
+            status = HttpStatus.UNAUTHORIZED;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        } catch (Exception e) {
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+        }
+
+        return new ResponseEntity<>(responseDTO, status);
+    }
+
 
     //계약서 처리 내역 조회(최신순)
     @GetMapping("/{chatroomSerial}/logs")
