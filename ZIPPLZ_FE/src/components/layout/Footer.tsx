@@ -63,7 +63,7 @@ export default function Footer() {
             </p>
           </li>
         </ul>
-        <p className="w-full pt-3 pb-16 text-left text-pretty text-zp-gray text-zp-3xs break-keep">
+        <p className="w-full pt-3 text-left text-pretty text-zp-gray text-zp-3xs break-keep">
           ZiPPlZ는 인테리어 시공업자와 고객을 잇는 중개 플랫폼입니다. ZiPPlZ는
           시공업자와 고객 사이에 이루어지는 거래 내지 계약의 당사자가 아닙니다.
           ZiPPlZ 플랫폼을 통하여 계약한 일정, 이에 대한 A/S 등 시공업자의

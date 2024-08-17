@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import Skeleton from 'react-loading-skeleton';
+import 'react-loading-skeleton/dist/skeleton.css';
 import { useNavigate } from 'react-router-dom';
 
 import { getChatRooms } from '@/apis/chatroom/chatApi';
@@ -31,38 +33,50 @@ const fields: string[] = [
 ];
 
 export default function Home() {
-  const [scheduleList, setScheduleList] = useState<Work[]>([]);
-  const [todayWork, setTodayWork] = useState<TodayWork[]>([]);
+  const [scheduleList, setScheduleList] = useState<Work[] | null>(null);
+  const [todayWork, setTodayWork] = useState<TodayWork[] | null>(null);
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[] | null>(null);
+  const { workerList, setWorkerList } = useWorkerListStore();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { loginUser } = useLoginUserStore();
-  const { workerList, setWorkerList } = useWorkerListStore();
-  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
   const fetchChatRooms = async () => {
     const response = await getChatRooms();
+    setLoading(true);
     setChatRoomList(response.data.data);
+    setLoading(false);
   };
+
   useEffect(() => {
     fetchChatRooms();
   }, []);
+
   const handleClickImageChange = () =>
     navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
+
   const fetchWorks = async () => {
     const response = await getWorksByUser();
     setScheduleList(response.data.data);
   };
+
   const handleClickField = (field: string) => {
     navigate(`/workers/portfolios?type=${field}`);
   };
+
   const fetchHotWorkers = async () => {
+    setLoading(true);
     const response = await getTopWorkerList();
     setWorkerList(response.data.data);
+    setLoading(false);
   };
+
   const fetchTodaySchedule = async () => {
     try {
       const response = await getTodayWork();
       setTodayWork(response.data.data);
     } catch (error) {}
   };
+
   useEffect(() => {
     fetchHotWorkers();
     if (loginUser?.role) {
@@ -70,10 +84,12 @@ export default function Home() {
       fetchTodaySchedule();
     }
   }, []);
+
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       <div className="relative w-full p-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-slight">
-        <ScheduleCalendar workList={scheduleList} />
+        <ScheduleCalendar workList={scheduleList} loading={loading} />
+
         {(!loginUser || loginUser.role === '') && (
           <div className="absolute flex justify-center items-center w-full h-full top-0 left-0 rounded-zp-radius-big bg-[rgba(255,255,255,0.5)] z-10">
             <div className="flex flex-col justify-center items-center w-[80%] h-[40%] bg-zp-light-beige opacity-100 z-100 rounded-zp-radius-big gap-4 p-4">
@@ -93,27 +109,32 @@ export default function Home() {
           </div>
         )}
       </div>
+
       {loginUser && loginUser.role !== '' && (
         <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
           <div className="basis-7/12">
             <p className="mb-1 font-bold text-zp-xl font-noto">📆 Today</p>
-            {todayWork && todayWork.length > 0 ? (
-              todayWork
-                .filter((work) => work.worker !== null)
-                .map((work) => (
-                  <TodaySchedule
-                    key={work.workSerial}
-                    role={loginUser?.role || ''}
-                    work={work}
-                    chatRoomList={chatRoomList}
-                  />
-                ))
+            {todayWork ? (
+              todayWork.length > 0 ? (
+                todayWork
+                  .filter((work) => work.worker !== null)
+                  .map((work) => (
+                    <TodaySchedule
+                      key={work.workSerial}
+                      role={loginUser?.role || ''}
+                      work={work}
+                      chatRoomList={chatRoomList || []}
+                    />
+                  ))
+              ) : (
+                <div className="w-full h-[8.3rem] rounded-zp-radius-big bg-zp-white flex items-center justify-center">
+                  <p className="font-bold text-zp-md text-zp-light-gray">
+                    시공이 없습니다
+                  </p>
+                </div>
+              )
             ) : (
-              <div className="w-full h-[8.3rem] rounded-zp-radius-big bg-zp-white flex items-center justify-center">
-                <p className="font-bold text-zp-md text-zp-light-gray">
-                  시공이 없습니다
-                </p>
-              </div>
+              <Skeleton height={132} count={2} />
             )}
           </div>
           <div className="basis-5/12">
@@ -127,6 +148,7 @@ export default function Home() {
           </div>
         </div>
       )}
+
       <div className="w-full">
         <p className="mb-1 font-bold text-zp-xl font-noto">
           🔎 찾으시는 시공이 있으신가요?
