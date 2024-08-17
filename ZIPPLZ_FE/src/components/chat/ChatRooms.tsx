@@ -4,12 +4,12 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useNavigate } from 'react-router-dom';
 
-import { useLoginUserStore } from '@/stores/loginUserStore';
 import type { ChatRoom } from '@/types';
 import Badge from '@assets/certified-icon.svg?react';
 import NothingIcon from '@assets/nothing-icon.svg?react';
 import ModalComponent from '@components/common/Modal';
 import SearchInput from '@components/common/SearchInput';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';

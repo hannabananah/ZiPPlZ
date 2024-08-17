@@ -25,6 +25,7 @@ import FindWorkerDetail from '@pages/common/workerinfo/FindWorkerDetail';
 import FindWorkerDetailCreate from '@pages/common/workerinfo/FindWorkerDetailCreate';
 import Schedule from '@pages/user/Schedule';
 import Portfolio from '@pages/worker/Portfolio';
+import GuardRoute from '@router/GuardRoute';
 
 import ContractPage from './pages/common/ContractPage';
 import HousePost from './pages/common/community/HousePost';
@@ -55,70 +56,82 @@ export default function App() {
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
         {/* 스케줄 & 계약서 */}
-        <Route path="schedule" element={<Schedule />} />
-        <Route path="contract/:workserial" element={<ContractPage />} />
+        <Route element={<GuardRoute />}>
+          <Route path="schedule" element={<Schedule />} />
+          <Route path="contract/:workserial" element={<ContractPage />} />
+          <Route path="mypage" element={<MyPage />} />
+          <Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
+          <Route
+            path="image-change/:userSerial"
+            element={<ImageChangePage />}
+          />
+          <Route
+            path="workers/findworker/write"
+            element={<FindWorkerDetailCreate />}
+          />
+          <Route
+            path="workers/findworker/update/:boardSerial"
+            element={<UpdateFindWorker />}
+          />
+        </Route>
+
         <Route path="community" element={<Community />} />
-        <Route path="mypage" element={<MyPage />} />
-        <Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
-        <Route path="image-change/:userSerial" element={<ImageChangePage />} />
-        <Route path="findworker/write" element={<FindWorkerDetailCreate />} />
         <Route path="workers/:category" element={<Workers />} />
-        <Route
-          path="workers/findworker/write"
-          element={<FindWorkerDetailCreate />}
-        />
-        <Route
-          path="workers/findworker/update/:boardSerial"
-          element={<UpdateFindWorker />}
-        />
         <Route path="workers/findworker/:id" element={<FindWorkerDetail />} />
         <Route path="workers/:id/portfolio" element={<Portfolio />} />
         <Route path="housepost" element={<HousePost />} />
         <Route path="housepost/:id" element={<HousePostDetail />} />
         <Route path="questionpost" element={<QuestionPost />} />
         <Route path="questionpost/:id" element={<QuestionPostDetail />} />
-        <Route path="housepostcreate" element={<HousePostCreate />} />
-        <Route path="housepostupdate" element={<HousePostUpdate />} />
-
-        <Route path="questionpostupdate" element={<QuestionPostUpdate />} />
-        <Route path="questionpostcreate" element={<QuestionPostCreate />} />
-        {/* 마이페이지 */}
-        <Route path="mypage/MyFindWorkerList" element={<MyFindWorkerList />} />
-        <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
-        <Route
-          path="mypage/Myquestionpostlist"
-          element={<MyQuestionPostList />}
-        />
-        <Route
-          path="mypage/myfindworkerscraplist"
-          element={<MyFindWorkerScrapList />}
-        />
-        <Route
-          path="mypage/Myhousepostscraplist"
-          element={<MyHousePostScrapList />}
-        />
-        <Route
-          path="mypage/Myquestionpostscraplist"
-          element={<MyQuestionPostScrapList />}
-        />
-        <Route path="mypage/myscraplist" element={<MyScrapList />} />
-        <Route
-          path="mypage/myinformationmodify"
-          element={<MyInformationModify />}
-        />
-        <Route
-          path="mypage/workerinfolocationdetail"
-          element={<WorkerInfoLocationDetail />}
-        />
-        <Route path="mypage/mypasswordmodify" element={<MyPasswordModify />} />
-        <Route path="mypage/policy" element={<Policy />} />
-        <Route path="mypage/resign" element={<Resign />} />
-        <Route path="mypage/version" element={<Version />} />
-        <Route path="mypage/resigncomplete" element={<ResignComplete />} />
-        <Route path="mypage/beforeresign" element={<BeforeResign />} />
-        <Route path="mypage/dontusezipplz" element={<DontUseZIPPLZ />} />
-        <Route path="mypage/wishworkerlist" element={<WishWorkerList />} />
-        <Route path="mypage/roughworker" element={<RoughWorker />} />
+        <Route element={<GuardRoute />}>
+          <Route path="housepostcreate" element={<HousePostCreate />} />
+          <Route path="housepostupdate" element={<HousePostUpdate />} />
+          <Route path="questionpostupdate" element={<QuestionPostUpdate />} />
+          <Route path="questionpostcreate" element={<QuestionPostCreate />} />
+          {/* 마이페이지 */}
+          <Route
+            path="mypage/MyFindWorkerList"
+            element={<MyFindWorkerList />}
+          />
+          <Route path="mypage/myhousepostlist" element={<MyHousePostList />} />
+          <Route
+            path="mypage/Myquestionpostlist"
+            element={<MyQuestionPostList />}
+          />
+          <Route
+            path="mypage/myfindworkerscraplist"
+            element={<MyFindWorkerScrapList />}
+          />
+          <Route
+            path="mypage/Myhousepostscraplist"
+            element={<MyHousePostScrapList />}
+          />
+          <Route
+            path="mypage/Myquestionpostscraplist"
+            element={<MyQuestionPostScrapList />}
+          />
+          <Route path="mypage/myscraplist" element={<MyScrapList />} />
+          <Route
+            path="mypage/myinformationmodify"
+            element={<MyInformationModify />}
+          />
+          <Route
+            path="mypage/workerinfolocationdetail"
+            element={<WorkerInfoLocationDetail />}
+          />
+          <Route
+            path="mypage/mypasswordmodify"
+            element={<MyPasswordModify />}
+          />
+          <Route path="mypage/policy" element={<Policy />} />
+          <Route path="mypage/resign" element={<Resign />} />
+          <Route path="mypage/version" element={<Version />} />
+          <Route path="mypage/resigncomplete" element={<ResignComplete />} />
+          <Route path="mypage/beforeresign" element={<BeforeResign />} />
+          <Route path="mypage/dontusezipplz" element={<DontUseZIPPLZ />} />
+          <Route path="mypage/wishworkerlist" element={<WishWorkerList />} />
+          <Route path="mypage/roughworker" element={<RoughWorker />} />
+        </Route>
       </Route>
       {/* 로그인 회원가입 */}
       <Route path="/member/join/:type/:order/:phrase" element={<SignUp />} />
