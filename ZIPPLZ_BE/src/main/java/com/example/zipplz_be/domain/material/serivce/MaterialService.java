@@ -24,7 +24,7 @@ public interface MaterialService {
 
     void unsetMaterialOnWish(int userSerial, int materialSerial);
 
-    void insertMaterialService(Map<String, Object> params);
+    //void insertMaterialService(Map<String, Object> params);
 
-    List<ElasticMaterial> searchMaterialService(Map<String, Object> params);
+    //List<ElasticMaterial> searchMaterialService(Map<String, Object> params);
 }

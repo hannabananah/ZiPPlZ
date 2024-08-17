@@ -416,6 +416,8 @@ public class PlanService {
                 for(Work work : workList) {
                     if(!work.getStatus().equals("confirmed")) continue;
 
+                    File workerProfile = (work.getWorkerSerial() == null) ? null : (work.getWorkerSerial().getUserSerial().getFileSerial());
+
                     TodayWorkListDTO workListDTO = TodayWorkListDTO.builder()
                             .workSerial(work.getWorkSerial())
                             .endDate(portfolioService.convertTimestamp(work.getEndDate()))
@@ -424,7 +426,7 @@ public class PlanService {
                             .address(plan.getAddress())
                             .worker(work.getWorkerSerial())
                             .customer(customer)
-                            .workerProfile(work.getWorkerSerial().getUserSerial().getFileSerial())
+                            .workerProfile(workerProfile)
                             .customerProfile(customer.getUserSerial().getFileSerial())
                             .build();
 
