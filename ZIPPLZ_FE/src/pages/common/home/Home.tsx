@@ -161,14 +161,8 @@ export default function Home() {
               🤖 AI 자재 입히기
             </p>
             <div className="flex flex-col gap-2">
-              <ImageChangeTab
-                onClick={handleClickImageChange}
-                loading={loading}
-              />
-              <ImageChangeViewTab
-                onClick={handleClickImageChange}
-                loading={loading}
-              />
+              <ImageChangeTab onClick={handleClickImageChange} />
+              <ImageChangeViewTab onClick={handleClickImageChange} />
             </div>
           </div>
         </div>
