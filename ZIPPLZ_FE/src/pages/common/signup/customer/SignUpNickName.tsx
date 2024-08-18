@@ -30,6 +30,7 @@ export default function SignUpNickName({
         width="full"
         height={2}
         radius="none"
+        value={nickName}
         onChange={(e: React.ChangeEvent) => {
           setCustomer((prev: Customer) => ({
             ...prev,

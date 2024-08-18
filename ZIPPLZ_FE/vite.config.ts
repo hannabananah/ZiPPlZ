@@ -7,10 +7,10 @@ export default defineConfig({
   plugins: [react(), svgr(), tsconfigPaths()],
   server: {
     proxy: {
-      '/ws': {
+      '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-        ws: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },
   },

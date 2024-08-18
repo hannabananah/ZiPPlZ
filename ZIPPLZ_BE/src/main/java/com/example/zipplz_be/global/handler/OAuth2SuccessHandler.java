@@ -43,7 +43,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 //            emailCookie.setSecure(true); // HTTPS 환경에서만 쿠키가 전송
             cookie.setPath("/");
             response.addCookie(cookie); // 예시로 쿠키 사용
-            response.sendRedirect("http://localhost:5173/member/join/common/1/extra-agree");
+            response.sendRedirect("https://zipplz.site/member/join/common/1/extra-agree");
 
             System.out.println("social before join!!!!!!!!!!!!!!!!!!!token!!!!!!!!!! => " + token);
             System.out.println("social before join!!!!!!!!!!!!!name from token!!!!!!!!!! => " + jwtUtil.getName(token));
@@ -62,6 +62,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         System.out.println("social after join!!!!!!!!!!!!!!!!!!!!!!token!!!!!!!!!! => " + token);
         System.out.println("social after join!!!!!!!!!!!!!name from token!!!!!!!!!! => " + jwtUtil.getName(token));
-        response.sendRedirect("http://localhost:5173/success");
+        response.sendRedirect("https://zipplz.site/success");
     }
 }

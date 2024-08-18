@@ -186,7 +186,7 @@ export default function Login() {
           </p>
         </div>
         <div className="absolute left-0 bottom-[4rem] px-4 w-full flex flex-col gap-4 z-30">
-          <Link to={GOOGLE_LOGIN_URL}>
+          <a href={GOOGLE_LOGIN_URL}>
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
               style={{
@@ -195,8 +195,8 @@ export default function Login() {
                 backgroundPosition: 'center center',
               }}
             />
-          </Link>
-          <Link to={KAKAO_LOGIN_URL}>
+          </a>
+          <a href={KAKAO_LOGIN_URL}>
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
               style={{
@@ -205,7 +205,7 @@ export default function Login() {
                 backgroundPosition: 'center center',
               }}
             />
-          </Link>
+          </a>
         </div>
       </div>
     </div>

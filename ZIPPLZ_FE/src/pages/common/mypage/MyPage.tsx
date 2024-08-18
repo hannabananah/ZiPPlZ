@@ -14,6 +14,7 @@ import { SiFoodpanda } from 'react-icons/si';
 import { TbDog } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import { useMyPageStore } from '@stores/myPageStore';
 
 const icons = [
@@ -43,9 +44,9 @@ export default function MyPage() {
   } = useMyPageStore();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewImg, setPreviewImg] = useState<string | null>(null);
-  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null);
-
+  const [previewImg, setPreviewImg] = useState<string | null>(null); // 이미지 미리보기용 상태
+  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null); // 아이콘 선택 상태
+  const { setLoginUser } = useLoginUserStore();
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -94,6 +95,7 @@ export default function MyPage() {
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('login-user');
+    setLoginUser(null);
     setShowLogoutModal(false);
     navigate('/member/login');
   };

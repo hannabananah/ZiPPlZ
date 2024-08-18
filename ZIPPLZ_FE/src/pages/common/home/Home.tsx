@@ -52,8 +52,8 @@ export default function Home() {
   }, []);
 
   const handleClickImageChange = () =>
-    navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
-
+    //(window.location.href = `http://localhost:8080?user=${loginUser?.userSerial}`);
+    (window.location.href = `https://zipplz.site/dev`);
   const fetchWorks = async () => {
     const response = await getWorksByUser();
     setScheduleList(response.data.data);
@@ -143,7 +143,11 @@ export default function Home() {
             </p>
             <div className="flex flex-col gap-2">
               <ImageChangeTab onClick={handleClickImageChange} />
-              <ImageChangeViewTab onClick={handleClickImageChange} />
+              <ImageChangeViewTab
+                onClick={() =>
+                  navigate(`my-change-image/${loginUser.userSerial}`)
+                }
+              />
             </div>
           </div>
         </div>

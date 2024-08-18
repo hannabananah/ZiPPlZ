@@ -213,19 +213,21 @@ export default function OverView({ portfolio }: Props) {
                   src={image.saveFile}
                 />
               ))}
-              <div className="flex items-center ">
-                <FiPlusCircle
-                  size={24}
-                  className="cursor-pointer aspect-square"
-                  onClick={handleClick}
-                />
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  onChange={handleFileChange}
-                />
-              </div>
+              {id && loginUser?.userSerial === parseInt(id) && (
+                <div className="flex items-center ">
+                  <FiPlusCircle
+                    size={24}
+                    className="cursor-pointer aspect-square"
+                    onClick={handleClick}
+                  />
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    style={{ display: 'none' }}
+                    onChange={handleFileChange}
+                  />
+                </div>
+              )}
             </>
           ) : (
             id &&

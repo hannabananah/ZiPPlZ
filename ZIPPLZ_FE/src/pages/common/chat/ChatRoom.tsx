@@ -16,7 +16,7 @@ import {
 } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url = "https://zipplz.site/api";
 
 function ChatRoomContent() {
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
