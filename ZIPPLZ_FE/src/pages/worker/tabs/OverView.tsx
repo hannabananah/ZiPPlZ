@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { FaImage } from 'react-icons/fa';
 import { FaSearch } from 'react-icons/fa';
+import { FaCamera } from 'react-icons/fa6';
 import { FiPlusCircle } from 'react-icons/fi';
 import { HiOutlineUser } from 'react-icons/hi2';
 import { IoArrowBackSharp } from 'react-icons/io5';
@@ -198,6 +199,10 @@ export default function OverView({ portfolio }: Props) {
           </div>
         </div>
         <hr className="w-full text-zp-main-color" />
+        <div className="flex items-center gap-1">
+          <FaCamera size={16} />
+          <p className="font-bold text-zp-sm">Image</p>
+        </div>
         <div
           className="relative flex w-full gap-4 overflow-x-auto"
           style={{
@@ -227,24 +232,23 @@ export default function OverView({ portfolio }: Props) {
                 />
               </div>
             </>
-          ) : (
-            id &&
-            loginUser?.userSerial === parseInt(id) && (
-              <div className="flex flex-col items-center w-full gap-4">
-                <label className="flex flex-col items-center justify-center w-full">
-                  <FaImage size={50} />
-                  <p className="w-full font-bold text-center">
-                    포트폴리오 이미지를 넣어주세요.
-                  </p>
+          ) : id && loginUser?.userSerial === parseInt(id) ? (
+            <div className="flex flex-col items-center w-full gap-4">
+              <label className="flex flex-col items-center justify-center w-full">
+                <FaImage size={50} />
+                <p className="w-full font-bold text-center">
+                  포트폴리오 이미지를 넣어주세요.
+                </p>
 
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={handleFileChange}
-                  />
-                </label>
-              </div>
-            )
+                <input
+                  type="file"
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+              </label>
+            </div>
+          ) : (
+            <p className="w-full font-bold text-center text-zp-lg">No Image</p>
           )}
         </div>
 

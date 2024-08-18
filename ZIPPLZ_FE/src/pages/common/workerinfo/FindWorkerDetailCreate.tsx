@@ -1,16 +1,50 @@
 import { ChangeEvent, useState } from 'react';
+import DaumPostcode from 'react-daum-postcode';
 import { CiSearch } from 'react-icons/ci';
 import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
+import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
-import { writeFindWorker } from '@apis/worker/WorkerListApi';
+import { useWorkerListStore } from '@/stores/workerListStore';
+import { getFindWorkerList, writeFindWorker } from '@apis/worker/WorkerListApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
 type Image = File;
-
+const postCodeStyle = {
+  width: 'full',
+  height: '30rem',
+};
+const customModalStyles: ReactModal.Styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1000,
+  },
+  content: {
+    maxWidth: '200px',
+    minWidth: '350px',
+    height: '30rem',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '1rem',
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    justifyContent: 'center',
+    padding: '1.5rem',
+    zIndex: 1500,
+  },
+};
 export default function FindWorkerDetailCreate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
@@ -33,23 +67,34 @@ export default function FindWorkerDetailCreate() {
   const handleImageRemove = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
-
+  const { setFindWorkerList } = useWorkerListStore();
+  const fetchFindWorkerList = async () => {
+    const response = await getFindWorkerList();
+    setFindWorkerList(response.data.data);
+  };
   const handleClickRegistButton = async (
     images: Image[],
     title: string,
     content: string
   ) => {
-    return await writeFindWorker({
+    await writeFindWorker({
       images: images,
       title: title,
       board_content: content,
+      user_address: address,
     });
+    await fetchFindWorkerList();
+  };
+  const [openDaum, setOpenDaum] = useState<boolean>(false);
+  const onCompletePost = (data: any) => {
+    setAddress(data.address);
+    setOpenDaum(false);
   };
 
   return (
     <>
       <div className="flex flex-col w-full p-6 mt-[3rem] gap-4">
-        <div className="w-full relative">
+        <div className="relative w-full">
           <GoArrowLeft className="absolute cursor-pointer" onClick={goList} />
           <p className="w-full font-bold text-center align-text-top text-zp-xl">
             구인 글쓰기
@@ -96,7 +141,7 @@ export default function FindWorkerDetailCreate() {
                 <MdClose
                   size={18}
                   onClick={() => handleImageRemove(index)}
-                  className="absolute rounded-zp-full top-1 right-1 cursor-pointer"
+                  className="absolute cursor-pointer rounded-zp-full top-1 right-1"
                 />
               </div>
             ))}
@@ -133,7 +178,11 @@ export default function FindWorkerDetailCreate() {
               setAddress(e.target.value)
             }
           />
-          <CiSearch size={16} className="absolute right-3 top-[2rem]" />
+          <CiSearch
+            size={16}
+            className="absolute right-3 top-[2rem]"
+            onClick={() => setOpenDaum(true)}
+          />
         </div>
         <div className="flex flex-col w-full gap-4">
           <p className="font-bold text-zp-xs">작업내용</p>
@@ -156,10 +205,19 @@ export default function FindWorkerDetailCreate() {
           onClick={() => {
             handleClickRegistButton(images, title, workDetail);
 
-            goList();
+            setTimeout(() => {
+              goList();
+            }, 2000); // 1000ms (1초) 후에 실행
           }}
         />
       </div>
+      <Modal
+        style={customModalStyles}
+        isOpen={openDaum}
+        onRequestClose={onCompletePost}
+      >
+        <DaumPostcode style={postCodeStyle} onComplete={onCompletePost} />
+      </Modal>
     </>
   );
 }

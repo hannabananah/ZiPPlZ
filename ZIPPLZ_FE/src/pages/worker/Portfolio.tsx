@@ -31,9 +31,13 @@ export default function Portfolio() {
   const { loginUser } = useLoginUserStore();
   const chatStart = async () => {
     try {
-      if (id && field) return await makeChatRoom(parseInt(id), nowField);
-    } catch (error) {
-      if (chatRoomList.length > 0 && portfolioOverview) {
+      if (id) {
+        const response = await makeChatRoom(parseInt(id), nowField);
+        const chatRoomSerial = response.data.data.chatroomSerial;
+        navigate(`/chatrooms/${chatRoomSerial}`);
+      }
+    } catch (e) {
+      if (chatRoomList && chatRoomList.length > 0 && portfolioOverview) {
         const chatRoomSerial: string = chatRoomList.filter(
           (room) =>
             room.fieldName === nowField &&
@@ -51,7 +55,7 @@ export default function Portfolio() {
     setPortfolioList,
     setPortfolioOverview,
   } = usePortfolioStore();
-  const { id, field } = useParams<{ id: string; field: string }>();
+  const { id } = useParams<{ id: string }>();
   const location = useLocation();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState<string>('overview');

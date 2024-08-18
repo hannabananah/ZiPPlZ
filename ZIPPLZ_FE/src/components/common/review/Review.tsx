@@ -54,7 +54,10 @@ export default function Review({ comment, childComments }: Props) {
       <div className="w-full h-['7rem'] border border-zp-main-color bg-zp-white flex flex-col gap-4 rounded-zp-radius-big py-4 px-6">
         <div className="flex items-center justify-between w-full text-zp-2xs">
           <div className="flex gap-1">
-            이미지{' '}
+            <img
+              className="w-3 h-3 rounded-zp-radius-full"
+              src={comment && comment.saveFile}
+            />
             <p className="font-bold">
               {comment?.nickName ? comment.nickName : comment?.userName}
             </p>
@@ -83,16 +86,18 @@ export default function Review({ comment, childComments }: Props) {
             )}
             {childComments && childComments.length}개 댓글보기
           </div>
-          <div
-            className="flex items-center gap-1 cursor-pointer"
-            onClick={showWriteReview}
-          >
-            <IoChatbubblesOutline size={12} />
-            답글 작성하기
-          </div>
+          {loginUser && loginUser.role !== '' && (
+            <div
+              className="flex items-center gap-1 cursor-pointer"
+              onClick={showWriteReview}
+            >
+              <IoChatbubblesOutline size={12} />
+              답글 작성하기
+            </div>
+          )}
         </div>
       </div>
-      {isWriteReview && (
+      {isWriteReview && loginUser && loginUser.role !== '' && (
         <div className="relative flex w-full gap-4">
           <Input
             inputType="search"

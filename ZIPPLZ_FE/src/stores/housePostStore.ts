@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { create } from 'zustand';
 
-const BASE_URL: string = 'http://localhost:5000/';
-
+// const BASE_URL: string = 'http://localhost:5000/';
+const BASE_URL: string = 'https://zipplz.site/api/';
 interface HousePost {
   board_serial: number;
   board_type: number;

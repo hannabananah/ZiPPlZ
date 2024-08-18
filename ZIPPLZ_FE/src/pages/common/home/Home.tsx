@@ -16,6 +16,9 @@ import ImageChangeViewTab from '@components/home/ImageChangeViewTab';
 import TodaySchedule from '@components/home/TodaySchedule';
 import WorkerCard from '@components/home/WorkerCard';
 import { useLoginUserStore } from '@stores/loginUserStore';
+import 'swiper/css';
+import { Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const fields: string[] = [
   '전체',
@@ -116,16 +119,27 @@ export default function Home() {
             <p className="mb-1 font-bold text-zp-xl font-noto">📆 Today</p>
             {todayWork ? (
               todayWork.length > 0 ? (
-                todayWork
-                  .filter((work) => work.worker !== null)
-                  .map((work) => (
-                    <TodaySchedule
-                      key={work.workSerial}
-                      role={loginUser?.role || ''}
-                      work={work}
-                      chatRoomList={chatRoomList || []}
-                    />
-                  ))
+                <Swiper
+                  modules={[Navigation, Pagination]}
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  navigation
+                  pagination={{ clickable: true }}
+                  scrollbar={{ draggable: true }}
+                >
+                  {todayWork
+                    .filter((work) => work.worker !== null)
+                    .map((work) => (
+                      <SwiperSlide key={work.workSerial}>
+                        <TodaySchedule
+                          key={work.workSerial}
+                          role={loginUser?.role || ''}
+                          work={work}
+                          chatRoomList={chatRoomList || []}
+                        />
+                      </SwiperSlide>
+                    ))}
+                </Swiper>
               ) : (
                 <div className="w-full h-[8.3rem] rounded-zp-radius-big bg-zp-white flex items-center justify-center">
                   <p className="font-bold text-zp-md text-zp-light-gray">

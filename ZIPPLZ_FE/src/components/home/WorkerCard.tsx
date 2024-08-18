@@ -26,14 +26,14 @@ export default function WorkerCard({ worker }: Props) {
           }}
         >
           <div className="profile-img absolute top-[-25%] w-[60%]">
-            {worker.save_file ? (
-              <img
-                className="object-cover w-full h-full rounded-zp-radius-full"
-                src={worker.save_file}
-              />
-            ) : (
-              <Skeleton circle={true} height={60} width={60} />
-            )}
+            {/* {worker.save_file ? ( */}
+            <img
+              className="object-cover w-full h-full rounded-zp-radius-full"
+              src={worker.save_file}
+            />
+            {/* ) : ( */}
+            {/* <Skeleton circle={true} height={60} width={60} /> */}
+            {/* )} */}
           </div>
 
           <p className="md:mt-[30%] mt-[50%] font-bold text-zp-2xs">

@@ -11,7 +11,7 @@ import './Calendar.css';
 interface Props {
   workList: any | Work[];
   onEventClick?: (workSerial: string) => void;
-  loading: boolean;
+  loading?: boolean;
 }
 
 const predefinedColors = [

@@ -14,6 +14,7 @@ import { SiFoodpanda } from 'react-icons/si';
 import { TbDog } from 'react-icons/tb';
 import { useNavigate } from 'react-router-dom';
 
+import { useLoginUserStore } from '@/stores/loginUserStore';
 import { useMyPageStore } from '@stores/myPageStore';
 
 const icons = [
@@ -32,7 +33,7 @@ export default function MyPage() {
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-
+  const { setLoginUser } = useLoginUserStore();
   const {
     profileImg,
     name,
@@ -94,8 +95,11 @@ export default function MyPage() {
   const handleLogoutConfirm = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('login-user');
+    setLoginUser(null);
+
     setShowLogoutModal(false);
     navigate('/member/login');
+    navigate(0);
   };
 
   const handleNavigateToResign = () => {
