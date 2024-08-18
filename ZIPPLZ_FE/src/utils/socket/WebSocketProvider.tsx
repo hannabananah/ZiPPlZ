@@ -5,8 +5,8 @@ import type { ChatMessageData } from '@/types';
 import { Client, IMessage } from '@stomp/stompjs';
 import axios from 'axios';
 
-const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const chat_base_url = 'ws://https://zipplz.site/ws';
+const base_url = 'https://zipplz.site';
 
 interface WebSocketContextType {
   sendMessage: (
