@@ -73,7 +73,7 @@ export default function Options({
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const url = `${base_url}chatroom/${chatroomSerial}/name`;
+      const url = `${base_url}/chatroom/${chatroomSerial}/name`;
 
       const response = await axios.get(url, { headers });
 

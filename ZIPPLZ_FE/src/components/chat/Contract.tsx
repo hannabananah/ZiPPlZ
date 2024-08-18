@@ -142,7 +142,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
 
     try {
       const response = await axios.get(
-        `${base_url}chatroom/${chatroomSerial}`,
+        `${base_url}/chatroom/${chatroomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }

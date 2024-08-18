@@ -37,7 +37,7 @@ export default function useOpenVidu() {
 
   const leaveSession = useCallback(async () => {
     if (sessionId) {
-      await axios.delete(`${base_url}openvidu/api/sessions`, {
+      await axios.delete(`${base_url}/openvidu/api/sessions`, {
         headers: {
           Authorization: `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json',
@@ -103,7 +103,7 @@ export default function useOpenVidu() {
         chatroomSerial: Number(chatroomSerial),
       });
       const response = await axios.post(
-        `${base_url}openvidu/api/sessions`,
+        `${base_url}/openvidu/api/sessions`,
         data,
         {
           headers: {
@@ -131,7 +131,7 @@ export default function useOpenVidu() {
         chatroomSerial: Number(chatroomSerial),
       });
       const response = await axios.post(
-        `${base_url}openvidu/api/sessions/connections`,
+        `${base_url}/openvidu/api/sessions/connections`,
         data,
         {
           headers: {

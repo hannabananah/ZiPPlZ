@@ -141,7 +141,7 @@ export default function UpdateContract({
 
     try {
       const response = await axios.get(
-        `${base_url}chatroom/${selectedChatRoomSerial}`,
+        `${base_url}/chatroom/${selectedChatRoomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
