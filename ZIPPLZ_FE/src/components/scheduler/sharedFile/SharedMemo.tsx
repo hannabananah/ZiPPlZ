@@ -42,9 +42,9 @@ export default function SharedMemo({ sharedContents }: Props) {
   };
   return (
     <>
-      <div className="relative w-full h-[5rem] flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-4">
+      <div className="relative w-full h-[5rem] flex flex-col bg-zp-white gap-1 justify-center items-center rounded-zp-radius-big p-4 drop-shadow-zp-slight">
         {!sharedContents ? (
-          <div className="text-zp-2xs w-full h-full text-zp-light-gray">
+          <div className="w-full h-full text-zp-2xs text-zp-light-gray">
             <p>공유 사항을 추가해주세요.</p>
           </div>
         ) : (
@@ -76,7 +76,7 @@ export default function SharedMemo({ sharedContents }: Props) {
           <div className="flex flex-col gap-[1rem] w-full mt-[4rem] overflow-auto">
             <>
               <div className="relative flex flex-col p-[1rem] max-w-[24rem] h-[7rem] bg-zp-yellow bg-opacity-40 gap-[0.5rem]">
-                <div className="flex justify-end items-start "></div>
+                <div className="flex items-start justify-end "></div>
                 <p className="text-zp-2xs text-wrap">{sharedContents}</p>
               </div>
             </>

@@ -20,7 +20,7 @@ interface QuestionPost {
   comment_cnt: number;
   isBookmarked: boolean;
   onBookmarkToggle: (post_serial: number, isBookmarked: boolean) => void;
-  post_image?: string | null; // 선택적 속성으로 변경
+  post_image?: string | null;
 }
 
 export default function QuestionPostListItem({

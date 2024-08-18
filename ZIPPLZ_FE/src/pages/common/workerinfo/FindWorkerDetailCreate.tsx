@@ -12,8 +12,10 @@ import { getFindWorkerList, writeFindWorker } from '@apis/worker/WorkerListApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
+// 이미지 상태의 타입 정의
+type Image = File;
 const postCodeStyle = {
-  width: '200px',
+  width: 'full',
   height: '30rem',
 };
 const customModalStyles: ReactModal.Styles = {
@@ -27,7 +29,7 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1000,
   },
   content: {
-    maxWidth: '468px',
+    maxWidth: '200px',
     minWidth: '350px',
     height: '30rem',
     position: 'absolute',
@@ -44,9 +46,6 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-// 이미지 상태의 타입 정의
-type Image = File;
-
 export default function FindWorkerDetailCreate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
@@ -78,7 +77,6 @@ export default function FindWorkerDetailCreate() {
     const response = await getFindWorkerList();
     setFindWorkerList(response.data.data);
   };
-  // 확인 버튼 핸들러
   const handleClickRegistButton = async (
     images: Image[],
     title: string,
@@ -95,26 +93,26 @@ export default function FindWorkerDetailCreate() {
 
   return (
     <>
-      <div className="flex flex-col w-full p-6 mt-[3rem] gap-4 mb-[4rem]">
-        <div className="w-full relateive">
+      <div className="flex flex-col w-full p-6 mt-[3rem] gap-4">
+        <div className="relative w-full">
           <GoArrowLeft className="absolute cursor-pointer" onClick={goList} />
-          <p className="w-full font-extrabold text-center align-text-top text-zp-xl">
+          <p className="w-full font-bold text-center align-text-top text-zp-xl">
             구인 글쓰기
           </p>
         </div>
         <div className="flex flex-col w-full gap-1">
-          <p className="font-bold text-zp-xl">
+          <p className="font-bold text-zp-sm">
             현장이나 일과 관련된 사진을 올려주세요.(선택사항)
           </p>
-          <p className="text-zp-xs text-zp-light-gray">
+          <p className="text-zp-3xs text-zp-light-gray ">
             사진을 첨부하면 시공자가 작업내용에 대해 보다 상세하게 파악할 수
             있어요.
           </p>
         </div>
         <div className="flex items-start gap-1">
-          <div className="flex flex-col items-center justify-center w-[5rem] aspect-square relative bg-zp-light-gray rounded-zp-radius-big">
+          <div className="flex flex-col items-center justify-center min-w-[5rem] aspect-square relative bg-zp-light-gray rounded-zp-radius-big">
             <label htmlFor="file-upload">
-              <FaCamera size={36} className="" />
+              <FaCamera size={36} />
               <p className="font-bold text-center text-zp-xs text-zp-gray">
                 {images.length}/10
               </p>
@@ -128,33 +126,35 @@ export default function FindWorkerDetailCreate() {
               multiple
             />
           </div>
-          <div className="flex overflow-x-auto">
+          <div className="flex flex-wrap gap-2">
             {images.map((image, index) => (
-              <div key={index} className="relative w-[5rem] h-[5rem] ">
+              <div
+                key={index}
+                className="relative min-w-[5rem] h-[5rem] border border-zp-light-gray rounded-zp-radius-big p-2"
+              >
                 <img
                   src={URL.createObjectURL(image)}
-                  className="w-full h-full opacity-50 rounded-zp-radius-big"
+                  className="w-full h-full rounded-zp-radius-big"
                   onClick={() => handleImageRemove(index)}
                 />
                 <MdClose
-                  size={24}
+                  size={18}
                   onClick={() => handleImageRemove(index)}
-                  className="absolute rounded-zp-radius-full bg-zp-red text-zp-white top-1 right-1"
+                  className="absolute cursor-pointer rounded-zp-full top-1 right-1"
                 />
               </div>
             ))}
           </div>
         </div>
         <div className="flex flex-col w-full gap-1">
-          <p className="font-bold text-zp-md">제목</p>
+          <p className="font-bold text-zp-xs">제목</p>
           <Input
             type="text"
             placeholder="제목을 입력 해주세요."
             inputType="login"
             width="100%"
             height={2}
-            className=""
-            fontSize="xs"
+            fontSize="2xs"
             radius="none"
             value={title}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -163,14 +163,14 @@ export default function FindWorkerDetailCreate() {
           />
         </div>
         <div className="relative flex flex-col w-full gap-1">
-          <p className="font-bold text-zp-md">현장 주소</p>
+          <p className="font-bold text-zp-xs">현장 주소</p>
           <Input
             type="text"
             placeholder="작업을 희망하는 주소를 입력해주세요."
             inputType="login"
             width="100%"
             height={2}
-            fontSize="xs"
+            fontSize="2xs"
             radius="none"
             value={address}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
@@ -184,11 +184,11 @@ export default function FindWorkerDetailCreate() {
           />
         </div>
         <div className="flex flex-col w-full gap-4">
-          <p className="font-bold text-zp-md">작업내용</p>
+          <p className="font-bold text-zp-xs">작업내용</p>
           <textarea
             placeholder="희망하시는 작업 또는 시공에 대해 입력해주세요."
             value={workDetail}
-            className="w-full h-[15rem] p-4 border text-zp-xs border-zp-main-color rounded-zp-radius-btn bg-zp-transparent resize-none"
+            className="w-full h-[15rem] p-4 border text-zp-2xs border-zp-main-color rounded-zp-radius-btn bg-zp-transparent resize-none"
             onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
               setWorkDetail((e.target as HTMLTextAreaElement).value)
             }

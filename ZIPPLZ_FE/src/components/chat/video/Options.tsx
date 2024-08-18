@@ -33,7 +33,7 @@ interface OptionsProps {
   handleCloseVideo: () => void;
 }
 
-const base_url = 'https://zipplz.site';
+const base_url = 'https://zipplz.site/api/';
 
 export default function Options({
   leaveSession,
@@ -73,7 +73,7 @@ export default function Options({
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const url = `${base_url}/chatroom/${chatroomSerial}/name`;
+      const url = `${base_url}chatroom/${chatroomSerial}/name`;
 
       const response = await axios.get(url, { headers });
 

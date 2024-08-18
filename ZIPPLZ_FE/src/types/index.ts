@@ -161,12 +161,32 @@ export interface NotificationData {
 }
 [];
 
+export interface data {
+  publicRelation: string;
+  career: number;
+  asPeriod: number;
+  company: string;
+  companyAddress: string;
+  businessNumber: string;
+}
+
+export interface Plan {
+  planSerial: number;
+  planName: string;
+  status: number;
+}
+
+export interface Field {
+  fieldCode: number;
+  fieldName: string;
+}
+
 export interface Work {
-  starDate: string;
+  workSerial?: number;
+  startDate: string;
   endDate: string;
   field: string;
 }
-
 export interface TodayWork {
   workSerial: number;
   startDate: string;
@@ -224,8 +244,115 @@ export interface TodayWork {
   };
 }
 
-export interface Plan {
-  planSerial: number;
-  planName: string;
-  status: number;
+export interface HotWorker {
+  name: string;
+  region: string;
+  field: string;
+  temp: string;
+}
+
+export interface WorkerInfo {
+  board_serial: number;
+  board_type: number;
+  user_serial: number;
+  title: string;
+  board_content: string;
+  board_date: string;
+  hit: number;
+  nickname: string;
+  comment_cnt: number;
+  wish_cnt: number;
+  portfolio_serial: number;
+  name: string;
+  birth_date: number;
+  temp: number;
+  field_id: number;
+  field_name: string;
+  career: number;
+  certificated_badge: number;
+  locations: string[];
+  img: string;
+  user_name: string;
+}
+
+export interface Reply {
+  id: number;
+  profilePic: string;
+  name: string;
+  date: string;
+  content: string;
+}
+
+export interface Comment {
+  id: number;
+  profilePic: string;
+  name: string;
+  rating: number;
+  date: string;
+  content: string;
+  replies: {
+    id: number;
+    profilePic: string;
+    name: string;
+    date: string;
+    content: string;
+  }[];
+}
+
+export interface Review {
+  reviewContent: string;
+  communicationStar: number;
+  attitudeStar: number;
+  qualityStar: number;
+  professionalStar: number;
+  isVisible: number;
+}
+
+export interface HousePost {
+  post_serial: number;
+  post_image: string | null;
+  title: string;
+  profile_image: string | null;
+  nickname: string;
+  upload_date: Date;
+  view_cnt: number;
+  bookmark_cnt: number;
+  comment_cnt: number;
+}
+
+export interface ReviewComment {
+  userName: string;
+  userSerial: number;
+  boardSerial: number;
+  commentSerial: number;
+  parentCommentSerial: number;
+  commentContent: string;
+  commentDate: string;
+  orderNumber: number;
+  isDeleted: number;
+  nickName?: string | null;
+  saveFile: string;
+}
+
+export interface Event {
+  title: string;
+  start: Date;
+  end: Date;
+  workSerial?: number;
+}
+
+export interface Contract {
+  workerName: string;
+  company: string;
+  businessNumber: string;
+  workerTel: string;
+  customerName: string;
+  customerTel: string;
+  address: string;
+  startDate: string;
+  endDate: string;
+  workPrice: number;
+  fieldName: string;
+  asPeriod: number;
+  materialList: string[];
 }

@@ -5,17 +5,17 @@ import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useNavigate } from 'react-router-dom';
 
-import { useLoginUserStore } from '@/stores/loginUserStore';
 import type { ChatRoom } from '@/types';
 import Badge from '@assets/certified-icon.svg?react';
 import NothingIcon from '@assets/nothing-icon.svg?react';
 import ModalComponent from '@components/common/Modal';
 import SearchInput from '@components/common/SearchInput';
+import { useLoginUserStore } from '@stores/loginUserStore';
 import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
-const base_url = 'https://zipplz.site';
+const base_url: string = 'https://zipplz.site/api/';
 
 export default function ChatRooms() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default function ChatRooms() {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const response = await axios.get(`${base_url}/chatroom`, {
+        const response = await axios.get(`${base_url}chatroom`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -81,7 +81,7 @@ export default function ChatRooms() {
 
   const handleRoomClick = (room: ChatRoom) => {
     closeModal('chatRooms');
-    navigate(`/chatrooms/${room.chatroomSerial}`);
+    navigate(`chatrooms/${room.chatroomSerial}`);
   };
 
   const handleDeleteChatroom = (roomId: string) => {
@@ -93,7 +93,7 @@ export default function ChatRooms() {
     if (selectedRoomId !== null) {
       try {
         await axios.patch(
-          `${base_url}/chatroom/${selectedRoomId}`,
+          `${base_url}chatroom/${selectedRoomId}`,
           {},
           {
             headers: {
@@ -189,7 +189,8 @@ export default function ChatRooms() {
                   <img
                     src={
                       room.file
-                        ? `http://localhost:5000/${room.file.saveFolder}/${room.file.saveFile}`
+                        ? // ? `http://localhost:5000/${room.file.saveFolder}/${room.file.saveFile}`
+                          `https://zipplz.site/api/${room.file.saveFolder}/${room.file.saveFile}`
                         : 'https://i.pravatar.cc/50?img=1'
                     }
                     alt="프로필 이미지"

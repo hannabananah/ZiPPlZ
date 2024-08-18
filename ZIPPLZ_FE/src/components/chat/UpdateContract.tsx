@@ -1,34 +1,20 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 
-import { sendUpdateContract, updateContract } from '@/apis/member/MemberApi';
+import { updateContract } from '@/apis/member/MemberApi';
+import type { Contract } from '@/types';
 import { Material } from '@/types';
 import { ContractRequestData } from '@apis/worker/ContractApi';
 import { getMaterials } from '@apis/worker/MaterialApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
-import { useLoginUserStore } from '@stores/loginUserStore';
+// import { useLoginUserStore } from '@stores/loginUserStore';
 import multiSelectBoxCustomStyles from '@styles/multiSelectBoxCustomStyles';
-import { formatDateWithTime } from '@utils/formatDateWithTime';
-import formatNumberWithCommas from '@utils/formatNumberWithCommas';
+// import { formatDateWithTime } from '@utils/formatDateWithTime';
+// import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 // import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
-
-interface Contract {
-  workerName: string;
-  company: string;
-  businessNumber: string;
-  workerTel: string;
-  customerName: string;
-  customerTel: string;
-  address: string;
-  startDate: string;
-  endDate: string;
-  workPrice: number;
-  fieldName: string;
-  asPeriod: number;
-  materialList: string[];
-}
 
 interface ContractProps {
   closeContractModal: () => void;
@@ -44,13 +30,14 @@ interface Field {
   editable: boolean;
 }
 
-const base_url = 'https://zipplz.site';
+const base_url = 'https://zipplz.site/api/';
 
 export default function UpdateContract({
   closeContractModal,
   contract,
   selectedChatRoomSerial,
 }: ContractProps) {
+  const navigate = useNavigate();
   const contractInfo: Field[] = [
     {
       label: '고객 이름',
@@ -104,9 +91,9 @@ export default function UpdateContract({
   // const { sendMessage } = useContext(WebSocketContext) || {
   //   sendMessage: () => {},
   // };
-  const { loginUser } = useLoginUserStore();
+  // const { loginUser } = useLoginUserStore();
   // const userSerial: number | undefined = loginUser?.userSerial;
-  const userName: string | undefined = loginUser?.userName;
+  // const userName: string | undefined = loginUser?.userName;
 
   useEffect(() => {
     const fetchMaterials = async () => {
@@ -130,78 +117,54 @@ export default function UpdateContract({
     const workPrice =
       Number(fields.find((field) => field.label === '작업 가격')?.value) || 0;
 
-    const calculateTotalDuration = (
-      startDate: string,
-      endDate: string
-    ): number => {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-      const timeDifference = end.getTime() - start.getTime() + 1;
-      const dayDifference = timeDifference / (1000 * 3600 * 24);
-      return Math.ceil(dayDifference);
-    };
+    // const calculateTotalDuration = (
+    //   startDate: string,
+    //   endDate: string
+    // ): number => {
+    //   const start = new Date(startDate);
+    //   const end = new Date(endDate);
+    //   const timeDifference = end.getTime() - start.getTime() + 1;
+    //   const dayDifference = timeDifference / (1000 * 3600 * 24);
+    //   return Math.ceil(dayDifference);
+    // };
 
-    const totalDuration =
-      startDate && endDate ? calculateTotalDuration(startDate, endDate) : 0;
-
-    const requestData: ContractRequestData = {
-      requestComment: '계약서 수정 내용 작성해서 보냅니다.',
-      startDate,
-      endDate,
-      workPrice,
-      materialList: selectedMaterials.map(
-        (material) => material.materialSerial
-      ),
-    };
+    // const totalDuration =
+    //   startDate && endDate ? calculateTotalDuration(startDate, endDate) : 0;
 
     try {
       const response = await axios.get(
-        `${base_url}/chatroom/${selectedChatRoomSerial}`,
+        `${base_url}chatroom/${selectedChatRoomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
 
       if (response.status === 200 && response.data) {
-        const otherUserName = response.data.data.otherUser.name;
+        // const otherUserName = response.data.data.otherUser.name;
+        //       const formattedMessage = `
+        //               계약서 수정 요청 보냅니다.
+
+        //   시공자: ${userName}
+        //   고객: ${otherUserName}
+        //   요청 일자: ${formatDateWithTime(new Date().toISOString())}
+        //  작업 가격: ${formatNumberWithCommas(workPrice)}원
+        //   출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
+        //   작업 기간: ${startDate}~${endDate}(${totalDuration}일)
+        //   자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
+        //       `;
+        const requestData: ContractRequestData = {
+          requestComment: '계약서 수정 요청 드립니다.',
+          startDate,
+          endDate,
+          workPrice,
+          materialList: selectedMaterials.map(
+            (material) => material.materialSerial
+          ),
+        };
         if (selectedChatRoomSerial)
           await updateContract(selectedChatRoomSerial, requestData);
-        const formattedMessage = `
-                계약서 수정내용 작성 완료
-                
-    시공자: ${userName}
-    고객: ${otherUserName}
-    요청 일자: ${formatDateWithTime(new Date().toISOString())}
-   작업 가격: ${formatNumberWithCommas(workPrice)}원
-    출장 주소: ${fields.find((field) => field.label === '출장 주소')?.value}
-    작업 기간: ${startDate}~${endDate}(${totalDuration}일)
-    자재 목록: ${selectedMaterials.map((material) => material.materialName).join(', ')}
-        `;
-        // const contractContent = {
-        //   requestComment: '계약서 수정 요청해서 보냅니다.',
-        //   startDate,
-        //   endDate,
-        //   workPrice,
-        //   materialList: selectedMaterials.map(
-        //     (material) => material.materialSerial
-        //   ),
-        //   chatroomSerial: selectedChatRoomSerial,
-        // };
-
-        // if (sendMessage) {
-        //   sendMessage(
-        //     formattedMessage,
-        //     userSerial as number,
-        //     undefined,
-        //     'TALK',
-        //     true,
-        //     contractContent
-        //   );
-        // } else {
-        //   console.error('메시지를 전송할 수 없습니다.');
-        // }
-        sendUpdateContract(selectedChatRoomSerial, formattedMessage);
-        closeContractModal();
+        setTimeout(() => closeContractModal(), 2000);
+        navigate(`/chatrooms/${selectedChatRoomSerial}`);
       } else {
         throw new Error('Unexpected response from the server');
       }
@@ -323,6 +286,9 @@ export default function UpdateContract({
               )}
             </div>
           ))}
+          <p className="font-bold text-zp-3xs text-zp-red">
+            ※ 작업 기간 및 자재는 다시 입력 부탁드립니다.
+          </p>
         </div>
 
         <div className="flex gap-2 pb-8">

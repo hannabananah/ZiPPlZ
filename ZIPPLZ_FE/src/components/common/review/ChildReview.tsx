@@ -3,23 +3,11 @@ import { useNavigate } from 'react-router-dom';
 
 import { deleteReview } from '@/apis/board/reviewApi';
 import { useLoginUserStore } from '@/stores/loginUserStore';
+import type { ReviewComment } from '@/types';
 import { formatDate } from '@utils/formatDateWithTime';
 
-interface Comment {
-  userName: string;
-  userSerial: number;
-  boardSerial: number;
-  commentSerial: number;
-  parentCommentSerial: number;
-  commentContent: string;
-  commentDate: string;
-  orderNumber: number;
-  isDeleted: number;
-  nickName?: string | null;
-}
-
 interface Props {
-  comment: Comment;
+  comment: ReviewComment;
 }
 export default function ChildReview({ comment }: Props) {
   const navigate = useNavigate();
@@ -36,7 +24,10 @@ export default function ChildReview({ comment }: Props) {
         <div className="w-full h-['3rem'] border border-zp-main-color bg-zp-white flex flex-col gap-4 rounded-zp-radius-big py-2 px-4 ">
           <div className="flex items-center justify-between w-full text-zp-2xs">
             <div className="flex gap-1">
-              이미지{' '}
+              <img
+                className="w-3 h-3 rounded-zp-radius-full"
+                src={comment.saveFile}
+              />
               <p className="font-bold">
                 {comment.nickName ? comment.nickName : comment.userName}
               </p>

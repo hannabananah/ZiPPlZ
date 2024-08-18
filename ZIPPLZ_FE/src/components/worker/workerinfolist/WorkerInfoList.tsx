@@ -39,7 +39,7 @@ export default function WorkerInfoList({
   return (
     <>
       {workerList && workerList.length > 0 ? (
-        <div className="grid w-full grid-cols-3  gap-4 sm:grid-cols-3 md:grid-cols-4 auto-rows-[11rem] mb-[3rem]">
+        <div className="grid w-full grid-cols-3 h-full overflow-auto gap-4 sm:grid-cols-3 md:grid-cols-4 auto-rows-[10rem]">
           {workerList.map((worker: any) => (
             <WorkerInfoListItem worker={worker} key={worker.protfolioSerial} />
           ))}

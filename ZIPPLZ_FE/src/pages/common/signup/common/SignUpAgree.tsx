@@ -43,7 +43,7 @@ export default function SignUpAgree({ setNext, setLink, phrase }: Props) {
 
   return (
     <div className="overflow-y-auto max-h-screen p-4 overflow-auto mb-[6rem]">
-      <pre className="font-extrabold text-zp-xl">
+      <pre className="font-bold text-zp-xl font-noto mb-1">
         서비스 이용을 위한 동의 안내
       </pre>
 

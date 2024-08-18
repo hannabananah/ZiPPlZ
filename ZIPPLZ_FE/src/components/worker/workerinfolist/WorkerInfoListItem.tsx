@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 
 import { CertificatedBadge } from '@/assets/svg/icons';
-import NoIMAGE from '@assets/no-image-icon.svg?react';
+import NoImage from '@assets/no-image-icon.svg?react';
 
 interface Props {
   worker: any;
@@ -11,7 +11,7 @@ export default function WorkerInfoListItem({ worker }: Props) {
   console.log('worke========>', worker);
   return (
     <div
-      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[10rem] drop-shadow-zp-slight px-1"
+      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[10rem] drop-shadow-zp-slight"
       onClick={() =>
         navigate(`/workers/${worker.user_serial}/portfolio?tab=overview`)
       }
@@ -22,8 +22,8 @@ export default function WorkerInfoListItem({ worker }: Props) {
           src={worker.save_file}
         />
       ) : (
-        <div className="flex items-center justify-center w-full h-full">
-          <NoIMAGE width={80} height={80} />
+        <div className="flex items-center justify-center w-full h-[40%]">
+          <NoImage height="full" />
         </div>
       )}
       <div className="flex flex-col w-full p-2 mt-2">

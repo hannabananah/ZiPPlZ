@@ -66,14 +66,14 @@ export default function TodaySchedule({
       {work && (
         <div className="relative w-full h-[8.3rem] rounded-zp-radius-big sm: p-4 md:p-6 flex flex-col gap-4 bg-zp-white drop-shadow-zp-slight">
           <div className="flex items-start justify-between md:px-2">
-            <div className="flex flex-col ">
+            <div className="flex flex-col">
               <div className="flex items-center gap-1">
-                <div className="w-4 h-4 bg-zp-main-color rounded-zp-radius-full" />
-                <p className="font-bold text-zp-sm">
+                <div className="w-2 h-2 bg-zp-main-color rounded-zp-radius-full" />
+                <p className="font-bold text-zp-sm ">
                   {role === 'customer' ? work.field : work.customer.nickname}
                 </p>
               </div>
-              <p className="text-zp-3xs">
+              <p className="text-zp-3xs ">
                 시공기간: {formatDate(work.startDate)}~
                 {formatDate(work.endDate)}
               </p>
@@ -84,10 +84,10 @@ export default function TodaySchedule({
             {role === 'customer' && (
               <div className="flex flex-col items-center gap-1">
                 <div className="border w-[60%] aspect-square rounded-zp-radius-full">
-                  {/* <img
+                  <img
                     className="object-cover w-full h-full rounded-zp-radius-full"
                     src={work.worker.userSerial.fileSerial.saveFile}
-                  /> */}
+                  />
                 </div>
                 <p className="text-zp-2xs">{work.worker.userSerial.userName}</p>
               </div>

@@ -2,17 +2,7 @@ import { CgProfile } from 'react-icons/cg';
 import { FaRegBookmark, FaRegComment, FaRegEye } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 
-interface HousePost {
-  post_serial: number;
-  post_image: string | null;
-  title: string;
-  profile_image: string | null;
-  nickname: string;
-  upload_date: Date;
-  view_cnt: number;
-  bookmark_cnt: number;
-  comment_cnt: number;
-}
+import type { HousePost } from '@/types';
 
 export default function HousePostListItem({
   post_serial,
@@ -29,7 +19,7 @@ export default function HousePostListItem({
 
   return (
     <div
-      className="h-64 p-2 rounded-zp-radius-big border border-zp-light-beige shadow-lg flex flex-col"
+      className="flex flex-col h-64 p-2 border shadow-lg rounded-zp-radius-big border-zp-light-beige"
       onClick={() => navigate(`/housepost/${post_serial}`)}
     >
       {/* 이미지 */}
@@ -38,29 +28,29 @@ export default function HousePostListItem({
           <img
             src={post_image}
             alt="Post"
-            className="h-24 w-full object-cover rounded-t-zp-radius-big"
+            className="object-cover w-full h-24 rounded-t-zp-radius-big"
           />
         ) : (
-          <div className="h-24 w-full bg-gray-200 rounded-t-zp-radius-big" />
+          <div className="w-full h-24 bg-gray-200 rounded-t-zp-radius-big" />
         )}
       </div>
       {/* 제목 */}
-      <div className="text-left font-bold text-zp-xs mt-2">{title}</div>
+      <div className="mt-2 font-bold text-left text-zp-xs">{title}</div>
       {/* 프로필 및 닉네임 */}
       <div className="flex items-center mt-2">
         {profile_image ? (
           <img
             src={profile_image}
             alt="Profile"
-            className="h-6 w-6 rounded-full"
+            className="w-6 h-6 rounded-full"
           />
         ) : (
-          <CgProfile className="h-6 w-6 text-gray-400" />
+          <CgProfile className="w-6 h-6 text-gray-400" />
         )}
         <div className="ml-2 text-zp-sm">{nickname}</div>
       </div>
       {/* 업로드 날짜 */}
-      <div className="text-zp-2xs text-zp-gray mt-1">
+      <div className="mt-1 text-zp-2xs text-zp-gray">
         {new Date(upload_date).toLocaleDateString('ko-KR', {
           year: '2-digit',
           month: '2-digit',

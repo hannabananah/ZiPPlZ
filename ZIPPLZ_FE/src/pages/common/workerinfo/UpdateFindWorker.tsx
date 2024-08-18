@@ -1,17 +1,20 @@
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { CiSearch } from 'react-icons/ci';
 import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
 import Modal from 'react-modal';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
+import { getFIndWorkerDetail } from '@/apis/worker/WorkerListApi';
+import Selectbar from '@/components/common/Selectbar';
+import { useWorkerListStore } from '@/stores/workerListStore';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
 const postCodeStyle = {
-  width: '200px',
+  width: 'full',
   height: '30rem',
 };
 const customModalStyles: ReactModal.Styles = {
@@ -25,7 +28,7 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1000,
   },
   content: {
-    maxWidth: '468px',
+    maxWidth: '200px',
     minWidth: '350px',
     height: '30rem',
     position: 'absolute',
@@ -42,91 +45,46 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-const board = {
-  board: {
-    title: '구인구직글3',
-    nickname: 'user1',
-    userSerial: 1,
-    boardSerial: 7,
-    hit: 0,
-    boardType: 3,
-    boardContent: '구인구직글3_content',
-    boardDate: '2024-08-08T23:49:59.988909',
-  },
-  board_images: [
-    {
-      fileName: 'file_name13',
-      saveFile: 'save_file_path13',
-      boardSerial: 7,
-      fileSerial: 13,
-      saveFolder: 'save_folder_path13',
-      originalFile: 'original_file_path13',
-    },
-    {
-      fileName: 'file_name14',
-      saveFile: 'save_file_path14',
-      boardSerial: 7,
-      fileSerial: 14,
-      saveFolder: 'save_folder_path14',
-      originalFile: 'original_file_path14',
-    },
-    {
-      fileName: 'file_name15',
-      saveFile: 'save_file_path15',
-      boardSerial: 7,
-      fileSerial: 15,
-      saveFolder: 'save_folder_path15',
-      originalFile: 'original_file_path15',
-    },
-  ],
-  comments: [
-    {
-      parent_comment: {
-        userSerial: 1,
-        boardSerial: 7,
-        commentSerial: 13,
-        parentCommentSerial: -1,
-        commentContent: '치매세요?',
-        commentDate: '2024-08-08T23:51:36.86451',
-        orderNumber: 3,
-        isDeleted: 0,
-      },
-      child_comments: [
-        {
-          userSerial: 1,
-          boardSerial: 7,
-          commentSerial: 14,
-          parentCommentSerial: 13,
-          commentContent: '치매세요?',
-          commentDate: '2024-08-08T23:51:57.047113',
-          orderNumber: 4,
-          isDeleted: 0,
-        },
-        {
-          userSerial: 1,
-          boardSerial: 7,
-          commentSerial: 15,
-          parentCommentSerial: 13,
-          commentContent: '치매세요?',
-          commentDate: '2024-08-08T23:52:00.205974',
-          orderNumber: 5,
-          isDeleted: 0,
-        },
-      ],
-    },
-  ],
-};
 type Image = string;
-
+const fields: string[] = [
+  '철거',
+  '설비',
+  '샷시',
+  '목공',
+  '전기',
+  '욕실',
+  '타일',
+  '마루',
+  '도배',
+  '가구',
+];
 export default function UpdateFindWorker() {
+  const { findWorker, setFindWorker } = useWorkerListStore();
+  const { boardSerial } = useParams<{ boardSerial: string }>();
+  const id: number = boardSerial ? parseInt(boardSerial) : 0;
+  const fetchFindWorker = async (boardSerial: number) => {
+    const response = await getFIndWorkerDetail(boardSerial);
+    setFindWorker(response.data.data);
+  };
   const [openDaum, setOpenDaum] = useState<boolean>(false);
+  useEffect(() => {
+    if (boardSerial && id > 0) {
+      fetchFindWorker(id);
+    }
+  }, []);
   const [images, setImages] = useState<Image[]>(
-    board.board_images.map((img) => img.saveFile)
+    findWorker ? findWorker.board_images.map((img) => img.saveFile) : []
   );
-  const [title, setTitle] = useState<string>(board.board.title);
-  const [address, setAddress] = useState<string>('주소');
+  const [title, setTitle] = useState<string>(
+    findWorker && findWorker.board ? findWorker.board.title : ''
+  );
+  const [wishField, setWishField] =
+    useState<string>('희망 분야를 선택해주세요');
+  const [address, setAddress] = useState<string>(
+    findWorker && findWorker.board ? findWorker.user_address : ''
+  );
   const [workDetail, setWorkDetail] = useState<string>(
-    board.board.boardContent
+    findWorker && findWorker.board ? findWorker.board.boardContent : ''
   );
   const onCompletePost = (data: any) => {
     setAddress(data.address);
@@ -169,17 +127,7 @@ export default function UpdateFindWorker() {
           {/* 나가기 버튼, 구인 글쓰기 text */}
           <GoArrowLeft className="absolute cursor-pointer" onClick={goList} />
           <p className="w-full font-extrabold text-center align-text-top text-zp-xl">
-            구인 글쓰기
-          </p>
-        </div>
-        {/* 게시판 가이드 */}
-        <div className="flex flex-col w-full gap-1">
-          <p className="font-bold text-zp-xl">
-            현장이나 일과 관련된 사진을 올려주세요.(선택사항)
-          </p>
-          <p className="text-zp-xs text-zp-light-gray">
-            사진을 첨부하면 시공자가 작업내용에 대해 보다 상세하게 파악할 수
-            있어요.
+            구인 글 수정
           </p>
         </div>
         {/* 사진 첨부 버튼 */}
@@ -234,6 +182,23 @@ export default function UpdateFindWorker() {
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
               setTitle(e.target.value)
             }
+          />
+        </div>
+        {/* 희망분야 */}
+        <div className="flex flex-col w-full gap-1">
+          <p className="font-bold text-zp-md">희망 분야</p>
+          <Selectbar
+            backgroundColor="light-beige"
+            fontColor="black"
+            selectedValue={wishField}
+            fontSize="xs"
+            radius="btn"
+            border="main"
+            hover="sub"
+            options={fields}
+            setSelectedValue={setWishField}
+            width="full"
+            height={2}
           />
         </div>
         {/* 현장 주소 input */}
