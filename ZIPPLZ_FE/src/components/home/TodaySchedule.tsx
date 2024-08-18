@@ -30,12 +30,12 @@ export default function TodaySchedule({ role, work, chatRoomList }: Props) {
           <div className="flex items-start justify-between md:px-2">
             <div className="flex flex-col">
               <div className="flex items-center gap-1">
-                <div className="mt-[4px] w-2 h-2 bg-zp-main-color rounded-zp-radius-full" />
-                <p className="font-bold text-zp-sm">
+                <div className="w-2 h-2 bg-zp-main-color rounded-zp-radius-full" />
+                <p className="font-bold text-zp-sm ">
                   {role === 'customer' ? work.field : work.customer.nickname}
                 </p>
               </div>
-              <p className="text-zp-3xs">
+              <p className="text-zp-3xs ">
                 시공기간: {formatDate(work.startDate)}~
                 {formatDate(work.endDate)}
               </p>
@@ -45,13 +45,13 @@ export default function TodaySchedule({ role, work, chatRoomList }: Props) {
             </div>
             {role === 'customer' && (
               <div className="flex flex-col items-center gap-1">
-                <div className="border w-[60%] aspect-square rounded-zp-radius-full">
-                  <img
-                    className="object-cover w-full h-full rounded-zp-radius-full"
-                    src={work.worker.userSerial.fileSerial?.saveFile}
-                  />
-                </div>
-                <p className="text-zp-2xs">{work.worker.userSerial.userName}</p>
+                <img
+                  className="object-cover w-[50%] aspect-square rounded-zp-radius-full"
+                  src={work.worker.userSerial.fileSerial?.saveFile}
+                />
+                <p className="font-bold text-zp-2xs">
+                  {work.worker.userSerial.userName}
+                </p>
               </div>
             )}
           </div>
