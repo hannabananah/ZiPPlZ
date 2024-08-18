@@ -12,7 +12,8 @@ interface Props {
 export default function WorkerReview({ portfolio }: Props) {
   const [goodReview, setGoodReview] = useState<string>('');
   const [badReview, setBadReview] = useState<string>('');
-  const { portfolioReview, setPortfolioReview } = usePortfolioStore();
+  const { portfolioReview, setPortfolioReview, portfolioOverview } =
+    usePortfolioStore();
   const fetchPortfolioReview = async (portfolioSerial: number) => {
     const response = await getPortfolioReview(portfolioSerial);
     setPortfolioReview(response.data.data);
@@ -47,7 +48,7 @@ export default function WorkerReview({ portfolio }: Props) {
               <div className="flex items-center gap-4 font-bold text-zp-xs">
                 <FaRegSmile size={16} />
                 <p className="font-bold text-zp-sm">
-                  시공업자 이름 님은 이래서 좋아요.
+                  {portfolioOverview?.user.userName} 님은 이래서 좋아요.
                 </p>
               </div>
               <div className="flex items-center w-full p-6 shadow-lg bg-zp-light-beige rounded-zp-radius-big">
@@ -58,7 +59,7 @@ export default function WorkerReview({ portfolio }: Props) {
               <div className="flex items-center gap-4 font-bold text-zp-xs">
                 <FaRegSadTear size={16} />
                 <p className="font-bold text-zp-sm">
-                  시공업자 이름 님 이건 고쳐주세요.
+                  {portfolioOverview?.user.userName} 님 이건 고쳐주세요.
                 </p>
               </div>
               <div className="flex items-center w-full p-6 shadow-lg bg-zp-light-beige rounded-zp-radius-big">
