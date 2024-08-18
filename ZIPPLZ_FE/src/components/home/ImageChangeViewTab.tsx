@@ -2,8 +2,10 @@ import CombinationIcon from '@assets/ai-combination-icon.svg?react';
 
 interface Props {
   onClick: () => void;
+  loading: boolean;
 }
-export default function ImageChangeViewTab({ onClick }: Props) {
+
+export default function ImageChangeViewTab({ onClick, loading }: Props) {
   return (
     <>
       <div

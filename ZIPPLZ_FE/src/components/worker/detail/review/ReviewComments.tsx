@@ -54,7 +54,7 @@ export default function ReviewComments() {
                   <FaStar key={index} className="text-xs text-gray-300" />
                 ))}
               </div>
-              <div className="text-gray-500 text-zp-2xs">{comment.date}</div>
+              <div className="text-zp-gray text-zp-2xs">{comment.date}</div>
             </div>
           </div>
           <div className="text-zp-2xs">{comment.content}</div>

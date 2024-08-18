@@ -8,7 +8,7 @@ interface Props {
 }
 export default function WorkerInfoListItem({ worker }: Props) {
   const navigate = useNavigate();
-
+  console.log('worke========>', worker);
   return (
     <div
       className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[10rem] drop-shadow-zp-slight"
@@ -28,8 +28,10 @@ export default function WorkerInfoListItem({ worker }: Props) {
       )}
       <div className="flex flex-col w-full p-2 mt-2">
         <div className="flex items-center gap-2">
-          <p className="font-bold text-zp-2xs">{worker.user_name}</p>
-          <p className="text-zp-3xs text-zp-light-gray">{worker.birth_date}</p>
+          <p className="font-bold font-noto text-zp-gray text-zp-xs">
+            {worker.user_name}
+          </p>
+          <p className="text-zp-2xs text-zp-light-gray">{worker.birth_date}</p>
           {worker.certificated_badge > 0 && (
             <CertificatedBadge width={16} height={16} />
           )}
@@ -38,7 +40,7 @@ export default function WorkerInfoListItem({ worker }: Props) {
         {worker.locations.map((region: string) => (
           <p className="text-zp-3xs text-zp-light-gray">{region}</p>
         ))}
-        <p className=" text-zp-3xs">
+        <p className=" text-zp-3xs text-zp-gray">
           {worker.field_name} | &nbsp;경력 {worker.career}년
         </p>
       </div>

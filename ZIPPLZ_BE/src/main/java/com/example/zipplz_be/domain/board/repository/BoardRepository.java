@@ -103,12 +103,17 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
 
     @Modifying
     @Transactional
-    @Query(value = "INSERT INTO BoardUserAddress(board_serial, user_address) " +
-            "VALUES(:boardSerial, :userAddress)", nativeQuery = true)
-    int addBoardUserAddress(@Param("boardSerial") int boardSerial, @Param("userAddress") String userAddress);
+    @Query(value = "INSERT INTO BoardUserAddress(board_serial, user_address, field_id) " +
+            "VALUES(:boardSerial, :userAddress, :fieldId)", nativeQuery = true)
+    int addBoardUserAddress(@Param("boardSerial") int boardSerial, @Param("userAddress") String userAddress, @Param("fieldId") String fieldId);
 
     @Query(value = "SELECT user_address " +
             "FROM BoardUserAddress " +
             "WHERE board_serial = :boardSerial", nativeQuery = true)
     String getUserAddress(@Param("boardSerial") int boardSerial);
+
+    @Query(value = "SELECT field_id " +
+            "FROM BoardUserAddress " +
+            "WHERE board_serial = :boardSerial", nativeQuery = true)
+    String getFieldId(@Param("boardSerial") int boardSerial);
 }

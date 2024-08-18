@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { IoHomeOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 import { requestLogin } from '@/apis/member/MemberApi';
 import Button from '@components/common/Button';

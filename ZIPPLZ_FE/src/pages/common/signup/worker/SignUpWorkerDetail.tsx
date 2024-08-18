@@ -83,7 +83,7 @@ export default function SignupWorkerDetail({
   return (
     <>
       <div className="relative flex flex-col w-full gap-4 p-4 bg-zp-white">
-        <p className="text-xl font-bold">사업자등록번호</p>
+        <p className="font-bold text-zp-lg">사업자등록번호</p>
         <div className="flex">
           <Input
             type="text"
@@ -112,7 +112,7 @@ export default function SignupWorkerDetail({
           />
         </div>
 
-        <p className="text-xl font-bold">소속업체명</p>
+        <p className="font-bold text-zp-lg">소속업체명</p>
 
         <Input
           type="text"
@@ -133,7 +133,7 @@ export default function SignupWorkerDetail({
           radius="none"
         />
 
-        <p className="text-xl font-bold">소속업체 주소</p>
+        <p className="font-bold text-zp-lg">소속업체 주소</p>
 
         <Input
           type="text"

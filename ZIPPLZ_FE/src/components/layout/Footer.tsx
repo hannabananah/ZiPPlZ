@@ -30,8 +30,8 @@ export default function Footer() {
           </li>
           <li className="font-bold text-zp-2xs max-[460px]:text-zp-3xs text-zp-black">
             대표자: 이가은 &nbsp;|&nbsp; 대표전화:
-            <a href="tel:0902-0817" className="hover:underline">
-              0902-0817
+            <a href="tel:0702-0816" className="hover:underline">
+              0702-0816
             </a>
           </li>
           <li className="text-zp-2xs max-[460px]:text-zp-3xs text-zp-gray">

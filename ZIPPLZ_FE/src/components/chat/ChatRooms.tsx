@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
+import { MdOutlineFullscreenExit } from 'react-icons/md';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useNavigate } from 'react-router-dom';
@@ -123,8 +124,16 @@ export default function ChatRooms() {
   };
 
   return (
-    <div className="relative flex flex-col w-full pb-8 overflow-y-auto">
-      <div className="sticky top-0 z-30 w-full px-8 pt-6 mb-4 bg-zp-white">
+    <div className="relative flex flex-col w-full p-6 overflow-y-auto">
+      <button
+        className="flex justify-end"
+        onClick={() => {
+          closeModal('chatRooms');
+        }}
+      >
+        <MdOutlineFullscreenExit size={26} />
+      </button>
+      <div className="sticky top-0 z-30 w-full px-8 mb-4 bg-zp-white">
         <SearchInput
           onSearch={handleSearch}
           placeholder="이름을 입력해주세요."

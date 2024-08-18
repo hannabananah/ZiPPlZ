@@ -26,7 +26,7 @@ import 'swiper/css';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-export default function FindWorkerDetai() {
+export default function FindWorkerDetail() {
   const checkWish = async (boardSerial: number) => {
     const response = await getWish(boardSerial);
     setIsWish(response.data.data);
@@ -181,7 +181,6 @@ export default function FindWorkerDetai() {
               </p>
             </div>
 
-            {/* 작업내용 */}
             <div className="flex flex-col gap-2">
               <p className="font-bold text-zp-lg">작업내용</p>
               <p className="w-full font-bold text-zp-xs text-zp-gray text-wrap">

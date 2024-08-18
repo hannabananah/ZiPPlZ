@@ -48,8 +48,8 @@ export default function WorkerInfoList({
         <>
           <div className="flex flex-col items-center justify-center w-full ">
             <img src="/nothing-icon.svg" className="w-[60%] aspect-square" />
-            <p className="font-bold text-zp-xl text-zp-light-gray">
-              존재하는 게시물이 없습니다
+            <p className="font-bold text-zp-md text-zp-light-gray">
+              존재하는 게시물이 없습니다.
             </p>
           </div>
         </>
