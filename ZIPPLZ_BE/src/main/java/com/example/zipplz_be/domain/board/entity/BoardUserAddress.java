@@ -19,4 +19,6 @@ public class BoardUserAddress {
     private Board boardSerial;
     @Column(name="user_address")
     private String userAddress;
+    @Column(name="field_id")
+    private String fieldId;
 }

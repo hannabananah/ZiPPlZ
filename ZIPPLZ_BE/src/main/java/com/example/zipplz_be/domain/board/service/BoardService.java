@@ -33,5 +33,5 @@ public interface BoardService {
 
     void updateboardhit(int boardSerial);
 
-    int addBoardUserAddress(int boardSerial, String userAddress);
+    int addBoardUserAddress(int boardSerial, String userAddress, String fieldId);
 }

@@ -95,10 +95,8 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public int addBoardUserAddress(int boardSerial, String userAddress) {
-        System.out.println(boardSerial);
-        System.out.println(userAddress);
-        return boardRepository.addBoardUserAddress(boardSerial, userAddress);
+    public int addBoardUserAddress(int boardSerial, String userAddress, String fieldId) {
+        return boardRepository.addBoardUserAddress(boardSerial, userAddress, fieldId);
     }
 
     @Override
@@ -229,6 +227,7 @@ public class BoardServiceImpl implements BoardService {
     public FindWorkerDetailDTO getFindWorker(int boardSerial) {
         BoardJoinDTO board = boardRepository.getBoard(boardSerial);
         String user_address = boardRepository.getUserAddress(boardSerial);
+        String field_id = boardRepository.getFieldId(boardSerial);
         List<BoardFileDTO> files = fileRepository.getBoardImg(boardSerial);
         List<CommentJoinDTO> parent_comments = commentRepository.getComment(boardSerial, -1);
         List<CommentViewDTO> comments = new ArrayList<>();
@@ -240,7 +239,7 @@ public class BoardServiceImpl implements BoardService {
             CommentViewDTO comment = new CommentViewDTO(parent_comment, child_comments);
             comments.add(comment);
         }
-        FindWorkerDetailDTO findworker = new FindWorkerDetailDTO(board, user_address, files, comments);
+        FindWorkerDetailDTO findworker = new FindWorkerDetailDTO(board, user_address, field_id, files, comments);
         return findworker;
     }
 
