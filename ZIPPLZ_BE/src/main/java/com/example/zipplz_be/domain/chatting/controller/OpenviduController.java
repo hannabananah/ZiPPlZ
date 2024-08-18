@@ -60,17 +60,29 @@ public class OpenviduController {
         System.out.println("세션 생성 요청 받음!!!");
         try {
             //openvidu.fetch();
+            System.out.println("try문 들어옴!!!");
 
-            if (params.get("chatroomSerial") == null || params.get("customSessionId") == null || params.get("customSessionId") == "") {
-                status = HttpStatus.BAD_REQUEST;
-                responseDTO = new ResponseDTO<>(status.value(), "필수 항목을 입력해주세요.");
-            } else {
+            // if (params.get("chatroomSerial") == null || params.get("customSessionId") == null || params.get("customSessionId") == "") {
+            //     status = HttpStatus.BAD_REQUEST;
+            //     responseDTO = new ResponseDTO<>(status.value(), "필수 항목을 입력해주세요.");
+            // } else {
                 
                 System.out.println("채팅방 유효검사 통과!!!");
-                SessionProperties properties = SessionProperties.fromJson(params).build();
+                // SessionProperties properties = SessionProperties.fromJson(params).build();
+
+                 // 기본 SessionProperties 객체를 설정합니다
+                SessionProperties properties = new SessionProperties.Builder()
+                    .mediaMode(SessionProperties.MediaMode.ROUTED)
+                    .archiveMode(SessionProperties.ArchiveMode.MANUAL)
+                    .recordingMode(SessionProperties.RecordingMode.NEVER)
+                    .defaultOutputMode(SessionProperties.OutputMode.ROUTED)
+                    .customData("Default user data")
+                    .build();
+
                 Session session = openvidu.createSession(properties);
                 
-                System.out.println("세션 생성 성공!!!");
+                System.out.println("세션 생성 성공!!!" + session.getSessionId());
+
                 boolean flag = openviduService.initializeSession((Integer) params.get("chatroomSerial"), session.getSessionId());
 
                 if (!flag) {
@@ -82,7 +94,7 @@ public class OpenviduController {
                     status = HttpStatus.OK;
                     responseDTO = new ResponseDTO<>(status.value(), "응답 성공", session.getSessionId());
                 }
-            }
+            //}
 
         } catch (Exception e) {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
