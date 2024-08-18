@@ -33,7 +33,7 @@ interface OptionsProps {
   handleCloseVideo: () => void;
 }
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url = 'https://zipplz.site';
 
 export default function Options({
   leaveSession,
