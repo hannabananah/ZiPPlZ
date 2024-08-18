@@ -59,7 +59,7 @@ public class OpenviduController {
 
         System.out.println("세션 생성 요청 받음!!!");
         try {
-            openvidu.fetch();
+            //openvidu.fetch();
 
             if (params.get("chatroomSerial") == null || params.get("customSessionId") == null || params.get("customSessionId") == "") {
                 status = HttpStatus.BAD_REQUEST;
