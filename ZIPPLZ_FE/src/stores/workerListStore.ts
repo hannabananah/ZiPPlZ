@@ -43,10 +43,12 @@ export interface Comment {
   orderNumber: number;
   isDeleted: number;
   nickName: string | null;
+  saveFile: string;
 }
 export interface FindWorkerDetail {
   board: FIndWorker2 | null;
   board_images: File[];
+  user_address: string;
   comments: {
     parent_comment: Comment | null;
     child_comments: Comment[] | null;
