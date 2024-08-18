@@ -68,16 +68,8 @@ public class OpenviduController {
             // } else {
                 
                 System.out.println("채팅방 유효검사 통과!!!");
-                // SessionProperties properties = SessionProperties.fromJson(params).build();
-
-                 // 기본 SessionProperties 객체를 설정합니다
-                SessionProperties properties = new SessionProperties.Builder()
-                    .mediaMode(SessionProperties.MediaMode.ROUTED)
-                    .archiveMode(SessionProperties.ArchiveMode.MANUAL)
-                    .recordingMode(SessionProperties.RecordingMode.NEVER)
-                    .defaultOutputMode(SessionProperties.OutputMode.ROUTED)
-                    .customData("Default user data")
-                    .build();
+                SessionProperties properties = SessionProperties.fromJson(params).build();
+                System.out.println(properties.toString());
 
                 Session session = openvidu.createSession(properties);
                 
