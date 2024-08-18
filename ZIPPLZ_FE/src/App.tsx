@@ -5,7 +5,8 @@ import Layout from '@components/layout/Layout';
 import loadable from '@loadable/component';
 import GuardRoute from '@router/GuardRoute';
 
-<<<<<<< HEAD
+import WatchImage from './pages/common/home/WatchImage';
+
 const Custom404 = loadable(() => import('@pages/common/404'), {
   fallback: <div>Loading...</div>,
 });
@@ -315,7 +316,6 @@ const UpdateFindWorker = loadable(
 const Workers = loadable(() => import('./pages/common/workerinfo/Workers'), {
   fallback: <div>Loading workers...</div>,
 });
-import WatchImage from './pages/common/home/WatchImage';
 
 export default function App() {
   return (
