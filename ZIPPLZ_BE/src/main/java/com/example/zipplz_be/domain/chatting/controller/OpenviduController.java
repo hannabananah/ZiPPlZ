@@ -58,6 +58,7 @@ public class OpenviduController {
         HttpStatus status = HttpStatus.ACCEPTED;
 
         System.out.println("세션 생성 요청 받음!!!");
+        System.out.println("세션 생성 진짜 요청 받음!!!");
         try {
             //openvidu.fetch();
             System.out.println("try문 들어옴!!!");
