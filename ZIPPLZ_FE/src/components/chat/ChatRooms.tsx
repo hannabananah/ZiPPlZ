@@ -14,7 +14,7 @@ import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
-const base_url = 'https://zipplz.site';
+const base_url: string = 'https://zipplz.site/api/';
 
 export default function ChatRooms() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function ChatRooms() {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const response = await axios.get(`${base_url}/chatroom`, {
+        const response = await axios.get(`${base_url}chatroom`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -92,7 +92,7 @@ export default function ChatRooms() {
     if (selectedRoomId !== null) {
       try {
         await axios.patch(
-          `${base_url}/chatroom/${selectedRoomId}`,
+          `${base_url}chatroom/${selectedRoomId}`,
           {},
           {
             headers: {
