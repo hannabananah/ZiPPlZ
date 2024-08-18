@@ -5,10 +5,9 @@ import MaterialIcon from '@assets/ai-material-icon.svg?react';
 
 interface Props {
   onClick: () => void;
-  loading: boolean;
 }
 
-export default function ImageChangeTab({ onClick, loading }: Props) {
+export default function ImageChangeTab({ onClick }: Props) {
   return (
     <>
       <div
