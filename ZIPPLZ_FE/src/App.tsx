@@ -36,6 +36,7 @@ import QuestionPostCreate from './pages/common/community/QuestionPostCreate';
 import QuestionPostDetail from './pages/common/community/QuestionPostDetail';
 import QuestionPostUpdate from './pages/common/community/QuestionPostUpdate';
 import ImageChangePage from './pages/common/home/ImageChangePage';
+import WatchImage from './pages/common/home/WatchImage';
 import Login from './pages/common/login/LogIn';
 import SocialLoginCheck from './pages/common/login/SocialLoginCheck';
 import FindIdPw from './pages/common/login/find/FindIdPw';
@@ -54,6 +55,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="my-change-image/:userSerial" element={<WatchImage />} />
         {/* 스케줄 & 계약서 */}
         <Route path="schedule" element={<Schedule />} />
         <Route path="contract/:workserial" element={<ContractPage />} />

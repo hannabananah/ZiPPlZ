@@ -1,13 +1,47 @@
 import { ChangeEvent, useState } from 'react';
+import DaumPostcode from 'react-daum-postcode';
 import { CiSearch } from 'react-icons/ci';
 import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
 import { MdClose } from 'react-icons/md';
+import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
+const postCodeStyle = {
+  width: '200px',
+  height: '30rem',
+};
+const customModalStyles: ReactModal.Styles = {
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    zIndex: 1000,
+  },
+  content: {
+    maxWidth: '468px',
+    minWidth: '350px',
+    height: '30rem',
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    borderRadius: '1rem',
+    backgroundColor: 'white',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+    justifyContent: 'center',
+    padding: '1.5rem',
+    zIndex: 1500,
+  },
+};
 const board = {
   board: {
     title: '구인구직글3',
@@ -85,6 +119,7 @@ const board = {
 type Image = string;
 
 export default function UpdateFindWorker() {
+  const [openDaum, setOpenDaum] = useState<boolean>(false);
   const [images, setImages] = useState<Image[]>(
     board.board_images.map((img) => img.saveFile)
   );
@@ -93,7 +128,10 @@ export default function UpdateFindWorker() {
   const [workDetail, setWorkDetail] = useState<string>(
     board.board.boardContent
   );
-
+  const onCompletePost = (data: any) => {
+    setAddress(data.address);
+    setOpenDaum(false);
+  };
   const navigate = useNavigate();
 
   const goList = () => navigate('/workers/findworker');
@@ -214,7 +252,11 @@ export default function UpdateFindWorker() {
               setAddress(e.target.value)
             }
           />
-          <CiSearch size={16} className="absolute right-3 top-[2rem]" />
+          <CiSearch
+            size={16}
+            className="absolute right-3 top-[2rem]"
+            onClick={() => setOpenDaum(true)}
+          />
         </div>
         {/* 작업 내용 input */}
         <div className="flex flex-col w-full gap-4">
@@ -238,6 +280,13 @@ export default function UpdateFindWorker() {
           onClick={handleConfirm}
         />
       </div>
+      <Modal
+        style={customModalStyles}
+        isOpen={openDaum}
+        onRequestClose={onCompletePost}
+      >
+        <DaumPostcode style={postCodeStyle} onComplete={onCompletePost} />
+      </Modal>
     </>
   );
 }

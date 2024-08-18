@@ -166,37 +166,37 @@ public class ContractController {
         return new ResponseEntity<>(responseDTO, status);
     }
 
-    @PostMapping("/{chatroomSerial}/modifiedmessage")
-    public ResponseEntity<?> sendModifiedMessage(Authentication authentication, @PathVariable int chatroomSerial, @RequestBody String message) {
-        ResponseDTO<?> responseDTO;
-        HttpStatus status = HttpStatus.ACCEPTED;
-
-        try {
-            int userSerial = portfolioService.getUserSerial(authentication);
-            ChatMessageRequestDTO contractMsg = ChatMessageRequestDTO.builder()
-                    .type(MessageType.CONTRACT)
-                    .chatroomSerial(chatroomSerial)
-                    .userSerial(userSerial)
-                    .chatMessageContent(message)
-                    .isFile(false)
-                    .originalFileName("")
-                    .isContract(true).build();
-            chatMessageService.sendMessage(contractMsg, userSerial, getUserRole(authentication));
-            status = HttpStatus.OK;
-            responseDTO = new ResponseDTO<>(status.value(), "수정 요청 완료!", message);
-        } catch (DuplicateContractException e) {
-            status = HttpStatus.BAD_REQUEST;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch (UnauthorizedUserException e) {
-            status = HttpStatus.UNAUTHORIZED;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        } catch (Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-
-        return new ResponseEntity<>(responseDTO, status);
-    }
+//    @PostMapping("/{chatroomSerial}/modifiedmessage")
+//    public ResponseEntity<?> sendModifiedMessage(Authentication authentication, @PathVariable int chatroomSerial, @RequestBody Map<String, Object> params) {
+//        ResponseDTO<?> responseDTO;
+//        HttpStatus status = HttpStatus.ACCEPTED;
+//
+//        try {
+//            int userSerial = portfolioService.getUserSerial(authentication);
+//            ChatMessageRequestDTO contractMsg = ChatMessageRequestDTO.builder()
+//                    .type(MessageType.CONTRACT)
+//                    .chatroomSerial(chatroomSerial)
+//                    .userSerial(userSerial)
+//                    .chatMessageContent(message)
+//                    .isFile(false)
+//                    .originalFileName("")
+//                    .isContract(true).build();
+//            chatMessageService.sendMessage(contractMsg, userSerial, getUserRole(authentication));
+//            status = HttpStatus.OK;
+//            responseDTO = new ResponseDTO<>(status.value(), "수정 요청 완료!", message);
+//        } catch (DuplicateContractException e) {
+//            status = HttpStatus.BAD_REQUEST;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        } catch (UnauthorizedUserException e) {
+//            status = HttpStatus.UNAUTHORIZED;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        } catch (Exception e) {
+//            status = HttpStatus.INTERNAL_SERVER_ERROR;
+//            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+//        }
+//
+//        return new ResponseEntity<>(responseDTO, status);
+//    }
 
 
     //계약서 처리 내역 조회(최신순)

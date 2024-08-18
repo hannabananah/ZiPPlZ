@@ -52,8 +52,8 @@ export default function Home() {
   }, []);
 
   const handleClickImageChange = () =>
-    navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
-
+    //(window.location.href = `http://localhost:8080?user=${loginUser?.userSerial}`);
+    (window.location.href = `https://zipplz.site/dev`);
   const fetchWorks = async () => {
     const response = await getWorksByUser();
     setScheduleList(response.data.data);
