@@ -36,6 +36,7 @@ import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 export default function Schedule() {
   const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
   const [loadingChatRooms, setLoadingChatRooms] = useState<boolean>(true);
+  console.log(loadingChatRooms);
   const [loadingPlan, setLoadingPlan] = useState<boolean>(true);
   const [loadingWorks, setLoadingWorks] = useState<boolean>(true);
 
