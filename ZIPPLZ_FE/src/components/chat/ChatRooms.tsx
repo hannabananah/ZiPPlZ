@@ -14,7 +14,7 @@ import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url = import.meta.env.production.VITE_APP_BASE_URL;
 
 export default function ChatRooms() {
   const navigate = useNavigate();
@@ -29,7 +29,7 @@ export default function ChatRooms() {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const response = await axios.get(`${base_url}/chatroom`, {
+        const response = await axios.get(`${base_url}chatroom`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -80,7 +80,7 @@ export default function ChatRooms() {
 
   const handleRoomClick = (room: ChatRoom) => {
     closeModal('chatRooms');
-    navigate(`/chatrooms/${room.chatroomSerial}`);
+    navigate(`chatrooms/${room.chatroomSerial}`);
   };
 
   const handleDeleteChatroom = (roomId: string) => {
@@ -92,7 +92,7 @@ export default function ChatRooms() {
     if (selectedRoomId !== null) {
       try {
         await axios.patch(
-          `${base_url}/chatroom/${selectedRoomId}`,
+          `${base_url}chatroom/${selectedRoomId}`,
           {},
           {
             headers: {
