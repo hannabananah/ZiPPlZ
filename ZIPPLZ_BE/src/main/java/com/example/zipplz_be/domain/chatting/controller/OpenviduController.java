@@ -57,6 +57,7 @@ public class OpenviduController {
         ResponseDTO<?> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
+        System.out.println("세션 생성 요청 받음!!!");
         try {
             openvidu.fetch();
 
@@ -64,15 +65,20 @@ public class OpenviduController {
                 status = HttpStatus.BAD_REQUEST;
                 responseDTO = new ResponseDTO<>(status.value(), "필수 항목을 입력해주세요.");
             } else {
+                
+                System.out.println("채팅방 유효검사 통과!!!");
                 SessionProperties properties = SessionProperties.fromJson(params).build();
                 Session session = openvidu.createSession(properties);
-
+                
+                System.out.println("세션 생성 성공!!!");
                 boolean flag = openviduService.initializeSession((Integer) params.get("chatroomSerial"), session.getSessionId());
 
                 if (!flag) {
                     status = HttpStatus.NOT_FOUND;
                     responseDTO = new ResponseDTO<>(status.value(), "유효하지 않은 채팅방 번호");
                 } else {
+                    
+                    System.out.println("세션 생성 리턴 간다!!!");
                     status = HttpStatus.OK;
                     responseDTO = new ResponseDTO<>(status.value(), "응답 성공", session.getSessionId());
                 }
