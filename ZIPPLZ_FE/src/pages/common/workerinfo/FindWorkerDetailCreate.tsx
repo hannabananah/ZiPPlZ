@@ -12,8 +12,10 @@ import { getFindWorkerList, writeFindWorker } from '@apis/worker/WorkerListApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
+// 이미지 상태의 타입 정의
+type Image = File;
 const postCodeStyle = {
-  width: '200px',
+  width: 'full',
   height: '30rem',
 };
 const customModalStyles: ReactModal.Styles = {
@@ -27,7 +29,7 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1000,
   },
   content: {
-    maxWidth: '468px',
+    maxWidth: '200px',
     minWidth: '350px',
     height: '30rem',
     position: 'absolute',
@@ -44,9 +46,6 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-// 이미지 상태의 타입 정의
-type Image = File;
-
 export default function FindWorkerDetailCreate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
@@ -78,7 +77,6 @@ export default function FindWorkerDetailCreate() {
     const response = await getFindWorkerList();
     setFindWorkerList(response.data.data);
   };
-  // 확인 버튼 핸들러
   const handleClickRegistButton = async (
     images: Image[],
     title: string,

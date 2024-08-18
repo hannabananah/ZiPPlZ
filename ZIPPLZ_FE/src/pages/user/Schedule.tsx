@@ -216,7 +216,7 @@ export default function Schedule() {
             setSelectedValue={setSelectedValue}
             width="full"
             height={2}
-            fontSize="md"
+            fontSize="xs"
             radius="btn"
             border="main"
             hover="sub"

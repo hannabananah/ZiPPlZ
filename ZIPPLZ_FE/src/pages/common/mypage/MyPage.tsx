@@ -33,7 +33,7 @@ export default function MyPage() {
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-
+  const { setLoginUser } = useLoginUserStore();
   const {
     profileImg,
     name,
@@ -96,8 +96,10 @@ export default function MyPage() {
     localStorage.removeItem('token');
     localStorage.removeItem('login-user');
     setLoginUser(null);
+
     setShowLogoutModal(false);
     navigate('/member/login');
+    navigate(0);
   };
 
   const handleNavigateToResign = () => {

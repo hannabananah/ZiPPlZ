@@ -14,12 +14,17 @@ import {
   getFIndWorkerDetail,
 } from '@/apis/worker/WorkerListApi';
 import { useLoginUserStore } from '@/stores/loginUserStore';
+// import type { ChatRoom } from '@/types';
+// import { getChatRooms, makeChatRoom } from '@apis/chatroom/chatApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import ModalComponent from '@components/common/Modal';
 import Review from '@components/common/review/Review';
 import { useModalActions } from '@stores/modalStore';
 import { useWorkerListStore } from '@stores/workerListStore';
+import 'swiper/css';
+import { Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 export default function FindWorkerDetai() {
   const checkWish = async (boardSerial: number) => {
@@ -58,6 +63,7 @@ export default function FindWorkerDetai() {
       fetchFindWorker(boardSerial);
       checkWish(boardSerial);
     }
+    window.scrollTo(0, 0);
   }, []);
   const handleClickWish = async (boardSerial: number, type: number) => {
     if (isWish > 0) {
@@ -68,6 +74,33 @@ export default function FindWorkerDetai() {
       return await addWish(boardSerial, type);
     }
   };
+  // const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  // const fetchChatRooms = async () => {
+  //   const response = await getChatRooms();
+  //   setChatRoomList(response.data.data);
+  // };
+  // useEffect(() => {
+  //   fetchChatRooms();
+  // }, []);
+  // const chatStart = async () => {
+  //   try {
+  //     if (id) {
+  //       const response = await makeChatRoom(parseInt(id), nowField);
+  //       const chatRoomSerial = response.data.data.chatroomSerial;
+  //       navigate(`/chatrooms/${chatRoomSerial}`);
+  //     }
+  //   } catch (e) {
+  //     if (chatRoomList && chatRoomList.length > 0 && portfolioOverview) {
+  //       const chatRoomSerial: string = chatRoomList.filter(
+  //         (room) =>
+  //           room.fieldName === nowField &&
+  //           room.workerName === portfolioOverview.user.userName &&
+  //           room.customerName === loginUser?.userName
+  //       )[0].chatroomSerial;
+  //       navigate(`/chatrooms/${chatRoomSerial}`);
+  //     }
+  //   }
+  // };
   return (
     <>
       {findWorker ? (
@@ -80,9 +113,6 @@ export default function FindWorkerDetai() {
                 size={24}
                 onClick={() => navigate(-1)}
               />
-              <p className="font-bold text-center align-text-top text-zp-xl">
-                시공자 찾기
-              </p>
               {loginUser?.userSerial === findWorker.board?.userSerial && (
                 <div className="flex gap-2">
                   <BsPencilSquare
@@ -104,16 +134,27 @@ export default function FindWorkerDetai() {
               )}
             </div>
             {/* 사진 */}
-            {findWorker.board_images && findWorker.board_images.length > 0 && (
-              <div className="flex w-full h-[220px] md:h-[300px] overflow-x-auto">
-                {findWorker.board_images.map((img) => (
-                  <img
-                    src={img.saveFile}
-                    className="w-full h-full rounded-zp-radius-big"
-                  />
+            <div className="flex w-full h-[220px] md:h-[300px]">
+              <Swiper
+                modules={[Navigation, Pagination]}
+                spaceBetween={50}
+                slidesPerView={1}
+                navigation
+                pagination={{ clickable: true }}
+                scrollbar={{ draggable: true }}
+              >
+                {findWorker.board_images.map((img, idx) => (
+                  <>
+                    <SwiperSlide key={idx}>
+                      <img
+                        className="object-cover w-full h-full rounded-zp-radius-big"
+                        src={img.saveFile}
+                      />
+                    </SwiperSlide>
+                  </>
                 ))}
-              </div>
-            )}
+              </Swiper>
+            </div>
 
             <div className="flex flex-col w-full gap-2">
               {/* 글 제목 */}
@@ -150,37 +191,39 @@ export default function FindWorkerDetai() {
 
             <div className="flex flex-col gap-2">
               <p className="font-bold text-zp-lg">리뷰</p>
-              <div className="relative flex w-full gap-4">
-                <Input
-                  inputType="search"
-                  type="text"
-                  width="full"
-                  height={2}
-                  placeholder="리뷰 작성하기"
-                  radius="big"
-                  fontSize="xs"
-                  value={review}
-                  onChange={(e: React.ChangeEvent) =>
-                    setReview((e.target as HTMLInputElement).value)
-                  }
-                />
-                <Button
-                  buttonType="second"
-                  children="등록"
-                  fontSize="xs"
-                  height={2}
-                  width={4}
-                  radius="btn"
-                  onClick={() => {
-                    handleClickRegistReview(boardSerial, review);
-                    navigate(0);
-                  }}
-                />
-                <IoChatbubblesOutline
-                  size={16}
-                  className="absolute top-2 left-4"
-                />
-              </div>
+              {loginUser && loginUser.role !== '' && (
+                <div className="relative flex w-full gap-4">
+                  <Input
+                    inputType="search"
+                    type="text"
+                    width="full"
+                    height={2}
+                    placeholder="리뷰 작성하기"
+                    radius="big"
+                    fontSize="xs"
+                    value={review}
+                    onChange={(e: React.ChangeEvent) =>
+                      setReview((e.target as HTMLInputElement).value)
+                    }
+                  />
+                  <Button
+                    buttonType="second"
+                    children="등록"
+                    fontSize="xs"
+                    height={2}
+                    width={4}
+                    radius="btn"
+                    onClick={() => {
+                      handleClickRegistReview(boardSerial, review);
+                      navigate(0);
+                    }}
+                  />
+                  <IoChatbubblesOutline
+                    size={16}
+                    className="absolute top-2 left-4"
+                  />
+                </div>
+              )}
               {findWorker.comments &&
                 findWorker.comments.length > 0 &&
                 findWorker.comments.map((comment) => (
@@ -192,37 +235,39 @@ export default function FindWorkerDetai() {
                 ))}
             </div>
           </div>
-          <div
-            className="fixed flex flex-col w-full gap-4 px-4 bg-zp-light-beige"
-            style={{ bottom: '3.6rem', left: 0 }}
-          >
-            <hr className="w-full text-zp-light-gray" />
-            <div className="flex items-center w-full gap-4 mb-4">
-              <Button
-                buttonType={isWish > 0 ? 'primary' : 'normal'}
-                width={loginUser?.role === 'worker' ? '50%' : 'full'}
-                height={3}
-                fontSize="lg"
-                radius="btn"
-                onClick={() => handleClickWish(boardSerial, 3)}
-              >
-                <IoBookmarkOutline size={24} />
-                <span className="font-bold"> 찜하기</span>
-              </Button>
-              {loginUser?.role === 'worker' && (
+          {loginUser && loginUser.role !== '' && (
+            <div
+              className="fixed flex flex-col w-full gap-4 px-4 bg-zp-light-beige"
+              style={{ bottom: '3.6rem', left: 0 }}
+            >
+              <hr className="w-full text-zp-light-gray" />
+              <div className="flex items-center w-full gap-4 mb-4">
                 <Button
-                  buttonType="second"
-                  width="full"
+                  buttonType={isWish > 0 ? 'primary' : 'normal'}
+                  width={loginUser?.role === 'worker' ? '50%' : 'full'}
                   height={3}
                   fontSize="lg"
                   radius="btn"
+                  onClick={() => handleClickWish(boardSerial, 3)}
                 >
-                  <IoChatbubblesOutline size={24} />
-                  <span className="font-bold">채팅하기</span>
+                  <IoBookmarkOutline size={24} />
+                  <span className="font-bold"> 찜하기</span>
                 </Button>
-              )}
+                {loginUser?.role === 'worker' && (
+                  <Button
+                    buttonType="second"
+                    width="full"
+                    height={3}
+                    fontSize="lg"
+                    radius="btn"
+                  >
+                    <IoChatbubblesOutline size={24} />
+                    <span className="font-bold">채팅하기</span>
+                  </Button>
+                )}
+              </div>
             </div>
-          </div>
+          )}
           <ModalComponent
             type="select"
             title="게시글 삭제"

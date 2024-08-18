@@ -198,12 +198,6 @@ const QuestionPostUpdate = loadable(
     ),
   }
 );
-const ImageChangePage = loadable(
-  () => import('./pages/common/home/ImageChangePage'),
-  {
-    fallback: <div>Loading image change page...</div>,
-  }
-);
 const Login = loadable(() => import('./pages/common/login/LogIn'), {
   fallback: <div>Loading login...</div>,
 });
@@ -329,10 +323,6 @@ export default function App() {
           <Route path="contract/:workserial" element={<ContractPage />} />
           <Route path="mypage" element={<MyPage />} />
           <Route path="chatrooms/:chatroomSerial" element={<ChatRoom />} />
-          <Route
-            path="image-change/:userSerial"
-            element={<ImageChangePage />}
-          />
           <Route
             path="workers/findworker/write"
             element={<FindWorkerDetailCreate />}

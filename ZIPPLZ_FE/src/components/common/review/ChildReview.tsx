@@ -24,7 +24,10 @@ export default function ChildReview({ comment }: Props) {
         <div className="w-full h-['3rem'] border border-zp-main-color bg-zp-white flex flex-col gap-4 rounded-zp-radius-big py-2 px-4 ">
           <div className="flex items-center justify-between w-full text-zp-2xs">
             <div className="flex gap-1">
-              이미지{' '}
+              <img
+                className="w-3 h-3 rounded-zp-radius-full"
+                src={comment.saveFile}
+              />
               <p className="font-bold">
                 {comment.nickName ? comment.nickName : comment.userName}
               </p>
