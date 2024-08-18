@@ -149,14 +149,14 @@ export default function Selectbar({
       </div>
       {isShowOptions && (
         <ul
-          className={`${Options} ${widthClass}`}
+          className={`${Options} ${widthClass} mt-4 rounded-zp-radius-btn`}
           style={{
             width: width === 'full' ? '100%' : widthStyle,
           }}
         >
           {options.map((option, index) => (
             <li
-              className={` ${status && status[index] === 1 ? Option : nonActive}  ${widthClass} ${heightClass} text-zp-2xs`}
+              className={` ${status ? (status[index] === 1 ? Option : nonActive) : Option}  ${widthClass} ${heightClass} text-zp-2xs rounded-zp-radius-btn`}
               key={index}
               onClick={() => handleOptionClick(option)}
             >

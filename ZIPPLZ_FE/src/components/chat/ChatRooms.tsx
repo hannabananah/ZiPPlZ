@@ -181,7 +181,8 @@ export default function ChatRooms() {
                   <img
                     src={
                       room.file
-                        ? `http://localhost:5000/${room.file.saveFolder}/${room.file.saveFile}`
+                        ? // ? `http://localhost:5000/${room.file.saveFolder}/${room.file.saveFile}`
+                          `https://zipplz.site/api/${room.file.saveFolder}/${room.file.saveFile}`
                         : 'https://i.pravatar.cc/50?img=1'
                     }
                     alt="프로필 이미지"

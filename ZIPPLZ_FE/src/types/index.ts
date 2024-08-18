@@ -331,6 +331,7 @@ export interface ReviewComment {
   orderNumber: number;
   isDeleted: number;
   nickName?: string | null;
+  saveFile: string;
 }
 
 export interface Event {
