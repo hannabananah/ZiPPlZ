@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { IoIosClose } from 'react-icons/io';
+import { MdOutlineFullscreenExit } from 'react-icons/md';
 import Skeleton from 'react-loading-skeleton';
 import 'react-loading-skeleton/dist/skeleton.css';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +15,7 @@ import { useModalActions } from '@stores/modalStore';
 import { formatTime } from '@utils/formatDateWithTime';
 import axios from 'axios';
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url: string = 'https://zipplz.site/api/';
 
 export default function ChatRooms() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ export default function ChatRooms() {
   useEffect(() => {
     const fetchChatRooms = async () => {
       try {
-        const response = await axios.get(`${base_url}/chatroom`, {
+        const response = await axios.get(`${base_url}chatroom`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
@@ -80,7 +81,7 @@ export default function ChatRooms() {
 
   const handleRoomClick = (room: ChatRoom) => {
     closeModal('chatRooms');
-    navigate(`/chatrooms/${room.chatroomSerial}`);
+    navigate(`chatrooms/${room.chatroomSerial}`);
   };
 
   const handleDeleteChatroom = (roomId: string) => {
@@ -92,7 +93,7 @@ export default function ChatRooms() {
     if (selectedRoomId !== null) {
       try {
         await axios.patch(
-          `${base_url}/chatroom/${selectedRoomId}`,
+          `${base_url}chatroom/${selectedRoomId}`,
           {},
           {
             headers: {
@@ -123,8 +124,16 @@ export default function ChatRooms() {
   };
 
   return (
-    <div className="relative flex flex-col w-full pb-8 overflow-y-auto">
-      <div className="sticky top-0 z-30 w-full px-8 pt-6 mb-4 bg-zp-white">
+    <div className="relative flex flex-col w-full p-6 overflow-y-auto">
+      <button
+        className="flex justify-end"
+        onClick={() => {
+          closeModal('chatRooms');
+        }}
+      >
+        <MdOutlineFullscreenExit size={26} />
+      </button>
+      <div className="sticky top-0 z-30 w-full px-8 mb-4 bg-zp-white">
         <SearchInput
           onSearch={handleSearch}
           placeholder="이름을 입력해주세요."

@@ -1,6 +1,7 @@
 package com.example.zipplz_be.domain.chatting.repository.mongodb;
 
 import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
+import com.example.zipplz_be.domain.model.entity.MessageType;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -17,4 +18,6 @@ public interface ChatMessageRepository extends MongoRepository<ChatMessage, Stri
     Optional<ChatMessage> findById(String id);
 
     boolean existsById(String id);
+
+    ChatMessage findByChatroomSerialAndUserSerialAndFileType(int chatroomSerial, int userSerial, MessageType fileType);
 }

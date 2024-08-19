@@ -3,6 +3,7 @@ import { create } from 'zustand';
 
 // const BASE_URL: string = 'http://localhost:5000/';
 const BASE_URL: string = 'https://zipplz.site/api/';
+
 interface WorkerPost {
   board_serial: number;
   board_type: number;

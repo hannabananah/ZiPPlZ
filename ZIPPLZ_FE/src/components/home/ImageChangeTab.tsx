@@ -6,11 +6,12 @@ import MaterialIcon from '@assets/ai-material-icon.svg?react';
 interface Props {
   onClick: () => void;
 }
+
 export default function ImageChangeTab({ onClick }: Props) {
   return (
     <>
       <div
-        className="relative w-full h-[4rem] rounded-zp-radius-big flex items-center  gap-1 bg-zp-white cursor-pointer drop-shadow-zp-slight"
+        className="relative w-full h-[4rem] rounded-zp-radius-big flex items-center gap-1 bg-zp-white cursor-pointer drop-shadow-zp-slight hover:text-zp-black"
         onClick={onClick}
       >
         <div className="flex items-center justify-center w-full">

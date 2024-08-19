@@ -7,14 +7,12 @@ import com.example.zipplz_be.domain.model.entity.MessageType;
 import com.example.zipplz_be.domain.user.entity.User;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 @Getter
+@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Document(collection = "chat_messages")
 public class ChatMessage extends BaseTimeEntity implements Comparable<ChatMessage> {

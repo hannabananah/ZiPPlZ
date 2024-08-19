@@ -2,7 +2,7 @@ package com.example.zipplz_be.domain.material.serivce;
 
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
-import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
+//import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -24,7 +24,7 @@ public interface MaterialService {
 
     void unsetMaterialOnWish(int userSerial, int materialSerial);
 
-    void insertMaterialService(Map<String, Object> params);
+    //void insertMaterialService(Map<String, Object> params);
 
-    List<ElasticMaterial> searchMaterialService(Map<String, Object> params);
+    //List<ElasticMaterial> searchMaterialService(Map<String, Object> params);
 }

@@ -13,6 +13,7 @@ import { getFindWorkerList, writeFindWorker } from '@apis/worker/WorkerListApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 
+// 이미지 상태의 타입 정의
 type Image = File;
 const postCodeStyle = {
   width: 'full',
@@ -65,8 +66,13 @@ export default function FindWorkerDetailCreate() {
   const [workDetail, setWorkDetail] = useState<string>('');
   const [wishField, setWishField] =
     useState<string>('희망 분야를 선택해주세요');
+  const [openDaum, setOpenDaum] = useState<boolean>(false);
   const navigate = useNavigate();
-
+  const onCompletePost = (data: any) => {
+    setAddress(data.address);
+    setOpenDaum(false);
+  };
+  //리스트 이동
   const goList = () => navigate('/workers/findworker');
 
   const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
@@ -101,11 +107,6 @@ export default function FindWorkerDetailCreate() {
       field_id: field,
     });
     await fetchFindWorkerList();
-  };
-  const [openDaum, setOpenDaum] = useState<boolean>(false);
-  const onCompletePost = (data: any) => {
-    setAddress(data.address);
-    setOpenDaum(false);
   };
 
   return (
@@ -143,7 +144,6 @@ export default function FindWorkerDetailCreate() {
               multiple
             />
           </div>
-          {/* Modified the following div */}
           <div className="flex flex-wrap gap-2">
             {images.map((image, index) => (
               <div

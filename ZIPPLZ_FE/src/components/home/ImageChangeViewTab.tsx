@@ -3,6 +3,7 @@ import CombinationIcon from '@assets/ai-combination-icon.svg?react';
 interface Props {
   onClick: () => void;
 }
+
 export default function ImageChangeViewTab({ onClick }: Props) {
   return (
     <>

@@ -27,7 +27,7 @@ interface Field {
   editable: boolean;
 }
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url = 'https://zipplz.site/api/';
 
 export default function Contract({ closeContractModal, name }: ContractProps) {
   const contractInfo: Field[] = [
@@ -142,7 +142,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
 
     try {
       const response = await axios.get(
-        `${base_url}/chatroom/${chatroomSerial}`,
+        `${base_url}chatroom/${chatroomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }

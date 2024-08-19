@@ -100,7 +100,7 @@ export default function Workers() {
   }, [category, type]);
   return (
     <>
-      <div className="flex flex-col items-center mt-[3rem] gap-4 p-6">
+      <div className="flex flex-col items-center mt-[3rem] gap-4 p-6 min-h-screen">
         <div className="relative w-full text-center">
           <div className="flex items-center justify-center w-full gap-2">
             <p className="font-bold text-center cursor-pointer text-zp-lg">
@@ -169,7 +169,11 @@ export default function Workers() {
         {/* 검색 입력 필드 */}
         <div className="relative flex flex-col items-center w-full">
           <Input
-            placeholder="시공업자의 이름을 입력하세요."
+            placeholder={
+              selectedOption === '전문 시공자 둘러보기'
+                ? '시공업자의 이름을 입력하세요.'
+                : '게시글 제목을 입력하세요.'
+            }
             inputType="login"
             type="text"
             width="70%"
@@ -206,7 +210,7 @@ export default function Workers() {
           )}
         </div>
         {category === 'portfolios' && type && (
-          <div className="w-full">
+          <div className="w-full mb-[5rem]">
             {type === '전체' ? (
               <WorkerInfoList keyword={keyword} searchWorker={searchWorker} />
             ) : (

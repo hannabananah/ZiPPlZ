@@ -32,7 +32,7 @@ export default function ChatRoomHeader({
   const { closeModal, openModal } = useModalActions();
 
   return (
-    <div className="sticky top-0 flex items-center justify-between h-20 px-4 bg-zp-transparent">
+    <div className="sticky top-0 z-40 flex items-center justify-between h-16 px-4 bg-zp-light-orange">
       <div className="flex items-center gap-x-2">
         <button onClick={() => navigate('/')} aria-label="Back">
           <IoIosArrowBack size={16} fill="#111" />
@@ -40,7 +40,7 @@ export default function ChatRoomHeader({
         <img
           src={imageUrl || 'path/to/placeholder-image.png'}
           alt="profile"
-          className="w-12 h-12 rounded-full"
+          className="w-12 h-12 rounded-zp-radius-full"
         />
         <div className="flex flex-col flex-1">
           <div className="flex items-center gap-1">

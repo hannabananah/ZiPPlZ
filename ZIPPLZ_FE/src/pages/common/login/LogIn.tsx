@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
 import { IoHomeOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
 
 import { requestLogin } from '@/apis/member/MemberApi';
 import Button from '@components/common/Button';
@@ -186,7 +185,7 @@ export default function Login() {
           </p>
         </div>
         <div className="absolute left-0 bottom-[4rem] px-4 w-full flex flex-col gap-4 z-30">
-          <Link to={GOOGLE_LOGIN_URL}>
+          <a href={GOOGLE_LOGIN_URL}>
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
               style={{
@@ -195,8 +194,8 @@ export default function Login() {
                 backgroundPosition: 'center center',
               }}
             />
-          </Link>
-          <Link to={KAKAO_LOGIN_URL}>
+          </a>
+          <a href={KAKAO_LOGIN_URL}>
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
               style={{
@@ -205,7 +204,7 @@ export default function Login() {
                 backgroundPosition: 'center center',
               }}
             />
-          </Link>
+          </a>
         </div>
       </div>
     </div>
