@@ -25,25 +25,12 @@ const ort = require("onnxruntime-web");
 import npyjs from "npyjs";
 import axios from "axios";
 
-// URL 파라미터를 처리하는 ImageChange 컴포넌트
-const ImageChange = () => {
-    const { userSerial } = useParams<{ userSerial: string }>();
-    const searchParams = new URLSearchParams(window.location.search);
-    const tab = searchParams.get("tab");
-
-    return (
-        <div>
-            <h1>Image Change Component</h1>
-            <p>User Serial: {userSerial}</p>
-            <p>Tab: {tab}</p>
-        </div>
-    );
-};
-
 // const IMAGE_EMBEDDING = "/assets/data/ssafy1_embedding.npy";
 const MODEL_DIR = "/model/sam_onnx_example.onnx";
 
 const App = () => {
+    const { userSerial } = useParams<{ userSerial: string }>();
+    console.log(userSerial);
     const options: string[] = ["바닥", "벽지"];
     const [selectedValue, setSelectedValue] = useState<string>("바닥");
     const {
