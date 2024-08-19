@@ -12,6 +12,7 @@ import { useLoginUserStore } from '@stores/loginUserStore';
 export default function BottomTab() {
   const location = useLocation();
   const { loginUser } = useLoginUserStore();
+
   const tabItems = [
     {
       path: '/',
@@ -25,6 +26,7 @@ export default function BottomTab() {
       inactiveIcon: <InactiveWorker width={26} />,
       label: '시공자 정보',
       role: ['customer', 'worker', ''],
+      isActive: () => location.pathname.startsWith('/workers'), // Check if the path starts with "/workers"
     },
     {
       path: loginUser?.role !== '' ? '/schedule' : '/member/login',
@@ -33,7 +35,7 @@ export default function BottomTab() {
       role: ['customer', ''],
     },
     {
-      path: `workers/${loginUser?.userSerial}/portfolio?tab=overview`,
+      path: `workers/${loginUser?.userSerial}`,
       icon: <TiBusinessCard size={26} />,
       label: '포트폴리오',
       role: ['worker'],
@@ -68,7 +70,7 @@ export default function BottomTab() {
               to={item.path}
               className={({ isActive }) =>
                 `flex flex-col items-center justify-center gap-y-1 ${
-                  isActive || (item.path === '/' && location.pathname === '/')
+                  isActive || item.isActive?.()
                     ? 'text-zp-main-color'
                     : 'text-zp-light-gray'
                 }`
@@ -77,15 +79,13 @@ export default function BottomTab() {
               {({ isActive }) => (
                 <>
                   {item.activeIcon && item.inactiveIcon
-                    ? isActive ||
-                      (item.path === '/' && location.pathname === '/')
+                    ? isActive || item.isActive?.()
                       ? item.activeIcon
                       : item.inactiveIcon
                     : item.icon}
                   <span
                     className={`text-zp-2xs ${
-                      isActive ||
-                      (item.path === '/' && location.pathname === '/')
+                      isActive || item.isActive?.()
                         ? 'text-zp-main-color'
                         : 'text-zp-light-gray'
                     }`}
