@@ -93,7 +93,7 @@ function ChatRoomContent() {
     setIsVideoModalOpen(false);
   };
   return (
-    <div className="relative flex flex-col h-screen bg-zp-light-orange">
+    <div className="relative flex flex-col bg-zp-light-orange">
       {isValidRoomId && selectedChatRoom && (
         <ChatRoomHeader
           name={selectedChatRoom.otherUser.name}
