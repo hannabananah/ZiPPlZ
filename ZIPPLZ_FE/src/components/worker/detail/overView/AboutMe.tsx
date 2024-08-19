@@ -28,7 +28,7 @@ export default function AboutMe() {
         <div>About Me</div>
       </div>
 
-      <div className="relative w-full p-4 bg-zp-white rounded-zp-radius-big">
+      <div className="relative w-full p-4 bg-zp-white rounded-zp-radius-big drop-shadow-zp-slight">
         <div className="flex flex-col space-y-2 text-zp-2xs">
           <div className="flex items-center">
             <div className="w-20">나이</div>

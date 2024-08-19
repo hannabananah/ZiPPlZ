@@ -16,6 +16,9 @@ import ImageChangeViewTab from '@components/home/ImageChangeViewTab';
 import TodaySchedule from '@components/home/TodaySchedule';
 import WorkerCard from '@components/home/WorkerCard';
 import { useLoginUserStore } from '@stores/loginUserStore';
+import 'swiper/css';
+import { Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 const fields: string[] = [
   '전체',
@@ -33,18 +36,18 @@ const fields: string[] = [
 ];
 
 export default function Home() {
-  const [scheduleList, setScheduleList] = useState<Work[]>([]);
-  const [todayWork, setTodayWork] = useState<TodayWork[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [loadingWorkers, setLoadingWorkers] = useState<boolean>(true);
+  const [scheduleList, setScheduleList] = useState<Work[] | null>(null);
+  const [todayWork, setTodayWork] = useState<TodayWork[] | null>(null);
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[] | null>(null);
+  const { workerList, setWorkerList } = useWorkerListStore();
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { loginUser } = useLoginUserStore();
-  const { workerList, setWorkerList } = useWorkerListStore();
-  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
-
   const fetchChatRooms = async () => {
     const response = await getChatRooms();
+    setLoading(true);
     setChatRoomList(response.data.data);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -52,8 +55,8 @@ export default function Home() {
   }, []);
 
   const handleClickImageChange = () =>
-    //(window.location.href = `http://localhost:8080?user=${loginUser?.userSerial}`);
-    (window.location.href = `https://zipplz.site/dev`);
+    (window.location.href = `http://localhost:8080?user=${loginUser?.userSerial}`);
+    // (window.location.href = `https://zipplz.site/dev`);
   const fetchWorks = async () => {
     const response = await getWorksByUser();
     setScheduleList(response.data.data);
@@ -64,9 +67,10 @@ export default function Home() {
   };
 
   const fetchHotWorkers = async () => {
+    setLoading(true);
     const response = await getTopWorkerList();
     setWorkerList(response.data.data);
-    setLoadingWorkers(false);
+    setLoading(false);
   };
 
   const fetchTodaySchedule = async () => {
@@ -90,11 +94,8 @@ export default function Home() {
   return (
     <div className="flex flex-col gap-6 mt-8 mb-6 overflow-auto bg-zp-light-beige p-7">
       <div className="relative w-full p-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-slight">
-        {loading ? (
-          <Skeleton height={400} />
-        ) : (
-          <ScheduleCalendar workList={scheduleList} />
-        )}
+        <ScheduleCalendar workList={scheduleList} loading={loading} />
+
         {(!loginUser || loginUser.role === '') && (
           <div className="absolute flex justify-center items-center w-full h-full top-0 left-0 rounded-zp-radius-big bg-[rgba(255,255,255,0.5)] z-10">
             <div className="flex flex-col justify-center items-center w-[80%] h-[40%] bg-zp-light-beige opacity-100 z-100 rounded-zp-radius-big gap-4 p-4">
@@ -118,50 +119,59 @@ export default function Home() {
       {loginUser && loginUser.role !== '' && (
         <div className="flex items-start justify-center w-full gap-2 md:gap-6">
           <div className="basis-7/12">
-            <p className="mb-2 font-bold text-zp-xl font-noto">📆 Today</p>
-            {loading ? (
-              <Skeleton count={1} height={80} className="mb-2" />
-            ) : todayWork && todayWork.length > 0 ? (
-              todayWork
-                .filter((work) => work.worker !== null)
-                .map((work) => (
-                  <TodaySchedule
-                    key={work.workSerial}
-                    role={loginUser?.role || ''}
-                    work={work}
-                    chatRoomList={chatRoomList}
-                    loading={loading}
-                  />
-                ))
+            <p className="mb-1 font-bold text-zp-xl font-noto">📆 Today</p>
+            {todayWork ? (
+              todayWork.length > 0 ? (
+                <Swiper
+                  modules={[Navigation, Pagination]}
+                  spaceBetween={0}
+                  slidesPerView={1}
+                  navigation
+                  pagination={{ clickable: true }}
+                  scrollbar={{ draggable: true }}
+                >
+                  {todayWork
+                    .filter((work) => work.worker !== null)
+                    .map((work) => (
+                      <SwiperSlide key={work.workSerial}>
+                        <TodaySchedule
+                          key={work.workSerial}
+                          role={loginUser?.role || ''}
+                          work={work}
+                          chatRoomList={chatRoomList || []}
+                          loading={loading}
+                        />
+                      </SwiperSlide>
+                    ))}
+                </Swiper>
+              ) : (
+                <div className="w-full h-[8.3rem] rounded-zp-radius-big bg-zp-white flex items-center justify-center">
+                  <p className="font-bold text-zp-md text-zp-light-gray">
+                    시공이 없습니다
+                  </p>
+                </div>
+              )
             ) : (
-              <div className="w-full h-[8.3rem] rounded-zp-radius-big bg-zp-white flex items-center justify-center drop-shadow-zp-slight mb-2">
-                <p className="text-zp-md text-zp-light-gray font-noto">
-                  시공이 없습니다.
-                </p>
-              </div>
+              <Skeleton height={132} count={2} />
             )}
           </div>
 
           <div className="basis-5/12">
-            <p className="mb-2 font-bold text-zp-md font-noto">
-              🤖 AI 자재 변환
+            <p className="mb-1 font-bold text-zp-xl font-noto">
+              🤖 AI 자재 입히기
             </p>
             <div className="flex flex-col gap-2">
-              <ImageChangeTab
-                onClick={handleClickImageChange}
-                loading={loading}
-              />
-              <ImageChangeViewTab
-                onClick={handleClickImageChange}
-                loading={loading}
-              />
+              <ImageChangeTab onClick={handleClickImageChange} />
+              <ImageChangeViewTab onClick={handleClickImageChange} />
             </div>
           </div>
         </div>
       )}
 
-      <div className="w-full font-noto">
-        <p className="font-bold text-zp-xl">🔎 찾으시는 시공이 있으신가요?</p>
+      <div className="w-full">
+        <p className="mb-1 font-bold text-zp-xl font-noto">
+          🔎 찾으시는 시공이 있으신가요?
+        </p>
         <p className="font-bold text-zp-2xs text-zp-gray">
           선택한 시공에 맞춰 인증된 전문 기술자를 추천해드립니다.
         </p>
@@ -176,14 +186,13 @@ export default function Home() {
           />
         ))}
       </div>
-
-      <p className="font-bold text-zp-xl font-noto">🔥 HOT한 시공업자</p>
+      <p className="mb-1 font-bold text-zp-xl font-noto">🔥 HOT한 시공업자</p>
       <div
         className="flex w-full overflow-x-auto"
         style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
       >
         <div className="flex justify-between w-full h-[8rem]">
-          {loadingWorkers ? (
+          {loading ? (
             <Skeleton width={100} height={80} count={5} className="mr-2" />
           ) : (
             workerList?.map((worker) => (

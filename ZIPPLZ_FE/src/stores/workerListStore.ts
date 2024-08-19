@@ -43,6 +43,7 @@ export interface Comment {
   orderNumber: number;
   isDeleted: number;
   nickName: string | null;
+  saveFile: string;
 }
 export interface FindWorkerDetail {
   board: FIndWorker2 | null;

@@ -5,8 +5,8 @@ import type { ChatMessageData } from '@/types';
 import { Client, IMessage } from '@stomp/stompjs';
 import axios from 'axios';
 
-const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const chat_base_url = 'wss://zipplz.site/api/ws';
+const base_url: string = 'https://zipplz.site/api/';
 
 interface WebSocketContextType {
   sendMessage: (
@@ -40,7 +40,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       try {
         const response = await axios.get<{
           data: { chatMessages: ChatMessageData[] };
-        }>(`${base_url}/chatroom/${chatroomSerial}`, {
+        }>(`${base_url}chatroom/${chatroomSerial}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         if (response.status === 200) {

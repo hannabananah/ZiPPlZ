@@ -57,7 +57,7 @@ export default function SchedulerCardExist({
   return (
     <>
       <div
-        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-normal"
+        className="relative flex flex-col items-center justify-center w-full gap-4 rounded-zp-radius-big bg-zp-white drop-shadow-zp-slight"
         style={{ height: cardHeight }}
       >
         <div className="absolute flex items-center justify-between w-full px-6 top-5 ">

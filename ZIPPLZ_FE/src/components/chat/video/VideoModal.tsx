@@ -15,6 +15,7 @@ export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
     leaveSession,
     // setSubscriber,
     setPublisher,
+    startScreenShare,
     OV,
   } = useOpenVidu();
 
@@ -51,6 +52,7 @@ export default function VideoModal({ handleCloseVideo }: VideoModalProps) {
         publishAudio={publishAudio}
         publishVideo={publishVideo}
         handleCloseVideo={handleCloseVideo}
+        startScreenShare={startScreenShare}
       />
     </div>
   );

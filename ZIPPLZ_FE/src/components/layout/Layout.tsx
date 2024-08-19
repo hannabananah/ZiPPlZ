@@ -22,8 +22,8 @@ export default function Layout() {
 
   return (
     <Suspense>
-      <div className="flex flex-col items-center justify-center w-full max-w-[600px] mx-auto">
-        <div className="relative flex flex-col w-full min-h-screen bg-zp-light-beige">
+      <div className="flex flex-col items-center justify-center w-full max-w-[600px] mx-auto ">
+        <div className="relative flex flex-col w-full h-full bg-zp-light-beige">
           {!isChatRoomsPage && !is404Page && <Header />}
           <div
             style={{ height: `calc(100% - 64px)` }}

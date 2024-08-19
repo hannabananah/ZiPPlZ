@@ -16,7 +16,7 @@ import {
 } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
 
-const base_url = "https://zipplz.site/api";
+const base_url = 'https://zipplz.site/api/';
 
 function ChatRoomContent() {
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
@@ -42,7 +42,7 @@ function ChatRoomContent() {
   ): Promise<ChatRoomDetails> => {
     try {
       const response = await axios.get<{ data: ChatRoomDetails }>(
-        `${base_url}/chatroom/${chatroomSerial}`,
+        `${base_url}chatroom/${chatroomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
@@ -105,7 +105,7 @@ function ChatRoomContent() {
           handleClickVideo={handleClickVideo}
         />
       )}
-      <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
+      <div className="relative flex flex-col flex-grow overflow-y-auto">
         {isValidRoomId ? (
           <>
             <div className="flex-1 overflow-y-auto">

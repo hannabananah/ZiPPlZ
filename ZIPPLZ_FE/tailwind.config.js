@@ -72,11 +72,20 @@ export default {
     },
     extend: {
       screens: {
-        sm: '400px', // 기존 sm의 범위를 600px로 변경
-        md: '500px', // 기존 md의 범위를 800px로 변경
-        // 필요에 따라 다른 브레이크포인트도 수정 가능
+        sm: '400px',
+        md: '500px',
         lg: '1024px',
         xl: '1280px',
+      },
+    },
+    animation: {
+      spinAndGrow: 'spinAndGrow 3s infinite',
+    },
+    keyframes: {
+      spinAndGrow: {
+        '0%': { transform: 'scale(1) rotate(0deg)' },
+        '50%': { transform: 'scale(1.5) rotate(360deg)' },
+        '100%': { transform: 'scale(1) rotate(720deg)' },
       },
     },
   },

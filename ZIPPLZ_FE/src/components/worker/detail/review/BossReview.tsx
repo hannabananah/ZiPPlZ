@@ -8,7 +8,7 @@ export default function BossReview({ review }: Props) {
         <img className="w-5 h-5 border rounded-zp-radius-full" src="" />
         <p className="font-bold text-zp-xs">시공업자</p>
       </div>
-      <div className="flex flex-col gap-4 p-4 shadow-lg bg-zp-light-gray rounded-zp-radius-big">
+      <div className="flex flex-col gap-4 p-4 shadow-lg drop-shadow-zp-normal rounded-zp-radius-big">
         <p className="text-zp-xs text-wrap">{review}</p>
       </div>
     </div>

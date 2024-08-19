@@ -33,7 +33,7 @@ export default function MyPage() {
   const navigate = useNavigate();
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
-
+  const { setLoginUser } = useLoginUserStore();
   const {
     profileImg,
     name,
@@ -46,7 +46,6 @@ export default function MyPage() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewImg, setPreviewImg] = useState<string | null>(null); // 이미지 미리보기용 상태
   const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null); // 아이콘 선택 상태
-  const { setLoginUser } = useLoginUserStore();
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -84,10 +83,6 @@ export default function MyPage() {
     navigate('/mypage/policy');
   };
 
-  const handleNavigateToVersion = () => {
-    navigate('/mypage/version');
-  };
-
   const handleLogoutClick = () => {
     setShowLogoutModal(true);
   };
@@ -100,8 +95,10 @@ export default function MyPage() {
     localStorage.removeItem('token');
     localStorage.removeItem('login-user');
     setLoginUser(null);
+
     setShowLogoutModal(false);
     navigate('/member/login');
+    navigate(0);
   };
 
   const handleNavigateToResign = () => {
@@ -167,7 +164,7 @@ export default function MyPage() {
   };
 
   return (
-    <div className="flex items-start justify-center min-h-screen p-6">
+    <div className="flex items-start justify-center p-6">
       <div className="w-full">
         <div className="relative flex items-center justify-between w-full">
           <div className="flex items-center">
@@ -184,7 +181,7 @@ export default function MyPage() {
 
         <div className="relative flex justify-center w-full mt-4">
           <div className="flex flex-col items-center">
-            <div className="relative w-36 h-36">
+            <div className="relative w-24 h-24">
               {previewImg ? (
                 <div className="flex items-center justify-center w-full h-full overflow-hidden rounded-zp-radius-full">
                   <img
@@ -217,7 +214,7 @@ export default function MyPage() {
                 <MdOutlinePhotoCamera size={24} />
               </div>
             </div>
-            <div className="grid h-8 font-bold w-36 place-items-center text-zp-md">
+            <div className="grid h-8 font-bold w-36 place-items-center text-zp-xs">
               {name}
             </div>
           </div>
@@ -226,7 +223,7 @@ export default function MyPage() {
         <hr className="w-full mt-6 border-zp-light-gray" />
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-md">내 정보 수정하기</div>
+          <div className="text-zp-xs">내 정보 수정하기</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -236,7 +233,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6 ">
-          <div className="text-zp-md">비밀번호 변경</div>
+          <div className="text-zp-xs">비밀번호 변경</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -246,7 +243,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6 ">
-          <div className="text-zp-md">내가 쓴 글 목록</div>
+          <div className="text-zp-xs">내가 쓴 글 목록</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -256,7 +253,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6 ">
-          <div className="text-zp-md">스크랩 글 목록</div>
+          <div className="text-zp-xs">스크랩 글 목록</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -268,7 +265,7 @@ export default function MyPage() {
         {role === 'customer' && (
           <>
             <div className="flex items-center justify-between w-full mt-6">
-              <div className="text-zp-md">관심있는 시공업자 목록</div>
+              <div className="text-zp-xs">관심있는 시공업자 목록</div>
               <div>
                 <HiChevronRight
                   className="cursor-pointer"
@@ -282,7 +279,7 @@ export default function MyPage() {
         <hr className="w-full mt-6 border-zp-light-gray" />
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-md">이용약관 / 개인정보처리방침</div>
+          <div className="text-zp-xs">이용약관 / 개인정보처리방침</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -292,18 +289,12 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-md">버전</div>
-          <div className="flex align-middle">
-            <div className="px-2">1.1.0</div>
-            <HiChevronRight
-              className="relative cursor-pointer top-1"
-              onClick={handleNavigateToVersion}
-            />
-          </div>
+          <div className="text-zp-xs">버전</div>
+          <div className="px-2">1.1.0</div>
         </div>
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-md">로그아웃</div>
+          <div className="text-zp-xs">로그아웃</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"
@@ -313,7 +304,7 @@ export default function MyPage() {
         </div>
 
         <div className="flex items-center justify-between w-full mt-6">
-          <div className="text-zp-md">탈퇴하기</div>
+          <div className="text-zp-xs">탈퇴하기</div>
           <div>
             <HiChevronRight
               className="cursor-pointer"

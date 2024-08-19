@@ -16,7 +16,7 @@ export default function BottomTab() {
   const tabItems = [
     {
       path: '/',
-      icon: <FaHome size={28} />,
+      icon: <FaHome size={26} />,
       label: '홈',
       role: ['customer', 'worker', ''],
     },
@@ -41,20 +41,20 @@ export default function BottomTab() {
     },
     {
       path: '/community',
-      activeIcon: <ActiveCommunity width={26} />,
-      inactiveIcon: <InactiveCommunity width={26} />,
+      activeIcon: <ActiveCommunity width={28} />,
+      inactiveIcon: <InactiveCommunity width={28} />,
       label: '커뮤니티',
       role: ['customer', 'worker', ''],
     },
     {
       path: loginUser?.role !== '' ? '/mypage' : '/member/login',
-      icon: <FaUser size={24} />,
+      icon: <FaUser size={26} />,
       label: '마이페이지',
       role: ['customer', 'worker', ''],
     },
   ];
   return (
-    <div className="fixed bottom-0 w-full max-w-[600px] bg-zp-white z-50">
+    <div className="fixed bottom-0 w-full max-w-[600px] bg-zp-white z-30">
       <div className="flex items-center justify-around h-16">
         {tabItems
           .filter((item) =>
