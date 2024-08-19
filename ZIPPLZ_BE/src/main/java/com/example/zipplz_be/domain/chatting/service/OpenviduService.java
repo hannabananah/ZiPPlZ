@@ -61,6 +61,9 @@ public class OpenviduService {
     public String deleteConnection(String sessionId, int userSerial) {
         Chatroom chatroom = chatroomRepository.findBySessionId(sessionId);
 
+        System.out.println(chatroom.getChatroomSerial() + " " + userSerial);
+
+
         UserToChatroom userToChatroom = userToChatroomRepository.findToken(chatroom.getChatroomSerial(),userSerial);
 
         String token = userToChatroom.getToken();
