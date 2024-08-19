@@ -1,4 +1,4 @@
-import { FaHome, FaRegCalendarCheck, FaUser } from 'react-icons/fa';
+import { FaRegCalendarCheck, FaUser } from 'react-icons/fa';
 import { TiBusinessCard } from 'react-icons/ti';
 import { NavLink, useLocation } from 'react-router-dom';
 
@@ -6,9 +6,8 @@ import ActiveCommunity from '@assets/active-community-icon.svg?react';
 import ActiveWorker from '@assets/active-worker-icon.svg?react';
 import InactiveCommunity from '@assets/inactive-community-icon.svg?react';
 import InactiveWorker from '@assets/inactive-worker-icon.svg?react';
+import Logo from '@assets/logo.svg?react';
 import { useLoginUserStore } from '@stores/loginUserStore';
-
-// import OverView from './../../pages/worker/tabs/OverView';
 
 export default function BottomTab() {
   const location = useLocation();
@@ -16,7 +15,7 @@ export default function BottomTab() {
   const tabItems = [
     {
       path: '/',
-      icon: <FaHome size={26} />,
+      icon: <Logo width={32} height={32} fill={'#73744a'} />,
       label: '홈',
       role: ['customer', 'worker', ''],
     },
@@ -53,6 +52,7 @@ export default function BottomTab() {
       role: ['customer', 'worker', ''],
     },
   ];
+
   return (
     <div className="fixed bottom-0 w-full max-w-[600px] bg-zp-white z-30">
       <div className="flex items-center justify-around h-16">

@@ -50,17 +50,17 @@ export default function QuestionPostListItem({
 
   return (
     <div
-      className="w-full rounded-zp-radius-big h-32 shadow-lg flex items-center"
+      className="flex items-center w-full h-32 shadow-lg rounded-zp-radius-big"
       onClick={() => navigate(`/questionpost/${post_serial}`)}
     >
-      <div className="p-2 flex items-center space-x-4 w-full">
+      <div className="flex items-center w-full p-2 space-x-4">
         {/* 이미지 */}
         <div className="">
           {post_image ? (
             <img
               src={post_image}
               alt="Post"
-              className="w-full h-full object-cover"
+              className="object-cover w-full h-full"
             />
           ) : (
             <div className=""></div>
@@ -68,33 +68,33 @@ export default function QuestionPostListItem({
         </div>
 
         {/* 제목 + 내용 */}
-        <div className="h-20 flex flex-col border-r px-6 basis-3/5">
-          <div className="text-zp-xs font-bold text-left">{title}</div>
-          <div className="line-clamp-2 text-zp-2xs text-zp-gray text-left">
+        <div className="flex flex-col h-20 px-6 border-r basis-3/5">
+          <div className="font-bold text-left text-zp-xs">{title}</div>
+          <div className="text-left line-clamp-2 text-zp-2xs text-zp-gray">
             {content}
           </div>
         </div>
 
         {/* 두 번째 요소 */}
         <div className="flex flex-col space-y-3 text-zp-gray basis-2/5">
-          <div className="flex justify-start space-x-1 items-center">
+          <div className="flex items-center justify-start space-x-1">
             {profile_image ? (
               <img
                 src={profile_image}
                 alt="Profile"
-                className="h-4 w-4 rounded-zp-radius-full"
+                className="w-4 h-4 rounded-zp-radius-full"
               />
             ) : (
               <CgProfile size={14} />
             )}
             <div className="text-zp-2xs">{nickname}</div>
           </div>
-          <div className="flex justify-start space-x-1 items-center">
+          <div className="flex items-center justify-start space-x-1">
             {calendar_image ? (
               <img
                 src={calendar_image}
                 alt="Calendar"
-                className="h-4 w-4 rounded-zp-radius-full"
+                className="w-4 h-4 rounded-zp-radius-full"
               />
             ) : (
               <FaRegCalendarAlt size={14} />
@@ -107,12 +107,12 @@ export default function QuestionPostListItem({
               })}
             </div>
           </div>
-          <div className="flex justify-start items-center">
-            <div className="flex justify-start space-x-1 items-center">
+          <div className="flex items-center justify-start">
+            <div className="flex items-center justify-start space-x-1">
               <PiEyeLight size={14} />
               <div className="text-zp-2xs">{view_cnt}</div>
             </div>
-            <div className="ml-1 flex justify-start space-x-1 items-center">
+            <div className="flex items-center justify-start ml-1 space-x-1">
               <div onClick={handleBookmarkClick} className="cursor-pointer">
                 {bookmarked ? (
                   <IoBookmark size={14} />
@@ -122,7 +122,7 @@ export default function QuestionPostListItem({
               </div>
               <div className="text-zp-2xs">{bookmark_cnt}</div>
             </div>
-            <div className="ml-1 flex justify-start space-x-1 items-center">
+            <div className="flex items-center justify-start ml-1 space-x-1">
               <AiOutlineMessage size={14} />
               <div className="text-zp-2xs">{comment_cnt}</div>
             </div>

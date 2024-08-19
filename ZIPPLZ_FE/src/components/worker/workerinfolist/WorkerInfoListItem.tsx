@@ -11,7 +11,7 @@ export default function WorkerInfoListItem({ worker }: Props) {
   console.log('worke========>', worker);
   return (
     <div
-      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[10rem] drop-shadow-zp-slight"
+      className="flex flex-col w-['30%'] bg-zp-white rounded-zp-radius-big cursor-pointer h-[10rem] drop-shadow-zp-slight justify-center"
       onClick={() =>
         navigate(`/workers/${worker.user_serial}/portfolio?tab=overview`)
       }

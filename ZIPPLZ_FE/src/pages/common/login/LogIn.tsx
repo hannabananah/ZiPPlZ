@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa6';
-import { IoHomeOutline } from 'react-icons/io5';
 import { useNavigate } from 'react-router-dom';
 
 import { requestLogin } from '@/apis/member/MemberApi';
+import Logo from '@assets/logo.svg?react';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import { useLoginUserStore } from '@stores/loginUserStore';
@@ -11,9 +11,9 @@ import { useLoginUserStore } from '@stores/loginUserStore';
 export default function Login() {
   const { setIsLogin, setLoginUser } = useLoginUserStore();
   const GOOGLE_LOGIN_URL: string =
-    'https://zipplz.site/api/oauth2/authorization/google';
+    'http://localhost:5000/oauth2/authorization/google';
   const KAKAO_LOGIN_URL: string =
-    'https://zipplz.site/api/oauth2/authorization/kakao';
+    'http://localhost:5000/oauth2/authorization/kakao';
   const navigate = useNavigate();
   const [isNoUser, setIsNoUser] = useState<boolean>(false);
   const [email, setEmail] = useState<string>('');
@@ -76,7 +76,7 @@ export default function Login() {
   return (
     <div className="relative w-full min-h-screen overflow-hidden">
       <div
-        className="z-10 flex flex-col min-h-screen gap-4 px-4"
+        className="z-10 flex flex-col min-h-screen gap-4 px-10"
         style={{
           backgroundImage: "url('/svg/landing-cover1.svg')",
           backgroundSize: '130%',
@@ -84,15 +84,16 @@ export default function Login() {
         }}
       >
         <div className="z-50 flex items-end justify-end">
-          <IoHomeOutline
-            size={24}
+          <Logo
+            width={36}
+            height={36}
             className="absolute top-[1rem] cursor-pointer"
             onClick={() => navigate('/')}
           />
         </div>
         <div className="absolute inset-0 z-20 bg-zp-white bg-opacity-20"></div>
-        <div className="flex flex-col items-center gap-6 mt-[10%] z-30">
-          <p className="font-bodoni text-zp-3xl">Zip plz</p>
+        <div className="flex flex-col items-center gap-6 mt-[10%] z-30 mb-2">
+          <p className="font-noto text-zp-3xl">ZiPPlZ</p>
           <div className="text-center">
             <p className="font-bold text-zp-xl">
               완벽한 인테리어, 편리한 시공 스케줄링,
@@ -107,7 +108,7 @@ export default function Login() {
           <Input
             type="email"
             inputType="login"
-            placeholder="이메일"
+            placeholder="이메일을 입력하세요."
             value={email}
             width="full"
             height={2}
@@ -128,7 +129,7 @@ export default function Login() {
             type={showPassword ? 'text' : 'password'}
             inputType="login"
             value={password}
-            placeholder="비밀번호를 입력하세요"
+            placeholder="비밀번호를 입력하세요."
             width="full"
             height={2}
             onChange={(e: React.ChangeEvent) => {
@@ -168,7 +169,7 @@ export default function Login() {
         </div>
         <div className="flex w-full justify-between px-[15%] z-30">
           <p
-            className="text-zp-md text-zp-gray ml-[5%] cursor-pointer font-bold"
+            className="text-zp-sm text-zp-gray ml-[5%] cursor-pointer font-bold"
             onClick={() => {
               navigate('/member/join/common/1/agree');
             }}
@@ -176,7 +177,7 @@ export default function Login() {
             회원가입
           </p>
           <p
-            className="font-bold cursor-pointer text-zp-md text-zp-gray"
+            className="font-bold cursor-pointer text-zp-sm text-zp-gray"
             onClick={() => {
               navigate('/member/find?type=id');
             }}
@@ -184,7 +185,7 @@ export default function Login() {
             아이디/비밀번호 찾기
           </p>
         </div>
-        <div className="absolute left-0 bottom-[4rem] px-4 w-full flex flex-col gap-4 z-30">
+        <div className="absolute left-0 bottom-[4rem] px-10 w-full flex flex-col gap-4 z-30">
           <a href={GOOGLE_LOGIN_URL}>
             <div
               className="w-full h-[3rem] rounded-zp-radius-btn"
