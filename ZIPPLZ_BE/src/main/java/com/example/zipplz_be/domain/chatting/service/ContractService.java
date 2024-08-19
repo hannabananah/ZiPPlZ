@@ -349,7 +349,7 @@ public class ContractService {
 
             int chatroomSerial = getChatroomSerial(request, originalWork.getFieldName());
             ChatMessage currMsg = chatMessageRepository.findByChatroomSerialAndUserSerialAndFileType(chatroomSerial, (Integer)params.get("sender"), MessageType.CONTRACT);
-            currMsg.setFileType(MessageType.CONTRACT_ACCEPTED);
+            currMsg.setFileType(MessageType.CONTRACT_REJECTED);
             chatMessageRepository.save(currMsg);
             workRepository.save(originalWork);
         }
@@ -460,13 +460,13 @@ public class ContractService {
                 .collect(Collectors.joining(", "));
         String message = String.format(
                 "\n                ✨ 계약서 수정 요청! ✨\n\n" +
-                        "                👷‍♂️ 시공자: %s\n" +
-                        "                👩‍🦰 고객: %s\n" +
-                        "                👏 요청 일자: %s\n" +
-                        "                💵 작업 가격: %s원\n" +
-                        "                🏠 출장 주소: %s\n" +
-                        "                📅 작업 기간: %s ~ %s(%d일)\n" +
-                        "                🛠 자재 목록: %s",
+                        "    👷‍♂️ 시공자: %s\n" +
+                        "    👩‍🦰 고객: %s\n" +
+                        "    👏 요청 일자: %s\n" +
+                        "    💵 작업 가격: %s원\n" +
+                        "    🏠 출장 주소: %s\n" +
+                        "    📅 작업 기간: %s ~ %s(%d일)\n" +
+                        "    🛠 자재 목록: %s",
                 workerName, customerName, requestDate, formattedWorkPrice, siteAddress,
                 formattedStartDate, formattedEndDate, totalDuration, materialNames
         );
