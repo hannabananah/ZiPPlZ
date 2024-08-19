@@ -7,6 +7,7 @@ export interface ContractRequestData {
   endDate: string;
   workPrice: number;
   materialList: number[];
+  chatroomSerial: number;
 }
 
 export const postContract = async (
