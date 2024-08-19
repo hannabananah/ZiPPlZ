@@ -14,8 +14,8 @@ import {
   getFIndWorkerDetail,
 } from '@/apis/worker/WorkerListApi';
 import { useLoginUserStore } from '@/stores/loginUserStore';
-// import type { ChatRoom } from '@/types';
-// import { getChatRooms, makeChatRoom } from '@apis/chatroom/chatApi';
+import type { ChatRoom } from '@/types';
+import { getChatRooms, makeChatRoom } from '@apis/chatroom/chatApi';
 import Button from '@components/common/Button';
 import Input from '@components/common/Input';
 import ModalComponent from '@components/common/Modal';
@@ -26,7 +26,19 @@ import 'swiper/css';
 import { Navigation, Pagination } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 
-export default function FindWorkerDetail() {
+const fields: string[] = [
+  '철거',
+  '설비',
+  '샷시',
+  '목공',
+  '전기',
+  '욕실',
+  '타일',
+  '마루',
+  '도배',
+  '가구',
+];
+export default function FindWorkerDetai() {
   const checkWish = async (boardSerial: number) => {
     const response = await getWish(boardSerial);
     setIsWish(response.data.data);
@@ -74,33 +86,36 @@ export default function FindWorkerDetail() {
       return await addWish(boardSerial, type);
     }
   };
-  // const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
-  // const fetchChatRooms = async () => {
-  //   const response = await getChatRooms();
-  //   setChatRoomList(response.data.data);
-  // };
-  // useEffect(() => {
-  //   fetchChatRooms();
-  // }, []);
-  // const chatStart = async () => {
-  //   try {
-  //     if (id) {
-  //       const response = await makeChatRoom(parseInt(id), nowField);
-  //       const chatRoomSerial = response.data.data.chatroomSerial;
-  //       navigate(`/chatrooms/${chatRoomSerial}`);
-  //     }
-  //   } catch (e) {
-  //     if (chatRoomList && chatRoomList.length > 0 && portfolioOverview) {
-  //       const chatRoomSerial: string = chatRoomList.filter(
-  //         (room) =>
-  //           room.fieldName === nowField &&
-  //           room.workerName === portfolioOverview.user.userName &&
-  //           room.customerName === loginUser?.userName
-  //       )[0].chatroomSerial;
-  //       navigate(`/chatrooms/${chatRoomSerial}`);
-  //     }
-  //   }
-  // };
+  const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const fetchChatRooms = async () => {
+    const response = await getChatRooms();
+    setChatRoomList(response.data.data);
+  };
+  useEffect(() => {
+    fetchChatRooms();
+  }, []);
+  const chatStart = async () => {
+    try {
+      if (findWorker && findWorker.board) {
+        const response = await makeChatRoom(
+          findWorker?.board?.userSerial,
+          fields[parseInt(findWorker?.field_id) - 1]
+        );
+        const chatRoomSerial = response.data.data.chatroomSerial;
+        navigate(`/chatrooms/${chatRoomSerial}`);
+      }
+    } catch (e) {
+      if (chatRoomList && chatRoomList.length > 0 && findWorker && loginUser) {
+        const chatRoomSerial: string = chatRoomList.filter(
+          (room) =>
+            room.fieldName === fields[parseInt(findWorker?.field_id) - 1] &&
+            room.workerName === loginUser.userName &&
+            room.customerName === findWorker.board?.userName
+        )[0].chatroomSerial;
+        navigate(`/chatrooms/${chatRoomSerial}`);
+      }
+    }
+  };
   return (
     <>
       {findWorker ? (
@@ -180,9 +195,17 @@ export default function FindWorkerDetail() {
                 {findWorker.user_address}
               </p>
             </div>
-
+            <div className="flex flex-col gap-2">
+              <p className="font-bold text-zp-lg">희망 분야</p>
+              <p className="w-full font-bold text-zp-xs text-zp-gray text-wrap">
+                {' '}
+                {fields[parseInt(findWorker.field_id) - 1]}
+              </p>
+            </div>
+            {/* 작업내용 */}
             <div className="flex flex-col gap-2">
               <p className="font-bold text-zp-lg">작업내용</p>
+
               <p className="w-full font-bold text-zp-xs text-zp-gray text-wrap">
                 {findWorker.board?.boardContent}
               </p>
@@ -259,6 +282,7 @@ export default function FindWorkerDetail() {
                     height={3}
                     fontSize="lg"
                     radius="btn"
+                    onClick={chatStart}
                   >
                     <IoChatbubblesOutline size={24} />
                     <span className="font-bold">채팅하기</span>

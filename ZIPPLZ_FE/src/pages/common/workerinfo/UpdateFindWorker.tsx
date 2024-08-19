@@ -1,13 +1,15 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import DaumPostcode from 'react-daum-postcode';
 import { CiSearch } from 'react-icons/ci';
-import { FaCamera } from 'react-icons/fa';
 import { GoArrowLeft } from 'react-icons/go';
-import { MdClose } from 'react-icons/md';
 import Modal from 'react-modal';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { getFIndWorkerDetail } from '@/apis/worker/WorkerListApi';
+import {
+  getFIndWorkerDetail,
+  getFindWorkerList,
+  updateFindWorker,
+} from '@/apis/worker/WorkerListApi';
 import Selectbar from '@/components/common/Selectbar';
 import { useWorkerListStore } from '@/stores/workerListStore';
 import Button from '@components/common/Button';
@@ -45,7 +47,6 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
-type Image = string;
 const fields: string[] = [
   '철거',
   '설비',
@@ -72,14 +73,13 @@ export default function UpdateFindWorker() {
       fetchFindWorker(id);
     }
   }, []);
-  const [images, setImages] = useState<Image[]>(
-    findWorker ? findWorker.board_images.map((img) => img.saveFile) : []
-  );
+
   const [title, setTitle] = useState<string>(
     findWorker && findWorker.board ? findWorker.board.title : ''
   );
-  const [wishField, setWishField] =
-    useState<string>('희망 분야를 선택해주세요');
+  const [wishField, setWishField] = useState<string>(
+    findWorker ? fields[parseInt(findWorker.field_id) - 1] : ''
+  );
   const [address, setAddress] = useState<string>(
     findWorker && findWorker.board ? findWorker.user_address : ''
   );
@@ -94,32 +94,27 @@ export default function UpdateFindWorker() {
 
   const goList = () => navigate('/workers/findworker');
 
-  const handleImageUpload = (event: ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(event.target.files || []);
-    const readerPromises = files.map((file) => {
-      const reader = new FileReader();
-      return new Promise<string>((resolve) => {
-        reader.onloadend = () => resolve(reader.result as string);
-        reader.readAsDataURL(file);
+  const { setFindWorkerList } = useWorkerListStore();
+  const fetchFindWorkerList = async () => {
+    const response = await getFindWorkerList();
+    setFindWorkerList(response.data.data);
+  };
+  const handleClickRegistButton = async (
+    title: string,
+    field: string,
+    address: string,
+    content: string
+  ) => {
+    if (findWorker && findWorker.board) {
+      await updateFindWorker(findWorker?.board?.boardSerial, {
+        title: title,
+        board_content: content,
+        user_address: address,
+        field_id: field,
       });
-    });
-
-    Promise.all(readerPromises).then((results) => {
-      setImages((prevImages) => [
-        ...prevImages,
-        ...results.slice(0, 10 - prevImages.length),
-      ]);
-    });
+      await fetchFindWorkerList();
+    }
   };
-
-  const handleImageRemove = (index: number) => {
-    setImages((prevImages) => prevImages.filter((_, i) => i !== index));
-  };
-
-  const handleConfirm = () => {
-    goList();
-  };
-
   return (
     <>
       <div className="flex flex-col w-full p-6 mt-[3rem] gap-4">
@@ -129,42 +124,6 @@ export default function UpdateFindWorker() {
           <p className="w-full font-extrabold text-center align-text-top text-zp-xl">
             구인 글 수정
           </p>
-        </div>
-        {/* 사진 첨부 버튼 */}
-        <div className="flex items-start gap-1">
-          <div className="flex flex-col items-center justify-center w-[5rem] aspect-square relative bg-zp-light-gray rounded-zp-radius-big">
-            <label htmlFor="file-upload">
-              <FaCamera size={36} className="" />
-              <p className="font-bold text-center text-zp-xs text-zp-gray">
-                {images.length}/10
-              </p>
-            </label>
-            <input
-              id="file-upload"
-              type="file"
-              accept="image/*"
-              onChange={handleImageUpload}
-              className="hidden"
-              multiple
-            />
-          </div>
-          {/* 사진 미리보기 */}
-          <div className="flex overflow-x-auto">
-            {images.map((image, index) => (
-              <div key={index} className="relative w-[5rem] h-[5rem] ">
-                <img
-                  src={image}
-                  className="w-full h-full opacity-50 rounded-zp-radius-big"
-                  onClick={() => handleImageRemove(index)}
-                />
-                <MdClose
-                  size={24}
-                  onClick={() => handleImageRemove(index)}
-                  className="absolute text-white bg-red-500 rounded-full top-1 right-1"
-                />
-              </div>
-            ))}
-          </div>
         </div>
         {/* 제목 input */}
         <div className="flex flex-col w-full gap-1">
@@ -242,7 +201,18 @@ export default function UpdateFindWorker() {
           height={3}
           fontSize="xl"
           radius="btn"
-          onClick={handleConfirm}
+          onClick={() => {
+            handleClickRegistButton(
+              title,
+              (fields.indexOf(wishField) + 1).toString(),
+              address,
+              workDetail
+            );
+
+            setTimeout(() => {
+              goList();
+            }, 2000); // 1000ms (1초) 후에 실행
+          }}
         />
       </div>
       <Modal

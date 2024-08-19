@@ -34,6 +34,15 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
                     @Param("title") String title,
                     @Param("boardContent") String boardContent,
                     @Param("boardDate") LocalDateTime boardDate);
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE BoardUserAddress " +
+            "SET user_address = :userAddress, field_id = :fieldId " +
+            "WHERE board_serial = :boardSerial", nativeQuery = true)
+    int moifyBoardAddress(@Param("boardSerial") int boardSerial,
+                          @Param("userAddress") String userAddress,
+                          @Param("fieldId") String fieldId);
+
 
     @Query(value = "SELECT b.*, cus.nickname, u.user_name, f.save_file " +
             "FROM ( SELECT * " +
@@ -116,4 +125,5 @@ public interface BoardRepository extends JpaRepository<Board, Integer> {
             "FROM BoardUserAddress " +
             "WHERE board_serial = :boardSerial", nativeQuery = true)
     String getFieldId(@Param("boardSerial") int boardSerial);
+
 }

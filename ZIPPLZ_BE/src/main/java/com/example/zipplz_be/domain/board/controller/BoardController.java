@@ -456,13 +456,19 @@ public class BoardController {
         try {
             String title = params.get("title");
             String board_content = params.get("board_content");
+            String user_address = params.get("user_address");
+            String field_id = params.get("field_id");
             LocalDateTime board_date = LocalDateTime.now();
-            int result= boardService.modifyBoard(boardSerial, title, board_content, board_date);
+            int result1= boardService.modifyBoard(boardSerial, title, board_content, board_date);
+            int result2 = boardService.moifyBoardAddress(boardSerial, user_address, field_id);
 
-            if (result == 0) {
-                status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "수정 실패 없음");
-            } else {
+            if (result1 == 0) {
+                status = HttpStatus.BAD_REQUEST;
+                responseDTO = new ResponseDTO<>(status.value(), "보드 수정 실패 없음");
+            } else if (result2 == 0) {
+                status = HttpStatus.BAD_REQUEST;
+                responseDTO = new ResponseDTO<>(status.value(), "주소 및 분야 수정 실패 없음");
+            }else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "수정 성공", true);
             }

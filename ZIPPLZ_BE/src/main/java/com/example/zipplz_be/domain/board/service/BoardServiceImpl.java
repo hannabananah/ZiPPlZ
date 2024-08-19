@@ -82,6 +82,11 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public int moifyBoardAddress(int boardSerial, String userAddress, String fieldId) {
+        return boardRepository.moifyBoardAddress(boardSerial, userAddress, fieldId);
+    }
+
+    @Override
     public int deleteBoard(int boardSerial) {
         boardRepository.deleteComment(boardSerial);
         boardRepository.deleteBoardToPortfolio(boardSerial);
