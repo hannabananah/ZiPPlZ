@@ -7,6 +7,7 @@ import { MdClose } from 'react-icons/md';
 import Modal from 'react-modal';
 import { useNavigate } from 'react-router-dom';
 
+import Selectbar from '@/components/common/Selectbar';
 import { useWorkerListStore } from '@/stores/workerListStore';
 import { getFindWorkerList, writeFindWorker } from '@apis/worker/WorkerListApi';
 import Button from '@components/common/Button';
@@ -45,12 +46,25 @@ const customModalStyles: ReactModal.Styles = {
     zIndex: 1500,
   },
 };
+const fields: string[] = [
+  '철거',
+  '설비',
+  '샷시',
+  '목공',
+  '전기',
+  '욕실',
+  '타일',
+  '마루',
+  '도배',
+  '가구',
+];
 export default function FindWorkerDetailCreate() {
   const [images, setImages] = useState<Image[]>([]);
   const [title, setTitle] = useState<string>('');
   const [address, setAddress] = useState<string>('');
   const [workDetail, setWorkDetail] = useState<string>('');
-
+  const [wishField, setWishField] =
+    useState<string>('희망 분야를 선택해주세요');
   const navigate = useNavigate();
 
   const goList = () => navigate('/workers/findworker');
@@ -75,6 +89,8 @@ export default function FindWorkerDetailCreate() {
   const handleClickRegistButton = async (
     images: Image[],
     title: string,
+    field: string,
+    address: string,
     content: string
   ) => {
     await writeFindWorker({
@@ -82,6 +98,7 @@ export default function FindWorkerDetailCreate() {
       title: title,
       board_content: content,
       user_address: address,
+      field_id: field,
     });
     await fetchFindWorkerList();
   };
@@ -163,6 +180,23 @@ export default function FindWorkerDetailCreate() {
             }
           />
         </div>
+        {/* 희망분야 */}
+        <div className="flex flex-col w-full gap-1">
+          <p className="font-bold text-zp-md">희망 분야</p>
+          <Selectbar
+            backgroundColor="light-beige"
+            fontColor="black"
+            selectedValue={wishField}
+            fontSize="xs"
+            radius="btn"
+            border="main"
+            hover="sub"
+            options={fields}
+            setSelectedValue={setWishField}
+            width="full"
+            height={2}
+          />
+        </div>
         <div className="relative flex flex-col w-full gap-1">
           <p className="font-bold text-zp-xs">현장 주소</p>
           <Input
@@ -197,18 +231,27 @@ export default function FindWorkerDetailCreate() {
         </div>
         <Button
           children="확인"
-          buttonType="second"
+          buttonType={
+            wishField === '희망 분야를 선택해주세요' ? 'light' : 'second'
+          }
           width="full"
           height={3}
           fontSize="xl"
           radius="btn"
           onClick={() => {
-            handleClickRegistButton(images, title, workDetail);
+            handleClickRegistButton(
+              images,
+              title,
+              (fields.indexOf(wishField) + 1).toString(),
+              address,
+              workDetail
+            );
 
             setTimeout(() => {
               goList();
             }, 2000); // 1000ms (1초) 후에 실행
           }}
+          disabled={wishField === '희망 분야를 선택해주세요'}
         />
       </div>
       <Modal

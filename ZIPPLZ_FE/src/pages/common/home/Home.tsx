@@ -55,7 +55,7 @@ export default function Home() {
   }, []);
 
   const handleClickImageChange = () =>
-    navigate(`/image-change/${loginUser?.userSerial}&tab=change`);
+    navigate(`http://localhost:8080?user=${loginUser?.userSerial}`);
 
   const fetchWorks = async () => {
     const response = await getWorksByUser();
