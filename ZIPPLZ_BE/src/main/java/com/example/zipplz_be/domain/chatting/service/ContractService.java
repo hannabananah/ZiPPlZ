@@ -306,6 +306,8 @@ public class ContractService {
         }
 
         int chatroomSerial = getChatroomSerial(request, originalWork.getFieldName());
+        System.out.println("chatroomSerial : " + chatroomSerial);
+        System.out.println("senderSerial:    " + (Integer)params.get("sender"));
         ChatMessage currMsg = chatMessageRepository.findByChatroomSerialAndUserSerialAndFileType(chatroomSerial, (Integer)params.get("sender"), MessageType.CONTRACT);
         currMsg.setFileType(MessageType.CONTRACT_ACCEPTED);
         chatMessageRepository.save(currMsg);
@@ -443,8 +445,12 @@ public class ContractService {
                 .requestStatus(request.getRequestStatus())
                 .requestType(request.getRequestType())
                 .build();
+
+        // 수정 요청 send message
+        String workerName = worker.getUserSerial().getUserName();
+        String customerName = customer.getUserSerial().getUserName();
         int totalDuration = calculateTotalDuration(startDate, endDate);
-        String requestDate = convertTimestamp(Timestamp.from(Instant.now()));
+        String requestDate = convertTimestampToDateTime(Timestamp.from(Instant.now()));
         String formattedStartDate = convertTimestampToDate(startDate);
         String formattedEndDate = convertTimestampToDate(endDate);
         String formattedWorkPrice = formatNumberWithCommas((Integer) params.get("workPrice"));
@@ -453,15 +459,15 @@ public class ContractService {
                 .map(serial -> materialRepository.findByMaterialSerial(serial).getMaterialName())
                 .collect(Collectors.joining(", "));
         String message = String.format(
-                "✨ 계약서 수정 요청! ✨\n\n" +
-                        "👷‍♂️ 시공자: %s\n" +
-                        "👩‍🦰 고객: %s\n" +
-                        "👏 요청 일자: %s\n" +
-                        "💵 작업 가격: %s원\n" +
-                        "🏠 출장 주소: %s\n" +
-                        "📅 작업 기간: %s ~ %s(%d일)\n" +
-                        "🛠 자재 목록: %s",
-                worker, customer, requestDate, formattedWorkPrice, siteAddress,
+                "\n                ✨ 계약서 수정 요청! ✨\n\n" +
+                        "                👷‍♂️ 시공자: %s\n" +
+                        "                👩‍🦰 고객: %s\n" +
+                        "                👏 요청 일자: %s\n" +
+                        "                💵 작업 가격: %s원\n" +
+                        "                🏠 출장 주소: %s\n" +
+                        "                📅 작업 기간: %s ~ %s(%d일)\n" +
+                        "                🛠 자재 목록: %s",
+                workerName, customerName, requestDate, formattedWorkPrice, siteAddress,
                 formattedStartDate, formattedEndDate, totalDuration, materialNames
         );
 
@@ -611,6 +617,22 @@ public class ContractService {
 
         // 원하는 포맷으로 DateTimeFormatter 설정
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+        // LocalDateTime을 포맷팅하여 문자열로 변환
+        return localDateTime.format(formatter);
+    }
+
+    // Timestamp를 yyyy.MM.dd HH:mm 형식의 문자열로 변환
+    public String convertTimestampToDateTime(Timestamp timestamp) {
+        if (timestamp == null) {
+            return null; // 또는 적절한 기본값을 반환할 수 있습니다.
+        }
+
+        // LocalDateTime 객체로 변환
+        LocalDateTime localDateTime = timestamp.toLocalDateTime();
+
+        // 원하는 포맷으로 DateTimeFormatter 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
 
         // LocalDateTime을 포맷팅하여 문자열로 변환
         return localDateTime.format(formatter);
