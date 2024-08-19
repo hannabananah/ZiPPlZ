@@ -5,12 +5,15 @@ import { axiosInstance } from '@apis/axiosInstance';
 interface Board {
   title: string;
   board_content: string;
+  user_address: string;
+  field_id: string;
 }
 interface FindWork {
   images: File[];
   title: string;
   board_content: string;
   user_address: string;
+  field_id: string;
 }
 
 //시공자목록 가져오기
@@ -47,6 +50,7 @@ export const writeFindWorker = async (data: FindWork) => {
   formData.append('title', data.title);
   formData.append('board_content', data.board_content);
   formData.append('user_address', data.user_address);
+  formData.append('field_id', data.field_id);
 
   return await axiosInstance.post(
     END_POINT.FIND_WORKER_LIST + '/add',
