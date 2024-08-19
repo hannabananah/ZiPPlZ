@@ -100,7 +100,7 @@ export default function Workers() {
   }, [category, type]);
   return (
     <>
-      <div className="flex flex-col items-center mt-[3rem] gap-4 p-6">
+      <div className="flex flex-col items-center mt-[3rem] gap-4 p-6 min-h-screen">
         <div className="relative w-full text-center">
           <div className="flex items-center justify-center w-full gap-2">
             <p className="font-bold text-center cursor-pointer text-zp-lg">

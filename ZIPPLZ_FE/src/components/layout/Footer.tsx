@@ -2,7 +2,7 @@ import Logo from '@assets/logo.svg?react';
 
 export default function Footer() {
   return (
-    <footer className="bottom-0 flex justify-center w-full pt-2 pb-3 border-t border-zp-light-gray bg-zp-sub-color max-[460px]:p-0">
+    <footer className="bottom-0 flex justify-center w-full pt-2 pb-3 bg-zp-sub-color max-[460px]:p-0 mb-16">
       <div className="w-full px-16">
         <ul className="flex flex-col pb-2 text-left text-zp-sm gap-y-1">
           <li className="flex items-center -ml-2 text-black-color">
