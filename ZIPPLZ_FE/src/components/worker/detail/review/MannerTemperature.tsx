@@ -9,18 +9,18 @@ export default function MannerTemperature({ scores }: Props) {
     <>
       <div className="flex flex-col w-full gap-6">
         <div className="flex flex-col w-full gap-2 font-bold text-zp-xs">
-          <p>매너 온도</p>
-          <div className="flex items-center w-full gap-2">
-            <FaHammer size={30} color="#00B3FF" />
-
-            <div className="w-full h-5 bg-zp-sub-color rounded-zp-radius-big">
-              <div
-                className="flex items-center justify-end h-full bg-zp-main-color rounded-zp-radius-big"
-                style={{ width: `${scores[0]}%` }}
-              >
-                <span className="text-zp-xs text-zp-white">{scores[0]}°C</span>{' '}
-                {/* 퍼센트 값 표시 */}
-              </div>
+          <p className="flex gap-1">
+            <FaHammer size={20} color="#00B3FF" />
+            매너 온도
+          </p>
+          <div className="w-full h-5 bg-zp-sub-color rounded-zp-radius-big">
+            <div
+              className="flex items-center justify-end h-full bg-zp-main-color rounded-zp-radius-big"
+              style={{ width: `${scores[0]}%` }}
+            >
+              <span className="pr-2 text-zp-3xs text-zp-white">
+                {scores[0]}°C
+              </span>
             </div>
           </div>
         </div>

@@ -110,10 +110,10 @@ export default function Portfolio() {
 
   return (
     <>
-      <div className="flex flex-col w-full gap-2 min-h-screen p-6 mt-[4rem] mb-10">
-        <div className="relative flex items-start w-full gap-6 font-bold">
+      <div className="flex flex-col w-full gap-2 min-h-screen p-6 mt-[3rem] mb-10">
+        <div className="relative flex items-start w-full gap-6 mt-2 font-bold">
           <div className="flex flex-col items-center">
-            <div className="w-[100px] h-[100px] rounded-zp-radius-full ">
+            <div className="w-[100px] h-[100px] rounded-zp-radius-full drop-shadow-zp-deep ">
               <img
                 className="object-cover w-full h-full rounded-zp-radius-full"
                 src={portfolioOverview?.userProfile.saveFile}
@@ -152,7 +152,7 @@ export default function Portfolio() {
                       width={3}
                       height={1.5}
                       fontSize="2xs"
-                      radius="big"
+                      radius="btn"
                       key={index}
                       onClick={() => {
                         fetchPortFolioOverView(item.portfolioSerial);
@@ -166,7 +166,7 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
-        <div className="grid w-full grid-cols-3 font-bold text-zp-sm">
+        <div className="grid w-full grid-cols-3 mt-2 font-bold text-zp-sm">
           <div
             className={`p-2 cursor-pointer ${
               activeTab === 'overview'
@@ -174,7 +174,10 @@ export default function Portfolio() {
                 : 'rounded-b-lg border-b-2 border-zp-main-color'
             }`}
           >
-            <p className="text-center" onClick={overviewClick}>
+            <p
+              className="text-center rounded-zp-radius-big"
+              onClick={overviewClick}
+            >
               종합정보
             </p>
           </div>
@@ -202,7 +205,7 @@ export default function Portfolio() {
             </p>
           </div>
         </div>
-        <div className="mb-[4rem]">
+        <div className="mt-2 mb-6">
           {activeTab === 'overview' && portfolioOverview && (
             <OverView portfolio={portfolioOverview} />
           )}
