@@ -20,7 +20,7 @@ export default function ImageChangeTab({ onClick }: Props) {
             <FaPlus />
             <BgIcon width={50} height={38} />
           </div>
-          <small className="absolute bottom-1 text-zp-2xs text-zp-light-gray">
+          <small className="absolute bottom-1 text-zp-2xs text-zp-light-gray break-keep">
             이곳에 변환할 이미지를 넣어주세요.
           </small>
         </div>
