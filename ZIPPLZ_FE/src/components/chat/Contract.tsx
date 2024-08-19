@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Select from 'react-select';
 
-import { Material } from '@/types';
+import type { Material } from '@/types';
 import { ContractRequestData } from '@apis/worker/ContractApi';
 import { postContract } from '@apis/worker/ContractApi';
 import { getMaterials } from '@apis/worker/MaterialApi';
@@ -138,8 +138,8 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
       materialList: selectedMaterials.map(
         (material) => material.materialSerial
       ),
+      chatroomSerial: Number(chatroomSerial),
     };
-
     try {
       const response = await axios.get(
         `${base_url}chatroom/${chatroomSerial}`,
@@ -147,7 +147,6 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
-
       if (response.status === 200 && response.data) {
         const otherUserName = response.data.data.otherUser.name;
         await postContract(Number(chatroomSerial), requestData);
@@ -167,7 +166,7 @@ export default function Contract({ closeContractModal, name }: ContractProps) {
             formattedMessage,
             userSerial as number,
             undefined,
-            'TALK',
+            'CONTRACT',
             true
           );
         } else {

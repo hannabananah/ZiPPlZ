@@ -13,7 +13,7 @@ interface WebSocketContextType {
     msg: string,
     userSerial: number,
     file?: File,
-    type?: 'TALK' | 'IMAGE' | 'FILE',
+    type?: 'TALK' | 'IMAGE' | 'FILE' | 'CONTRACT',
     contract?: boolean,
     contractContent?: {
       requestComment: string;
@@ -114,7 +114,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     msg: string,
     userSerial: number,
     file?: File,
-    type: 'TALK' | 'IMAGE' | 'FILE' = 'TALK',
+    type: 'TALK' | 'IMAGE' | 'FILE' | 'CONTRACT' = 'TALK',
     contract: boolean = false,
     contractContent?: {
       requestComment: string;

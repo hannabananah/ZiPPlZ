@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { FaRegSadTear, FaRegSmile } from 'react-icons/fa';
 
 import { getGPTReview, getPortfolioReview } from '@/apis/worker/PortfolioApi';
 import PortfolioReview from '@/components/worker/detail/review/PortfolioReview';
@@ -23,7 +22,6 @@ export default function WorkerReview({ portfolio }: Props) {
     setGoodReview(response.data.data.goodReview);
     setBadReview(response.data.data.badReview);
   };
-
   useEffect(() => {
     if (portfolio) {
       fetchPortfolioReview(portfolio.portfolioSerial);
@@ -32,7 +30,7 @@ export default function WorkerReview({ portfolio }: Props) {
   }, []);
   return (
     <>
-      <div className="flex flex-col h-full gap-6 py-4 overflow-scroll mb-[5rem]">
+      <div className="flex flex-col h-full gap-6 py-4 mb-[5rem]">
         {portfolioReview ? (
           <>
             <MannerTemperature
@@ -44,30 +42,31 @@ export default function WorkerReview({ portfolio }: Props) {
                 portfolioReview?.averageAttitudeStar,
               ]}
             />
-            <div className="flex flex-col w-full gap-2">
-              <div className="flex items-center gap-4 font-bold text-zp-xs">
-                <FaRegSmile size={16} />
+            <div className="flex flex-col p-3 bg-zp-white drop-shadow-zp-slight rounded-zp-radius-big">
+              <div className="flex items-center gap-2 font-bold text-zp-xs">
+                {/* <FaRegSmile size={16} /> */}
                 <p className="font-bold text-zp-sm">
-                  {portfolioOverview?.user.userName} 님은 이래서 좋아요.
+                  😀 {portfolioOverview?.user.userName}님의 이런 점이 좋아요!
                 </p>
               </div>
-              <div className="flex items-center w-full p-6 shadow-lg bg-zp-light-beige rounded-zp-radius-big">
-                <p className="font-bold text-zp-xs text-wrap">{goodReview}</p>
-              </div>
+              <p className="px-2 mt-3 font-bold text-zp-xs text-wrap">
+                {goodReview || '아직 좋은 리뷰가 없습니다.'}
+              </p>
             </div>
-            <div className="flex flex-col w-full gap-2">
-              <div className="flex items-center gap-4 font-bold text-zp-xs">
-                <FaRegSadTear size={16} />
+            <div className="flex flex-col p-3 bg-zp-white drop-shadow-zp-slight rounded-zp-radius-big">
+              <div className="flex items-center gap-2 font-bold text-zp-xs">
+                {/* <FaRegSadTear size={16} /> */}
                 <p className="font-bold text-zp-sm">
-                  {portfolioOverview?.user.userName} 님 이건 고쳐주세요.
+                  😥 {portfolioOverview?.user.userName}님, 이 부분을 좀더
+                  신경써주세요!
                 </p>
               </div>
-              <div className="flex items-center w-full p-6 shadow-lg bg-zp-light-beige rounded-zp-radius-big">
-                <p className="font-bold text-zp-xs text-wrap">{badReview}</p>
-              </div>
+              <p className="px-2 mt-3 font-bold text-zp-xs text-wrap">
+                {badReview || '아직 개선할 리뷰가 없습니다.'}
+              </p>
             </div>
-            <div className="flex flex-col w-full gap2">
-              <p className="font-bold text-zp-sm">리뷰</p>
+            <div className="flex flex-col p-3 bg-zp-white drop-shadow-zp-slight rounded-zp-radius-big">
+              <p className="font-bold text-zp-sm">💬 리뷰</p>
               {portfolioReview?.reviewList &&
                 portfolioReview.reviewList.map((review) => (
                   <PortfolioReview review={review} />

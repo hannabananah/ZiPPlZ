@@ -48,11 +48,7 @@ function ChatRoomContent() {
         }
       );
 
-      if (response.status === 200) {
-        return response.data.data;
-      } else {
-        throw new Error('Unexpected response');
-      }
+      return response.data.data;
     } catch (error) {
       console.error(
         'Error fetching chat room details:',
