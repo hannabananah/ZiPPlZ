@@ -349,7 +349,7 @@ public class ContractService {
 
             int chatroomSerial = getChatroomSerial(request, originalWork.getFieldName());
             ChatMessage currMsg = chatMessageRepository.findByChatroomSerialAndUserSerialAndFileType(chatroomSerial, (Integer)params.get("sender"), MessageType.CONTRACT);
-            currMsg.setFileType(MessageType.CONTRACT_ACCEPTED);
+            currMsg.setFileType(MessageType.CONTRACT_REJECTED);
             chatMessageRepository.save(currMsg);
             workRepository.save(originalWork);
         }
