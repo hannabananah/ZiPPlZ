@@ -68,7 +68,8 @@ public class OpenviduService {
 
         String token = userToChatroom.getToken();
 
-        userToChatroomRepository.delete(userToChatroom);
+        //userToChatroomRepository.delete(userToChatroom);
+        userToChatroomRepository.deleteToken(userToChatroom.getToken());
         return token;
     }
 
