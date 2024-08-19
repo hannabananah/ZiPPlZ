@@ -43,7 +43,6 @@ export default function Message({
   const isFile = fileType === 'FILE';
   const { loginUser } = useLoginUserStore();
   const currUserSerial: number | undefined = loginUser?.userSerial;
-  const currRole = loginUser?.role;
 
   const handleAcceptContract = async () => {
     try {

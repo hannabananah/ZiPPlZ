@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 
 import { updateContract } from '@/apis/member/MemberApi';
@@ -113,6 +113,7 @@ export default function UpdateContract({
       alert('모든 양식을 채워주세요.');
       return;
     }
+    const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
 
     const workPrice =
       Number(fields.find((field) => field.label === '작업 가격')?.value) || 0;
@@ -160,6 +161,7 @@ export default function UpdateContract({
           materialList: selectedMaterials.map(
             (material) => material.materialSerial
           ),
+          chatroomSerial: Number(chatroomSerial),
         };
         if (selectedChatRoomSerial)
           await updateContract(selectedChatRoomSerial, requestData);
@@ -195,7 +197,6 @@ export default function UpdateContract({
     setSelectedMaterials(selectedMaterials.filter(Boolean) as Material[]);
   };
 
-  // const navigate = useNavigate();
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     setTimeout(() => {
