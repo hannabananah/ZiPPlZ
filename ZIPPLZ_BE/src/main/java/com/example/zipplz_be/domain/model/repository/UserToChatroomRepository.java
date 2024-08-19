@@ -24,5 +24,5 @@ public interface UserToChatroomRepository extends JpaRepository<UserToChatroom, 
     UserToChatroom findByuserSerialAndChatroomSerial(int userSerial, int chatroomSerial);
 
     @Query(value = "delete from Usertochatroom where user_serial= :userSerial and chatroom_serial = :chatroomSerial", nativeQuery = true)
-    void deleteToken(String token);
+    void deleteToken(int userSerial, int chatroomSerial);
 }
