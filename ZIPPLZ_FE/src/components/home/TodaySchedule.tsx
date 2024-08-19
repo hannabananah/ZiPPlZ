@@ -86,7 +86,7 @@ export default function TodaySchedule({
                 <div className="border w-[60%] aspect-square rounded-zp-radius-full">
                   <img
                     className="object-cover w-full h-full rounded-zp-radius-full"
-                    src={work.worker.userSerial.fileSerial.saveFile}
+                    src={work.worker.userSerial.fileSerial?.saveFile}
                   />
                 </div>
                 <p className="text-zp-2xs">{work.worker.userSerial.userName}</p>
