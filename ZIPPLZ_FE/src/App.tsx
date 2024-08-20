@@ -343,7 +343,7 @@ export default function App() {
         <Route path="questionpost/:id" element={<QuestionPostDetail />} />
         <Route element={<GuardRoute />}>
           <Route path="housepostcreate" element={<HousePostCreate />} />
-          <Route path="housepostupdate" element={<HousePostUpdate />} />
+          <Route path="housepostupdate/:boardSerial" element={<HousePostUpdate />} />
           <Route path="questionpostupdate" element={<QuestionPostUpdate />} />
           <Route path="questionpostcreate" element={<QuestionPostCreate />} />
           {/* 마이페이지 */}
