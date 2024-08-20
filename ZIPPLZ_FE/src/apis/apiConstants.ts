@@ -32,6 +32,10 @@ export const END_POINT = {
     `portfolio/schedule/${workerSerial}`,
   PORTFOLIO_REVIEW: (serial: number) => `portfolio/review/${serial}`,
 
+  //자랑글
+  HOUSEPOST: 'board/showoff',
+  HOUSEPOST_LIST: 'board/showoff/list',
+
   COMMENT: 'comment',
 
   WISH: 'wish',

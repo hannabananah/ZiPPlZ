@@ -24,20 +24,8 @@ export default function MyHousePostList() {
   const [selectedWorkers, setSelectedWorkers] = useState<number[]>([]);
 
   const { fetchMyHousePostList } = useMyPageStore();
-  const [list, setList] = useState<HousePost[]>([]);
+  const [list, setList] = useState<any>([]);
 
-  interface HousePost {
-    board_serial: number;
-    user_serial: number;
-    title: string;
-    board_content: string;
-    board_date: string;
-    hit: number;
-    nickname: string;
-    comment_cnt: number;
-    wish_cnt: number;
-    img?: string;
-  }
 
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +57,7 @@ export default function MyHousePostList() {
     if (isAllSelected) {
       setSelectedWorkers([]);
     } else {
-      setSelectedWorkers(list.map((worker) => worker.user_serial));
+      setSelectedWorkers(list.map((worker:any) => worker.user_serial));
     }
     setIsAllSelected(!isAllSelected);
   };
@@ -230,7 +218,7 @@ export default function MyHousePostList() {
         {/* workerInfoListitem 컴포넌트 */}
         {/* 화면 width 따라 grid 개수 변화 */}
         <div className="grid w-full grid-cols-2 gap-3 mt-2 sm:grid-cols-2 md:grid-cols-3">
-          {list.map((post) => (
+          {list.map((post:any) => (
             <div
               key={post.board_serial}
               className={`relative rounded-zp-radius-big border border-zp-light-beige flex flex-col items-center ${
@@ -255,17 +243,7 @@ export default function MyHousePostList() {
                   )}
                 </div>
               )}
-              <HousePostListItem
-                post_serial={post.board_serial}
-                post_image={post.img ?? null}
-                title={post.title}
-                profile_image={null}
-                nickname={post.nickname}
-                upload_date={new Date(post.board_date)}
-                view_cnt={post.hit}
-                bookmark_cnt={post.wish_cnt}
-                comment_cnt={post.comment_cnt}
-              />
+              <HousePostListItem board={post} />
             </div>
           ))}
         </div>
