@@ -47,9 +47,9 @@ export interface Comment {
 }
 export interface FindWorkerDetail {
   board: FIndWorker2 | null;
-  board_images: File[];
   user_address: string;
   field_id: string;
+  board_images: File[];
   comments: {
     parent_comment: Comment | null;
     child_comments: Comment[] | null;

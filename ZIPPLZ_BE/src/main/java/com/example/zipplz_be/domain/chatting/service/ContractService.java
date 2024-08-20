@@ -1,9 +1,14 @@
 package com.example.zipplz_be.domain.chatting.service;
 
+import com.example.zipplz_be.domain.chatting.dto.ChatMessageRequestDTO;
 import com.example.zipplz_be.domain.chatting.dto.ContractRequestDTO;
 import com.example.zipplz_be.domain.chatting.entity.AfterService;
+import com.example.zipplz_be.domain.chatting.entity.ChatMessage;
 import com.example.zipplz_be.domain.chatting.exception.ContractNotFoundException;
+import com.example.zipplz_be.domain.chatting.repository.mongodb.ChatMessageRepository;
 import com.example.zipplz_be.domain.model.MaterialWorkRelationId;
+import com.example.zipplz_be.domain.model.entity.MessageType;
+import com.example.zipplz_be.domain.model.entity.Status;
 import com.example.zipplz_be.domain.portfolio.entity.Portfolio;
 import com.example.zipplz_be.domain.chatting.dto.ContractDTO;
 import com.example.zipplz_be.domain.chatting.entity.Chatroom;
@@ -33,16 +38,21 @@ import com.example.zipplz_be.domain.user.repository.UserRepository;
 import com.example.zipplz_be.domain.user.repository.WorkerRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Pageable;
 
 @Service
@@ -58,8 +68,10 @@ public class ContractService {
     private final RequestRepository requestRepository;
     private final ChatroomRepository chatroomRepository;
     private final PortfolioRepository portfolioRepository;
+    private final ChatMessageService chatMessageService;
+    private final ChatMessageRepository chatMessageRepository;
 
-    ContractService( PortfolioRepository portfolioRepository, ChatroomRepository chatroomRepository, RequestRepository requestRepository, MaterialWorkRelationRepository materialWorkRelationRepository, MaterialRepository materialRepository, FieldRepository fieldRepository, WorkerRepository workerRepository, WorkRepository workRepository, UserRepository userRepository, CustomerRepository customerRepository, PlanRepository planRepository) {
+    ContractService(PortfolioRepository portfolioRepository, ChatroomRepository chatroomRepository, RequestRepository requestRepository, MaterialWorkRelationRepository materialWorkRelationRepository, MaterialRepository materialRepository, FieldRepository fieldRepository, WorkerRepository workerRepository, WorkRepository workRepository, UserRepository userRepository, CustomerRepository customerRepository, PlanRepository planRepository, ChatMessageService chatMessageService, ChatMessageRepository chatMessageRepository) {
         this.portfolioRepository = portfolioRepository;
         this.chatroomRepository = chatroomRepository;
         this.requestRepository = requestRepository;
@@ -71,6 +83,8 @@ public class ContractService {
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
         this.planRepository = planRepository;
+        this.chatMessageService = chatMessageService;
+        this.chatMessageRepository = chatMessageRepository;
     }
 
     @Transactional
@@ -291,6 +305,12 @@ public class ContractService {
             workRepository.delete(awaitingWork.get(0));
         }
 
+        int chatroomSerial = getChatroomSerial(request, originalWork.getFieldName());
+        System.out.println("chatroomSerial : " + chatroomSerial);
+        System.out.println("senderSerial:    " + (Integer)params.get("sender"));
+        ChatMessage currMsg = chatMessageRepository.findByChatroomSerialAndUserSerialAndFileType(chatroomSerial, (Integer)params.get("sender"), MessageType.CONTRACT);
+        currMsg.setFileType(MessageType.CONTRACT_ACCEPTED);
+        chatMessageRepository.save(currMsg);
         workRepository.save(originalWork);
     }
 
@@ -326,6 +346,12 @@ public class ContractService {
 
             //awaiting 공종은 삭제하기.
             workRepository.delete(awaitingWork.get(0));
+
+            int chatroomSerial = getChatroomSerial(request, originalWork.getFieldName());
+            ChatMessage currMsg = chatMessageRepository.findByChatroomSerialAndUserSerialAndFileType(chatroomSerial, (Integer)params.get("sender"), MessageType.CONTRACT);
+            currMsg.setFileType(MessageType.CONTRACT_REJECTED);
+            chatMessageRepository.save(currMsg);
+            workRepository.save(originalWork);
         }
     }
 
@@ -419,6 +445,41 @@ public class ContractService {
                 .requestStatus(request.getRequestStatus())
                 .requestType(request.getRequestType())
                 .build();
+
+        // 수정 요청 send message
+        String workerName = worker.getUserSerial().getUserName();
+        String customerName = customer.getUserSerial().getUserName();
+        int totalDuration = calculateTotalDuration(startDate, endDate);
+        String requestDate = convertTimestampToDateTime(Timestamp.from(Instant.now()));
+        String formattedStartDate = convertTimestampToDate(startDate);
+        String formattedEndDate = convertTimestampToDate(endDate);
+        String formattedWorkPrice = formatNumberWithCommas((Integer) params.get("workPrice"));
+        String siteAddress = plan.getAddress();
+        String materialNames = materialList.stream()
+                .map(serial -> materialRepository.findByMaterialSerial(serial).getMaterialName())
+                .collect(Collectors.joining(", "));
+        String message = String.format(
+                "\n                ✨ 계약서 수정 요청! ✨\n\n" +
+                        "    👷‍♂️ 시공자: %s\n" +
+                        "    👩‍🦰 고객: %s\n" +
+                        "    👏 요청 일자: %s\n" +
+                        "    💵 작업 가격: %s원\n" +
+                        "    🏠 출장 주소: %s\n" +
+                        "    📅 작업 기간: %s ~ %s(%d일)\n" +
+                        "    🛠 자재 목록: %s",
+                workerName, customerName, requestDate, formattedWorkPrice, siteAddress,
+                formattedStartDate, formattedEndDate, totalDuration, materialNames
+        );
+
+        ChatMessageRequestDTO contractMsg = ChatMessageRequestDTO.builder()
+                .type(MessageType.CONTRACT)
+                .chatroomSerial(chatroomSerial)
+                .userSerial(userSerial)
+                .chatMessageContent(message)
+                .isFile(false)
+                .originalFileName("")
+                .isContract(true).build();
+        chatMessageService.sendMessage(contractMsg, userSerial, userRepository.findByUserSerial(userSerial).getRole());
 
         return contractRequestDTO;
     }
@@ -519,6 +580,9 @@ public class ContractService {
                 .requestType(request.getRequestType())
                 .build();
 
+        ChatMessage currMsg = chatMessageRepository.findByChatroomSerialAndUserSerialAndFileType(chatroomSerial, userSerial, MessageType.CONTRACT);
+        currMsg.setFileType(MessageType.CONTRACT_REJECTED);
+        chatMessageRepository.save(currMsg);
         return contractRequestDTO;
     }
 
@@ -534,5 +598,64 @@ public class ContractService {
         return Timestamp.valueOf(localDateTime);
     }
 
+    //공사기간 계산
+    public static int calculateTotalDuration(Timestamp startDate, Timestamp endDate) {
+        long timeDifference = endDate.getTime() - startDate.getTime() + 1;
+        long dayDifference = timeDifference / (1000 * 3600 * 24);
 
+        return (int) Math.ceil(dayDifference);
+    }
+
+    // Timestamp를 yyyy.MM.dd 형식의 문자열로 변환
+    public String convertTimestampToDate(Timestamp timestamp) {
+        if (timestamp == null) {
+            return null; // 또는 적절한 기본값을 반환할 수 있습니다.
+        }
+
+        // LocalDateTime 객체로 변환
+        LocalDateTime localDateTime = timestamp.toLocalDateTime();
+
+        // 원하는 포맷으로 DateTimeFormatter 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
+        // LocalDateTime을 포맷팅하여 문자열로 변환
+        return localDateTime.format(formatter);
+    }
+
+    // Timestamp를 yyyy.MM.dd HH:mm 형식의 문자열로 변환
+    public String convertTimestampToDateTime(Timestamp timestamp) {
+        if (timestamp == null) {
+            return null; // 또는 적절한 기본값을 반환할 수 있습니다.
+        }
+
+        // LocalDateTime 객체로 변환
+        LocalDateTime localDateTime = timestamp.toLocalDateTime();
+
+        // 원하는 포맷으로 DateTimeFormatter 설정
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+
+        // LocalDateTime을 포맷팅하여 문자열로 변환
+        return localDateTime.format(formatter);
+    }
+
+    //format workprice with commas
+    public static String formatNumberWithCommas(Integer number) {
+        if (number == null) {
+            return "0";
+        }
+
+        // NumberFormat 객체를 사용하여 천 단위 구분 기호를 포함하여 포맷
+        NumberFormat numberFormat = NumberFormat.getInstance(Locale.KOREA);
+        return numberFormat.format(number);
+    }
+
+    //getChatroomSerial
+    public int getChatroomSerial(Request request, String fieldName) {
+        int chatroomSerial = -1;
+        User cuser = request.getSender().getRole().equals("customer") ? request.getSender(): request.getReceiver();
+        User wuser = request.getSender().getRole().equals("worker") ? request.getSender(): request.getReceiver();
+        chatroomSerial = chatroomRepository.findByCuserAndWuserAndStatusAndFieldName(cuser, wuser, Status.ACTIVE, fieldName).getChatroomSerial();
+
+        return chatroomSerial;
+    }
 }

@@ -5,6 +5,8 @@ import Layout from '@components/layout/Layout';
 import loadable from '@loadable/component';
 import GuardRoute from '@router/GuardRoute';
 
+import WatchImage from './pages/common/home/WatchImage';
+
 const Custom404 = loadable(() => import('@pages/common/404'), {
   fallback: <div>Loading...</div>,
 });
@@ -314,6 +316,7 @@ export default function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="my-change-image/:userSerial" element={<WatchImage />} />
         {/* 스케줄 & 계약서 */}
         <Route element={<GuardRoute />}>
           <Route path="schedule" element={<Schedule />} />

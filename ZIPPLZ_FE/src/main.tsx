@@ -18,7 +18,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <AppContextProvider>
         <Suspense
           fallback={
-            <div className="flex items-center justify-center h-screen">
+            <div className="flex items-center justify-center h-screen overflow-hidden">
               <Logo width={150} className="animate-spinAndGrow" />
             </div>
           }

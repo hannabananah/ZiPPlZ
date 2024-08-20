@@ -22,9 +22,9 @@ export default function Header() {
   return (
     <div className="fixed flex items-center justify-between h-14 bg-zp-light-beige px-7 max-w-[600px] w-full z-30">
       <div className="flex items-center">
-        <Logo width={30} height={30} />
+        <Logo width={30} height={30} className="-mr-1" />
         <Button
-          children="zip-plz"
+          children="iPPlZ"
           buttonType="light"
           fontSize="2xl"
           type="button"

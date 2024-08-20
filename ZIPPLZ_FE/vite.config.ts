@@ -7,8 +7,15 @@ export default defineConfig({
   plugins: [react(), svgr(), tsconfigPaths()],
   server: {
     proxy: {
+      '/api': {
+        target: 'https://zipplz.site',
+        changeOrigin: true,
+        rewrite: function (path) {
+          return path.replace(/^\/api/, '');
+        },
+      },
       '/ws': {
-        target: 'http://localhost:5000',
+        target: 'https://zipplz.site',
         changeOrigin: true,
         ws: true,
       },

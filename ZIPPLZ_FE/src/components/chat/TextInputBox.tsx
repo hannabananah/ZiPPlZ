@@ -13,7 +13,7 @@ import Circle from '@assets/gradient-circle.svg?react';
 import TextArea from '@components/common/TextArea';
 import { WebSocketContext } from '@utils/socket/WebSocketProvider';
 
-type TextInputBoxType = 'TALK' | 'IMAGE' | 'FILE';
+type TextInputBoxType = 'TALK' | 'IMAGE' | 'FILE' | 'CONTRACT';
 
 interface TextInputBoxProps {
   isMenuVisible: boolean;
@@ -132,7 +132,7 @@ export default function TextInputBox({
   };
 
   return (
-    <div className="sticky bottom-0 flex items-center justify-between w-full gap-3 px-4 my-4 max-h-12 bg-zp-transparent">
+    <div className="sticky bottom-0 flex items-center justify-between w-full gap-3 px-4 my-3 max-h-12 bg-zp-transparent">
       <button className="relative" onClick={onMenuToggle}>
         <Circle width={28} height={28} />
         <div

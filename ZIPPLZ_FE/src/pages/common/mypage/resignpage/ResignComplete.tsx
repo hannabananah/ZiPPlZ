@@ -15,7 +15,7 @@ export default function ResignComplete() {
           {/* 체크 아이콘 */}
           <div className="flex items-center justify-center mb-6">
             <FaRegCheckCircle
-              className="text-green-500"
+              stroke="#666"
               style={{ width: '167px', height: '167px' }}
             />
           </div>

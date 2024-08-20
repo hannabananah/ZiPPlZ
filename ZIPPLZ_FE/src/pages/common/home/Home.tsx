@@ -6,7 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { getChatRooms } from '@/apis/chatroom/chatApi';
 import { getTopWorkerList } from '@/apis/worker/WorkerListApi';
 import { useWorkerListStore } from '@/stores/workerListStore';
-import { ChatRoom, TodayWork, Work } from '@/types';
+import type { ChatRoom, TodayWork, Work } from '@/types';
 import { getTodayWork, getWorksByUser } from '@apis/scheduler/schedulerApi';
 import Button from '@components/common/Button';
 import ScheduleCalendar from '@components/common/calendar/ScheduleCalendar';
@@ -55,8 +55,9 @@ export default function Home() {
   }, []);
 
   const handleClickImageChange = () =>
-    navigate(`http://localhost:8080?user=${loginUser?.userSerial}`);
-
+    // (window.location.href = `https://43.201.5.30:8080?user=${loginUser?.userSerial}`);
+    // navigate(`/image-change/{loginUser?.userSerial`)
+    (window.location.href = `http://localhost:8080/?user=${loginUser?.userSerial}`);
   const fetchWorks = async () => {
     const response = await getWorksByUser();
     setScheduleList(response.data.data);
@@ -77,7 +78,10 @@ export default function Home() {
     try {
       const response = await getTodayWork();
       setTodayWork(response.data.data);
-    } catch (error) {}
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -114,7 +118,7 @@ export default function Home() {
       </div>
 
       {loginUser && loginUser.role !== '' && (
-        <div className="flex items-start justify-center w-full gap-2 md:gap-6 ">
+        <div className="flex items-start justify-center w-full gap-2 md:gap-6">
           <div className="basis-7/12">
             <p className="mb-1 font-bold text-zp-xl font-noto">📆 Today</p>
             {todayWork ? (
@@ -136,6 +140,7 @@ export default function Home() {
                           role={loginUser?.role || ''}
                           work={work}
                           chatRoomList={chatRoomList || []}
+                          loading={loading}
                         />
                       </SwiperSlide>
                     ))}
@@ -151,6 +156,7 @@ export default function Home() {
               <Skeleton height={132} count={2} />
             )}
           </div>
+
           <div className="basis-5/12">
             <p className="mb-1 font-bold text-zp-xl font-noto">
               🤖 AI 자재 입히기
@@ -171,7 +177,8 @@ export default function Home() {
           선택한 시공에 맞춰 인증된 전문 기술자를 추천해드립니다.
         </p>
       </div>
-      <div className="grid w-full grid-cols-6 gap-4 ">
+
+      <div className="grid w-full grid-cols-6 gap-4">
         {fields.map((item) => (
           <FieldListItem
             key={item}
@@ -185,10 +192,14 @@ export default function Home() {
         className="flex w-full overflow-x-auto"
         style={{ msOverflowStyle: 'none', scrollbarWidth: 'none' }}
       >
-        <div className="flex justify-between w-full h-[8rem] ">
-          {workerList?.map((worker) => (
-            <WorkerCard key={worker.field_id} worker={worker} />
-          ))}
+        <div className="flex justify-between w-full h-[8rem]">
+          {loading ? (
+            <Skeleton width={100} height={80} count={5} className="mr-2" />
+          ) : (
+            workerList?.map((worker) => (
+              <WorkerCard key={worker.field_id} worker={worker} />
+            ))
+          )}
         </div>
       </div>
     </div>

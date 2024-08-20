@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { FaPlus } from 'react-icons/fa';
-import { FaTrashAlt } from 'react-icons/fa';
+import { FaPlus, FaTrashAlt } from 'react-icons/fa';
 import { HiOutlinePencilAlt } from 'react-icons/hi';
+import Skeleton from 'react-loading-skeleton';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import { getChatRooms } from '@/apis/chatroom/chatApi';
@@ -35,13 +35,21 @@ import formatNumberWithCommas from '@utils/formatNumberWithCommas';
 
 export default function Schedule() {
   const [chatRoomList, setChatRoomList] = useState<ChatRoom[]>([]);
+  const [loadingChatRooms, setLoadingChatRooms] = useState<boolean>(true);
+  console.log(loadingChatRooms);
+  const [loadingPlan, setLoadingPlan] = useState<boolean>(true);
+  const [loadingWorks, setLoadingWorks] = useState<boolean>(true);
+
   const fetchChatRooms = async () => {
     const response = await getChatRooms();
     setChatRoomList(response.data.data);
+    setLoadingChatRooms(false);
   };
+
   useEffect(() => {
     fetchChatRooms();
   }, []);
+
   const location = useLocation();
   const queryParams = new URLSearchParams(location.search);
   const param: string | null = queryParams.get('plan');
@@ -74,6 +82,7 @@ export default function Schedule() {
     useState<number | null>(null);
   const [options, setOptions] = useState<Plan[]>([]);
   const [selectedWorkSerial, setSelectedWorkSerial] = useState<number>(0);
+
   const handleConfirmDelete = async (
     planSerial: number,
     workSerial: number
@@ -87,35 +96,43 @@ export default function Schedule() {
   const fetchPlanList = async () => {
     const response = await getPlans();
     setPlanList(response.data.data);
+    setLoadingPlan(false);
   };
 
   const fetchWorkList = async (planSerial: number) => {
     const response = await getWorks(planSerial, 0, 20);
     setWorkList(response.data.data);
+    setLoadingWorks(false);
   };
 
   const fetchPlan = async (planSerial: number) => {
     const response = await getOnePlan(planSerial);
     setPlan(response.data.data.plan);
     setFileList(response.data.data.fileList);
+    setLoadingPlan(false);
+    setLoadingWorks(false);
   };
 
   const getTotalPrice = async (planSerial: number) => {
     const response = await getPrice(planSerial);
     setTotalPrice(response.data.data);
   };
+
   const updateWork = async (workSerial: number, workContent: string) => {
     if (planSerial)
       return await modifyWork(planSerial, workSerial, workContent);
   };
+
   const removePlan = async (planSerial: number) => {
     await deletePlan(planSerial);
     fetchWorkList(planSerial);
     closeModal('mini');
   };
+
   const setPlanActive = async () => {
     if (planSerial) return await activePlan(planSerial);
   };
+
   useEffect(() => {
     const savedValue = localStorage.getItem('selectedValue');
     if (savedValue && planSerial) {
@@ -130,6 +147,7 @@ export default function Schedule() {
       setFileList(null);
     };
   }, []);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     fetchPlanList();
@@ -145,11 +163,13 @@ export default function Schedule() {
       setOptions(newOptions);
     }
   }, [planList]);
+
   useEffect(() => {
     if (selectedValue) {
       localStorage.setItem('selectedValue', selectedValue);
     }
   }, [selectedValue]);
+
   useEffect(() => {
     if (options.length > 0 && selectedValue !== '계획을 선택해주세요.') {
       const selectedPlan = options.find(
@@ -166,9 +186,11 @@ export default function Schedule() {
       }
     }
   }, [selectedValue, options, planList, plan]);
+
   useEffect(() => {
     if (planSerial) fetchPlan(planSerial);
   }, [workList]);
+
   return (
     <>
       <div className="mt-[5rem] flex flex-col w-full items-center bg-zp-light-beige gap-4 sm lg px-6 mb-[5rem]">
@@ -216,7 +238,7 @@ export default function Schedule() {
             setSelectedValue={setSelectedValue}
             width="full"
             height={2}
-            fontSize="xs"
+            fontSize="lg"
             radius="btn"
             border="main"
             hover="sub"
@@ -254,49 +276,73 @@ export default function Schedule() {
             <p className="w-full font-bold text-zp-xl ">공유 문서</p>
             <div className="flex items-stretch justify-between w-full h-full gap-4">
               <div className="h-full basis-2/3">
-                <SharedImg fileList={fileList} planSerial={plan?.planSerial} />
+                {loadingPlan ? (
+                  <Skeleton width="100%" height="200px" />
+                ) : (
+                  <SharedImg
+                    fileList={fileList}
+                    planSerial={plan?.planSerial}
+                  />
+                )}
               </div>
               <div className="h-full basis-1/3">
-                <SharedMemo sharedContents={plan?.sharedContents} />
+                {loadingPlan ? (
+                  <Skeleton width="100%" height="200px" />
+                ) : (
+                  <SharedMemo sharedContents={plan?.sharedContents} />
+                )}
               </div>
             </div>
             <p className="w-full font-bold text-right text-zp-xl ">
-              총 시공 가격 : {formatNumberWithCommas(totalPrice)}원
-            </p>
-            {workList &&
-              workList.map((item, idx) =>
-                item.workerSerial ? (
-                  <SchedulerCardExist
-                    key={item.workSerial}
-                    schedule={item}
-                    idx={idx + 1}
-                    planSerial={plan?.planSerial}
-                    updateContent={updateWork}
-                    chatRoomList={chatRoomList}
-                    openReviewModal={(workSerial: number) => {
-                      setSelectedWorkSerialForReview(workSerial);
-                      openReviewModal();
-                    }}
-                  />
-                ) : item.fieldCode.fieldCode === 0 ? (
-                  <SchedulerCardCustom
-                    key={item.workSerial}
-                    schedule={item}
-                    idx={idx + 1}
-                    planSerial={plan?.planSerial}
-                  />
-                ) : (
-                  <SchedulerCard
-                    key={item.workSerial}
-                    schedule={item}
-                    idx={idx + 1}
-                    onClickTrash={() => {
-                      openModal('select');
-                      setSelectedWorkSerial(item.workSerial);
-                    }}
-                  />
-                )
+              {loadingPlan ? (
+                <Skeleton width="200px" height="20px" />
+              ) : (
+                `총 시공 가격 : ${formatNumberWithCommas(totalPrice)}원`
               )}
+            </p>
+            {loadingWorks
+              ? Array.from({ length: 3 }).map((_, idx) => (
+                  <Skeleton
+                    key={idx}
+                    width="100%"
+                    height="120px"
+                    className="mb-4"
+                  />
+                ))
+              : workList &&
+                workList.map((item, idx) =>
+                  item.workerSerial ? (
+                    <SchedulerCardExist
+                      key={item.workSerial}
+                      schedule={item}
+                      idx={idx + 1}
+                      planSerial={plan?.planSerial}
+                      updateContent={updateWork}
+                      chatRoomList={chatRoomList}
+                      openReviewModal={(workSerial: number) => {
+                        setSelectedWorkSerialForReview(workSerial);
+                        openReviewModal();
+                      }}
+                    />
+                  ) : item.fieldCode.fieldCode === 0 ? (
+                    <SchedulerCardCustom
+                      key={item.workSerial}
+                      schedule={item}
+                      idx={idx + 1}
+                      planSerial={plan?.planSerial}
+                    />
+                  ) : (
+                    <SchedulerCard
+                      key={item.workSerial}
+                      schedule={item}
+                      idx={idx + 1}
+                      onClickTrash={() => {
+                        openModal('select');
+                        setSelectedWorkSerial(item.workSerial);
+                      }}
+                    />
+                  )
+                )}
             {plan && plan.isActive === 1 && (
               <ScheduleRegist planSerial={plan?.planSerial} />
             )}

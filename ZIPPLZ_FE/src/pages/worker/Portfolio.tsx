@@ -110,11 +110,10 @@ export default function Portfolio() {
 
   return (
     <>
-      <div className="flex flex-col w-full gap-2 min-h-screen p-6 mt-[4rem]">
-        <div className="relative flex items-start w-full gap-6 font-bold">
-          {/* 사진, 이름 */}
+      <div className="flex flex-col w-full gap-2 min-h-screen p-6 mt-[3rem] mb-10">
+        <div className="relative flex items-start w-full gap-6 mt-2 font-bold">
           <div className="flex flex-col items-center">
-            <div className="w-[100px] h-[100px] rounded-zp-radius-full ">
+            <div className="w-[100px] h-[100px] rounded-zp-radius-full drop-shadow-zp-deep ">
               <img
                 className="object-cover w-full h-full rounded-zp-radius-full"
                 src={portfolioOverview?.userProfile.saveFile}
@@ -150,10 +149,10 @@ export default function Portfolio() {
                           : 'second'
                       }
                       disabled={nowField === item.fieldId.fieldName}
-                      width={4}
-                      height={2}
-                      fontSize="xs"
-                      radius="big"
+                      width={3}
+                      height={1.5}
+                      fontSize="2xs"
+                      radius="btn"
                       key={index}
                       onClick={() => {
                         fetchPortFolioOverView(item.portfolioSerial);
@@ -167,7 +166,7 @@ export default function Portfolio() {
             </div>
           </div>
         </div>
-        <div className="grid w-full grid-cols-3 font-bold text-zp-sm">
+        <div className="grid w-full grid-cols-3 mt-2 font-bold text-zp-sm">
           <div
             className={`p-2 cursor-pointer ${
               activeTab === 'overview'
@@ -175,7 +174,10 @@ export default function Portfolio() {
                 : 'rounded-b-lg border-b-2 border-zp-main-color'
             }`}
           >
-            <p className="text-center" onClick={overviewClick}>
+            <p
+              className="text-center rounded-zp-radius-big"
+              onClick={overviewClick}
+            >
               종합정보
             </p>
           </div>
@@ -194,7 +196,7 @@ export default function Portfolio() {
           <div
             className={`p-2 cursor-pointer ${
               activeTab === 'review'
-                ? 'rounded-t-zp-radius-big border-x-2 border-t-2 border-zp-main-color'
+                ? 'rounded-t-zp-radius-big border-zp-main-color'
                 : 'rounded-b-lg border-b-2 border-zp-main-color'
             }`}
           >
@@ -203,7 +205,7 @@ export default function Portfolio() {
             </p>
           </div>
         </div>
-        <div className="mb-[4rem]">
+        <div className="mt-2 mb-6">
           {activeTab === 'overview' && portfolioOverview && (
             <OverView portfolio={portfolioOverview} />
           )}
@@ -219,11 +221,11 @@ export default function Portfolio() {
         </div>
       </div>
       <div
-        className="fixed flex flex-col w-full gap-4 px-4 bg-zp-light-beige"
-        style={{ bottom: '3.6rem', left: 0 }}
+        className="fixed flex flex-col w-full gap-4 z-[30] bg-zp-light-beige max-w-[600px]"
+        style={{ bottom: '3.6rem' }}
       >
         {loginUser?.role === 'customer' && (
-          <div className="flex flex-col items-center w-full gap-4 mb-4">
+          <div className="flex flex-col items-center w-full gap-4 mb-6">
             <hr className="w-full text-zp-light-gray" />
             <Button
               buttonType="second"

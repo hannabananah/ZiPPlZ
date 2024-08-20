@@ -16,7 +16,7 @@ import {
 } from '@utils/socket/WebSocketProvider';
 import axios from 'axios';
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url = 'https://zipplz.site/api/';
 
 function ChatRoomContent() {
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
@@ -42,17 +42,13 @@ function ChatRoomContent() {
   ): Promise<ChatRoomDetails> => {
     try {
       const response = await axios.get<{ data: ChatRoomDetails }>(
-        `${base_url}/chatroom/${chatroomSerial}`,
+        `${base_url}chatroom/${chatroomSerial}`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         }
       );
 
-      if (response.status === 200) {
-        return response.data.data;
-      } else {
-        throw new Error('Unexpected response');
-      }
+      return response.data.data;
     } catch (error) {
       console.error(
         'Error fetching chat room details:',
@@ -105,7 +101,7 @@ function ChatRoomContent() {
           handleClickVideo={handleClickVideo}
         />
       )}
-      <div className="relative flex flex-col flex-grow pt-4 overflow-y-auto">
+      <div className="relative flex flex-col flex-grow overflow-y-auto">
         {isValidRoomId ? (
           <>
             <div className="flex-1 overflow-y-auto">

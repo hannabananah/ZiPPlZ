@@ -37,11 +37,12 @@ export default function Message({
     formattedImgUrl = `data:text/plain;base64,${chatMessageContent}`;
   }
 
+  const isAccepted = fileType === 'CONTRACT_ACCEPTED';
+  const isRejected = fileType === 'CONTRACT_REJECTED';
   const isImage = fileType === 'IMAGE';
   const isFile = fileType === 'FILE';
   const { loginUser } = useLoginUserStore();
   const currUserSerial: number | undefined = loginUser?.userSerial;
-  const currRole = loginUser?.role;
 
   const handleAcceptContract = async () => {
     try {
@@ -60,6 +61,7 @@ export default function Message({
     try {
       if (typeof currUserSerial === 'number') {
         const response = await rejectContract(otherUserSerial, currUserSerial);
+
         if (response.proc.code === 200) {
           setContractHandled('rejected');
         }
@@ -123,8 +125,9 @@ export default function Message({
         )}
         {!loading &&
           contract &&
-          currRole === 'customer' &&
-          !contractHandled && (
+          !contractHandled &&
+          !isAccepted &&
+          !isRejected && (
             <div className="flex justify-end gap-2 mt-2">
               <Button
                 type="button"
@@ -150,12 +153,12 @@ export default function Message({
               </Button>
             </div>
           )}
-        {contractHandled === 'accepted' && (
+        {(contractHandled === 'accepted' || isAccepted) && (
           <div className="absolute z-50 w-40 -translate-x-1/2 -top-12 left-1/2 animate-zoom-in">
             <Accepted className="w-40" />
           </div>
         )}
-        {contractHandled === 'rejected' && (
+        {(contractHandled === 'rejected' || isRejected) && (
           <div className="absolute z-50 w-40 -translate-x-1/2 -top-16 left-1/2 animate-zoom-in">
             <Rejected className="w-40" />
           </div>

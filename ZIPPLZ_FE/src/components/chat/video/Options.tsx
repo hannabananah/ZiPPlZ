@@ -11,7 +11,6 @@ import { useParams } from 'react-router-dom';
 
 import Contract from '@components/chat/Contract';
 import FullModal from '@components/common/FullModal';
-// import useOpenVidu from '@hooks/useOpenvidu';
 import { useLoginUserStore } from '@stores/loginUserStore';
 import axios from 'axios';
 import {
@@ -31,9 +30,10 @@ interface OptionsProps {
   publishAudio: (enabled: boolean) => void;
   publishVideo: (enabled: boolean) => void;
   handleCloseVideo: () => void;
+  startScreenShare: () => void;
 }
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url = 'https://zipplz.site/api/';
 
 export default function Options({
   leaveSession,
@@ -44,6 +44,7 @@ export default function Options({
   publishAudio,
   publishVideo,
   handleCloseVideo,
+  startScreenShare,
 }: OptionsProps) {
   const [isMuted, setIsMuted] = useState(false);
   const [isHided, setIsHided] = useState(false);
@@ -52,7 +53,6 @@ export default function Options({
   const [isContractModalOpen, setIsContractModalOpen] = useState(false);
   const { chatroomSerial } = useParams<{ chatroomSerial?: string }>();
   // const { startRecording, stopRecording } = useOpenVidu();
-  // const { startScreenShare } = useOpenVidu();
   // const [onRecord, setOnRecord] = useState(false);
   const { loginUser } = useLoginUserStore();
   const userRole: string | undefined = loginUser?.role;
@@ -73,7 +73,7 @@ export default function Options({
     try {
       const token = localStorage.getItem('token');
       const headers = { Authorization: `Bearer ${token}` };
-      const url = `${base_url}/chatroom/${chatroomSerial}/name`;
+      const url = `${base_url}chatroom/${chatroomSerial}/name`;
 
       const response = await axios.get(url, { headers });
 
@@ -134,7 +134,7 @@ export default function Options({
   };
 
   const handleSharingContract = () => {
-    // startScreenShare();
+    startScreenShare();
     setIsContractModalOpen(true);
   };
 

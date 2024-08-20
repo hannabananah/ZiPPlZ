@@ -79,7 +79,7 @@ public class BoardController {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "질문글 삽입 실패 없음");
             } else {
-                if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                if (images !=null && !images.isEmpty() && images.get(0).getSize() != 0) {
                     int file_result = boardService.uploadImageService(images, board_serial);
                     if (file_result == 0) {
                         status = HttpStatus.NOT_FOUND;
@@ -229,7 +229,7 @@ public class BoardController {
                     status = HttpStatus.NOT_FOUND;
                     responseDTO = new ResponseDTO<>(status.value(), "관계 시공자 삽입 실패");
                 } else {
-                    if (!images.isEmpty() && images.getFirst().getSize() != 0) {
+                    if (images !=null && !images.isEmpty() && images.getFirst().getSize() != 0) {
                         int file_result = boardService.uploadImageService(images, board_serial);
                         if (file_result == 0) {
                             status = HttpStatus.NOT_FOUND;
@@ -352,7 +352,7 @@ public class BoardController {
     // 구인구직글 추가하기
     @Transactional
     @PostMapping("/findworker/add")
-    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("title") String title, @RequestPart("board_content") String board_content, @RequestPart("user_address") String user_address) {
+    public ResponseEntity<ResponseDTO<Boolean>> addFindWorker(Authentication authentication, @RequestPart("images") List<MultipartFile> images, @RequestPart("title") String title, @RequestPart("board_content") String board_content, @RequestPart("user_address") String user_address, @RequestPart("field_id") String field_id) {
         ResponseDTO<Boolean> responseDTO;
         HttpStatus status = HttpStatus.ACCEPTED;
 
@@ -366,19 +366,17 @@ public class BoardController {
             int hit = 0;
 
             int result = boardService.addBoard(user_serial, board_type, title, board_content, board_date, hit);
-            System.out.println("result : "+result);
             int board_serial = boardService.getLastInsertId();
             if (result == 0) {
                 status = HttpStatus.NOT_FOUND;
                 responseDTO = new ResponseDTO<>(status.value(), "구인구직글 삽입 실패 없음");
             } else {
-                int address_result = boardService.addBoardUserAddress(board_serial, user_address);
-                System.out.println("address_result :"+address_result);
+                int address_result = boardService.addBoardUserAddress(board_serial, user_address, field_id);
                 if (address_result == 0  ) {
                     status = HttpStatus.BAD_REQUEST;
                     responseDTO = new ResponseDTO<>(status.value(), "주소 삽입 실패 없음");
                 } else {
-                    if (!images.isEmpty() && images.get(0).getSize() != 0) {
+                    if (images !=null && !images.isEmpty() && images.get(0).getSize() != 0) {
                         int file_result = boardService.uploadImageService(images, board_serial);
                         System.out.println(file_result);
                         if (file_result == 0) {
@@ -458,13 +456,19 @@ public class BoardController {
         try {
             String title = params.get("title");
             String board_content = params.get("board_content");
+            String user_address = params.get("user_address");
+            String field_id = params.get("field_id");
             LocalDateTime board_date = LocalDateTime.now();
-            int result= boardService.modifyBoard(boardSerial, title, board_content, board_date);
+            int result1= boardService.modifyBoard(boardSerial, title, board_content, board_date);
+            int result2 = boardService.moifyBoardAddress(boardSerial, user_address, field_id);
 
-            if (result == 0) {
-                status = HttpStatus.NOT_FOUND;
-                responseDTO = new ResponseDTO<>(status.value(), "수정 실패 없음");
-            } else {
+            if (result1 == 0) {
+                status = HttpStatus.BAD_REQUEST;
+                responseDTO = new ResponseDTO<>(status.value(), "보드 수정 실패 없음");
+            } else if (result2 == 0) {
+                status = HttpStatus.BAD_REQUEST;
+                responseDTO = new ResponseDTO<>(status.value(), "주소 및 분야 수정 실패 없음");
+            }else {
                 status = HttpStatus.OK;
                 responseDTO = new ResponseDTO<>(status.value(), "수정 성공", true);
             }

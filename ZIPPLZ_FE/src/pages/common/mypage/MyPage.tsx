@@ -44,9 +44,8 @@ export default function MyPage() {
   } = useMyPageStore();
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  const [previewImg, setPreviewImg] = useState<string | null>(null);
-  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null);
-
+  const [previewImg, setPreviewImg] = useState<string | null>(null); // 이미지 미리보기용 상태
+  const [selectedIcon, setSelectedIcon] = useState<JSX.Element | null>(null); // 아이콘 선택 상태
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {

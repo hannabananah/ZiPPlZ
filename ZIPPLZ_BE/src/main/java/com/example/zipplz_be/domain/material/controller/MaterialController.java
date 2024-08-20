@@ -2,7 +2,7 @@ package com.example.zipplz_be.domain.material.controller;
 
 import com.example.zipplz_be.domain.file.entity.File;
 import com.example.zipplz_be.domain.material.dto.MaterialViewDTO;
-import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
+//import com.example.zipplz_be.domain.material.entity.ElasticMaterial;
 import com.example.zipplz_be.domain.material.serivce.MaterialService;
 import com.example.zipplz_be.domain.model.dto.ResponseDTO;
 import com.example.zipplz_be.domain.user.dto.CustomUserDetails;
@@ -159,41 +159,41 @@ public class MaterialController {
     }
 
     //자재 삽입하기
-    @PostMapping("/insert")
-    public ResponseEntity<ResponseDTO> insertMaterial(@RequestBody Map<String,Object> params) {
-        ResponseDTO<?> responseDTO;
-        HttpStatus status;
+    // @PostMapping("/insert")
+    // public ResponseEntity<ResponseDTO> insertMaterial(@RequestBody Map<String,Object> params) {
+    //     ResponseDTO<?> responseDTO;
+    //     HttpStatus status;
 
-        try {
-            materialService.insertMaterialService(params);
+    //     try {
+    //         materialService.insertMaterialService(params);
 
-            status = HttpStatus.OK;
-            responseDTO = new ResponseDTO<>(status.value(), "자재 삽입 성공!");
-        } catch(Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        return new ResponseEntity<>(responseDTO, status);
+    //         status = HttpStatus.OK;
+    //         responseDTO = new ResponseDTO<>(status.value(), "자재 삽입 성공!");
+    //     } catch(Exception e) {
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //         responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+    //     }
+    //     return new ResponseEntity<>(responseDTO, status);
 
-    }
+    // }
 
     //자재 검색하기
-    @PostMapping("/search")
-    public ResponseEntity<ResponseDTO> searchMaterial(@RequestBody Map<String,Object> params) {
-        ResponseDTO<?> responseDTO;
-        HttpStatus status;
+    // @PostMapping("/search")
+    // public ResponseEntity<ResponseDTO> searchMaterial(@RequestBody Map<String,Object> params) {
+    //     ResponseDTO<?> responseDTO;
+    //     HttpStatus status;
 
-        try {
-            List<ElasticMaterial> elasticMaterials = materialService.searchMaterialService(params);
+    //     try {
+    //         List<ElasticMaterial> elasticMaterials = materialService.searchMaterialService(params);
 
-            status = HttpStatus.OK;
-            responseDTO = new ResponseDTO<>(status.value(), "검색 성공!", elasticMaterials);
-        } catch(Exception e) {
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-            responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
-        }
-        return new ResponseEntity<>(responseDTO, status);
-    }
+    //         status = HttpStatus.OK;
+    //         responseDTO = new ResponseDTO<>(status.value(), "검색 성공!", elasticMaterials);
+    //     } catch(Exception e) {
+    //         status = HttpStatus.INTERNAL_SERVER_ERROR;
+    //         responseDTO = new ResponseDTO<>(status.value(), e.getMessage());
+    //     }
+    //     return new ResponseEntity<>(responseDTO, status);
+    // }
 
 
         public int getUserSerial(Authentication authentication) {

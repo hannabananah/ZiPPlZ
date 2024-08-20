@@ -5,15 +5,15 @@ import type { ChatMessageData } from '@/types';
 import { Client, IMessage } from '@stomp/stompjs';
 import axios from 'axios';
 
-const chat_base_url = import.meta.env.VITE_APP_CHAT_URL;
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+const chat_base_url = 'wss://zipplz.site/api/ws';
+const base_url: string = 'https://zipplz.site/api/';
 
 interface WebSocketContextType {
   sendMessage: (
     msg: string,
     userSerial: number,
     file?: File,
-    type?: 'TALK' | 'IMAGE' | 'FILE',
+    type?: 'TALK' | 'IMAGE' | 'FILE' | 'CONTRACT',
     contract?: boolean,
     contractContent?: {
       requestComment: string;
@@ -40,7 +40,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
       try {
         const response = await axios.get<{
           data: { chatMessages: ChatMessageData[] };
-        }>(`${base_url}/chatroom/${chatroomSerial}`, {
+        }>(`${base_url}chatroom/${chatroomSerial}`, {
           headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
         if (response.status === 200) {
@@ -114,7 +114,7 @@ const WebSocketProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
     msg: string,
     userSerial: number,
     file?: File,
-    type: 'TALK' | 'IMAGE' | 'FILE' = 'TALK',
+    type: 'TALK' | 'IMAGE' | 'FILE' | 'CONTRACT' = 'TALK',
     contract: boolean = false,
     contractContent?: {
       requestComment: string;

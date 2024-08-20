@@ -106,7 +106,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
           }));
           setName((e.target as HTMLInputElement).value);
         }}
-        fontSize="xl"
+        fontSize="sm"
         className="p-1"
         radius="none"
       />
@@ -128,7 +128,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
               }));
               setEmail((e.target as HTMLInputElement).value);
             }}
-            fontSize="xl"
+            fontSize="sm"
             className="p-1"
             radius="none"
             disabled={!isUniqueEmail && isUniqueEmail !== null}
@@ -178,7 +178,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
           onChange={(e: React.ChangeEvent) => {
             setPassword((e.target as HTMLInputElement).value);
           }}
-          fontSize="xl"
+          fontSize="sm"
           radius="none"
         />
         {showPassword ? (
@@ -216,7 +216,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
             }));
             setCheckPassword((e.target as HTMLInputElement).value);
           }}
-          fontSize="xl"
+          fontSize="sm"
           radius="none"
           className="p-1"
         />
@@ -250,7 +250,7 @@ export default function SignupInfo({ setActive, setLink, setUser }: Props) {
         onChange={setPhone}
         placeholder="010-0000-0000"
         inputType="signup"
-        fontSize="xl"
+        fontSize="sm"
         height={2}
         radius="none"
       />

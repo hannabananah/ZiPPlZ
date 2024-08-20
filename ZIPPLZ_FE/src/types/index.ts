@@ -4,7 +4,12 @@ export interface ChatMessageData {
   userName: string;
   chatMessageContent: string;
   createdAt: string;
-  fileType: 'IMAGE' | 'TALK' | 'FILE';
+  fileType:
+    | 'IMAGE'
+    | 'TALK'
+    | 'FILE'
+    | 'CONTRACT_ACCEPTED'
+    | 'CONTRACT_REJECTED';
   file: {
     fileSerial: number;
     saveFolder: string;
@@ -80,12 +85,17 @@ export interface ChatRoomDetails {
     userName: string;
     chatMessageContent: string;
     createdAt: string;
-    fileType: 'IMAGE' | 'TALK' | 'FILE';
+    fileType:
+      | 'IMAGE'
+      | 'TALK'
+      | 'FILE'
+      | 'CONTRACT_ACCEPTED'
+      | 'CONTRACT_REJECTED';
     file: {
       fileSerial: number;
       saveFolder: string;
       originalFile: string;
-      saveFile: string;
+      saveFile: string | null;
       fileName: string;
     } | null;
   }[];
@@ -93,7 +103,7 @@ export interface ChatRoomDetails {
 
 // 메시지 전송
 export interface SendMessageReq {
-  type: 'IMAGE' | 'TALK' | 'FILE';
+  type: 'IMAGE' | 'TALK' | 'FILE' | 'CONTRACT';
   chatroomSerial: number;
   userSerial: number;
   chatMessageContent: string;

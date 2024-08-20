@@ -23,6 +23,7 @@ import Input from '@/components/common/Input';
 import { useLoginUserStore } from '@/stores/loginUserStore';
 import { PortfolioDetail, usePortfolioStore } from '@/stores/portfolioStore';
 import type { data } from '@/types';
+import NothingIcon from '@assets/nothing-icon.svg?react';
 
 const postCodeStyle = {
   width: '200px',
@@ -164,7 +165,7 @@ export default function OverView({ portfolio }: Props) {
       <IoArrowBackSharp
         size={20}
         onClick={() => navigate(-1)}
-        className="absolute top-[3.5rem]"
+        className="absolute top-[3.5rem] cursor-pointer"
       />
       <div className="flex flex-col w-full gap-4">
         {id && loginUser?.userSerial === parseInt(id) && (
@@ -176,19 +177,18 @@ export default function OverView({ portfolio }: Props) {
             />
           </div>
         )}
-        <div className="flex flex-col">
+        <div className="flex flex-col p-3 bg-zp-white drop-shadow-zp-slight rounded-zp-radius-big">
           <div className="flex items-center gap-1">
             <HiOutlineUser size={16} />
-            <p className="font-bold text-zp-sm">About Me</p>
+            <p className="font-bold text-zp-sm">기본 프로필</p>
           </div>
           <div className="flex w-full gap-4 pl-4 mt-4">
             <div className="flex flex-col gap-2 pr-6 font-bold border-r text-zp-gray text-zp-xs border-r-zp-sub-color">
-              <p>나이</p>
-              <p>E-Mail</p>
-              <p>경력</p>
-              <p>A/S 기간</p>
+              {['나이', 'E-Mail', '경력', 'A/S 기간'].map((label, index) => (
+                <p key={index}>{label}</p>
+              ))}
             </div>
-            <div className="flex flex-col gap-2 font-bold text-zp-gray text-zp-xs ">
+            <div className="flex flex-col gap-2 text-zp-gray text-zp-xs">
               <p>
                 {2024 - parseInt(portfolio.user.birthDate.split('-')[0])} 세
               </p>
@@ -198,85 +198,91 @@ export default function OverView({ portfolio }: Props) {
             </div>
           </div>
         </div>
-        <hr className="w-full text-zp-main-color" />
-        <div className="flex items-center gap-1">
-          <FaCamera size={16} />
-          <p className="font-bold text-zp-sm">Image</p>
-        </div>
-        <div
-          className="relative flex w-full gap-4 overflow-x-auto"
-          style={{
-            scrollbarWidth: 'none',
-            msOverflowStyle: 'none',
-          }}
-        >
-          {portfolio && portfolio.imageList.length > 0 ? (
-            <>
-              {portfolio.imageList.map((image: any) => (
-                <img
-                  className="flex-shrink-0 w-[25%] aspect-square border"
-                  src={image.saveFile}
-                />
-              ))}
-              <div className="flex items-center ">
-                <FiPlusCircle
-                  size={24}
-                  className="cursor-pointer aspect-square"
-                  onClick={handleClick}
-                />
-                <input
-                  type="file"
-                  ref={fileInputRef}
-                  style={{ display: 'none' }}
-                  onChange={handleFileChange}
-                />
+        <div className="flex flex-col p-3 bg-zp-white drop-shadow-zp-slight rounded-zp-radius-big">
+          <div className="flex items-center gap-1">
+            <FaCamera size={16} />
+            <p className="font-bold text-zp-sm">작업 이미지</p>
+          </div>
+          <div
+            className="relative flex w-full gap-4 overflow-x-auto"
+            style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+            }}
+          >
+            {portfolio && portfolio.imageList.length > 0 ? (
+              <>
+                {portfolio.imageList.map((image: any) => (
+                  <img
+                    className="flex-shrink-0 w-[25%] aspect-square border"
+                    src={image.saveFile}
+                  />
+                ))}
+                {id && loginUser?.userSerial === parseInt(id) && (
+                  <div className="flex items-center ">
+                    <FiPlusCircle
+                      size={24}
+                      className="cursor-pointer aspect-square"
+                      onClick={handleClick}
+                    />
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      style={{ display: 'none' }}
+                      onChange={handleFileChange}
+                    />
+                  </div>
+                )}
+              </>
+            ) : id && loginUser?.userSerial === parseInt(id) ? (
+              <div className="flex flex-col items-center w-full gap-4">
+                <label className="flex flex-col items-center justify-center w-full">
+                  <FaImage size={50} />
+                  <p className="w-full font-bold text-center">
+                    포트폴리오 이미지를 넣어주세요.
+                  </p>
+                  <input
+                    type="file"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                </label>
               </div>
-            </>
-          ) : id && loginUser?.userSerial === parseInt(id) ? (
-            <div className="flex flex-col items-center w-full gap-4">
-              <label className="flex flex-col items-center justify-center w-full">
-                <FaImage size={50} />
-                <p className="w-full font-bold text-center">
-                  포트폴리오 이미지를 넣어주세요.
-                </p>
+            ) : (
+              <div className="w-full text-center text-zp-md text-zp-light-gray">
+                등록된 이미지가 없습니다.
+                <NothingIcon width={80} height={80} className="mx-auto" />
+              </div>
+            )}
+          </div>
+        </div>
 
-                <input
-                  type="file"
-                  className="hidden"
-                  onChange={handleFileChange}
-                />
-              </label>
+        <div className="flex flex-col p-3 bg-zp-white drop-shadow-zp-slight rounded-zp-radius-big">
+          <div className="flex items-center gap-1">
+            <TbBuildingCommunity size={16} />
+            <p className="font-bold text-zp-sm">소속업체</p>
+          </div>
+          <div className="flex w-full gap-4 pl-4 mt-4">
+            <div className="flex flex-col gap-2 pr-6 font-bold border-r text-zp-gray text-zp-xs border-r-zp-sub-color">
+              {['업체명', '업체 주소', '사업자등록번호'].map((label, index) => (
+                <p key={index}>{label}</p>
+              ))}
             </div>
-          ) : (
-            <p className="w-full font-bold text-center text-zp-lg">No Image</p>
-          )}
-        </div>
-
-        <hr className="w-full text-zp-main-color" />
-
-        <div className="flex items-center gap-1">
-          <TbBuildingCommunity size={16} />
-          <p className="font-bold text-zp-sm">소속업체</p>
-        </div>
-        <div className="flex w-full gap-4 pl-4">
-          <div className="flex flex-col gap-2 pr-6 font-bold border-r text-zp-gray text-zp-xs border-r-zp-sub-color">
-            <p>업체명</p>
-            <p>업체 주소</p>
-            <p>사업자등록번호</p>
-          </div>
-          <div className="flex flex-col gap-2 font-bold text-zp-gray text-zp-xs">
-            <p>{portfolio.worker.company}</p>
-            <p>{portfolio.worker.companyAddress}</p>
-            <p>{portfolio.worker.businessNumber}</p>
+            <div className="flex flex-col gap-2 text-zp-gray text-zp-xs">
+              <p>{portfolio.worker.company}</p>
+              <p>{portfolio.worker.companyAddress}</p>
+              <p>{portfolio.worker.businessNumber}</p>
+            </div>
           </div>
         </div>
-        <hr className="w-full text-zp-main-color" />
 
-        <div className="flex items-center gap-1">
-          <RiMessage2Line size={16} />
-          <p className="font-bold text-zp-sm">하고 싶은 말</p>
+        <div className="flex flex-col p-3 bg-zp-white drop-shadow-zp-slight rounded-zp-radius-big">
+          <div className="flex items-center gap-1">
+            <RiMessage2Line size={16} />
+            <p className="font-bold text-zp-sm">하고 싶은 말</p>
+          </div>
+          <p className="pl-4 mt-4 text-zp-xs">{portfolio.publicRelation}</p>
         </div>
-        <p className="pl-4 font-bold text-zp-xs">{portfolio.publicRelation}</p>
       </div>
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center ">
