@@ -121,12 +121,14 @@ export default function Review({ comment, childComments }: Props) {
             radius="btn"
             onClick={() => {
               if (comment)
-                handleClickRegistReview(
-                  comment?.boardSerial,
-                  review,
-                  comment?.commentSerial,
-                  0
-                );
+                setTimeout(() => {
+                  handleClickRegistReview(
+                    comment?.boardSerial,
+                    review,
+                    comment?.commentSerial,
+                    0
+                  );
+                }, 1500);
               navigate(0);
             }}
           />

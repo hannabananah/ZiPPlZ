@@ -61,13 +61,15 @@ const ScheduleCalendar = function ({ workList, onEventClick, loading }: Props) {
           dayMaxEvents={true}
           events={eventList.map((event) => {
             const adjustedEnd = new Date(event.end);
+            const adjustedStart = new Date(event.start)
             adjustedEnd.setDate(adjustedEnd.getDate() + 1);
+            adjustedStart.setDate(adjustedStart.getDate()+1)
 
             const randomColor = getRandomColor();
 
             return {
               title: event.title,
-              start: event.start.toISOString(),
+              start: adjustedStart.toISOString(),
               end: adjustedEnd.toISOString(),
               extendedProps: {
                 backgroundColor: randomColor,

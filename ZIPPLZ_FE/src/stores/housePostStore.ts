@@ -10,6 +10,8 @@ interface HousePost {
   img: string;
   title: string;
   nickname: string;
+  user_name: string;
+  save_file: string;
   board_date: string;
   hit: number;
   wish_cnt: number;
@@ -49,20 +51,28 @@ interface HousePostDetails {
     parent_comment: {
       userName: string;
       userSerial: number;
+      boardSerial: number;
       commentSerial: number;
+      parentCommentSerial: number;
       commentContent: string;
       commentDate: string;
       saveFile: string;
       nickName: string;
+      orderNumber: number;
+      isDeleted: number;
     };
     child_comments: {
       userName: string;
       userSerial: number;
+      boardSerial: number;
       commentSerial: number;
+      parentCommentSerial: number;
       commentContent: string;
       commentDate: string;
       saveFile: string;
       nickName: string;
+      orderNumber: number;
+      isDeleted: number;
     }[];
   }[];
 }
@@ -99,7 +109,6 @@ interface HousePostState {
     formData: FormData
   ) => Promise<{ code: number; message: string }>;
   updatePost: (
-    token: string,
     id: number,
     postData: {
       title: string;
@@ -201,6 +210,11 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
               commentDate: comment.parent_comment.commentDate,
               saveFile: comment.parent_comment.saveFile,
               nickName: comment.parent_comment.nickName,
+              boardSerial:comment.parent_comment.boardSerial,
+              parentCommentSerial:comment.parent_comment.parentCommentSerial,
+              orderNumber:comment.parent_comment.orderNumber,
+              isDeleted: comment.parent_comment.isDeleted,
+              
             },
             child_comments: comment.child_comments.map((child: any) => ({
               userName: child.userName,
@@ -279,12 +293,10 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
   },
 
   updatePost: async (
-    token: string,
     id: number,
     postData: {
       title: string;
       board_content: string;
-      selectedWorkers?: { portfolio_serial: number; worker: number }[];
     }
   ) => {
     try {
@@ -293,8 +305,7 @@ export const useHousePostStore = create<HousePostState>((set, get) => ({
         postData,
         {
           headers: {
-            Authorization: token,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
           },
         }
       );

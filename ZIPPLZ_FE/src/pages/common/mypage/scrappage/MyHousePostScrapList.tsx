@@ -7,7 +7,7 @@ import { IoMdArrowDropdown } from 'react-icons/io';
 import { useNavigate } from 'react-router-dom';
 
 import Selectbar from '@/components/common/Selectbar';
-import HousePostListItem from '@/components/community/HousePostListItem';
+// import HousePostListItem from '@/components/community/HousePostListItem';
 import Input from '@components/common/Input';
 import { useMyPageStore } from '@stores/myPageStore';
 
@@ -275,17 +275,9 @@ export default function MyHousePostScrapList() {
                   )}
                 </div>
               )}
-              <HousePostListItem
-                post_serial={post.board_serial}
-                post_image={post.img ?? null}
-                title={post.title}
-                profile_image={null}
-                nickname={post.nickname}
-                upload_date={new Date(post.board_date)}
-                view_cnt={post.hit}
-                bookmark_cnt={post.wish_cnt}
-                comment_cnt={post.comment_cnt}
-              />
+              {/* <HousePostListItem
+                board={post}
+              /> */}
             </div>
           ))}
         </div>
