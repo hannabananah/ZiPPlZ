@@ -139,9 +139,9 @@ export default function SignBottom({
             buttonType={active ? 'second' : 'light'}
             radius="btn"
             width="full"
-            height={3.75}
+            height={3}
             children="인증"
-            fontSize="2xl"
+            fontSize="lg"
             disabled={!active}
             onClick={handleClick}
           />
@@ -150,7 +150,7 @@ export default function SignBottom({
           buttonType={next ? 'second' : 'light'}
           radius="btn"
           width="full"
-          height={3.75}
+          height={3}
           children={
             order < 3 ||
             (phrase !== 'nickname' &&
@@ -160,7 +160,7 @@ export default function SignBottom({
               ? '다음'
               : '회원가입 완료'
           }
-          fontSize="2xl"
+          fontSize="lg"
           disabled={!next}
           onClick={() => {
             setNext(false);
