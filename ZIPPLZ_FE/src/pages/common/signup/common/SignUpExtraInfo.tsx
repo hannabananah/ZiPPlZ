@@ -61,7 +61,7 @@ export default function SignUpExtraInfo({
           }));
           setName((e.target as HTMLInputElement).value);
         }}
-        fontSize="xl"
+        fontSize="sm"
         className="p-1"
         radius="none"
       />
@@ -77,7 +77,7 @@ export default function SignUpExtraInfo({
         onChange={setPhone}
         placeholder="010-0000-0000"
         inputType="signup"
-        fontSize="xl"
+        fontSize="sm"
         height={2}
         radius="none"
       />
