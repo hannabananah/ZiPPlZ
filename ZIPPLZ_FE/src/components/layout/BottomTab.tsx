@@ -35,7 +35,7 @@ export default function BottomTab() {
       role: ['customer', ''],
     },
     {
-      path: `workers/${loginUser?.userSerial}`,
+      path: `workers/${loginUser?.userSerial}/portfolio?tab=overview`,
       icon: <TiBusinessCard size={26} />,
       label: '포트폴리오',
       role: ['worker'],
