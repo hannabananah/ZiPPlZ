@@ -61,6 +61,7 @@ export default function SignUpExtraInfo({
           }));
           setName((e.target as HTMLInputElement).value);
         }}
+        value={name}
         fontSize="sm"
         className="p-1"
         radius="none"
