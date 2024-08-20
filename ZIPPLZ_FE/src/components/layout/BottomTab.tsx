@@ -26,7 +26,7 @@ export default function BottomTab() {
       inactiveIcon: <InactiveWorker width={26} />,
       label: '시공자 정보',
       role: ['customer', 'worker', ''],
-      isActive: () => location.pathname.startsWith('/workers'), // Check if the path starts with "/workers"
+      isActive: () => location.pathname.startsWith('/workers'),
     },
     {
       path: loginUser?.role !== '' ? '/schedule' : '/member/login',
@@ -35,7 +35,7 @@ export default function BottomTab() {
       role: ['customer', ''],
     },
     {
-      path: `workers/${loginUser?.userSerial}/portfolio?tab=overview`,
+      path: `workers/${loginUser?.userSerial}/portfolio?tab=workerschedule`,
       icon: <TiBusinessCard size={26} />,
       label: '포트폴리오',
       role: ['worker'],
