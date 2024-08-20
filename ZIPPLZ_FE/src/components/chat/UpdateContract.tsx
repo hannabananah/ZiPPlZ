@@ -30,7 +30,8 @@ interface Field {
   editable: boolean;
 }
 
-const base_url = import.meta.env.VITE_APP_BASE_URL;
+// const base_url = import.meta.env.VITE_APP_BASE_URL;
+const base_url = 'https://zipplz.site/api';
 
 export default function UpdateContract({
   closeContractModal,
