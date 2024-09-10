@@ -72,30 +72,30 @@
     </ul>
     <br/>
     <h2>✨ 주요 기능</h2>
-    <h3>- 스케줄링</h3>
+    <h3> 🟠 스케줄링</h3>
   <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem;">
   <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; justify-content: center;">
-    <span>1. 스케줄 등록</span>
+    <div> 1. 스케줄 등록</div>
     <img width=200px src="ZIPPLZ_FE/public/readme/schedule1.gif"/>
-  </div>
+  </div><br/>
   <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; justify-content: center;">
-    <span>2. 스케줄러 공유이미지 등록</span>
+    <div>2. 스케줄러 공유이미지 등록</div>
     <img width=200px src="ZIPPLZ_FE/public/readme/schedule2.gif"/>
-  </div>
+  </div><br/>
   <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; justify-content: center;">
-    <span>3. 스케줄러 공유메모 수정</span>
+    <div> 3. 스케줄러 공유메모 수정</div>
     <img width=200px src="ZIPPLZ_FE/public/readme/schedule3.gif"/>
-  </div>
+  </div><br/>
   <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; justify-content: center;">
-    <span>4. 스케줄러 계약서 이동 & 계약서 수정</span>
+    <div> 4. 스케줄러 계약서 이동 & 계약서 수정</div>
     <img width=200px src="ZIPPLZ_FE/public/readme/schedule4.gif"/>
-  </div>
+  </div><br/>
   <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; justify-content: center;">
-    <span>5. 스케줄러 채팅방 이동</span>
+    <div> 5. 스케줄러 채팅방 이동</div>
     <img width=200px src="ZIPPLZ_FE/public/readme/schedule5.gif"/>
-  </div>
+  </div><br/>
   <div style="display: flex; flex-direction: column; align-items: center; gap: 1rem; justify-content: center;">
-    <span>6. 스케줄러 개인시공 등록</span>
+    <div> 6. 스케줄러 개인시공 등록</div>
     <img width=200px src="ZIPPLZ_FE/public/readme/schedule6.gif"/>
   </div>
 </div>
@@ -106,16 +106,16 @@
       <p>✔️ 개인이 원하는 일정도 커스텀으로 등록 가능</p>
 </p>
     <br/>
-    <h3>- 가상 이미지 변환</h3>
+    <h3> 🟠 가상 이미지 변환</h3>
     <div style="display:flex; gap:2rem;">
       <div style="display: flex; flex-direction: column; align-items: center; gap:1rem; justify-content: center;">
-    <span>1. 이미지 선택</span>
+    <div> 1. 이미지 선택</div>
     <img width=200px src="ZIPPLZ_FE/public/readme/image1.gif"/>
-      </div>
+      </div><br/>
       <div style="display: flex; flex-direction: column; align-items: center; gap:1rem; justify-content: center;">
-      <span>2. 이미지 변환</span>
+      <div> 2. 이미지 변환</div>
       <img width=200px src="ZIPPLZ_FE/public/readme/image2.gif"/>
-      </div>
+      </div><br/>
     </div>
       <br/>
       <p>✔️ Segment Anything Model을 활용한 가상 이미지 변환</p>
@@ -123,14 +123,14 @@
       <p>✔️ ONNX Library를 사용하여 구역 선택 후 바꾸고 싶은 자재 선택</p>
       <p>✔️ Karlo API를 활용하여 이미지 편집 진행</p>
       <br/>
-<h3>- 화상채팅</h3>
+<h3> 🟠 화상채팅</h3>
 <div style="display:flex; gap:2rem;">
 <div style="display: flex; flex-direction: column; align-items: center; gap:1rem; justify-content: center;">
-<span>고객</span>
+<div>고객</div>
 <img width=200px src="ZIPPLZ_FE/public/readme/customer.gif"/>
-</div>
+</div><br/>
 <div style="display: flex; flex-direction: column; align-items: center; gap:1rem; justify-content: center;">
-<span>시공자</span>
+<div>시공자</div><br/>
 <img width=200px src="ZIPPLZ_FE/public/readme/worker.gif"/>
 </div>
 </div>
@@ -141,7 +141,7 @@
 <p>✔️ 계약서 수락, 거절을 눌러 즉시 전달되는 계약과정</p>
 
 <br/>
-  <h3>- 시공자 리스트</h3>
+  <h3> 🟠 시공자 리스트</h3>
     <div style="display:flex; gap:2rem;">
     <div style="display: flex; flex-direction: column; align-items: center; gap:1rem; justify-content: center;">
     <img width=200px src="ZIPPLZ_FE/public/readme/workerList.gif"/>
@@ -155,10 +155,10 @@
   <p>✔️ 시공자의 일정을 고려하여 문의 가능</p>
   <br/>
 
-  <h3>- 커뮤니티</h3>
+  <h3> 🟠 커뮤니티</h3>
     <div style="display:flex; gap:2rem;">
     <div style="display: flex; flex-direction: column; align-items: center; gap:1rem; justify-content: center;">
-  <span>집 자랑글 커뮤니티</span>
+  <div> 집 자랑글 커뮤니티</div>
   <img width=200px src="ZIPPLZ_FE/public/readme/community.gif"/>
     </div>
   </div>
